@@ -118,4 +118,181 @@ jobs:
           gh release create "$GITHUB_REF_NAME" dist/* \
             --title "Qima $GITHUB_REF_NAME" \
             --generate-notes \
-            --verify-tag
+            --verify-tag \
+            || gh release upload "$GITHUB_REF_NAME" dist/* --clobber
+
+  macos:
+    name: macOS app
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+
+      - name: Verify tag matches pubspec version
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          pubspec_version="$(grep -E '^version:' pubspec.yaml | awk '{print $2}' | cut -d+ -f1)"
+          tag_version="${GITHUB_REF_NAME#v}"
+          if [ "$pubspec_version" != "$tag_version" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME does not match pubspec version $pubspec_version."
+            echo 'Bump the version: line in pubspec.yaml (both the name and the +buildNumber) and retag.'
+            exit 1
+          fi
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build macOS (release)
+        run: flutter build macos --release
+
+      # Not notarized: launching the .app will require the user to right-click
+      # > Open (or clear the quarantine flag) the first time, since it is not
+      # signed with a Developer ID and Apple has not notarized it.
+      - name: Prepare release assets
+        run: |
+          version="$(grep -E '^version:' pubspec.yaml | awk '{print $2}' | cut -d+ -f1)"
+          mkdir -p dist
+          ditto -c -k --sequesterRsrc --keepParent \
+            "build/macos/Build/Products/Release/qima.app" \
+            "dist/qima-${version}-macos.zip"
+          cd dist
+          shasum -a 256 "qima-${version}-macos.zip" > "qima-${version}-macos.zip.sha256"
+          ls -lh
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: qima-macos-app
+          path: dist/
+
+      - name: Publish GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" dist/* \
+            --title "Qima $GITHUB_REF_NAME" \
+            --generate-notes \
+            --verify-tag \
+            || gh release upload "$GITHUB_REF_NAME" dist/* --clobber
+
+  windows:
+    name: Windows app
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+
+      - name: Verify tag matches pubspec version
+        if: startsWith(github.ref, 'refs/tags/')
+        shell: bash
+        run: |
+          pubspec_version="$(grep -E '^version:' pubspec.yaml | awk '{print $2}' | cut -d+ -f1)"
+          tag_version="${GITHUB_REF_NAME#v}"
+          if [ "$pubspec_version" != "$tag_version" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME does not match pubspec version $pubspec_version."
+            echo 'Bump the version: line in pubspec.yaml (both the name and the +buildNumber) and retag.'
+            exit 1
+          fi
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build Windows (release)
+        run: flutter build windows --release
+
+      # Not code-signed: Windows SmartScreen will warn on first launch since
+      # there is no Authenticode certificate to sign the executable with.
+      - name: Prepare release assets
+        shell: bash
+        run: |
+          version="$(grep -E '^version:' pubspec.yaml | awk '{print $2}' | cut -d+ -f1)"
+          mkdir -p dist
+          release_dir="build/windows/x64/runner/Release"
+          (cd "$release_dir" && 7z a -tzip "$OLDPWD/dist/qima-${version}-windows.zip" .)
+          cd dist
+          sha256sum "qima-${version}-windows.zip" > "qima-${version}-windows.zip.sha256"
+          ls -lh
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: qima-windows-app
+          path: dist/
+
+      - name: Publish GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" dist/* \
+            --title "Qima $GITHUB_REF_NAME" \
+            --generate-notes \
+            --verify-tag \
+            || gh release upload "$GITHUB_REF_NAME" dist/* --clobber
+
+  linux:
+    name: Linux app
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+
+      - name: Verify tag matches pubspec version
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          pubspec_version="$(grep -E '^version:' pubspec.yaml | awk '{print $2}' | cut -d+ -f1)"
+          tag_version="${GITHUB_REF_NAME#v}"
+          if [ "$pubspec_version" != "$tag_version" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME does not match pubspec version $pubspec_version."
+            echo 'Bump the version: line in pubspec.yaml (both the name and the +buildNumber) and retag.'
+            exit 1
+          fi
+
+      - name: Install Linux build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libstdc++-12-dev
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build Linux (release)
+        run: flutter build linux --release
+
+      - name: Prepare release assets
+        run: |
+          version="$(grep -E '^version:' pubspec.yaml | awk '{print $2}' | cut -d+ -f1)"
+          mkdir -p dist
+          release_dir="build/linux/x64/release/bundle"
+          tar -C "$release_dir" -czf "dist/qima-${version}-linux-x64.tar.gz" .
+          cd dist
+          sha256sum "qima-${version}-linux-x64.tar.gz" > "qima-${version}-linux-x64.tar.gz.sha256"
+          ls -lh
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: qima-linux-bundle
+          path: dist/
+
+      - name: Publish GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" dist/* \
+            --title "Qima $GITHUB_REF_NAME" \
+            --generate-notes \
+            --verify-tag \
+            || gh release upload "$GITHUB_REF_NAME" dist/* --clobber
