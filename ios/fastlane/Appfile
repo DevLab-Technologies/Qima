@@ -1,0 +1,6 @@
+app_identifier("com.devlabtechnologies.qima")
+team_id("44PL6FHCG3") # DevLab Technologies (individual developer account)
+
+# No apple_id here on purpose: this project authenticates to App Store Connect
+# with an API key (see app_store_connect_api_key in Fastfile), not an Apple ID.
+# Apple ID + password sessions expire under 2FA and are not usable in CI.

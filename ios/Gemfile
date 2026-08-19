@@ -1,0 +1,8 @@
+source "https://rubygems.org"
+
+gem "fastlane"
+
+# No Gemfile.lock is committed yet: this was written in a sandbox with no
+# network access to rubygems.org, so `bundle lock` could not be run here.
+# The first CI run (or a local `bundle install`) will generate one - commit
+# it after that so subsequent runs get reproducible gem versions.

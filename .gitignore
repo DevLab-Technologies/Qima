@@ -59,3 +59,11 @@ app.*.map.json
 *.p8
 *.mobileprovision
 *.cer
+
+# fastlane: generated at build time (ExportOptions.plist embeds a profile name
+# pulled from a secret) or contain run logs/local reports, not source.
+ios/ExportOptions.plist
+ios/fastlane/report.xml
+ios/fastlane/*.log
+ios/fastlane/screenshots/
+ios/fastlane/test_output/
