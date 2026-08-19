@@ -1,0 +1,21 @@
+#!/bin/sh
+# Blocks signing material from being committed to this public repository.
+#
+# .gitignore is not enough on its own: `git add -f` bypasses it, and the release
+# keystore is kept inside the working tree. A signing key pushed to a public
+# repository is compromised permanently — recovering means generating a new key,
+# after which no existing install can be updated in place.
+#
+# Enable once per clone:  git config core.hooksPath .githooks
+
+blocked=$(git diff --cached --name-only --diff-filter=AM |
+    grep -Ei '(^|/)key\.properties$|\.(jks|keystore|p12|pepk|p8|mobileprovision|cer)$')
+
+if [ -n "$blocked" ]; then
+    echo "pre-commit: refusing to commit signing material:" >&2
+    echo "$blocked" | sed 's/^/  /' >&2
+    echo >&2
+    echo "Unstage it with: git restore --staged <file>" >&2
+    echo "If a file here is genuinely safe to publish, commit with --no-verify." >&2
+    exit 1
+fi
