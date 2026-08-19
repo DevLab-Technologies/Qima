@@ -19,7 +19,7 @@ class CustomInstrument extends Equatable implements Syncable {
   final String sourceSymbol;
   final AssetClass assetClass;
 
-  CustomInstrument._({
+  const CustomInstrument._({
     required this.id,
     required this.instrumentID,
     required this.symbol,

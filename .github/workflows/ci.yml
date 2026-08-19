@@ -5,6 +5,13 @@ on:
     branches: [main]
   pull_request:
 
+# Pinned so a new Flutter stable release cannot turn a green branch red on its
+# own: `flutter analyze` fails the build on info-level issues, and every stable
+# release adds new deprecation infos. Bump this deliberately, together with the
+# code migrations the new version asks for.
+env:
+  FLUTTER_VERSION: "3.41.6"
+
 jobs:
   test:
     name: Analyze and test
@@ -15,6 +22,7 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
 
       - name: Install dependencies
         run: flutter pub get
@@ -34,6 +42,7 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
 
       - name: Install dependencies
         run: flutter pub get
@@ -55,6 +64,7 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
 
       - name: Install dependencies
         run: flutter pub get
@@ -71,6 +81,7 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
 
       - name: Install dependencies
         run: flutter pub get
