@@ -79,17 +79,23 @@ class SettingsScreen extends StatelessWidget {
                 DSCard(
                   child: Column(
                     children: [
-                      for (final interval in WidgetRefreshInterval.values)
-                        RadioListTile<WidgetRefreshInterval>(
-                          contentPadding: EdgeInsets.zero,
-                          title: Text(displayLabel(context, interval.labelKey), style: const TextStyle(color: DS.textPrimary)),
-                          value: interval,
-                          groupValue: state.widgetRefreshInterval,
-                          activeColor: DS.textPrimary,
-                          onChanged: (value) {
-                            if (value != null) cubit.setWidgetRefreshInterval(value);
-                          },
+                      RadioGroup<WidgetRefreshInterval>(
+                        groupValue: state.widgetRefreshInterval,
+                        onChanged: (value) {
+                          if (value != null) cubit.setWidgetRefreshInterval(value);
+                        },
+                        child: Column(
+                          children: [
+                            for (final interval in WidgetRefreshInterval.values)
+                              RadioListTile<WidgetRefreshInterval>(
+                                contentPadding: EdgeInsets.zero,
+                                title: Text(displayLabel(context, interval.labelKey), style: const TextStyle(color: DS.textPrimary)),
+                                value: interval,
+                                activeColor: DS.textPrimary,
+                              ),
+                          ],
                         ),
+                      ),
                       const Divider(color: DS.hairline),
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: DS.spaceSM),
@@ -106,20 +112,26 @@ class SettingsScreen extends StatelessWidget {
                 DSCard(
                   child: Column(
                     children: [
-                      for (final language in AppLanguage.values)
-                        RadioListTile<AppLanguage>(
-                          contentPadding: EdgeInsets.zero,
-                          title: Text(
-                            language == AppLanguage.system ? l10n.settingsLanguageSystem : language.nativeName,
-                            style: const TextStyle(color: DS.textPrimary),
-                          ),
-                          value: language,
-                          groupValue: state.appLanguage,
-                          activeColor: DS.textPrimary,
-                          onChanged: (value) {
-                            if (value != null) cubit.setAppLanguage(value);
-                          },
+                      RadioGroup<AppLanguage>(
+                        groupValue: state.appLanguage,
+                        onChanged: (value) {
+                          if (value != null) cubit.setAppLanguage(value);
+                        },
+                        child: Column(
+                          children: [
+                            for (final language in AppLanguage.values)
+                              RadioListTile<AppLanguage>(
+                                contentPadding: EdgeInsets.zero,
+                                title: Text(
+                                  language == AppLanguage.system ? l10n.settingsLanguageSystem : language.nativeName,
+                                  style: const TextStyle(color: DS.textPrimary),
+                                ),
+                                value: language,
+                                activeColor: DS.textPrimary,
+                              ),
+                          ],
                         ),
+                      ),
                       const Divider(color: DS.hairline),
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: DS.spaceSM),

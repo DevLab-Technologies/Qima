@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("kotlin-android")
@@ -8,6 +10,29 @@ plugins {
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
 }
+
+// Release signing material, resolved from `android/key.properties` for local
+// release builds and from environment variables in CI. Absent on contributor
+// machines and in the debug-only CI job, which is why `release` below degrades
+// to debug signing rather than failing the build.
+val keystorePropertiesFile = rootProject.file("key.properties")
+val keystoreProperties = Properties().apply {
+    if (keystorePropertiesFile.exists()) {
+        keystorePropertiesFile.inputStream().use { load(it) }
+    }
+}
+
+fun signingValue(propertyKey: String, environmentKey: String): String? =
+    keystoreProperties.getProperty(propertyKey) ?: System.getenv(environmentKey)
+
+val releaseStoreFile = signingValue("storeFile", "QIMA_KEYSTORE_PATH")
+val releaseStorePassword = signingValue("storePassword", "QIMA_KEYSTORE_PASSWORD")
+val releaseKeyAlias = signingValue("keyAlias", "QIMA_KEY_ALIAS")
+val releaseKeyPassword = signingValue("keyPassword", "QIMA_KEY_PASSWORD")
+val hasReleaseSigning = releaseStoreFile != null &&
+    releaseStorePassword != null &&
+    releaseKeyAlias != null &&
+    releaseKeyPassword != null
 
 android {
     namespace = "com.devlabtechnologies.qima"
@@ -27,8 +52,18 @@ android {
         compose = true
     }
 
+    signingConfigs {
+        if (hasReleaseSigning) {
+            create("release") {
+                storeFile = file(releaseStoreFile!!)
+                storePassword = releaseStorePassword
+                keyAlias = releaseKeyAlias
+                keyPassword = releaseKeyPassword
+            }
+        }
+    }
+
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "com.devlabtechnologies.qima"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
@@ -40,9 +75,20 @@ android {
 
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+            // Never ship a publicly distributed APK signed with the debug key:
+            // it is a shared, well-known key, so anyone could sign an "update"
+            // that Android would install straight over a user's install. The
+            // fallback exists only so contributors and the debug-only CI job
+            // can still build without the private keystore.
+            signingConfig = if (hasReleaseSigning) {
+                signingConfigs.getByName("release")
+            } else {
+                logger.warn(
+                    "WARNING: no release keystore found - signing the release build with the " +
+                        "debug key. This build MUST NOT be distributed."
+                )
+                signingConfigs.getByName("debug")
+            }
         }
     }
 }

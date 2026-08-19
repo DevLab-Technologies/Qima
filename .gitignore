@@ -43,3 +43,19 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Signing material — never commit these to a public repository.
+# Matched at any depth on purpose: the release keystore is kept inside the
+# working tree, so a rule anchored to one directory would not protect it after
+# a move. A leaked key cannot be rotated without breaking in-place updates for
+# every existing install, so `.githooks/pre-commit` blocks these as well, since
+# .gitignore alone does not stop `git add -f`.
+**/key.properties
+*.jks
+*.keystore
+*.p12
+*.pepk
+# iOS/macOS signing, for when those ship
+*.p8
+*.mobileprovision
+*.cer
