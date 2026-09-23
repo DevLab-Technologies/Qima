@@ -74,26 +74,13 @@ platform :ios do
     begin
       existing = Spaceship::ConnectAPI::App.get_apps(filter: { bundleId: APP_IDENTIFIER })
       if existing && !existing.empty?
-        UI.important("An app already exists in App Store Connect for #{APP_IDENTIFIER} (id=#{existing.first.id}). Skip 'create_app'.")
+        UI.important("An app already exists in App Store Connect for #{APP_IDENTIFIER} (id=#{existing.first.id}). Nothing to create.")
       else
-        UI.message("No app record yet for #{APP_IDENTIFIER}. 'create_app' still needs to run.")
+        UI.message("No app record yet for #{APP_IDENTIFIER}. Create it in App Store Connect > Apps > New App - the App Store Connect API cannot create app records.")
       end
     rescue => e
       UI.user_error!("Authenticated, but listing apps failed: #{e.message}")
     end
-  end
-
-  desc "Create the App Store Connect app record. Bundle ID, team, name, language and SKU are fixed below - override APP_STORE_NAME/APP_SKU env vars if needed."
-  lane :create_app do
-    require_asc_api_key!
-    produce(
-      app_identifier: APP_IDENTIFIER,
-      app_name: ENV["APP_STORE_NAME"] || "Qima",
-      language: ENV["APP_STORE_PRIMARY_LANGUAGE"] || "en-US",
-      sku: ENV["APP_SKU"] || "QIMA-IOS-001",
-      team_id: APPLE_TEAM_ID,
-      skip_itc: false
-    )
   end
 
   desc "Import a distribution certificate (.p12) and provisioning profile (.mobileprovision) from base64 secrets into a throwaway CI keychain, then switch Runner to manual signing."

@@ -1,0 +1,110 @@
+require "shellwords"
+
+default_platform(:android)
+
+PACKAGE_NAME = "com.devlabtechnologies.qima"
+AAB_PATH = File.expand_path("../../build/app/outputs/bundle/release/app-release.aab", __dir__)
+
+# Every track counts: Play rejects a versionCode already used on ANY track.
+PLAY_TRACKS = %w[internal alpha beta production].freeze
+
+# Loads the Google Play service account key from PLAY_SERVICE_ACCOUNT_JSON (the
+# raw JSON contents). Env-only on purpose, so the key never touches the disk.
+def require_play_json_key!
+  json_key_data = ENV["PLAY_SERVICE_ACCOUNT_JSON"]
+  if json_key_data.to_s.strip.empty?
+    UI.user_error!(
+      "PLAY_SERVICE_ACCOUNT_JSON must be set to the Google Play service account key JSON. " \
+      "Create one in Google Cloud, then grant it release access in Play Console > Users and permissions."
+    )
+  end
+  json_key_data
+end
+
+# Play requires versionCode to strictly increase across all tracks. Asking Play
+# for the highest one in use is robust against manual Console uploads, which a
+# CI counter (like github.run_number) cannot see.
+def next_version_code(json_key_data)
+  used_codes = PLAY_TRACKS.flat_map do |track|
+    google_play_track_version_codes(
+      package_name: PACKAGE_NAME,
+      track: track,
+      json_key_data: json_key_data
+    )
+  rescue => e
+    # A track with no releases yet is normal for a new app; anything else is not.
+    UI.message("No version codes on track '#{track}' (#{e.message.lines.first&.strip}).")
+    []
+  end
+
+  next_code = (used_codes.map(&:to_i).max || 0) + 1
+  UI.message("Highest versionCode on Play: #{used_codes.max || 'none'} -> using #{next_code}.")
+  next_code
+end
+
+# Builds the signed release App Bundle. Signing comes from the QIMA_KEYSTORE_*
+# environment variables read by android/app/build.gradle.kts.
+def build_release_aab!(build_number)
+  Dir.chdir(File.expand_path("../..", __dir__)) do
+    sh("flutter", "build", "appbundle", "--release", "--build-number=#{build_number}")
+  end
+  UI.user_error!("No App Bundle at #{AAB_PATH} after flutter build appbundle.") unless File.exist?(AAB_PATH)
+  verify_release_signature!
+end
+
+# build.gradle.kts falls back to the debug key when signing material is
+# missing. That is fine for contributors but must never reach Play, and Play
+# would permanently reject an upload signed with a key that isn't the upload key.
+def verify_release_signature!
+  signer_output = sh("keytool -printcert -jarfile #{AAB_PATH.shellescape}", log: false)
+  UI.user_error!("App Bundle is not signed.") if signer_output.strip.empty?
+  if signer_output.include?("CN=Android Debug")
+    UI.user_error!("App Bundle is signed with the debug key. Refusing to continue.")
+  end
+  UI.success("App Bundle is signed with the release (upload) key.")
+end
+
+platform :android do
+  desc "Read-only: confirm the Play service account key authenticates."
+  lane :preflight do
+    validate_play_store_json_key(json_key_data: require_play_json_key!)
+    UI.success("Google Play service account key accepted.")
+  end
+
+  desc "Build the signed release App Bundle and upload it to the Play internal track."
+  lane :internal do
+    json_key_data = require_play_json_key!
+    # Authenticate up front: next_version_code tolerates per-track lookup
+    # errors, so a bad key must not be mistaken for "no releases yet".
+    validate_play_store_json_key(json_key_data: json_key_data)
+    version_code = next_version_code(json_key_data)
+
+    build_release_aab!(version_code)
+
+    # A Play app that has never been published only accepts "draft" releases,
+    # so draft is the default. The release is then rolled out from Play
+    # Console; set PLAY_RELEASE_STATUS=completed once the app is live to skip
+    # that step for internal testers.
+    upload_to_play_store(
+      package_name: PACKAGE_NAME,
+      track: "internal",
+      aab: AAB_PATH,
+      json_key_data: json_key_data,
+      # CI passes an unset repository variable as "", so treat blank as unset.
+      release_status: ENV["PLAY_RELEASE_STATUS"].to_s.strip.empty? ? "draft" : ENV["PLAY_RELEASE_STATUS"],
+      skip_upload_apk: true,
+      skip_upload_metadata: true,
+      skip_upload_changelogs: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true
+    )
+
+    UI.success("Uploaded versionCode #{version_code} to the Play internal track.")
+  end
+
+  desc "Build and verify the signed release App Bundle WITHOUT uploading. Used for workflow_dispatch validation runs."
+  lane :build_only do
+    build_release_aab!(ENV["QIMA_BUILD_NUMBER"] || "1")
+    UI.success("Built and verified the signed App Bundle without uploading (build_only lane).")
+  end
+end
