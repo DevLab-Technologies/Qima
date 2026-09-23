@@ -1,0 +1,1 @@
+gold,silver,bullion,karat,portfolio,crypto,bitcoin,stocks,currency,exchange rate,price,tracker

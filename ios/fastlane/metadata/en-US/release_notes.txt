@@ -1,0 +1,1 @@
+First store release: live prices for metals, crypto, stocks, indices and currencies; holdings and portfolio value; price charts; Arabic, Spanish and French.
