@@ -7,6 +7,7 @@ import '../blocs/app_cubit.dart';
 import '../blocs/app_state.dart';
 import '../l10n/app_localizations.dart';
 import '../theme/design_system.dart';
+import '../theme/strings.dart';
 import '../widgets/instrument_row.dart';
 import 'add_instrument_screen.dart';
 import 'instrument_detail_screen.dart';
@@ -181,7 +182,7 @@ class _WatchlistScreenState extends State<WatchlistScreen> with WidgetsBindingOb
                               ),
                             ),
                             Text(
-                              '${valuation.isUp ? '+' : ''}${(valuation.gainFraction * 100).toStringAsFixed(2)}%',
+                              signedFigure('${(valuation.gainFraction * 100).toStringAsFixed(2)}%', isUp: valuation.isUp),
                               style: TextStyle(color: DS.trendColor(valuation.isUp), fontWeight: FontWeight.w700),
                             ),
                           ],

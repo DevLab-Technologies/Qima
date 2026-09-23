@@ -171,3 +171,9 @@ String? _resolve(AppLocalizations loc, String key) {
       return null;
   }
 }
+
+/// A signed figure (gain, change %) for display: prefixes "+" when [isUp]
+/// (negatives already carry "-" from formatting) and isolates the result as
+/// left-to-right, so in Arabic the sign stays attached to the number instead
+/// of drifting to the far side ("67.05%+").
+String signedFigure(String value, {required bool isUp}) => '\u2066${isUp ? '+' : ''}$value\u2069';

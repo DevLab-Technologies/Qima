@@ -35,10 +35,15 @@ class InstrumentIcon extends StatelessWidget {
       width: size,
       height: size,
       decoration: BoxDecoration(gradient: gradient, shape: BoxShape.circle),
-      child: Icon(
-        _materialIcon(instrument?.systemImage ?? 'dollarsign.circle.fill'),
-        color: Colors.black.withValues(alpha: 0.65),
-        size: size * 0.55,
+      // Pinned LTR: some glyphs (the stocks trend line) mirror under RTL,
+      // which would read as a downtrend in Arabic.
+      child: Directionality(
+        textDirection: TextDirection.ltr,
+        child: Icon(
+          _materialIcon(instrument?.systemImage ?? 'dollarsign.circle.fill'),
+          color: Colors.black.withValues(alpha: 0.65),
+          size: size * 0.55,
+        ),
       ),
     );
   }
