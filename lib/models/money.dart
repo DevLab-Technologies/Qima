@@ -1,6 +1,8 @@
 import 'package:equatable/equatable.dart';
 import 'package:intl/intl.dart';
 
+import 'currency_style.dart';
+
 /// A currency-tagged amount with magnitude-aware formatting rules that
 /// mirror the original Swift `Money` type exactly (see spec §1.3 / §8.1).
 class Money extends Equatable {
@@ -24,27 +26,34 @@ class Money extends Equatable {
     return 2;
   }
 
-  /// Full-precision currency-formatted string, e.g. "$1,234.56".
-  String formatted({String? locale}) {
-    final format = NumberFormat.simpleCurrency(
+  /// Full-precision currency-formatted string with the currency's native
+  /// symbol and placement, e.g. "$1,234.56" or "1,234.56 €".
+  ///
+  /// [useFallbackSymbol] swaps in a symbol system fonts can render, for
+  /// surfaces outside Flutter (see [CurrencyStyle.fallbackSymbol]).
+  String formatted({String? locale, bool useFallbackSymbol = false}) {
+    final number = NumberFormat.decimalPatternDigits(
       locale: locale,
-      name: currencyCode,
       decimalDigits: fractionDigits,
+    ).format(magnitude);
+    return CurrencyStyle.of(currencyCode).apply(
+      number,
+      isNegative: amount < 0,
+      useFallbackSymbol: useFallbackSymbol,
     );
-    return format.format(amount);
   }
 
   /// Compact currency-formatted string with k/M suffixes for large amounts,
-  /// e.g. "$4.5k", "$2.1M". Values below 1,000 are shown unscaled.
-  String compact({String? locale}) {
-    double scaled = amount;
-    String suffix = '';
+  /// e.g. "$4.5k", "2.1M €". Values below 1,000 are shown unscaled.
+  String compact({String? locale, bool useFallbackSymbol = false}) {
     final m = magnitude;
+    double scaled = m;
+    String suffix = '';
     if (m >= 1000000) {
-      scaled = amount / 1000000;
+      scaled = m / 1000000;
       suffix = 'M';
     } else if (m >= 1000) {
-      scaled = amount / 1000;
+      scaled = m / 1000;
       suffix = 'k';
     }
 
@@ -54,12 +63,15 @@ class Money extends Equatable {
     final isWhole = rounded1 == rounded1.truncateToDouble();
     final decimalDigits = isWhole ? 0 : 1;
 
-    final format = NumberFormat.simpleCurrency(
+    final number = NumberFormat.decimalPatternDigits(
       locale: locale,
-      name: currencyCode,
       decimalDigits: decimalDigits,
+    ).format(scaled);
+    return CurrencyStyle.of(currencyCode).apply(
+      '$number$suffix',
+      isNegative: amount < 0,
+      useFallbackSymbol: useFallbackSymbol,
     );
-    return '${format.format(scaled)}$suffix';
   }
 
   @override

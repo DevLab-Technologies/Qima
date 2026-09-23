@@ -42,6 +42,10 @@ import '../theme/instrument_theme.dart';
 /// keeps ALL business logic — magnitude-band formatting, RangeChange
 /// guard rules, sparkline windowing — inside the already-tested Dart
 /// layer. Native widget code is a pure renderer.
+///
+/// Money strings use each currency's fallback symbol: native widgets render
+/// with system fonts, which on older OS versions have no glyph for the
+/// Saudi Riyal sign the app itself draws from a bundled font.
 class HomeWidgetService {
   HomeWidgetService._();
 
@@ -105,9 +109,9 @@ class HomeWidgetService {
       final payload = {
         'available': true,
         'currency': state.baseCurrency,
-        'value': valuation.value.formatted(),
-        'cost': valuation.cost.formatted(),
-        'gain': valuation.gain.formatted(),
+        'value': valuation.value.formatted(useFallbackSymbol: true),
+        'cost': valuation.cost.formatted(useFallbackSymbol: true),
+        'gain': valuation.gain.formatted(useFallbackSymbol: true),
         'percent': (valuation.gainFraction * 100),
         'isUp': valuation.isUp,
         'updatedAtMillis': DateTime.now().millisecondsSinceEpoch,
@@ -155,8 +159,8 @@ class HomeWidgetService {
       'available': true,
       'symbol': instrument.symbol,
       'currency': card.currency,
-      'price': presentation.latestPrice,
-      'compactPrice': presentation.compactPrice,
+      'price': presentation.latestMoney?.formatted(useFallbackSymbol: true) ?? '—',
+      'compactPrice': presentation.latestMoney?.compact(useFallbackSymbol: true) ?? '—',
       'unitSuffix': presentation.unitSuffix ?? '',
       'karatLabel': presentation.karatLabel ?? '',
       'changePercent': change == null ? null : (change.percentValue * 100),

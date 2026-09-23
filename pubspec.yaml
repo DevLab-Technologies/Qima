@@ -16,7 +16,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.0.0+1
+version: 1.1.0+2
 
 environment:
   sdk: ^3.11.4
@@ -100,6 +100,32 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+
+  # Arabic script is set in Almarai (SIL OFL 1.1). The Riyal
+  # family carries only the Saudi Riyal sign (U+20C1, MIT), which system fonts
+  # on older OS versions lack. Both are wired as fallbacks in `DS` and
+  # their licenses are registered in `main.dart`.
+  fonts:
+    - family: Almarai
+      fonts:
+        - asset: assets/fonts/almarai/Almarai-Light.ttf
+          weight: 300
+        - asset: assets/fonts/almarai/Almarai-Regular.ttf
+        - asset: assets/fonts/almarai/Almarai-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/almarai/Almarai-ExtraBold.ttf
+          weight: 800
+    - family: Riyal
+      fonts:
+        - asset: assets/fonts/riyal/Riyal-Regular.ttf
+        - asset: assets/fonts/riyal/Riyal-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/riyal/Riyal-Bold.ttf
+          weight: 700
+
+  assets:
+    - assets/fonts/almarai/OFL.txt
+    - assets/fonts/riyal/LICENSE
 
 # Launcher icons for iOS and Android are generated from one master image.
 # Regenerate after changing it: `dart run flutter_launcher_icons`.

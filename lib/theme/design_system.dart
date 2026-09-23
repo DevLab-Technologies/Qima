@@ -43,6 +43,16 @@ class DS {
   static const double spaceLG = 20;
   static const double spaceXL = 28;
 
+  // ---- Typography ----
+  /// Primary family when the app runs in Arabic; it ships matching Latin
+  /// glyphs, so digits and tickers sit evenly with the Arabic around them.
+  static const String arabicFontFamily = 'Almarai';
+
+  /// Consulted before the OS fallback chain in every locale: Arabic glyphs
+  /// (currency symbols, Arabic names) render in Almarai rather than the system's
+  /// basic Arabic face, and the Saudi Riyal sign always has a glyph.
+  static const List<String> fontFamilyFallback = [arabicFontFamily, 'Riyal'];
+
   static Color trendColor(bool isUp) => isUp ? up : down;
 
   static const LinearGradient cardFill = LinearGradient(
