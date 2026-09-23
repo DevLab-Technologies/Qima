@@ -60,7 +60,7 @@ class PriceGlanceWidget : GlanceAppWidget() {
     @Composable
     private fun Content(context: Context, state: HomeWidgetGlanceState) {
         val json = readJson(state.preferences, "price_widget_data")
-        val cardBg = Color(0xFF1C1F27)
+        val cardBg = Color(0xFF1F2229)
 
         Box(
             modifier = GlanceModifier
@@ -110,7 +110,7 @@ class PriceGlanceWidget : GlanceAppWidget() {
         val isUp = json.optBoolean("isUp", true)
         val changePercent = json.optDouble("changePercent", 0.0)
         val accent = argbColor(json.optInt("accentColor", 0xFFE6BA4D.toInt()))
-        val trendColor = if (isUp) Color(0xFF30D158) else Color(0xFFFF453A)
+        val trendColor = if (isUp) Color(0xFF30D158) else Color(0xFFFF6B61)
         val sparkline = json.optJSONArray("sparkline")
 
         Column(modifier = GlanceModifier.fillMaxSize()) {
@@ -157,7 +157,7 @@ class PriceGlanceWidget : GlanceAppWidget() {
                     ),
                 )
             } else {
-                Text("—", style = TextStyle(fontSize = 13.sp, color = ColorProvider(Color(0x66FFFFFF))))
+                Text("—", style = TextStyle(fontSize = 13.sp, color = ColorProvider(Color(0x85FFFFFF))))
             }
             Spacer(modifier = GlanceModifier.height(8.dp))
             Sparkline(sparkline, accent)

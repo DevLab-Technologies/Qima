@@ -72,6 +72,10 @@ class AppLocalizationsAr extends AppLocalizations {
       'حمّل السجل لعرض الرسم البياني الكامل للسعر.';
 
   @override
+  String get errorRefreshFailed =>
+      'تعذّر تحديث الأسعار. تحقّق من اتصالك وحاول مرة أخرى.';
+
+  @override
   String get detailChangeCurrency => 'تغيير العملة';
 
   @override

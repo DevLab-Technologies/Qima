@@ -3,24 +3,33 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 
 /// Design-system tokens ported from `DesignSystem.swift` (spec §3.1). The app
-/// is dark-mode-only.
+/// is dark-mode-only. Every text color keeps ≥ 4.5:1 contrast on the lightest
+/// surface it can sit on ([tileTop]); `design_system_contrast_test.dart`
+/// enforces this.
 class DS {
   DS._();
 
   // ---- Palette ----
   static const Color bg0 = Color(0xFF08090C);
   static const Color bg1 = Color(0xFF0F1116);
-  static const Color surfaceTop = Color(0xFF1C1F27);
-  static const Color surfaceBottom = Color(0xFF14161C);
-  static const Color tileTop = Color(0xFF23262F);
-  static const Color tileBottom = Color(0xFF191B22);
-  static const Color hairline = Color.fromRGBO(255, 255, 255, 0.08);
-  static const Color hairlineStrong = Color.fromRGBO(255, 255, 255, 0.16);
+  static const Color surfaceTop = Color(0xFF1F2229);
+  static const Color surfaceBottom = Color(0xFF191B21);
+  static const Color tileTop = Color(0xFF2B2F39);
+  static const Color tileBottom = Color(0xFF22252D);
+
+  /// Menus, dialogs and sheets floating above cards.
+  static const Color overlay = Color(0xFF262A33);
+  static const Color hairline = Color.fromRGBO(255, 255, 255, 0.10);
+  static const Color hairlineStrong = Color.fromRGBO(255, 255, 255, 0.18);
   static const Color textPrimary = Colors.white;
   static const Color textSecondary = Color.fromRGBO(255, 255, 255, 0.60);
-  static const Color textTertiary = Color.fromRGBO(255, 255, 255, 0.38);
+  static const Color textTertiary = Color.fromRGBO(255, 255, 255, 0.52);
+
+  /// Brand accent (gold): selection, links, progress and non-instrument hero
+  /// cards. Green/red are reserved for price direction ([up]/[down]).
+  static const Color brand = Color(0xFFE6BA4D);
   static const Color up = Color(0xFF30D158);
-  static const Color down = Color(0xFFFF453A);
+  static const Color down = Color(0xFFFF6B61);
 
   // ---- Radius ----
   static const double radiusTile = 14;
@@ -111,8 +120,7 @@ class DS {
   /// with [accent] instead of Material 3's auto-generated (and, for a gold
   /// seed color, often blue/purple-looking) `secondaryContainer`. Pass the
   /// current instrument's accent (`InstrumentTheme.accentColor`) wherever an
-  /// instrument is in scope, or [textPrimary] as a neutral default when it
-  /// isn't (spec §3.1/§3.2).
+  /// instrument is in scope, or [brand] when it isn't (spec §3.1/§3.2).
   static ButtonStyle segmentedButtonStyle(Color accent) {
     return SegmentedButton.styleFrom(
       backgroundColor: tileTop,
@@ -126,7 +134,7 @@ class DS {
 }
 
 /// A [ChoiceChip] pre-styled to pull its selected fill from [accent] (an
-/// instrument accent, or a neutral default) rather than Material 3's
+/// instrument accent, or [DS.brand] by default) rather than Material 3's
 /// auto-generated secondary color, matching [DS.segmentedButtonStyle]'s
 /// intent for the chip widget family (spec §3.1/§3.2).
 class DSChoiceChip extends StatelessWidget {
@@ -140,7 +148,7 @@ class DSChoiceChip extends StatelessWidget {
     required this.label,
     required this.selected,
     required this.onSelected,
-    this.accent = DS.textPrimary,
+    this.accent = DS.brand,
   });
 
   @override

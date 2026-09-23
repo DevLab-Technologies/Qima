@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../models/asset.dart';
@@ -23,6 +24,8 @@ import 'app_state.dart';
 /// [PriceRepository] and the persisted stores to a single [AppState] the UI
 /// observes via `flutter_bloc`.
 class AppCubit extends Cubit<AppState> {
+  static const _refreshFailedKey = 'error.refreshFailed';
+
   final PriceRepository repository;
   final WatchlistStore watchlistStore;
   final HoldingsStore holdingsStore;
@@ -162,7 +165,7 @@ class AppCubit extends Cubit<AppState> {
       if (updated.isEmpty && instruments.isNotEmpty) {
         emit(state.copyWith(
           phase: RefreshPhase.failed,
-          errorMessage: 'error.refreshFailed',
+          errorMessage: _refreshFailedKey,
           rates: rates,
           seriesByID: merged,
         ));
@@ -175,8 +178,9 @@ class AppCubit extends Cubit<AppState> {
           lastRefresh: DateTime.now(),
         ));
       }
-    } catch (e) {
-      emit(state.copyWith(phase: RefreshPhase.failed, errorMessage: e.toString()));
+    } catch (e, st) {
+      debugPrint('AppCubit: refreshAll failed: $e\n$st');
+      emit(state.copyWith(phase: RefreshPhase.failed, errorMessage: _refreshFailedKey));
     }
     // Fire-and-forget: history is larger and shouldn't block live prices.
     unawaited(backfillHistoryIfNeeded());
@@ -233,8 +237,9 @@ class AppCubit extends Cubit<AppState> {
         seriesByID: {...state.seriesByID, instrument.id: series},
         lastRefresh: DateTime.now(),
       ));
-    } catch (e) {
-      emit(state.copyWith(phase: RefreshPhase.failed, errorMessage: e.toString()));
+    } catch (e, st) {
+      debugPrint('AppCubit: refresh(${instrument.id}) failed: $e\n$st');
+      emit(state.copyWith(phase: RefreshPhase.failed, errorMessage: _refreshFailedKey));
     }
   }
 

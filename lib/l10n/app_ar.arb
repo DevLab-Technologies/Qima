@@ -20,6 +20,7 @@
   "detailLoadHistory": "تحميل السجل",
   "detailNoHistoryTitle": "لا يوجد سجل بعد",
   "detailNoHistoryMessage": "حمّل السجل لعرض الرسم البياني الكامل للسعر.",
+  "errorRefreshFailed": "تعذّر تحديث الأسعار. تحقّق من اتصالك وحاول مرة أخرى.",
   "detailChangeCurrency": "تغيير العملة",
   "detailShowPerUnit": "عرض السعر لكل {unit}",
   "holdingsEmpty": "أضف أول دفعة لبدء تتبع هذه المقتنيات.",

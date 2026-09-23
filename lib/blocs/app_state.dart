@@ -17,6 +17,8 @@ class AppState extends Equatable {
   final FXRates rates;
   final FXHistory fxHistory;
   final RefreshPhase phase;
+
+  /// Localization key (resolved with `displayLabel`), never raw exception text.
   final String? errorMessage;
   final List<HoldingLot> lots;
   final List<WatchCard> cards;

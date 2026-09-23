@@ -23,11 +23,13 @@ class InstrumentTheme {
             Color.fromRGBO(140, 140, 140, 0.55),
           ];
         }
+        // Platinum-group metals get a cool blue cast so they read apart
+        // from silver's neutral grey.
         if (instrument.symbol == 'XPT' || instrument.symbol == 'XPD') {
           return const [
-            Color.fromRGBO(235, 235, 235, 1),
-            Color.fromRGBO(189, 204, 217, 1),
-            Color.fromRGBO(140, 140, 140, 0.55),
+            Color.fromRGBO(214, 230, 245, 1),
+            Color.fromRGBO(169, 196, 221, 1),
+            Color.fromRGBO(98, 128, 158, 1),
           ];
         }
         // Gold (default metal, e.g. XAU).
@@ -42,11 +44,12 @@ class InstrumentTheme {
           Color.fromRGBO(242, 140, 51, 1),
           Color.fromRGBO(199, 92, 26, 1),
         ];
+      // Cyan rather than teal, so currencies don't read as the "up" green.
       case AssetClass.fiat:
         return const [
-          Color.fromRGBO(140, 209, 184, 1),
-          Color.fromRGBO(77, 168, 148, 1),
-          Color.fromRGBO(41, 115, 107, 1),
+          Color.fromRGBO(140, 220, 232, 1),
+          Color.fromRGBO(63, 184, 201, 1),
+          Color.fromRGBO(30, 122, 140, 1),
         ];
       case AssetClass.stock:
         return const [

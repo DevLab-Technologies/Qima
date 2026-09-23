@@ -23,6 +23,7 @@
   "detailLoadHistory": "Load history",
   "detailNoHistoryTitle": "No history yet",
   "detailNoHistoryMessage": "Load history to see the full price chart.",
+  "errorRefreshFailed": "Couldn't refresh prices. Check your connection and try again.",
   "detailChangeCurrency": "Change currency",
   "detailShowPerUnit": "Show per {unit}",
   "@detailShowPerUnit": {

@@ -50,7 +50,7 @@ class PortfolioGlanceWidget : GlanceAppWidget() {
     @Composable
     private fun Content(context: Context, state: HomeWidgetGlanceState) {
         val json = readJson(state.preferences, "portfolio_widget_data")
-        val cardBg = Color(0xFF1C1F27)
+        val cardBg = Color(0xFF1F2229)
 
         Box(
             modifier = GlanceModifier
@@ -92,7 +92,7 @@ class PortfolioGlanceWidget : GlanceAppWidget() {
         val gain = json.optString("gain", "")
         val isUp = json.optBoolean("isUp", true)
         val percent = json.optDouble("percent", 0.0)
-        val trendColor = if (isUp) Color(0xFF30D158) else Color(0xFFFF453A)
+        val trendColor = if (isUp) Color(0xFF30D158) else Color(0xFFFF6B61)
 
         Column(modifier = GlanceModifier.fillMaxSize()) {
             Text(
