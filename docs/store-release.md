@@ -57,6 +57,7 @@ git push origin "ios-v$V" "android-v$V"
 
 Then promote:
 
+- **Listing**: run the *Store listing* workflow once per release (see §3).
 - **iOS**: TestFlight → add internal testers → test. Then App Store → the version → select the build → *Add for Review*.
 - **Android**: Play Console → Testing → Internal testing → review the draft release → *Start rollout*. Then promote it to Production (or Closed testing first) → *Send for review*.
   - A new personal developer account must run a closed test with at least 12 testers for 14 days before production access unlocks.
@@ -64,24 +65,41 @@ Then promote:
 
 ## 3. Store listing
 
-The listing text lives in fastlane's standard layout, in the four app languages:
+Everything the listings need is in the repo, in fastlane's standard layout:
 
-- iOS: `ios/fastlane/metadata/<locale>/` holds name, subtitle, promotional text, keywords, description, release notes and URLs.
-- Android: `android/fastlane/metadata/android/<locale>/` holds title, short and full description, and `changelogs/default.txt`.
+| | App Store | Google Play |
+|---|---|---|
+| Text | `ios/fastlane/metadata/<locale>/` (name, subtitle, promo text, keywords, description, release notes, URLs) | `android/fastlane/metadata/android/<locale>/` (title, short and full description, `changelogs/default.txt`) |
+| Screenshots | `ios/fastlane/screenshots/{en-US,ar-SA}/`: iPhone 6.9" (1320×2868) and iPad 13" (2064×2752) | `.../{en-US,ar}/images/phoneScreenshots/` |
+| Graphics | App icon comes from the build | `featureGraphic.png` (1024×500, localized), `en-US/images/icon.png` (512×512) |
 
-The upload lanes currently skip metadata (`skip_upload_metadata: true`), so paste
-these into the consoles for the first release. Every file is within its store's
-character limit.
+Text is in en, ar, es and fr. Screenshots are in English and Arabic; Spanish
+and French listings fall back to the English ones.
 
-Still needed, and not in the repo:
+**Upload the listing:** Actions → *Store listing* → Run workflow (choose a
+store). It runs `fastlane ios metadata` / `fastlane android metadata`. These
+lanes only touch listing content: they never upload a build, change a release
+or submit for review. The App Store lane targets the version in `pubspec.yaml`
+and creates it in App Store Connect if needed.
 
-- **Screenshots**
-  - iPhone 6.9" (1320×2868) — required
-  - iPad 13" — required, because the app runs on iPad
-  - Play phone — at least 2
-  - Play Wear OS — only if Wear distribution is enabled
-- **Play feature graphic**: 1024×500.
-- **App icon**: iOS takes it from the build. Play needs a 512×512 PNG; export it from `assets/icon/app_icon.png`.
+**Regenerate screenshots** after UI changes (needs Xcode simulators):
+
+```sh
+tool/store_screenshots.sh <iphone-6.9-udid> en captures/iphone-en
+tool/store_screenshots.sh <iphone-6.9-udid> ar captures/iphone-ar
+tool/store_screenshots.sh <ipad-13-udid>    en captures/ipad-en
+tool/store_screenshots.sh <ipad-13-udid>    ar captures/ipad-ar
+python3 tool/store_assets.py captures   # needs Pillow with libraqm
+```
+
+`integration_test/store_screenshots_test.dart` seeds a demo watchlist and
+holdings and walks through the screens with live prices. The shell script
+captures the simulator (with a 9:41 status bar) at each step, and
+`store_assets.py` files the images into both stores' folders and draws the
+feature graphics.
+
+Not covered: Play **Wear OS** screenshots. Only opt in to Wear distribution
+if you add them.
 
 ## 4. Console questionnaires
 

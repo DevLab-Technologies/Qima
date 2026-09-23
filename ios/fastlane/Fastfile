@@ -182,4 +182,28 @@ platform :ios do
 
     UI.success("Built and signed the release IPA without uploading (build_only lane).")
   end
+
+  desc "Upload the App Store listing (text from fastlane/metadata, screenshots from fastlane/screenshots) for the pubspec version. Never uploads a binary and never submits for review."
+  lane :metadata do
+    api_key = require_asc_api_key!
+    pubspec = File.read(File.expand_path("../../pubspec.yaml", __dir__))
+    app_version = pubspec[/^version:\s*([0-9.]+)/, 1]
+    UI.user_error!("Could not read the version from pubspec.yaml.") unless app_version
+
+    deliver(
+      api_key: api_key,
+      app_identifier: APP_IDENTIFIER,
+      app_version: app_version,
+      metadata_path: File.expand_path("metadata", __dir__),
+      screenshots_path: File.expand_path("screenshots", __dir__),
+      skip_binary_upload: true,
+      overwrite_screenshots: true,
+      submit_for_review: false,
+      automatic_release: false,
+      run_precheck_before_submit: false,
+      force: true
+    )
+
+    UI.success("Uploaded the App Store listing for #{app_version}. Submit for review in App Store Connect.")
+  end
 end
