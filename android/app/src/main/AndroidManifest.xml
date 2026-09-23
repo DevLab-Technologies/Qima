@@ -3,7 +3,7 @@
          Wear OS devices treat this as a signal they can install the app. -->
     <uses-feature android:name="android.hardware.type.watch" android:required="false"/>
     <application
-        android:label="qima"
+        android:label="Qima"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <!-- Lets the app run on Wear OS without a paired phone app. There is
