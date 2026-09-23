@@ -51,7 +51,7 @@ class PortfolioDetailScreen extends StatelessWidget {
                             Expanded(
                               child: _metricTile(
                                 l10n.holdingsGain,
-                                '${valuation.isUp ? '+' : ''}${valuation.gain.formatted()}',
+                                signedFigure(valuation.gain.formatted(), isUp: valuation.isUp),
                                 tint: DS.trendColor(valuation.isUp),
                               ),
                             ),
@@ -100,7 +100,7 @@ class PortfolioDetailScreen extends StatelessWidget {
                                 Text(held.valuation.value.formatted(),
                                     style: const TextStyle(color: DS.textPrimary, fontWeight: FontWeight.w700)),
                                 Text(
-                                  '${held.valuation.isUp ? '+' : ''}${held.valuation.gain.formatted()}',
+                                  signedFigure(held.valuation.gain.formatted(), isUp: held.valuation.isUp),
                                   style: TextStyle(color: DS.trendColor(held.valuation.isUp), fontSize: 12),
                                 ),
                               ],

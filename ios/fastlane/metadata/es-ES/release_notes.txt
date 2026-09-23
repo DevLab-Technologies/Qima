@@ -1,0 +1,1 @@
+Primera versión en la tienda: precios en directo de metales, cripto, acciones, índices y divisas; posiciones y valor de la cartera; gráficos; árabe, español y francés.

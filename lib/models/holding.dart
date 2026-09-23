@@ -65,7 +65,9 @@ class HoldingLot extends Equatable implements Syncable {
         unit: PriceUnit.values.byName(json['unit'] as String),
         unitCost: (json['unitCost'] as num).toDouble(),
         costCurrency: json['costCurrency'] as String,
-        date: DateTime.parse(json['date'] as String),
+        // Stored as a UTC instant; converted back so the calendar day shown
+        // matches the day the user picked in their own time zone.
+        date: DateTime.parse(json['date'] as String).toLocal(),
       );
 
   @override

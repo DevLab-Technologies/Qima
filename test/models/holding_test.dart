@@ -109,4 +109,23 @@ void main() {
       expect(result!.averageUnitCostUSD, closeTo(lot.totalCost, 1e-6));
     });
   });
+
+  test('HoldingLot JSON round trip keeps the calendar day the user picked', () {
+    // A date picked at local midnight is stored as a UTC instant; east of UTC
+    // that instant falls on the previous day, which must not leak into display.
+    final picked = DateTime(2025, 1, 8);
+    final lot = HoldingLot(
+      id: 'lot',
+      instrumentID: 'metal.XAU',
+      quantity: 1,
+      unit: PriceUnit.gram,
+      unitCost: 100,
+      costCurrency: 'USD',
+      date: picked,
+    );
+    final restored = HoldingLot.fromJson(lot.toJson());
+    expect(restored.date.isUtc, isFalse);
+    expect([restored.date.year, restored.date.month, restored.date.day], [2025, 1, 8]);
+    expect(restored.date, picked);
+  });
 }

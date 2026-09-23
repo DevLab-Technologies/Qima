@@ -30,11 +30,11 @@ void main() {
     });
     test('>= 1,000 uses k suffix', () {
       final formatted = const Money(4500, 'USD').compact(locale: 'en_US');
-      expect(formatted.endsWith('k'), isTrue);
+      expect(formatted, r'$4.5k');
     });
     test('>= 1,000,000 uses M suffix', () {
       final formatted = const Money(2100000, 'USD').compact(locale: 'en_US');
-      expect(formatted.endsWith('M'), isTrue);
+      expect(formatted, r'$2.1M');
     });
   });
 }

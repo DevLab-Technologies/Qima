@@ -3,6 +3,7 @@ import 'asset.dart';
 import 'chart_range.dart';
 import 'display_point.dart';
 import 'metal_breakdown.dart';
+import 'money.dart';
 import 'quote.dart';
 
 /// A window-scoped change figure: the absolute and percent delta over
@@ -75,18 +76,16 @@ class InstrumentPresentation {
 
   String? get karatLabel => converter.karat?.shortLabelKey;
 
-  /// Latest price formatted in full or compact precision; "—" if no data.
-  String get latestPrice {
+  /// Latest price in the display currency, or null if there's no data.
+  Money? get latestMoney {
     final latest = series.latest;
-    if (latest == null) return '—';
-    return converter.moneyForQuote(latest).formatted();
+    return latest == null ? null : converter.moneyForQuote(latest);
   }
 
-  String get compactPrice {
-    final latest = series.latest;
-    if (latest == null) return '—';
-    return converter.moneyForQuote(latest).compact();
-  }
+  /// Latest price formatted in full or compact precision; "—" if no data.
+  String get latestPrice => latestMoney?.formatted() ?? '—';
+
+  String get compactPrice => latestMoney?.compact() ?? '—';
 
   /// Rows for the metal breakdown card: troy-ounce and kilogram prices,
   /// then either per-karat gram prices (gold) or a single plain gram price

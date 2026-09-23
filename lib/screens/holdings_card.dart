@@ -84,18 +84,21 @@ class _SummaryGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final gainPercent = (valuation.gainFraction * 100).toStringAsFixed(2);
-    return GridView.count(
-      crossAxisCount: 2,
+    // Fixed tile height: an aspect ratio made tiles balloon on tablets.
+    return GridView(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      childAspectRatio: 2.6,
-      mainAxisSpacing: DS.spaceXS,
-      crossAxisSpacing: DS.spaceXS,
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        mainAxisExtent: 62,
+        mainAxisSpacing: DS.spaceXS,
+        crossAxisSpacing: DS.spaceXS,
+      ),
       children: [
         _metric(l10n.holdingsValue, valuation.value.formatted()),
         _metric(l10n.holdingsCost, valuation.cost.formatted()),
-        _metric(l10n.holdingsGain, '${valuation.isUp ? '+' : ''}${valuation.gain.formatted()}', tint: DS.trendColor(valuation.isUp)),
-        _metric(l10n.holdingsGainPercent, '${valuation.isUp ? '+' : ''}$gainPercent%', tint: DS.trendColor(valuation.isUp)),
+        _metric(l10n.holdingsGain, signedFigure(valuation.gain.formatted(), isUp: valuation.isUp), tint: DS.trendColor(valuation.isUp)),
+        _metric(l10n.holdingsGainPercent, signedFigure('$gainPercent%', isUp: valuation.isUp), tint: DS.trendColor(valuation.isUp)),
       ],
     );
   }

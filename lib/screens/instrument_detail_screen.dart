@@ -327,7 +327,7 @@ class _CurrentPriceCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(DS.radiusPill),
               ),
               child: Text(
-                '${change!.isUp ? '+' : ''}${(change!.percentValue * 100).toStringAsFixed(2)}%',
+                signedFigure('${(change!.percentValue * 100).toStringAsFixed(2)}%', isUp: change!.isUp),
                 style: TextStyle(color: DS.trendColor(change!.isUp), fontWeight: FontWeight.w700, fontSize: 13),
               ),
             )
@@ -349,13 +349,16 @@ class _MetalBreakdownCard extends StatelessWidget {
     final rows = presentation.metalBreakdown;
     if (rows.isEmpty) return const SizedBox.shrink();
     return DSCard(
-      child: GridView.count(
-        crossAxisCount: 2,
+      // Fixed tile height: an aspect ratio made tiles balloon on tablets.
+      child: GridView(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
-        childAspectRatio: 2.4,
-        mainAxisSpacing: DS.spaceXS,
-        crossAxisSpacing: DS.spaceXS,
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          mainAxisExtent: 66,
+          mainAxisSpacing: DS.spaceXS,
+          crossAxisSpacing: DS.spaceXS,
+        ),
         children: [
           for (final row in rows)
             DSTile(
@@ -395,7 +398,7 @@ class _StatsRow extends StatelessWidget {
         Expanded(
           child: StatPill(
             title: l10n.statChange,
-            value: change == null ? '—' : '${change!.isUp ? '+' : ''}${(change!.percentValue * 100).toStringAsFixed(2)}%',
+            value: change == null ? '—' : signedFigure('${(change!.percentValue * 100).toStringAsFixed(2)}%', isUp: change!.isUp),
             tint: change == null ? null : DS.trendColor(change!.isUp),
           ),
         ),

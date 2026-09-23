@@ -1,4 +1,6 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'blocs/app_cubit.dart';
@@ -19,7 +21,21 @@ bool isWatchFormFactor(BuildContext context) =>
     MediaQuery.of(context).size.shortestSide < _kWatchShortestSideThreshold;
 
 void main() {
+  LicenseRegistry.addLicense(_bundledFontLicenses);
   runApp(const QimaApp());
+}
+
+/// Surfaces the bundled fonts' licenses on the system licenses page, as the
+/// SIL OFL requires the license to travel with the font.
+Stream<LicenseEntry> _bundledFontLicenses() async* {
+  yield LicenseEntryWithLineBreaks(
+    const ['Almarai'],
+    await rootBundle.loadString('assets/fonts/almarai/OFL.txt'),
+  );
+  yield LicenseEntryWithLineBreaks(
+    const ['Riyal'],
+    await rootBundle.loadString('assets/fonts/riyal/LICENSE'),
+  );
 }
 
 class QimaApp extends StatelessWidget {
@@ -43,6 +59,7 @@ class QimaApp extends StatelessWidget {
             theme: ThemeData(
               brightness: Brightness.dark,
               scaffoldBackgroundColor: DS.bg0,
+              fontFamilyFallback: DS.fontFamilyFallback,
               // Seeded from the brand gold, but surfaces are pinned to the DS
               // palette so menus, dialogs and pickers match the cool-grey cards
               // instead of the warm tones the seed would generate.
@@ -82,6 +99,19 @@ class QimaApp extends StatelessWidget {
                 ),
               ),
             ),
+            // Arabic is set entirely in the Arabic family; other locales keep
+            // the platform font and reach it only through the fallback chain.
+            builder: (context, child) {
+              if (Localizations.localeOf(context).languageCode != 'ar') return child!;
+              final theme = Theme.of(context);
+              return Theme(
+                data: theme.copyWith(
+                  textTheme: theme.textTheme.apply(fontFamily: DS.arabicFontFamily),
+                  primaryTextTheme: theme.primaryTextTheme.apply(fontFamily: DS.arabicFontFamily),
+                ),
+                child: child!,
+              );
+            },
             home: Builder(
               builder: (context) => isWatchFormFactor(context) ? const WatchWatchlistScreen() : const WatchlistScreen(),
             ),

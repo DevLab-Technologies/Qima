@@ -1,0 +1,84 @@
+name: Store listing
+
+# Manual only: uploads the store listing (text, screenshots, and on Play the
+# icon and feature graphic) from the fastlane metadata folders. It never
+# uploads a build, changes a release, or submits for review — those stay in
+# testflight.yml / play-store.yml and the store consoles.
+on:
+  workflow_dispatch:
+    inputs:
+      store:
+        description: Which store listing to upload
+        type: choice
+        options: [both, app-store, play]
+        default: both
+
+permissions:
+  contents: read
+
+jobs:
+  app-store:
+    name: App Store listing
+    if: inputs.store == 'both' || inputs.store == 'app-store'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify required secrets are present
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_KEY_CONTENT: ${{ secrets.ASC_KEY_CONTENT }}
+        run: |
+          missing=""
+          for name in ASC_KEY_ID ASC_ISSUER_ID ASC_KEY_CONTENT; do
+            [ -z "${!name}" ] && missing="$missing $name"
+          done
+          if [ -n "$missing" ]; then
+            echo "::error::Missing required secrets:$missing"
+            echo "See docs/store-release.md, then re-run."
+            exit 1
+          fi
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+          bundler-cache: true
+          working-directory: ios
+
+      - name: Upload App Store listing
+        working-directory: ios
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_KEY_CONTENT: ${{ secrets.ASC_KEY_CONTENT }}
+        run: bundle exec fastlane ios metadata
+
+  play:
+    name: Google Play listing
+    if: inputs.store == 'both' || inputs.store == 'play'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify required secrets are present
+        env:
+          PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+        run: |
+          if [ -z "$PLAY_SERVICE_ACCOUNT_JSON" ]; then
+            echo "::error::Missing required secret: PLAY_SERVICE_ACCOUNT_JSON"
+            echo "See docs/store-release.md, then re-run."
+            exit 1
+          fi
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+          bundler-cache: true
+          working-directory: android
+
+      - name: Upload Play listing
+        working-directory: android
+        env:
+          PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+        run: bundle exec fastlane android metadata

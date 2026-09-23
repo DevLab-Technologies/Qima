@@ -1,0 +1,1 @@
+oro,plata,lingotes,quilates,cartera,cripto,bitcoin,acciones,divisas,tipo de cambio,precio
