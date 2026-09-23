@@ -6,7 +6,7 @@ require "shellwords"
 default_platform(:ios)
 
 APP_IDENTIFIER = "com.devlabtechnologies.qima"
-APPLE_TEAM_ID = "44PL6FHCG3"
+APPLE_TEAM_ID = "ZS3A435WC2"
 
 # Loads the App Store Connect API key from ASC_KEY_ID / ASC_ISSUER_ID /
 # ASC_KEY_CONTENT (base64-encoded .p8 contents). This is the only supported
