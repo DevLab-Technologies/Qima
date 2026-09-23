@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 import '../l10n/app_localizations.dart';
+import '../l10n/currency_names.dart';
 import '../theme/design_system.dart';
 
 /// Searchable currency list — matches ISO code or the localized currency
@@ -25,20 +25,14 @@ class CurrencyPicker extends StatefulWidget {
 class _CurrencyPickerState extends State<CurrencyPicker> {
   String _query = '';
 
-  String _nameFor(String code) {
-    try {
-      return NumberFormat.simpleCurrency(name: code).currencyName ?? code;
-    } catch (_) {
-      return code;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
+    final languageCode = Localizations.localeOf(context).languageCode;
+    String nameFor(String code) => currencyDisplayName(code, languageCode);
     final query = _query.trim().toLowerCase();
     final filtered = widget.currencies.where((code) {
       if (query.isEmpty) return true;
-      return code.toLowerCase().contains(query) || _nameFor(code).toLowerCase().contains(query);
+      return code.toLowerCase().contains(query) || nameFor(code).toLowerCase().contains(query);
     }).toList();
 
     final l10n = AppLocalizations.of(context)!;
@@ -72,7 +66,7 @@ class _CurrencyPickerState extends State<CurrencyPicker> {
                   final isSelected = code == widget.selected;
                   return ListTile(
                     title: Text(code, style: const TextStyle(color: DS.textPrimary)),
-                    subtitle: Text(_nameFor(code), style: const TextStyle(color: DS.textTertiary)),
+                    subtitle: Text(nameFor(code), style: const TextStyle(color: DS.textTertiary)),
                     trailing: isSelected ? const Icon(Icons.check, color: DS.up) : null,
                     onTap: () => Navigator.of(context).pop(code),
                   );

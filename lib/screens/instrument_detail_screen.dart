@@ -206,7 +206,7 @@ class _InstrumentDetailScreenState extends State<InstrumentDetailScreen> {
                     const SizedBox(height: DS.spaceMD),
                     DSCard(
                       child: Text(
-                        state.errorMessage!,
+                        displayLabel(context, state.errorMessage!),
                         style: const TextStyle(color: DS.down),
                       ),
                     ),
@@ -395,7 +395,7 @@ class _StatsRow extends StatelessWidget {
         Expanded(
           child: StatPill(
             title: l10n.statChange,
-            value: change == null ? '—' : '${(change!.percentValue * 100).toStringAsFixed(2)}%',
+            value: change == null ? '—' : '${change!.isUp ? '+' : ''}${(change!.percentValue * 100).toStringAsFixed(2)}%',
             tint: change == null ? null : DS.trendColor(change!.isUp),
           ),
         ),

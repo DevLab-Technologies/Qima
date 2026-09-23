@@ -33,7 +33,7 @@ class PortfolioDetailScreen extends StatelessWidget {
               children: [
                 if (valuation != null)
                   DSHeroCard(
-                    accent: DS.trendColor(valuation.isUp),
+                    accent: DS.brand,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [

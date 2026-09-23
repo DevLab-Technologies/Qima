@@ -94,7 +94,7 @@ class _SummaryGrid extends StatelessWidget {
       children: [
         _metric(l10n.holdingsValue, valuation.value.formatted()),
         _metric(l10n.holdingsCost, valuation.cost.formatted()),
-        _metric(l10n.holdingsGain, valuation.gain.formatted(), tint: DS.trendColor(valuation.isUp)),
+        _metric(l10n.holdingsGain, '${valuation.isUp ? '+' : ''}${valuation.gain.formatted()}', tint: DS.trendColor(valuation.isUp)),
         _metric(l10n.holdingsGainPercent, '${valuation.isUp ? '+' : ''}$gainPercent%', tint: DS.trendColor(valuation.isUp)),
       ],
     );

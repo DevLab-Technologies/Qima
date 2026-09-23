@@ -72,6 +72,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'Load history to see the full price chart.';
 
   @override
+  String get errorRefreshFailed =>
+      'Couldn\'t refresh prices. Check your connection and try again.';
+
+  @override
   String get detailChangeCurrency => 'Change currency';
 
   @override

@@ -20,6 +20,7 @@
   "detailLoadHistory": "Cargar historial",
   "detailNoHistoryTitle": "Aún no hay historial",
   "detailNoHistoryMessage": "Carga el historial para ver el gráfico de precios completo.",
+  "errorRefreshFailed": "No se pudieron actualizar los precios. Revisa tu conexión e inténtalo de nuevo.",
   "detailChangeCurrency": "Cambiar moneda",
   "detailShowPerUnit": "Mostrar por {unit}",
   "holdingsEmpty": "Añade tu primer lote para empezar a seguir esta posición.",

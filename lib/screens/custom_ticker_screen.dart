@@ -135,7 +135,7 @@ class _CustomTickerScreenState extends State<CustomTickerScreen> {
                       ],
                       selected: {_assetClass},
                       onSelectionChanged: (s) => setState(() => _assetClass = s.first),
-                      style: DS.segmentedButtonStyle(DS.textPrimary),
+                      style: DS.segmentedButtonStyle(DS.brand),
                     ),
                   ),
                   const SizedBox(height: DS.spaceSM),

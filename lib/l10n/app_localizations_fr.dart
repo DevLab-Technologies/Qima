@@ -72,6 +72,10 @@ class AppLocalizationsFr extends AppLocalizations {
       'Chargez l\'historique pour voir le graphique de prix complet.';
 
   @override
+  String get errorRefreshFailed =>
+      'Impossible d\'actualiser les prix. Vérifiez votre connexion et réessayez.';
+
+  @override
   String get detailChangeCurrency => 'Changer de devise';
 
   @override

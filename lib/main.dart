@@ -43,9 +43,26 @@ class QimaApp extends StatelessWidget {
             theme: ThemeData(
               brightness: Brightness.dark,
               scaffoldBackgroundColor: DS.bg0,
+              // Seeded from the brand gold, but surfaces are pinned to the DS
+              // palette so menus, dialogs and pickers match the cool-grey cards
+              // instead of the warm tones the seed would generate.
               colorScheme: ColorScheme.fromSeed(
-                seedColor: const Color(0xFFE6BA4D),
+                seedColor: DS.brand,
                 brightness: Brightness.dark,
+              ).copyWith(
+                primary: DS.brand,
+                onPrimary: DS.bg0,
+                surface: DS.bg1,
+                onSurface: DS.textPrimary,
+                onSurfaceVariant: DS.textSecondary,
+                surfaceContainerLowest: DS.bg0,
+                surfaceContainerLow: DS.surfaceBottom,
+                surfaceContainer: DS.overlay,
+                surfaceContainerHigh: DS.overlay,
+                surfaceContainerHighest: DS.tileTop,
+                outline: DS.hairlineStrong,
+                outlineVariant: DS.hairline,
+                error: DS.down,
               ),
               appBarTheme: const AppBarTheme(
                 elevation: 0,

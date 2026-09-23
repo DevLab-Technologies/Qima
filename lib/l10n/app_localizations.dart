@@ -222,6 +222,12 @@ abstract class AppLocalizations {
   /// **'Load history to see the full price chart.'**
   String get detailNoHistoryMessage;
 
+  /// No description provided for @errorRefreshFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t refresh prices. Check your connection and try again.'**
+  String get errorRefreshFailed;
+
   /// No description provided for @detailChangeCurrency.
   ///
   /// In en, this message translates to:

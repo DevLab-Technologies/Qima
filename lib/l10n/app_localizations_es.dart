@@ -72,6 +72,10 @@ class AppLocalizationsEs extends AppLocalizations {
       'Carga el historial para ver el gráfico de precios completo.';
 
   @override
+  String get errorRefreshFailed =>
+      'No se pudieron actualizar los precios. Revisa tu conexión e inténtalo de nuevo.';
+
+  @override
   String get detailChangeCurrency => 'Cambiar moneda';
 
   @override

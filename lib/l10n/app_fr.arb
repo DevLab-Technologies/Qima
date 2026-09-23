@@ -20,6 +20,7 @@
   "detailLoadHistory": "Charger l'historique",
   "detailNoHistoryTitle": "Pas encore d'historique",
   "detailNoHistoryMessage": "Chargez l'historique pour voir le graphique de prix complet.",
+  "errorRefreshFailed": "Impossible d'actualiser les prix. Vérifiez votre connexion et réessayez.",
   "detailChangeCurrency": "Changer de devise",
   "detailShowPerUnit": "Afficher par {unit}",
   "holdingsEmpty": "Ajoutez votre premier lot pour commencer à suivre cette position.",

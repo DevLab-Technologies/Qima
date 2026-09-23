@@ -164,6 +164,9 @@ String? _resolve(AppLocalizations loc, String key) {
     case 'refresh.6h':
       return loc.refresh6h;
 
+    case 'error.refreshFailed':
+      return loc.errorRefreshFailed;
+
     default:
       return null;
   }

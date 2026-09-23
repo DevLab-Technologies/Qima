@@ -165,7 +165,7 @@ class _WatchlistScreenState extends State<WatchlistScreen> with WidgetsBindingOb
                         MaterialPageRoute(builder: (_) => const PortfolioDetailScreen()),
                       ),
                       child: DSHeroCard(
-                        accent: DS.trendColor(valuation.isUp),
+                        accent: DS.brand,
                         child: Row(
                           children: [
                             Expanded(
