@@ -76,6 +76,14 @@ jobs:
           bundler-cache: true
           working-directory: ios
 
+      # setup-ruby puts a toolcache Ruby on PATH, but the runner's preinstalled
+      # CocoaPods belongs to a different Ruby. `flutter build ipa` shells out to
+      # a bare `pod`, sees the mismatch, and bails with "CocoaPods is installed
+      # but broken". Installing it into the Ruby actually on PATH fixes both
+      # this step and Flutter's own invocation.
+      - name: Install CocoaPods
+        run: gem install cocoapods --no-document
+
       - name: Install CocoaPods dependencies
         working-directory: ios
         run: pod install --repo-update
