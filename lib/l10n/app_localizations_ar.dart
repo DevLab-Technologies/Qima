@@ -12,6 +12,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get appTitle => 'قيمة';
 
   @override
+  String get navWatchlist => 'قائمة المتابعة';
+
+  @override
   String get watchlistAdd => 'إضافة أداة';
 
   @override

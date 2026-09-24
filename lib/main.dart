@@ -10,9 +10,9 @@ import 'blocs/app_state.dart';
 import 'l10n/app_localizations.dart';
 import 'models/watch_card.dart';
 import 'screens/backup_screen.dart';
+import 'screens/home_shell.dart';
 import 'screens/instrument_detail_screen.dart';
 import 'screens/watch_watchlist_screen.dart';
-import 'screens/watchlist_screen.dart';
 import 'services/backup/backup_reminder_notifier.dart';
 import 'services/notification_service.dart';
 import 'services/preferences.dart';
@@ -164,7 +164,7 @@ class _QimaAppState extends State<QimaApp> {
               return LockGate(child: content);
             },
             home: Builder(
-              builder: (context) => isWatchFormFactor(context) ? const WatchWatchlistScreen() : const WatchlistScreen(),
+              builder: (context) => isWatchFormFactor(context) ? const WatchWatchlistScreen() : const HomeShell(),
             ),
           );
         },

@@ -79,5 +79,32 @@ ThemeData buildTheme(Brightness brightness) {
     segmentedButtonTheme: SegmentedButtonThemeData(
       style: DS.segmentedButtonStyle(colors, colors.brand),
     ),
+    navigationBarTheme: NavigationBarThemeData(
+      backgroundColor: colors.bg1,
+      surfaceTintColor: Colors.transparent,
+      indicatorColor: colors.brand,
+      height: 64,
+      labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+      iconTheme: WidgetStateProperty.resolveWith(
+        (states) => IconThemeData(
+          color: states.contains(WidgetState.selected) ? colors.onBrand : colors.textTertiary,
+        ),
+      ),
+      labelTextStyle: WidgetStateProperty.resolveWith(
+        (states) => TextStyle(
+          color: states.contains(WidgetState.selected) ? colors.textPrimary : colors.textTertiary,
+          fontSize: 12,
+          fontWeight: states.contains(WidgetState.selected) ? FontWeight.w700 : FontWeight.w500,
+        ),
+      ),
+    ),
+    navigationRailTheme: NavigationRailThemeData(
+      backgroundColor: colors.bg1,
+      indicatorColor: colors.brand,
+      selectedIconTheme: IconThemeData(color: colors.onBrand),
+      unselectedIconTheme: IconThemeData(color: colors.textTertiary),
+      selectedLabelTextStyle: TextStyle(color: colors.textPrimary, fontSize: 12, fontWeight: FontWeight.w700),
+      unselectedLabelTextStyle: TextStyle(color: colors.textTertiary, fontSize: 12, fontWeight: FontWeight.w500),
+    ),
   );
 }

@@ -1,6 +1,7 @@
 {
   "@@locale": "es",
   "appTitle": "Qima",
+  "navWatchlist": "Seguimiento",
   "watchlistFilterAll": "Todos",
   "watchlistAdd": "Añadir instrumento",
   "watchlistEmptyTitle": "Tu lista de seguimiento está vacía",

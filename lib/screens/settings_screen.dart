@@ -19,8 +19,15 @@ import 'currency_picker.dart';
 /// Single settings sheet: base currency, default chart range, widget refresh
 /// interval, language, and a static data-sources footer. Mirrors
 /// `SettingsView.swift`.
+///
+/// Used two ways (spec §v2-C): pushed on the root navigator (default — back
+/// arrow like any other pushed screen) or hosted as `HomeShell`'s Settings
+/// tab, which passes [asTab]: true so no back arrow is shown.
 class SettingsScreen extends StatelessWidget {
-  const SettingsScreen({super.key});
+  final bool asTab;
+  final ScrollController? scrollController;
+
+  const SettingsScreen({super.key, this.asTab = false, this.scrollController});
 
   @override
   Widget build(BuildContext context) {
@@ -31,11 +38,17 @@ class SettingsScreen extends StatelessWidget {
     return ScreenBackground(
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        appBar: AppBar(backgroundColor: Colors.transparent, title: Text(l10n.settingsTitle)),
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          automaticallyImplyLeading: !asTab,
+          titleSpacing: asTab ? 16 : null,
+          title: Text(l10n.settingsTitle),
+        ),
         body: BlocBuilder<AppCubit, AppState>(
           builder: (context, _) {
             final state = cubit.state;
             return ListView(
+              controller: scrollController,
               padding: const EdgeInsets.all(DS.spaceMD),
               children: [
                 _SectionHeader(l10n.settingsAppearance),

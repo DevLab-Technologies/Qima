@@ -17,8 +17,17 @@ import 'instrument_detail_screen.dart';
 /// plus one row per held instrument — name, lot count/weight, value, gain,
 /// and a thin weight bar in the holding's accent color (spec §v2-A
 /// "Portfolio"). Mirrors `PortfolioDetailView.swift`.
+///
+/// Used two ways (spec §v2-C): pushed on the root navigator (default —
+/// shows a back arrow like any other pushed screen) or hosted as
+/// `HomeShell`'s Portfolio tab, which passes [asTab]: true so no back arrow
+/// is shown (there's nothing to pop to; the tab bar itself gets you back to
+/// Watchlist) and a title with 16px leading padding per the Figma frame.
 class PortfolioDetailScreen extends StatelessWidget {
-  const PortfolioDetailScreen({super.key});
+  final bool asTab;
+  final ScrollController? scrollController;
+
+  const PortfolioDetailScreen({super.key, this.asTab = false, this.scrollController});
 
   @override
   Widget build(BuildContext context) {
@@ -31,6 +40,8 @@ class PortfolioDetailScreen extends StatelessWidget {
         backgroundColor: Colors.transparent,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
+          automaticallyImplyLeading: !asTab,
+          titleSpacing: asTab ? 16 : null,
           title: Text(l10n.portfolioTitle),
           actions: [
             BlocBuilder<AppCubit, AppState>(
@@ -54,6 +65,7 @@ class PortfolioDetailScreen extends StatelessWidget {
             final sliceByID = {for (final s in slices) s.holding.id: s};
 
             return ListView(
+              controller: scrollController,
               padding: const EdgeInsets.all(DS.spaceMD),
               children: [
                 if (valuation != null)

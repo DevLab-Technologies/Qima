@@ -1,6 +1,7 @@
 {
   "@@locale": "ar",
   "appTitle": "قيمة",
+  "navWatchlist": "قائمة المتابعة",
   "watchlistAdd": "إضافة أداة",
   "watchlistEmptyTitle": "قائمة المتابعة فارغة",
   "watchlistEmptyMessage": "أضف معادن أو عملات رقمية أو أسهمًا أو عملات لبدء تتبع الأسعار.",

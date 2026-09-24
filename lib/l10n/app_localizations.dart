@@ -108,6 +108,12 @@ abstract class AppLocalizations {
   /// **'Qima'**
   String get appTitle;
 
+  /// Bottom navigation / navigation rail label for the watchlist tab.
+  ///
+  /// In en, this message translates to:
+  /// **'Watchlist'**
+  String get navWatchlist;
+
   /// No description provided for @watchlistAdd.
   ///
   /// In en, this message translates to:

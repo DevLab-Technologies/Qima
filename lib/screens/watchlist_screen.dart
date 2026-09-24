@@ -18,14 +18,29 @@ import '../widgets/portfolio_hero.dart';
 import 'add_instrument_screen.dart';
 import 'instrument_detail_screen.dart';
 import 'portfolio_detail_screen.dart';
-import 'settings_screen.dart';
 
 /// Root watchlist screen. Mirrors `ContentView.swift`: auto-refresh loop
 /// keyed to app lifecycle, empty state, portfolio hero chart, an
 /// asset-class filter, and a reorderable/dismissible instrument list (v2-A
 /// "Chart-first" layout).
+///
+/// Used two ways (spec §v2-C): standalone as a pushed/root route (its own
+/// price-refresh loop, tapping the hero pushes [PortfolioDetailScreen]), or
+/// hosted as the Watchlist tab of `HomeShell`, which owns the refresh loop
+/// itself (so the two never race with duplicate timers) and passes
+/// [manageRefreshLifecycle]: false plus [onOpenPortfolio] to switch tabs
+/// instead of pushing.
 class WatchlistScreen extends StatefulWidget {
-  const WatchlistScreen({super.key});
+  final bool manageRefreshLifecycle;
+  final VoidCallback? onOpenPortfolio;
+  final ScrollController? scrollController;
+
+  const WatchlistScreen({
+    super.key,
+    this.manageRefreshLifecycle = true,
+    this.onOpenPortfolio,
+    this.scrollController,
+  });
 
   @override
   State<WatchlistScreen> createState() => _WatchlistScreenState();
@@ -38,13 +53,17 @@ class _WatchlistScreenState extends State<WatchlistScreen> with WidgetsBindingOb
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addObserver(this);
-    WidgetsBinding.instance.addPostFrameCallback((_) => _onForeground());
+    if (widget.manageRefreshLifecycle) {
+      WidgetsBinding.instance.addObserver(this);
+      WidgetsBinding.instance.addPostFrameCallback((_) => _onForeground());
+    }
   }
 
   @override
   void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
+    if (widget.manageRefreshLifecycle) {
+      WidgetsBinding.instance.removeObserver(this);
+    }
     _timer?.cancel();
     super.dispose();
   }
@@ -97,12 +116,6 @@ class _WatchlistScreenState extends State<WatchlistScreen> with WidgetsBindingOb
               icon: const Icon(Icons.add),
               onPressed: () => Navigator.of(context).push(
                 MaterialPageRoute(builder: (_) => const AddInstrumentScreen()),
-              ),
-            ),
-            IconButton(
-              icon: const Icon(Icons.settings_outlined),
-              onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const SettingsScreen()),
               ),
             ),
           ],
@@ -173,6 +186,7 @@ class _WatchlistScreenState extends State<WatchlistScreen> with WidgetsBindingOb
             final canReorder = _filter == null;
 
             return ListView(
+              controller: widget.scrollController,
               padding: const EdgeInsets.all(DS.spaceMD),
               children: [
                 if (valuation != null) ...[
@@ -182,9 +196,10 @@ class _WatchlistScreenState extends State<WatchlistScreen> with WidgetsBindingOb
                     change: cubit.portfolioChange(state.preferredPortfolioRange),
                     selectedRange: state.preferredPortfolioRange,
                     onSelectRange: cubit.setPreferredPortfolioRange,
-                    onTap: () => Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => const PortfolioDetailScreen()),
-                    ),
+                    onTap: widget.onOpenPortfolio ??
+                        () => Navigator.of(context).push(
+                              MaterialPageRoute(builder: (_) => const PortfolioDetailScreen()),
+                            ),
                     hideBalances: state.hideBalances,
                     onToggleHideBalances: cubit.toggleHideBalances,
                   ),

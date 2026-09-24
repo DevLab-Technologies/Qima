@@ -4,6 +4,10 @@
   "@appTitle": {
     "description": "App name shown in the OS and the root navigation bar."
   },
+  "navWatchlist": "Watchlist",
+  "@navWatchlist": {
+    "description": "Bottom navigation / navigation rail label for the watchlist tab."
+  },
   "watchlistAdd": "Add instrument",
   "watchlistEmptyTitle": "Your watchlist is empty",
   "watchlistEmptyMessage": "Add metals, crypto, stocks, or currencies to start tracking prices.",

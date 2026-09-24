@@ -12,6 +12,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get appTitle => 'Qima';
 
   @override
+  String get navWatchlist => 'Seguimiento';
+
+  @override
   String get watchlistAdd => 'Añadir instrumento';
 
   @override
