@@ -1498,6 +1498,48 @@ abstract class AppLocalizations {
   /// **'Last backup {date} · {instruments} instruments, {lots} lots'**
   String settingsBackupSubtitle(String date, int instruments, int lots);
 
+  /// No description provided for @settingsICloudSync.
+  ///
+  /// In en, this message translates to:
+  /// **'iCloud sync'**
+  String get settingsICloudSync;
+
+  /// No description provided for @settingsICloudSyncSwitch.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync with iCloud'**
+  String get settingsICloudSyncSwitch;
+
+  /// No description provided for @settingsICloudSyncFooter.
+  ///
+  /// In en, this message translates to:
+  /// **'Keeps your watchlist, holdings, custom tickers and price alerts up to date across your devices.'**
+  String get settingsICloudSyncFooter;
+
+  /// No description provided for @settingsICloudSyncStatusUpToDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Up to date · {time}'**
+  String settingsICloudSyncStatusUpToDate(String time);
+
+  /// No description provided for @settingsICloudSyncStatusSyncing.
+  ///
+  /// In en, this message translates to:
+  /// **'Syncing…'**
+  String get settingsICloudSyncStatusSyncing;
+
+  /// No description provided for @settingsICloudSyncStatusNotSignedIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Not signed in to iCloud'**
+  String get settingsICloudSyncStatusNotSignedIn;
+
+  /// No description provided for @settingsICloudSyncStatusStorageFull.
+  ///
+  /// In en, this message translates to:
+  /// **'iCloud storage for Qima is full'**
+  String get settingsICloudSyncStatusStorageFull;
+
   /// No description provided for @backupTitle.
   ///
   /// In en, this message translates to:

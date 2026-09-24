@@ -22,6 +22,7 @@ import '../services/alerts_store.dart';
 import '../services/app_lock_service.dart';
 import '../services/background_refresh.dart';
 import '../services/backup/backup_service.dart';
+import '../services/cloud_kv_store.dart';
 import '../services/custom_instrument_store.dart';
 import '../services/holdings_store.dart';
 import '../services/notification_service.dart';
@@ -30,6 +31,7 @@ import '../services/home_widget_service.dart';
 import '../services/price_converter.dart';
 import '../services/price_repository.dart';
 import '../services/refresh_pipeline.dart';
+import '../services/switchable_cloud_kv_store.dart';
 import '../services/watchlist_store.dart';
 import 'app_state.dart';
 
@@ -51,7 +53,25 @@ class AppCubit extends Cubit<AppState> {
   late BackupService backupService;
   RefreshPipeline? _pipeline;
 
-  AppCubit({
+  /// Shared cloud key-value backend for every synced store + [preferences]
+  /// (spec Phase 7). Always constructed (even on platforms/tests that never
+  /// enable it) so [watchlistStore]/[holdingsStore]/etc default-construct
+  /// against the SAME instance rather than each getting their own — turning
+  /// sync on/off is then just [SwitchableCloudKVStore.setEnabled], with no
+  /// store ever rebuilt. Callers that inject their own stores (most unit
+  /// tests) bypass this entirely — each of those stores keeps whatever cloud
+  /// backend it was given (normally none, i.e. [LocalOnlyCloudKVStore]).
+  final SwitchableCloudKVStore cloudStore;
+  StreamSubscription<CloudKVChangeEvent>? _cloudChangesSubscription;
+
+  /// Maps a `SyncedStore.cloudKey` to the reload+re-emit routine for that
+  /// store, so an external-change event naming that key reloads only the
+  /// affected store instead of everything (spec Phase 7 "external-change
+  /// event reloads the right store"). Populated in [init] once every store
+  /// exists.
+  Map<String, Future<void> Function()> _reloadByCloudKey = {};
+
+  factory AppCubit({
     PriceRepository? repository,
     WatchlistStore? watchlistStore,
     HoldingsStore? holdingsStore,
@@ -60,22 +80,42 @@ class AppCubit extends Cubit<AppState> {
     AlertsStore? alertsStore,
     AlertRuntimeStore? alertRuntimeStore,
     NotificationService? notificationService,
-  })  : repository = repository ?? PriceRepository(),
-        watchlistStore = watchlistStore ?? WatchlistStore(),
-        holdingsStore = holdingsStore ?? HoldingsStore(),
-        customInstrumentStore = customInstrumentStore ?? CustomInstrumentStore(),
-        appLockService = appLockService ?? AppLockService(),
-        alertsStore = alertsStore ?? AlertsStore(),
-        alertRuntimeStore = alertRuntimeStore ?? AlertRuntimeStore(),
-        notificationService = notificationService ?? NotificationService(),
-        super(AppState());
+    SwitchableCloudKVStore? cloudStore,
+  }) {
+    // Built once up front so every default-constructed store below shares
+    // the exact same backend — see [cloudStore]'s doc comment.
+    final resolvedCloudStore = cloudStore ?? SwitchableCloudKVStore();
+    return AppCubit._(
+      repository: repository ?? PriceRepository(),
+      watchlistStore: watchlistStore ?? WatchlistStore(cloud: resolvedCloudStore),
+      holdingsStore: holdingsStore ?? HoldingsStore(cloud: resolvedCloudStore),
+      customInstrumentStore: customInstrumentStore ?? CustomInstrumentStore(cloud: resolvedCloudStore),
+      appLockService: appLockService ?? AppLockService(),
+      alertsStore: alertsStore ?? AlertsStore(cloud: resolvedCloudStore),
+      alertRuntimeStore: alertRuntimeStore ?? AlertRuntimeStore(),
+      notificationService: notificationService ?? NotificationService(),
+      cloudStore: resolvedCloudStore,
+    );
+  }
+
+  AppCubit._({
+    required this.repository,
+    required this.watchlistStore,
+    required this.holdingsStore,
+    required this.customInstrumentStore,
+    required this.appLockService,
+    required this.alertsStore,
+    required this.alertRuntimeStore,
+    required this.notificationService,
+    required this.cloudStore,
+  }) : super(AppState());
 
   // ---------------------------------------------------------------------
   // Init
   // ---------------------------------------------------------------------
 
   Future<void> init() async {
-    preferences = await Preferences.create();
+    preferences = await Preferences.create(cloud: cloudStore);
     backupService = BackupService(
       watchlistStore: watchlistStore,
       holdingsStore: holdingsStore,
@@ -83,6 +123,24 @@ class AppCubit extends Cubit<AppState> {
       alertsStore: alertsStore,
       preferences: preferences,
     );
+
+    // Resolves (and, if applicable, enables) the cloud backend BEFORE any
+    // store's `load()`/seeding runs below — critical for the "first-enable
+    // on a device that already has local data" case (spec Phase 7): if the
+    // cloud store were enabled only after seeding, a fresh device would seed
+    // its local mirror from `InstrumentCatalog.defaultWatchlist` while
+    // looking at an empty (not-yet-connected) cloud, and that seeded data
+    // would then merge back IN alongside whatever's really in the cloud
+    // instead of the cloud's real state being seen first. Enabling first
+    // means `WatchlistStore.load()`'s seed check (`local.isEmpty &&
+    // cloud.isEmpty`) sees the real cloud contents, so a device joining an
+    // already-populated account merges into it instead of re-seeding
+    // defaults next to it.
+    final iCloudAccountAvailable = _platformSupportsICloud ? await cloudStore.accountStatus() : false;
+    final iCloudSyncEnabled = preferences.iCloudSyncEnabled;
+    final cloudEnabledAtStartup = iCloudSyncEnabled && iCloudAccountAvailable;
+    cloudStore.setEnabled(cloudEnabledAtStartup);
+    if (cloudEnabledAtStartup) await cloudStore.synchronize();
 
     final customs = await customInstrumentStore.load();
     InstrumentCatalog.reloadCustom(customs.map((c) => c.instrument).toList());
@@ -151,9 +209,27 @@ class AppCubit extends Cubit<AppState> {
       appLockEnabled: appLockEnabled,
       lockGrace: lockGrace,
       backupReminderDue: backupService.isReminderDue(),
+      iCloudSyncEnabled: iCloudSyncEnabled,
+      iCloudAccountAvailable: iCloudAccountAvailable,
+      cloudSyncStatus: _statusFor(
+        syncEnabled: iCloudSyncEnabled,
+        accountAvailable: iCloudAccountAvailable,
+        platformSupported: _platformSupportsICloud,
+      ),
+      lastCloudSyncAt: cloudEnabledAtStartup ? DateTime.now() : null,
     ));
 
     startSync();
+  }
+
+  CloudSyncStatus _statusFor({
+    required bool syncEnabled,
+    required bool accountAvailable,
+    required bool platformSupported,
+  }) {
+    if (!platformSupported || !syncEnabled) return CloudSyncStatus.disabled;
+    if (!accountAvailable) return CloudSyncStatus.notSignedIn;
+    return CloudSyncStatus.upToDate;
   }
 
   /// Recomputes [AppState.backupReminderDue] from [BackupService] — called
@@ -222,13 +298,178 @@ class AppCubit extends Cubit<AppState> {
     return store.load();
   }
 
-  /// No-op placeholder for the iCloud external-change observer — a later
-  /// pass can wire a real cloud KV store behind [CloudKVStore] without
-  /// touching this method's shape.
-  void startSync() {}
+  /// Whether this platform can offer iCloud KVS at all — iOS only for now.
+  /// macOS stays local-only until its entitlement is added (see the Phase 7
+  /// report / `macos/Runner/CloudKVPlugin.swift`'s note); every other
+  /// platform has no iCloud concept whatsoever.
+  bool get _platformSupportsICloud {
+    if (kIsWeb) return false;
+    return defaultTargetPlatform == TargetPlatform.iOS;
+  }
 
+  /// Registers which store to reload when an external-change event names
+  /// its cloud key, and starts listening for them if this platform can
+  /// support iCloud at all. Called once from [init] AFTER the cloud backend
+  /// has already been enabled/synced for the startup case (see the comment
+  /// above `cloudStore.setEnabled` in [init]) — this only wires the ongoing
+  /// listener, it doesn't repeat that initial enable/merge.
+  void startSync() {
+    _reloadByCloudKey = {
+      'watchcards.records': () => _reloadWatchlist(),
+      'holdings.records': () => _reloadHoldings(),
+      'custominstruments.records': () => _reloadCustomInstruments(),
+      'alerts.records': () => _reloadAlerts(),
+    };
+
+    if (!_platformSupportsICloud) return;
+    _cloudChangesSubscription ??= cloudStore.didChangeExternally.listen(_handleCloudChange);
+  }
+
+  /// Re-checks `accountStatus()` and reconciles [AppState]/[cloudStore] with
+  /// it, then — if both the platform, the account and the user's preference
+  /// allow it — performs the actual enable/merge sync. Used by
+  /// [setICloudSyncEnabled] (user flips the switch) and by
+  /// [_handleCloudChange] for an `accountChange` event; [init] does its own
+  /// first-enable pass directly (see the ordering comment there) rather than
+  /// calling this, since this emits [CloudSyncStatus.syncing] transiently in
+  /// a way that would flash before [init]'s own first `emit`.
+  Future<void> _refreshICloudAvailabilityAndSync({required bool userInitiatedEnable}) async {
+    if (!_platformSupportsICloud) {
+      cloudStore.setEnabled(false);
+      if (isClosed) return;
+      emit(state.copyWith(
+        iCloudSyncEnabled: userInitiatedEnable,
+        iCloudAccountAvailable: false,
+        cloudSyncStatus: CloudSyncStatus.disabled,
+      ));
+      return;
+    }
+
+    final accountAvailable = await cloudStore.accountStatus();
+    if (isClosed) return;
+    emit(state.copyWith(iCloudAccountAvailable: accountAvailable));
+
+    if (!userInitiatedEnable || !accountAvailable) {
+      cloudStore.setEnabled(false);
+      if (isClosed) return;
+      emit(state.copyWith(
+        iCloudSyncEnabled: userInitiatedEnable,
+        cloudSyncStatus: userInitiatedEnable ? CloudSyncStatus.notSignedIn : CloudSyncStatus.disabled,
+      ));
+      return;
+    }
+
+    if (isClosed) return;
+    emit(state.copyWith(iCloudSyncEnabled: true, cloudSyncStatus: CloudSyncStatus.syncing));
+    cloudStore.setEnabled(true);
+    await adoptCloudChanges();
+  }
+
+  /// User-facing toggle for the Settings "Sync with iCloud" switch (spec
+  /// Phase 7). Persists the preference (itself never synced — see
+  /// `Preferences.iCloudSyncEnabled`) and, when turning ON, immediately
+  /// merges — never wipes — whatever is already on this device with
+  /// whatever is already in the cloud: every store's `load()` already does
+  /// last-write-wins-per-item merge against the (now-enabled) cloud backend,
+  /// so a device that had local-only data before enabling keeps it, folded
+  /// together with anything already synced from another device. Turning OFF
+  /// stops listening for external changes but leaves all local data and the
+  /// last-synced cloud copy untouched — nothing is deleted either way.
+  Future<void> setICloudSyncEnabled(bool value) async {
+    if (value == state.iCloudSyncEnabled) return;
+    await preferences.setICloudSyncEnabled(value);
+    await _refreshICloudAvailabilityAndSync(userInitiatedEnable: value);
+  }
+
+  /// Handles one `NSUbiquitousKeyValueStore.didChangeExternallyNotification`
+  /// forwarded from the platform channel. Reloads only the store(s) named by
+  /// the event's keys (spec Phase 7 "external-change event reloads the
+  /// right store") — an event with no keys (iCloud sometimes omits them, and
+  /// [CloudKVChangeReason.accountChange]/[CloudKVChangeReason.initialSyncChange]
+  /// never carry a useful key list) reloads every synced store instead,
+  /// since at that point any of them may have changed.
+  Future<void> _handleCloudChange(CloudKVChangeEvent event) async {
+    // `disposeCloudSync` cancels the stream subscription, but an event
+    // already dispatched to this handler before that cancellation takes
+    // effect can still be mid-flight across the `await`s below — guard every
+    // `emit` in this method (and the reload helpers it calls) with
+    // `isClosed` so a straggling event can never throw by emitting into a
+    // closed `Cubit` after the owning widget/test has torn it down.
+    if (isClosed) return;
+    switch (event.reason) {
+      case CloudKVChangeReason.quotaViolationChange:
+        emit(state.copyWith(cloudSyncStatus: CloudSyncStatus.storageFull));
+        return;
+      case CloudKVChangeReason.accountChange:
+        // The signed-in account changed (switched or signed out) — re-check
+        // rather than trust the stale `iCloudAccountAvailable`/cached data,
+        // since keys now visible may belong to a different account.
+        await _refreshICloudAvailabilityAndSync(userInitiatedEnable: state.iCloudSyncEnabled);
+        return;
+      case CloudKVChangeReason.serverChange:
+      case CloudKVChangeReason.initialSyncChange:
+      case CloudKVChangeReason.unknown:
+        break;
+    }
+
+    emit(state.copyWith(cloudSyncStatus: CloudSyncStatus.syncing));
+    final keysToReload = event.keys.isEmpty ? _reloadByCloudKey.keys.toList() : event.keys;
+    for (final key in keysToReload) {
+      if (isClosed) return;
+      final reload = _reloadByCloudKey[key];
+      if (reload != null) await reload();
+    }
+    if (isClosed) return;
+    emit(state.copyWith(cloudSyncStatus: CloudSyncStatus.upToDate, lastCloudSyncAt: DateTime.now()));
+  }
+
+  Future<void> _reloadWatchlist() async {
+    final cards = await watchlistStore.load();
+    if (!isClosed && cards != state.cards) emit(state.copyWith(cards: cards));
+  }
+
+  Future<void> _reloadHoldings() async {
+    final lots = await holdingsStore.load();
+    if (!isClosed && lots != state.lots) emit(state.copyWith(lots: lots));
+  }
+
+  Future<void> _reloadCustomInstruments() async {
+    final customs = await customInstrumentStore.load();
+    InstrumentCatalog.reloadCustom(customs.map((c) => c.instrument).toList());
+  }
+
+  Future<void> _reloadAlerts() async {
+    final alerts = await alertsStore.load();
+    if (!isClosed && alerts != state.alerts) emit(state.copyWith(alerts: alerts));
+  }
+
+  /// Runs a full first-enable/merge pass across every synced store — each
+  /// store's `load()` merges local+cloud last-write-wins-per-item (spec
+  /// Phase 7 "first-enable on a device that already has local data"), so
+  /// this can never wipe local data, only fold it together with the cloud's
+  /// copy. Also starts the underlying `NSUbiquitousKeyValueStore.synchronize()`
+  /// pass so a prompt round-trip is more likely.
   Future<void> adoptCloudChanges() async {
-    // No-op: local-only sync in this pass.
+    if (!state.iCloudSyncEnabled) return;
+    await cloudStore.synchronize();
+    await _reloadWatchlist();
+    await _reloadHoldings();
+    await _reloadCustomInstruments();
+    await _reloadAlerts();
+    if (isClosed) return;
+    emit(state.copyWith(cloudSyncStatus: CloudSyncStatus.upToDate, lastCloudSyncAt: DateTime.now()));
+  }
+
+  /// Cancels the cloud-change subscription — called from tests/teardown or
+  /// when the owning widget is disposed, so no native event listener
+  /// outlives this cubit. `AppCubit` itself has no `close()` override today
+  /// (flutter_bloc's `Cubit.close()` doesn't know about this subscription),
+  /// so callers that construct a long-lived [AppCubit] and later discard it
+  /// should call this explicitly.
+  Future<void> disposeCloudSync() async {
+    await _cloudChangesSubscription?.cancel();
+    _cloudChangesSubscription = null;
+    await cloudStore.dispose();
   }
 
   // ---------------------------------------------------------------------

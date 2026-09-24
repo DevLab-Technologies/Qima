@@ -275,6 +275,14 @@
   "settingsBackupSubtitleNever": "لم يتم النسخ الاحتياطي مطلقًا",
   "settingsBackupSubtitle": "آخر نسخة احتياطية {date} · {instruments} أداة، {lots} دفعة",
 
+  "settingsICloudSync": "مزامنة iCloud",
+  "settingsICloudSyncSwitch": "المزامنة مع iCloud",
+  "settingsICloudSyncFooter": "تُبقي قائمة المتابعة والمقتنيات والرموز المخصصة وتنبيهات الأسعار محدّثة عبر أجهزتك.",
+  "settingsICloudSyncStatusUpToDate": "محدّثة · {time}",
+  "settingsICloudSyncStatusSyncing": "جارٍ المزامنة…",
+  "settingsICloudSyncStatusNotSignedIn": "لم يتم تسجيل الدخول إلى iCloud",
+  "settingsICloudSyncStatusStorageFull": "مساحة تخزين iCloud الخاصة بـQima ممتلئة",
+
   "backupTitle": "النسخ الاحتياطي والاستعادة",
   "backupStatusTitle": "محفوظة على هذا الهاتف فقط",
   "backupStatusMessage": "بياناتك موجودة على هذا الجهاز فقط. أنشئ نسخة احتياطية لتتمكن من استعادتها هنا أو على جهاز آخر.",

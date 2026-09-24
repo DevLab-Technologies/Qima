@@ -800,6 +800,32 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
+  String get settingsICloudSync => 'مزامنة iCloud';
+
+  @override
+  String get settingsICloudSyncSwitch => 'المزامنة مع iCloud';
+
+  @override
+  String get settingsICloudSyncFooter =>
+      'تُبقي قائمة المتابعة والمقتنيات والرموز المخصصة وتنبيهات الأسعار محدّثة عبر أجهزتك.';
+
+  @override
+  String settingsICloudSyncStatusUpToDate(String time) {
+    return 'محدّثة · $time';
+  }
+
+  @override
+  String get settingsICloudSyncStatusSyncing => 'جارٍ المزامنة…';
+
+  @override
+  String get settingsICloudSyncStatusNotSignedIn =>
+      'لم يتم تسجيل الدخول إلى iCloud';
+
+  @override
+  String get settingsICloudSyncStatusStorageFull =>
+      'مساحة تخزين iCloud الخاصة بـQima ممتلئة';
+
+  @override
   String get backupTitle => 'النسخ الاحتياطي والاستعادة';
 
   @override

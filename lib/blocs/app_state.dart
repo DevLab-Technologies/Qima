@@ -11,6 +11,27 @@ import '../services/preferences.dart';
 
 enum RefreshPhase { idle, refreshing, failed }
 
+/// Status of the iCloud key-value sync backend, for the Settings "iCloud
+/// sync" status line (spec Phase 7). [disabled] covers both "the user turned
+/// it off" and "not offered on this platform/no iCloud account" — the UI
+/// that decides whether to show the section at all is what distinguishes
+/// those, this just reflects whether the switch is effectively on.
+enum CloudSyncStatus {
+  disabled,
+  syncing,
+  upToDate,
+
+  /// No iCloud account is signed in on this device (`accountStatus()` was
+  /// false, or an `accountChange` event fired and the recheck came back
+  /// false).
+  notSignedIn,
+
+  /// The iCloud KVS quota (1 MB total, 1024 keys) was exceeded on a write —
+  /// local data stays authoritative; the write is simply not reflected in
+  /// the cloud until something is freed up (spec Phase 7 "Size guard").
+  storageFull;
+}
+
 /// The app's single source of truth. Mirrors `AppModel.swift` (spec §4.1).
 class AppState extends Equatable {
   final bool initialized;
@@ -59,6 +80,25 @@ class AppState extends Equatable {
   /// `AppCubit._refreshBackupReminder`.
   final bool backupReminderDue;
 
+  /// Whether the user has iCloud sync turned on (spec Phase 7) — mirrors
+  /// `Preferences.iCloudSyncEnabled`, a local-only setting never itself
+  /// synced through the store it controls.
+  final bool iCloudSyncEnabled;
+
+  /// Whether iCloud sync is offered on this device at all: iOS only, and
+  /// (once checked) an iCloud account must be signed in. Starts `true`
+  /// (platform-gated already by [iCloudSyncEnabled]'s default and by
+  /// `SettingsScreen` only building the section on iOS) so the section
+  /// doesn't flash away before the first `accountStatus()` check resolves;
+  /// [AppCubit.init] corrects it promptly.
+  final bool iCloudAccountAvailable;
+
+  final CloudSyncStatus cloudSyncStatus;
+
+  /// Last time a full sync round-trip (local+cloud merge) completed
+  /// successfully, for the "Up to date · 14:32" status line.
+  final DateTime? lastCloudSyncAt;
+
   AppState({
     this.initialized = false,
     Map<String, QuoteSeries>? seriesByID,
@@ -84,6 +124,10 @@ class AppState extends Equatable {
     this.deliverAlertsOnThisDevice = true,
     this.notificationsEnabled = true,
     this.backupReminderDue = false,
+    this.iCloudSyncEnabled = false,
+    this.iCloudAccountAvailable = true,
+    this.cloudSyncStatus = CloudSyncStatus.disabled,
+    this.lastCloudSyncAt,
   })  : seriesByID = seriesByID ?? const {},
         rates = rates ?? FXRates.usdIdentity;
 
@@ -113,6 +157,11 @@ class AppState extends Equatable {
     bool? deliverAlertsOnThisDevice,
     bool? notificationsEnabled,
     bool? backupReminderDue,
+    bool? iCloudSyncEnabled,
+    bool? iCloudAccountAvailable,
+    CloudSyncStatus? cloudSyncStatus,
+    DateTime? lastCloudSyncAt,
+    bool clearLastCloudSyncAt = false,
   }) {
     return AppState(
       initialized: initialized ?? this.initialized,
@@ -139,6 +188,10 @@ class AppState extends Equatable {
       deliverAlertsOnThisDevice: deliverAlertsOnThisDevice ?? this.deliverAlertsOnThisDevice,
       notificationsEnabled: notificationsEnabled ?? this.notificationsEnabled,
       backupReminderDue: backupReminderDue ?? this.backupReminderDue,
+      iCloudSyncEnabled: iCloudSyncEnabled ?? this.iCloudSyncEnabled,
+      iCloudAccountAvailable: iCloudAccountAvailable ?? this.iCloudAccountAvailable,
+      cloudSyncStatus: cloudSyncStatus ?? this.cloudSyncStatus,
+      lastCloudSyncAt: clearLastCloudSyncAt ? null : (lastCloudSyncAt ?? this.lastCloudSyncAt),
     );
   }
 
@@ -168,5 +221,9 @@ class AppState extends Equatable {
         deliverAlertsOnThisDevice,
         notificationsEnabled,
         backupReminderDue,
+        iCloudSyncEnabled,
+        iCloudAccountAvailable,
+        cloudSyncStatus,
+        lastCloudSyncAt,
       ];
 }

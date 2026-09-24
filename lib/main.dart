@@ -82,6 +82,7 @@ class _QimaAppState extends State<QimaApp> {
   @override
   void dispose() {
     _tapSubscription?.cancel();
+    unawaited(_cubit.disposeCloudSync());
     super.dispose();
   }
 

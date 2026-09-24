@@ -800,6 +800,31 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get settingsICloudSync => 'iCloud sync';
+
+  @override
+  String get settingsICloudSyncSwitch => 'Sync with iCloud';
+
+  @override
+  String get settingsICloudSyncFooter =>
+      'Keeps your watchlist, holdings, custom tickers and price alerts up to date across your devices.';
+
+  @override
+  String settingsICloudSyncStatusUpToDate(String time) {
+    return 'Up to date · $time';
+  }
+
+  @override
+  String get settingsICloudSyncStatusSyncing => 'Syncing…';
+
+  @override
+  String get settingsICloudSyncStatusNotSignedIn => 'Not signed in to iCloud';
+
+  @override
+  String get settingsICloudSyncStatusStorageFull =>
+      'iCloud storage for Qima is full';
+
+  @override
   String get backupTitle => 'Backup & restore';
 
   @override

@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart' show kIsWeb, TargetPlatform, defaultTargetPlatform;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 
 import '../blocs/app_cubit.dart';
 import '../blocs/app_state.dart';
@@ -57,6 +58,11 @@ class SettingsScreen extends StatelessWidget {
                 _SectionHeader(l10n.settingsPrivacy),
                 const _PrivacySecuritySection(),
                 const SizedBox(height: DS.spaceLG),
+                if (!kIsWeb && defaultTargetPlatform == TargetPlatform.iOS) ...[
+                  _SectionHeader(l10n.settingsICloudSync),
+                  const _ICloudSyncSection(),
+                  const SizedBox(height: DS.spaceLG),
+                ],
                 _SectionHeader(l10n.settingsBackup),
                 const _BackupSection(),
                 const SizedBox(height: DS.spaceLG),
@@ -410,6 +416,75 @@ class _PrivacySecuritySectionState extends State<_PrivacySecuritySection> {
                 ),
               ],
             ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+/// "iCloud sync" settings card (spec Phase 7, iOS only — [SettingsScreen]
+/// only builds this section on iOS): a "Sync with iCloud" switch plus a
+/// status line reflecting [AppState.cloudSyncStatus]. Turning the switch on
+/// merges — never wipes — this device's local data with whatever's already
+/// in iCloud (see `AppCubit.setICloudSyncEnabled`); turning it off just
+/// stops listening for changes, it never deletes anything.
+class _ICloudSyncSection extends StatelessWidget {
+  const _ICloudSyncSection();
+
+  String _statusText(BuildContext context, AppState state, AppLocalizations l10n) {
+    switch (state.cloudSyncStatus) {
+      case CloudSyncStatus.disabled:
+        return '';
+      case CloudSyncStatus.syncing:
+        return l10n.settingsICloudSyncStatusSyncing;
+      case CloudSyncStatus.notSignedIn:
+        return l10n.settingsICloudSyncStatusNotSignedIn;
+      case CloudSyncStatus.storageFull:
+        return l10n.settingsICloudSyncStatusStorageFull;
+      case CloudSyncStatus.upToDate:
+        final at = state.lastCloudSyncAt;
+        if (at == null) return l10n.settingsICloudSyncStatusSyncing;
+        return l10n.settingsICloudSyncStatusUpToDate(DateFormat.Hm(Localizations.localeOf(context).toString()).format(at.toLocal()));
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final cubit = context.read<AppCubit>();
+    final l10n = AppLocalizations.of(context)!;
+    final colors = context.colors;
+
+    return BlocBuilder<AppCubit, AppState>(
+      bloc: cubit,
+      builder: (context, state) {
+        final statusText = _statusText(context, state, l10n);
+        final statusColor = state.cloudSyncStatus == CloudSyncStatus.storageFull ||
+                state.cloudSyncStatus == CloudSyncStatus.notSignedIn
+            ? colors.down
+            : colors.textTertiary;
+
+        return DSCard(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              SwitchListTile(
+                contentPadding: EdgeInsets.zero,
+                title: Text(l10n.settingsICloudSyncSwitch, style: TextStyle(color: colors.textPrimary)),
+                subtitle: Text(l10n.settingsICloudSyncFooter, style: TextStyle(color: colors.textTertiary, fontSize: 12)),
+                value: state.iCloudSyncEnabled,
+                activeThumbColor: colors.onBrand,
+                activeTrackColor: colors.brand,
+                onChanged: (value) => cubit.setICloudSyncEnabled(value),
+              ),
+              if (state.iCloudSyncEnabled && statusText.isNotEmpty) ...[
+                Divider(color: colors.hairline, height: DS.spaceLG),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: DS.spaceXS),
+                  child: Text(statusText, style: TextStyle(color: statusColor, fontSize: 12)),
+                ),
+              ],
+            ],
           ),
         );
       },

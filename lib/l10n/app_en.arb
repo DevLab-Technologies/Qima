@@ -410,6 +410,19 @@
     }
   },
 
+  "settingsICloudSync": "iCloud sync",
+  "settingsICloudSyncSwitch": "Sync with iCloud",
+  "settingsICloudSyncFooter": "Keeps your watchlist, holdings, custom tickers and price alerts up to date across your devices.",
+  "settingsICloudSyncStatusUpToDate": "Up to date · {time}",
+  "@settingsICloudSyncStatusUpToDate": {
+    "placeholders": {
+      "time": { "type": "String" }
+    }
+  },
+  "settingsICloudSyncStatusSyncing": "Syncing…",
+  "settingsICloudSyncStatusNotSignedIn": "Not signed in to iCloud",
+  "settingsICloudSyncStatusStorageFull": "iCloud storage for Qima is full",
+
   "backupTitle": "Backup & restore",
   "backupStatusTitle": "Stored only on this phone",
   "backupStatusMessage": "Your data lives on this device only. Back it up so you can restore it here or on another device.",

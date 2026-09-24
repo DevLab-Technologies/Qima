@@ -143,6 +143,7 @@ class Preferences {
   static const String _lockGraceKey = 'lockGrace';
   static const String _deliverAlertsOnThisDeviceKey = 'deliverAlertsOnThisDevice';
   static const String _lastAlertEvaluationAtKey = 'lastAlertEvaluationAt';
+  static const String _iCloudSyncEnabledKey = 'iCloudSyncEnabled';
   static const String _legacyWatchcardsKey = 'pref.watchcards';
   static const String _legacyWatchlistKey = 'pref.watchlist';
 
@@ -323,6 +324,24 @@ class Preferences {
 
   Future<void> setLastAlertEvaluationAt(DateTime value) async {
     await local.setString(_lastAlertEvaluationAtKey, value.toUtc().toIso8601String());
+  }
+
+  /// Local-only, NOT synced through the cloud store itself — this is the
+  /// on/off switch FOR cloud sync, so it can never be read from the thing it
+  /// controls (spec Phase 7). Whether this device even offers the setting is
+  /// a separate concern (`AppCubit`/`SettingsScreen` gate on platform +
+  /// account availability); this getter just answers "did the user turn it
+  /// on", defaulting to on so a first launch on a device with an iCloud
+  /// account already signed in starts syncing without an extra step.
+  bool get iCloudSyncEnabledDefault {
+    if (kIsWeb) return false;
+    return defaultTargetPlatform == TargetPlatform.iOS;
+  }
+
+  bool get iCloudSyncEnabled => local.getBool(_iCloudSyncEnabledKey) ?? iCloudSyncEnabledDefault;
+
+  Future<void> setICloudSyncEnabled(bool value) async {
+    await local.setBool(_iCloudSyncEnabledKey, value);
   }
 
   /// Migration chain, simplified for a from-scratch app: (1) pre-sync

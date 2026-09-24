@@ -29,7 +29,7 @@ class _Item extends Syncable {
 /// any platform channel.
 class _FakeCloudKVStore implements CloudKVStore {
   final Map<String, String> _values = {};
-  final _controller = StreamController<String>.broadcast();
+  final _controller = StreamController<CloudKVChangeEvent>.broadcast();
 
   @override
   Future<String?> getString(String key) async => _values[key];
@@ -37,14 +37,17 @@ class _FakeCloudKVStore implements CloudKVStore {
   @override
   Future<void> setString(String key, String value) async {
     _values[key] = value;
-    _controller.add(key);
+    _controller.add(CloudKVChangeEvent(keys: [key], reason: CloudKVChangeReason.serverChange));
   }
 
   @override
   Future<void> synchronize() async {}
 
   @override
-  Stream<String> get didChangeExternally => _controller.stream;
+  Future<bool> accountStatus() async => true;
+
+  @override
+  Stream<CloudKVChangeEvent> get didChangeExternally => _controller.stream;
 }
 
 void main() {

@@ -275,6 +275,14 @@
   "settingsBackupSubtitleNever": "Nunca se ha hecho una copia de seguridad",
   "settingsBackupSubtitle": "Última copia {date} · {instruments} instrumentos, {lots} lotes",
 
+  "settingsICloudSync": "Sincronización de iCloud",
+  "settingsICloudSyncSwitch": "Sincronizar con iCloud",
+  "settingsICloudSyncFooter": "Mantiene tu lista de seguimiento, posiciones, tickers personalizados y alertas de precio actualizados en todos tus dispositivos.",
+  "settingsICloudSyncStatusUpToDate": "Actualizado · {time}",
+  "settingsICloudSyncStatusSyncing": "Sincronizando…",
+  "settingsICloudSyncStatusNotSignedIn": "No has iniciado sesión en iCloud",
+  "settingsICloudSyncStatusStorageFull": "El almacenamiento de iCloud para Qima está lleno",
+
   "backupTitle": "Copia de seguridad y restauración",
   "backupStatusTitle": "Guardado solo en este teléfono",
   "backupStatusMessage": "Tus datos solo existen en este dispositivo. Haz una copia de seguridad para poder restaurarlos aquí o en otro dispositivo.",
