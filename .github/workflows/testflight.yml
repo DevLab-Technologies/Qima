@@ -62,6 +62,19 @@ jobs:
             exit 1
           fi
 
+      # The runner's default Xcode was 16.4 (iOS 18.5 SDK) and App Store Connect
+      # now rejects anything built with less than the iOS 26 SDK. Select the
+      # newest Xcode the image actually carries, and print the list so a future
+      # image change is visible in the log rather than a 409 from altool.
+      - name: Select the newest Xcode
+        run: |
+          ls -d /Applications/Xcode*.app
+          latest="$(ls -d /Applications/Xcode*.app | sort -V | tail -1)"
+          echo "Selecting $latest"
+          sudo xcode-select -s "$latest/Contents/Developer"
+          xcodebuild -version
+          xcodebuild -showsdks | grep -i ios || true
+
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
