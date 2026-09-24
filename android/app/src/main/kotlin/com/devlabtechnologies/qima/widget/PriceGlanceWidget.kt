@@ -28,7 +28,6 @@ import androidx.glance.layout.width
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
-import androidx.glance.unit.ColorProvider
 import com.devlabtechnologies.qima.MainActivity
 import es.antonborri.home_widget.HomeWidgetGlanceState
 import es.antonborri.home_widget.HomeWidgetGlanceStateDefinition
@@ -60,12 +59,11 @@ class PriceGlanceWidget : GlanceAppWidget() {
     @Composable
     private fun Content(context: Context, state: HomeWidgetGlanceState) {
         val json = readJson(state.preferences, "price_widget_data")
-        val cardBg = Color(0xFF1F2229)
 
         Box(
             modifier = GlanceModifier
                 .fillMaxSize()
-                .background(cardBg)
+                .background(QimaWidgetColors.surfaceTop)
                 .padding(14.dp)
                 .clickable(onClick = actionStartActivity(Intent(context, MainActivity::class.java)))
         ) {
@@ -89,13 +87,13 @@ class PriceGlanceWidget : GlanceAppWidget() {
                 style = TextStyle(
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
-                    color = ColorProvider(Color.White),
+                    color = QimaWidgetColors.textPrimary,
                 ),
             )
             Spacer(modifier = GlanceModifier.height(4.dp))
             Text(
                 "No data yet",
-                style = TextStyle(fontSize = 12.sp, color = ColorProvider(Color(0xB3FFFFFF))),
+                style = TextStyle(fontSize = 12.sp, color = QimaWidgetColors.textSecondary),
             )
         }
     }
@@ -109,8 +107,11 @@ class PriceGlanceWidget : GlanceAppWidget() {
         val hasChange = json.optBoolean("hasChange", false)
         val isUp = json.optBoolean("isUp", true)
         val changePercent = json.optDouble("changePercent", 0.0)
+        // The accent Dart sends is already resolved for the OS's current
+        // day/night mode (see HomeWidgetService._priceSnapshot), so it's
+        // used directly rather than re-wrapped in a ColorProvider pair.
         val accent = argbColor(json.optInt("accentColor", 0xFFE6BA4D.toInt()))
-        val trendColor = if (isUp) Color(0xFF30D158) else Color(0xFFFF6B61)
+        val trendColor = if (isUp) QimaWidgetColors.up else QimaWidgetColors.down
         val sparkline = json.optJSONArray("sparkline")
 
         Column(modifier = GlanceModifier.fillMaxSize()) {
@@ -127,7 +128,7 @@ class PriceGlanceWidget : GlanceAppWidget() {
                     style = TextStyle(
                         fontSize = 13.sp,
                         fontWeight = FontWeight.Medium,
-                        color = ColorProvider(Color(0xB3FFFFFF)),
+                        color = QimaWidgetColors.textSecondary,
                     ),
                 )
             }
@@ -137,13 +138,13 @@ class PriceGlanceWidget : GlanceAppWidget() {
                 style = TextStyle(
                     fontSize = 26.sp,
                     fontWeight = FontWeight.Bold,
-                    color = ColorProvider(Color.White),
+                    color = QimaWidgetColors.textPrimary,
                 ),
             )
             if (unitSuffix.isNotBlank()) {
                 Text(
                     "per $unitSuffix",
-                    style = TextStyle(fontSize = 11.sp, color = ColorProvider(Color(0x99FFFFFF))),
+                    style = TextStyle(fontSize = 11.sp, color = QimaWidgetColors.textTertiary),
                 )
             }
             Spacer(modifier = GlanceModifier.height(6.dp))
@@ -153,11 +154,11 @@ class PriceGlanceWidget : GlanceAppWidget() {
                     style = TextStyle(
                         fontSize = 13.sp,
                         fontWeight = FontWeight.Medium,
-                        color = ColorProvider(trendColor),
+                        color = trendColor,
                     ),
                 )
             } else {
-                Text("—", style = TextStyle(fontSize = 13.sp, color = ColorProvider(Color(0x85FFFFFF))))
+                Text("—", style = TextStyle(fontSize = 13.sp, color = QimaWidgetColors.textTertiary))
             }
             Spacer(modifier = GlanceModifier.height(8.dp))
             Sparkline(sparkline, accent)

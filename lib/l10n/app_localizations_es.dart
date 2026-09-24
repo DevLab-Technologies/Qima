@@ -161,6 +161,18 @@ class AppLocalizationsEs extends AppLocalizations {
   String get settingsTitle => 'Ajustes';
 
   @override
+  String get settingsAppearance => 'Apariencia';
+
+  @override
+  String get settingsAppearanceSystem => 'Sistema';
+
+  @override
+  String get settingsAppearanceLight => 'Claro';
+
+  @override
+  String get settingsAppearanceDark => 'Oscuro';
+
+  @override
   String get settingsBaseCurrency => 'Moneda base';
 
   @override

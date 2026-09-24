@@ -11,6 +11,7 @@ import '../models/watch_card.dart';
 import '../theme/design_system.dart';
 import '../theme/instrument_theme.dart';
 import '../theme/price_chart.dart';
+import '../theme/qima_colors.dart';
 import '../theme/strings.dart';
 import '../widgets/instrument_icon.dart';
 import '../widgets/stat_pill.dart';
@@ -68,6 +69,7 @@ class _InstrumentDetailScreenState extends State<InstrumentDetailScreen> {
   Widget build(BuildContext context) {
     final cubit = context.read<AppCubit>();
     final l10n = AppLocalizations.of(context)!;
+    final colors = context.colors;
 
     return BlocBuilder<AppCubit, AppState>(
       builder: (context, state) {
@@ -77,7 +79,7 @@ class _InstrumentDetailScreenState extends State<InstrumentDetailScreen> {
         final availableRanges = ChartRange.available(presentation.points, now, includeExtended: _showsExtendedRanges);
         final effectiveRange = availableRanges.contains(_range) ? _range : availableRanges.last;
         final windowChange = presentation.change(effectiveRange, now);
-        final accent = InstrumentTheme.accentColor(instrument);
+        final accent = InstrumentTheme.accentColor(instrument, colors);
 
         return ScreenBackground(
           child: Scaffold(
@@ -145,7 +147,7 @@ class _InstrumentDetailScreenState extends State<InstrumentDetailScreen> {
                       children: [
                         Row(
                           children: [
-                            Text(l10n.detailHistory, style: const TextStyle(color: DS.textPrimary, fontWeight: FontWeight.w700)),
+                            Text(l10n.detailHistory, style: TextStyle(color: colors.textPrimary, fontWeight: FontWeight.w700)),
                             const Spacer(),
                             TextButton(
                               onPressed: state.isLoadingHistory ? null : _revealAllTime,
@@ -192,7 +194,7 @@ class _InstrumentDetailScreenState extends State<InstrumentDetailScreen> {
                           height: 240,
                           child: KeyedSubtree(
                             key: ValueKey(effectiveRange),
-                            child: _buildChart(context, presentation, effectiveRange, now, windowChange, accent, state),
+                            child: _buildChart(context, colors, presentation, effectiveRange, now, windowChange, accent, state),
                           ),
                         ),
                       ],
@@ -207,7 +209,7 @@ class _InstrumentDetailScreenState extends State<InstrumentDetailScreen> {
                     DSCard(
                       child: Text(
                         displayLabel(context, state.errorMessage!),
-                        style: const TextStyle(color: DS.down),
+                        style: TextStyle(color: colors.down),
                       ),
                     ),
                   ],
@@ -222,6 +224,7 @@ class _InstrumentDetailScreenState extends State<InstrumentDetailScreen> {
 
   Widget _buildChart(
     BuildContext context,
+    QimaColors colors,
     InstrumentPresentation presentation,
     ChartRange range,
     DateTime now,
@@ -239,11 +242,11 @@ class _InstrumentDetailScreenState extends State<InstrumentDetailScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.show_chart, color: DS.textTertiary, size: 32),
+            Icon(Icons.show_chart, color: colors.textTertiary, size: 32),
             const SizedBox(height: DS.spaceSM),
-            Text(l10n.detailNoHistoryTitle, style: const TextStyle(color: DS.textSecondary)),
+            Text(l10n.detailNoHistoryTitle, style: TextStyle(color: colors.textSecondary)),
             const SizedBox(height: 2),
-            Text(l10n.detailNoHistoryMessage, style: const TextStyle(color: DS.textTertiary, fontSize: 12)),
+            Text(l10n.detailNoHistoryMessage, style: TextStyle(color: colors.textTertiary, fontSize: 12)),
             const SizedBox(height: DS.spaceXS),
             TextButton(onPressed: _revealAllTime, child: Text(l10n.detailLoadHistory)),
           ],
@@ -253,7 +256,7 @@ class _InstrumentDetailScreenState extends State<InstrumentDetailScreen> {
     return PriceChartView(
       points: windowed,
       isTrendingUp: windowChange?.isUp ?? presentation.isTrendingUp,
-      accent: DS.trendColor(windowChange?.isUp ?? presentation.isTrendingUp),
+      accent: QimaColors.trendColor(windowChange?.isUp ?? presentation.isTrendingUp, colors),
       isInteractive: true,
       currencyCode: presentation.displayCurrency,
     );
@@ -269,6 +272,7 @@ class _CurrentPriceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     final lastQuoteTime = presentation.series.latest?.timestamp.toLocal();
     return DSHeroCard(
       accent: accent,
@@ -284,15 +288,15 @@ class _CurrentPriceCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(displayLabel(context, presentation.instrument.nameKey),
-                        style: const TextStyle(color: DS.textPrimary, fontWeight: FontWeight.w700)),
-                    Text(presentation.symbol, style: const TextStyle(color: DS.textTertiary, fontSize: 12)),
+                        style: TextStyle(color: colors.textPrimary, fontWeight: FontWeight.w700)),
+                    Text(presentation.symbol, style: TextStyle(color: colors.textTertiary, fontSize: 12)),
                   ],
                 ),
               ),
               if (lastQuoteTime != null)
                 Text(
                   '${lastQuoteTime.hour.toString().padLeft(2, '0')}:${lastQuoteTime.minute.toString().padLeft(2, '0')}',
-                  style: const TextStyle(color: DS.textTertiary, fontSize: 12),
+                  style: TextStyle(color: colors.textTertiary, fontSize: 12),
                 ),
             ],
           ),
@@ -302,19 +306,19 @@ class _CurrentPriceCard extends StatelessWidget {
             children: [
               Text(
                 presentation.latestPrice,
-                style: const TextStyle(color: DS.textPrimary, fontSize: 38, fontWeight: FontWeight.w800),
+                style: TextStyle(color: colors.textPrimary, fontSize: 38, fontWeight: FontWeight.w800),
               ),
               if (presentation.unitSuffix != null)
                 Padding(
                   padding: const EdgeInsets.only(left: 6, bottom: 6),
                   child: Text('/ ${displayLabel(context, presentation.unitSuffix!)}',
-                      style: const TextStyle(color: DS.textTertiary, fontSize: 14)),
+                      style: TextStyle(color: colors.textTertiary, fontSize: 14)),
                 ),
               if (presentation.karatLabel != null)
                 Padding(
                   padding: const EdgeInsets.only(left: 6, bottom: 6),
                   child: Text(displayLabel(context, presentation.karatLabel!),
-                      style: const TextStyle(color: DS.textSecondary, fontSize: 14)),
+                      style: TextStyle(color: colors.textSecondary, fontSize: 14)),
                 ),
             ],
           ),
@@ -323,16 +327,16 @@ class _CurrentPriceCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: DS.spaceSM, vertical: 4),
               decoration: BoxDecoration(
-                color: DS.trendColor(change!.isUp).withValues(alpha: 0.15),
+                color: QimaColors.trendColor(change!.isUp, colors).withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(DS.radiusPill),
               ),
               child: Text(
                 signedFigure('${(change!.percentValue * 100).toStringAsFixed(2)}%', isUp: change!.isUp),
-                style: TextStyle(color: DS.trendColor(change!.isUp), fontWeight: FontWeight.w700, fontSize: 13),
+                style: TextStyle(color: QimaColors.trendColor(change!.isUp, colors), fontWeight: FontWeight.w700, fontSize: 13),
               ),
             )
           else if (!presentation.hasData)
-            Text(AppLocalizations.of(context)!.pricePullToRefresh, style: const TextStyle(color: DS.textTertiary, fontSize: 12)),
+            Text(AppLocalizations.of(context)!.pricePullToRefresh, style: TextStyle(color: colors.textTertiary, fontSize: 12)),
         ],
       ),
     );
@@ -348,6 +352,7 @@ class _MetalBreakdownCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final rows = presentation.metalBreakdown;
     if (rows.isEmpty) return const SizedBox.shrink();
+    final colors = context.colors;
     return DSCard(
       // Fixed tile height: an aspect ratio made tiles balloon on tablets.
       child: GridView(
@@ -366,9 +371,9 @@ class _MetalBreakdownCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(displayLabel(context, row.label), style: const TextStyle(color: DS.textTertiary, fontSize: 11)),
+                  Text(displayLabel(context, row.label), style: TextStyle(color: colors.textTertiary, fontSize: 11)),
                   const SizedBox(height: 2),
-                  Text(row.value, style: const TextStyle(color: DS.textPrimary, fontWeight: FontWeight.w700)),
+                  Text(row.value, style: TextStyle(color: colors.textPrimary, fontWeight: FontWeight.w700)),
                 ],
               ),
             ),
@@ -392,6 +397,7 @@ class _StatsRow extends StatelessWidget {
     final high = windowed.isEmpty ? null : windowed.map((p) => p.value).reduce((a, b) => a > b ? a : b);
     final low = windowed.isEmpty ? null : windowed.map((p) => p.value).reduce((a, b) => a < b ? a : b);
     final l10n = AppLocalizations.of(context)!;
+    final colors = context.colors;
 
     return Row(
       children: [
@@ -399,7 +405,7 @@ class _StatsRow extends StatelessWidget {
           child: StatPill(
             title: l10n.statChange,
             value: change == null ? '—' : signedFigure('${(change!.percentValue * 100).toStringAsFixed(2)}%', isUp: change!.isUp),
-            tint: change == null ? null : DS.trendColor(change!.isUp),
+            tint: change == null ? null : QimaColors.trendColor(change!.isUp, colors),
           ),
         ),
         const SizedBox(width: DS.spaceXS),

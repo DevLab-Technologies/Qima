@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../l10n/app_localizations.dart';
 import '../l10n/currency_names.dart';
 import '../theme/design_system.dart';
+import '../theme/qima_colors.dart';
 
 /// Searchable currency list — matches ISO code or the localized currency
 /// name, case-insensitive substring. Mirrors `CurrencyPicker.swift`.
@@ -36,6 +37,7 @@ class _CurrencyPickerState extends State<CurrencyPicker> {
     }).toList();
 
     final l10n = AppLocalizations.of(context)!;
+    final colors = context.colors;
     return ScreenBackground(
       child: Scaffold(
         backgroundColor: Colors.transparent,
@@ -46,13 +48,13 @@ class _CurrencyPickerState extends State<CurrencyPicker> {
               padding: const EdgeInsets.all(DS.spaceMD),
               child: TextField(
                 autofocus: false,
-                style: const TextStyle(color: DS.textPrimary),
+                style: TextStyle(color: colors.textPrimary),
                 decoration: InputDecoration(
                   hintText: l10n.currencyPickerSearchHint,
-                  hintStyle: const TextStyle(color: DS.textTertiary),
-                  prefixIcon: const Icon(Icons.search, color: DS.textTertiary),
+                  hintStyle: TextStyle(color: colors.textTertiary),
+                  prefixIcon: Icon(Icons.search, color: colors.textTertiary),
                   filled: true,
-                  fillColor: DS.tileTop,
+                  fillColor: colors.tileTop,
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(DS.radiusTile), borderSide: BorderSide.none),
                 ),
                 onChanged: (v) => setState(() => _query = v),
@@ -65,9 +67,9 @@ class _CurrencyPickerState extends State<CurrencyPicker> {
                   final code = filtered[index];
                   final isSelected = code == widget.selected;
                   return ListTile(
-                    title: Text(code, style: const TextStyle(color: DS.textPrimary)),
-                    subtitle: Text(nameFor(code), style: const TextStyle(color: DS.textTertiary)),
-                    trailing: isSelected ? const Icon(Icons.check, color: DS.up) : null,
+                    title: Text(code, style: TextStyle(color: colors.textPrimary)),
+                    subtitle: Text(nameFor(code), style: TextStyle(color: colors.textTertiary)),
+                    trailing: isSelected ? Icon(Icons.check, color: colors.up) : null,
                     onTap: () => Navigator.of(context).pop(code),
                   );
                 },

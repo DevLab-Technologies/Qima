@@ -9,6 +9,7 @@ import 'l10n/app_localizations.dart';
 import 'screens/watch_watchlist_screen.dart';
 import 'screens/watchlist_screen.dart';
 import 'services/preferences.dart';
+import 'theme/app_theme.dart';
 import 'theme/design_system.dart';
 
 /// Wear OS screens are typically 192-227dp square/round; a normal phone's
@@ -46,7 +47,8 @@ class QimaApp extends StatelessWidget {
     return BlocProvider<AppCubit>(
       create: (_) => AppCubit()..init(),
       child: BlocBuilder<AppCubit, AppState>(
-        buildWhen: (previous, current) => previous.appLanguage != current.appLanguage,
+        buildWhen: (previous, current) =>
+            previous.appLanguage != current.appLanguage || previous.appearance != current.appearance,
         builder: (context, state) {
           return MaterialApp(
             onGenerateTitle: (context) => AppLocalizations.of(context)?.appTitle ?? 'Qima',
@@ -56,49 +58,9 @@ class QimaApp extends StatelessWidget {
             locale: state.appLanguage == AppLanguage.system
                 ? null
                 : Locale(state.appLanguage.localeIdentifier!),
-            theme: ThemeData(
-              brightness: Brightness.dark,
-              scaffoldBackgroundColor: DS.bg0,
-              fontFamilyFallback: DS.fontFamilyFallback,
-              // Seeded from the brand gold, but surfaces are pinned to the DS
-              // palette so menus, dialogs and pickers match the cool-grey cards
-              // instead of the warm tones the seed would generate.
-              colorScheme: ColorScheme.fromSeed(
-                seedColor: DS.brand,
-                brightness: Brightness.dark,
-              ).copyWith(
-                primary: DS.brand,
-                onPrimary: DS.bg0,
-                surface: DS.bg1,
-                onSurface: DS.textPrimary,
-                onSurfaceVariant: DS.textSecondary,
-                surfaceContainerLowest: DS.bg0,
-                surfaceContainerLow: DS.surfaceBottom,
-                surfaceContainer: DS.overlay,
-                surfaceContainerHigh: DS.overlay,
-                surfaceContainerHighest: DS.tileTop,
-                outline: DS.hairlineStrong,
-                outlineVariant: DS.hairline,
-                error: DS.down,
-              ),
-              appBarTheme: const AppBarTheme(
-                elevation: 0,
-                centerTitle: false,
-                foregroundColor: DS.textPrimary,
-              ),
-              textTheme: ThemeData.dark().textTheme.apply(
-                    bodyColor: DS.textPrimary,
-                    displayColor: DS.textPrimary,
-                  ),
-              filledButtonTheme: FilledButtonThemeData(
-                style: FilledButton.styleFrom(
-                  backgroundColor: DS.textPrimary,
-                  foregroundColor: DS.bg0,
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(DS.radiusPill)),
-                ),
-              ),
-            ),
+            theme: buildTheme(Brightness.light),
+            darkTheme: buildTheme(Brightness.dark),
+            themeMode: state.appearance.themeMode,
             // Arabic is set entirely in the Arabic family; other locales keep
             // the platform font and reach it only through the fallback chain.
             builder: (context, child) {

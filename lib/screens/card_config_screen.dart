@@ -9,6 +9,7 @@ import '../models/metal_breakdown.dart';
 import '../models/watch_card.dart';
 import '../theme/design_system.dart';
 import '../theme/instrument_theme.dart';
+import '../theme/qima_colors.dart';
 import '../theme/strings.dart';
 import 'currency_picker.dart';
 
@@ -42,7 +43,8 @@ class _CardConfigScreenState extends State<CardConfigScreen> {
     final cubit = context.read<AppCubit>();
     final instrument = widget.instrument;
     final l10n = AppLocalizations.of(context)!;
-    final accent = InstrumentTheme.accentColor(instrument);
+    final colors = context.colors;
+    final accent = InstrumentTheme.accentColor(instrument, colors);
 
     return ScreenBackground(
       child: Scaffold(
@@ -57,8 +59,8 @@ class _CardConfigScreenState extends State<CardConfigScreen> {
                 children: [
                   ListTile(
                     contentPadding: EdgeInsets.zero,
-                    title: Text(l10n.commonCurrency, style: const TextStyle(color: DS.textPrimary)),
-                    trailing: Text(_currency, style: const TextStyle(color: DS.textSecondary)),
+                    title: Text(l10n.commonCurrency, style: TextStyle(color: colors.textPrimary)),
+                    trailing: Text(_currency, style: TextStyle(color: colors.textSecondary)),
                     onTap: () async {
                       final selected = await CurrencyPicker.show(
                         context,
@@ -70,7 +72,7 @@ class _CardConfigScreenState extends State<CardConfigScreen> {
                   ),
                   if (instrument.supportedUnits.length > 1) ...[
                     const SizedBox(height: DS.spaceSM),
-                    Text(l10n.settingsUnit, style: const TextStyle(color: DS.textTertiary, fontSize: 12)),
+                    Text(l10n.settingsUnit, style: TextStyle(color: colors.textTertiary, fontSize: 12)),
                     const SizedBox(height: 4),
                     SegmentedButton<PriceUnit>(
                       segments: [
@@ -79,12 +81,12 @@ class _CardConfigScreenState extends State<CardConfigScreen> {
                       ],
                       selected: {_unit},
                       onSelectionChanged: (s) => setState(() => _unit = s.first),
-                      style: DS.segmentedButtonStyle(accent),
+                      style: DS.segmentedButtonStyle(colors, accent),
                     ),
                   ],
                   if (instrument.supportedKarats.isNotEmpty) ...[
                     const SizedBox(height: DS.spaceSM),
-                    Text(l10n.settingsKarat, style: const TextStyle(color: DS.textTertiary, fontSize: 12)),
+                    Text(l10n.settingsKarat, style: TextStyle(color: colors.textTertiary, fontSize: 12)),
                     const SizedBox(height: 4),
                     SegmentedButton<GoldKarat>(
                       segments: [
@@ -93,7 +95,7 @@ class _CardConfigScreenState extends State<CardConfigScreen> {
                       ],
                       selected: {_karat ?? instrument.supportedKarats.first},
                       onSelectionChanged: (s) => setState(() => _karat = s.first),
-                      style: DS.segmentedButtonStyle(accent),
+                      style: DS.segmentedButtonStyle(colors, accent),
                     ),
                   ],
                 ],

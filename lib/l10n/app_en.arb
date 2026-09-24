@@ -75,6 +75,10 @@
     }
   },
   "settingsTitle": "Settings",
+  "settingsAppearance": "Appearance",
+  "settingsAppearanceSystem": "System",
+  "settingsAppearanceLight": "Light",
+  "settingsAppearanceDark": "Dark",
   "settingsBaseCurrency": "Base currency",
   "settingsPortfolioCurrency": "Portfolio currency",
   "settingsUnit": "Unit",

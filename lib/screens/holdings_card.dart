@@ -7,6 +7,7 @@ import '../models/asset.dart';
 import '../models/holding.dart';
 import '../models/money.dart';
 import '../theme/design_system.dart';
+import '../theme/qima_colors.dart';
 import '../theme/strings.dart';
 import 'lot_editor_screen.dart';
 
@@ -24,6 +25,7 @@ class HoldingsCard extends StatelessWidget {
     final lots = cubit.lotsFor(instrument);
     final valuation = cubit.valuationFor(instrument, displayCurrency);
     final l10n = AppLocalizations.of(context)!;
+    final colors = context.colors;
 
     return DSCard(
       child: Column(
@@ -31,10 +33,10 @@ class HoldingsCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              Text(l10n.detailHoldings, style: const TextStyle(color: DS.textPrimary, fontSize: 16, fontWeight: FontWeight.w700)),
+              Text(l10n.detailHoldings, style: TextStyle(color: colors.textPrimary, fontSize: 16, fontWeight: FontWeight.w700)),
               const Spacer(),
               IconButton(
-                icon: const Icon(Icons.add_circle_outline, color: DS.textPrimary),
+                icon: Icon(Icons.add_circle_outline, color: colors.textPrimary),
                 onPressed: () => Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (_) => LotEditorScreen(instrument: instrument, defaultCurrency: displayCurrency),
@@ -48,7 +50,7 @@ class HoldingsCard extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: DS.spaceMD),
               child: Text(
                 l10n.holdingsEmpty,
-                style: const TextStyle(color: DS.textTertiary),
+                style: TextStyle(color: colors.textTertiary),
               ),
             )
           else ...[
@@ -83,6 +85,7 @@ class _SummaryGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final colors = context.colors;
     final gainPercent = (valuation.gainFraction * 100).toStringAsFixed(2);
     // Fixed tile height: an aspect ratio made tiles balloon on tablets.
     return GridView(
@@ -95,23 +98,25 @@ class _SummaryGrid extends StatelessWidget {
         crossAxisSpacing: DS.spaceXS,
       ),
       children: [
-        _metric(l10n.holdingsValue, valuation.value.formatted()),
-        _metric(l10n.holdingsCost, valuation.cost.formatted()),
-        _metric(l10n.holdingsGain, signedFigure(valuation.gain.formatted(), isUp: valuation.isUp), tint: DS.trendColor(valuation.isUp)),
-        _metric(l10n.holdingsGainPercent, signedFigure('$gainPercent%', isUp: valuation.isUp), tint: DS.trendColor(valuation.isUp)),
+        _metric(colors, l10n.holdingsValue, valuation.value.formatted()),
+        _metric(colors, l10n.holdingsCost, valuation.cost.formatted()),
+        _metric(colors, l10n.holdingsGain, signedFigure(valuation.gain.formatted(), isUp: valuation.isUp),
+            tint: QimaColors.trendColor(valuation.isUp, colors)),
+        _metric(colors, l10n.holdingsGainPercent, signedFigure('$gainPercent%', isUp: valuation.isUp),
+            tint: QimaColors.trendColor(valuation.isUp, colors)),
       ],
     );
   }
 
-  Widget _metric(String label, String value, {Color? tint}) {
+  Widget _metric(QimaColors colors, String label, String value, {Color? tint}) {
     return DSTile(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(label.toUpperCase(), style: const TextStyle(color: DS.textTertiary, fontSize: 10)),
+          Text(label.toUpperCase(), style: TextStyle(color: colors.textTertiary, fontSize: 10)),
           const SizedBox(height: 2),
-          Text(value, style: TextStyle(color: tint ?? DS.textPrimary, fontSize: 14, fontWeight: FontWeight.w700)),
+          Text(value, style: TextStyle(color: tint ?? colors.textPrimary, fontSize: 14, fontWeight: FontWeight.w700)),
         ],
       ),
     );
@@ -127,6 +132,7 @@ class _LotTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     final unitSuffix = lot.unit.abbreviationKey != null ? ' ${displayLabel(context, lot.unit.abbreviationKey!)}' : '';
     final qtyText = '${_formatQty(lot.quantity)}$unitSuffix';
     return Dismissible(
@@ -136,19 +142,19 @@ class _LotTile extends StatelessWidget {
       background: Container(
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.only(right: DS.spaceMD),
-        child: const Icon(Icons.delete, color: DS.down),
+        child: Icon(Icons.delete, color: colors.down),
       ),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
         onTap: onTap,
-        title: Text(qtyText, style: const TextStyle(color: DS.textPrimary)),
+        title: Text(qtyText, style: TextStyle(color: colors.textPrimary)),
         subtitle: Text(
           '${Money(lot.unitCost, lot.costCurrency).formatted()} · ${lot.date.year}-${lot.date.month.toString().padLeft(2, '0')}-${lot.date.day.toString().padLeft(2, '0')}',
-          style: const TextStyle(color: DS.textTertiary, fontSize: 12),
+          style: TextStyle(color: colors.textTertiary, fontSize: 12),
         ),
         trailing: Text(
           Money(lot.totalCost, lot.costCurrency).formatted(),
-          style: const TextStyle(color: DS.textSecondary),
+          style: TextStyle(color: colors.textSecondary),
         ),
       ),
     );

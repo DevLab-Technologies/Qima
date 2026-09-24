@@ -3,7 +3,6 @@ package com.devlabtechnologies.qima.widget
 import android.content.Context
 import android.content.Intent
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.glance.GlanceId
@@ -25,7 +24,6 @@ import androidx.glance.layout.padding
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
-import androidx.glance.unit.ColorProvider
 import com.devlabtechnologies.qima.MainActivity
 import es.antonborri.home_widget.HomeWidgetGlanceState
 import es.antonborri.home_widget.HomeWidgetGlanceStateDefinition
@@ -50,12 +48,11 @@ class PortfolioGlanceWidget : GlanceAppWidget() {
     @Composable
     private fun Content(context: Context, state: HomeWidgetGlanceState) {
         val json = readJson(state.preferences, "portfolio_widget_data")
-        val cardBg = Color(0xFF1F2229)
 
         Box(
             modifier = GlanceModifier
                 .fillMaxSize()
-                .background(cardBg)
+                .background(QimaWidgetColors.surfaceTop)
                 .padding(14.dp)
                 .clickable(onClick = actionStartActivity(Intent(context, MainActivity::class.java)))
         ) {
@@ -76,12 +73,12 @@ class PortfolioGlanceWidget : GlanceAppWidget() {
         ) {
             Text(
                 "Portfolio",
-                style = TextStyle(fontSize = 13.sp, color = ColorProvider(Color(0xB3FFFFFF))),
+                style = TextStyle(fontSize = 13.sp, color = QimaWidgetColors.textSecondary),
             )
             Spacer(modifier = GlanceModifier.height(4.dp))
             Text(
                 "Add your first lot",
-                style = TextStyle(fontSize = 13.sp, color = ColorProvider(Color(0x99FFFFFF))),
+                style = TextStyle(fontSize = 13.sp, color = QimaWidgetColors.textTertiary),
             )
         }
     }
@@ -92,7 +89,7 @@ class PortfolioGlanceWidget : GlanceAppWidget() {
         val gain = json.optString("gain", "")
         val isUp = json.optBoolean("isUp", true)
         val percent = json.optDouble("percent", 0.0)
-        val trendColor = if (isUp) Color(0xFF30D158) else Color(0xFFFF6B61)
+        val trendColor = if (isUp) QimaWidgetColors.up else QimaWidgetColors.down
 
         Column(modifier = GlanceModifier.fillMaxSize()) {
             Text(
@@ -100,7 +97,7 @@ class PortfolioGlanceWidget : GlanceAppWidget() {
                 style = TextStyle(
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Medium,
-                    color = ColorProvider(Color(0xB3FFFFFF)),
+                    color = QimaWidgetColors.textSecondary,
                 ),
             )
             Spacer(modifier = GlanceModifier.height(6.dp))
@@ -109,7 +106,7 @@ class PortfolioGlanceWidget : GlanceAppWidget() {
                 style = TextStyle(
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
-                    color = ColorProvider(Color.White),
+                    color = QimaWidgetColors.textPrimary,
                 ),
             )
             Spacer(modifier = GlanceModifier.height(6.dp))
@@ -118,7 +115,7 @@ class PortfolioGlanceWidget : GlanceAppWidget() {
                 style = TextStyle(
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Medium,
-                    color = ColorProvider(trendColor),
+                    color = trendColor,
                 ),
             )
         }

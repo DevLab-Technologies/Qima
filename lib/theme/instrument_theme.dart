@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 
 import '../models/asset.dart';
+import 'qima_colors.dart';
 
 /// Per-asset-class accent colors, ported from `Theme.swift` (spec §3.2).
+/// Each stop set keeps its dark-mode gradient shape (used for the hero-card
+/// wash/border), but the single flat [accentColor] — used as fills, chip
+/// selections and chart lines — comes from [QimaColors]'s per-asset-class
+/// accent tokens so it stays correct in light mode.
 class InstrumentTheme {
   InstrumentTheme._();
 
@@ -74,5 +79,26 @@ class InstrumentTheme {
     );
   }
 
-  static Color accentColor(Instrument? instrument) => _stops(instrument)[1];
+  /// Flat accent used for fills, selected chips/segments and chart lines.
+  /// Metal instruments without a specific asset-class accent (gold, and the
+  /// silver/platinum-group split above) fall back to the gradient's middle
+  /// stop, matching pre-Phase-1 behaviour; other asset classes use
+  /// [QimaColors]'s theme-aware accent so light mode reads correctly.
+  static Color accentColor(Instrument? instrument, QimaColors colors) {
+    if (instrument == null) return colors.accentStock;
+    switch (instrument.assetClass) {
+      case AssetClass.metal:
+        if (instrument.symbol == 'XAG') return colors.accentSilver;
+        if (instrument.symbol == 'XPT' || instrument.symbol == 'XPD') return colors.accentPlatinum;
+        return colors.accentGold;
+      case AssetClass.crypto:
+        return colors.accentCrypto;
+      case AssetClass.fiat:
+        return colors.accentFiat;
+      case AssetClass.stock:
+        return colors.accentStock;
+      case AssetClass.indices:
+        return colors.accentIndex;
+    }
+  }
 }

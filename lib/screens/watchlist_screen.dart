@@ -7,6 +7,7 @@ import '../blocs/app_cubit.dart';
 import '../blocs/app_state.dart';
 import '../l10n/app_localizations.dart';
 import '../theme/design_system.dart';
+import '../theme/qima_colors.dart';
 import '../theme/strings.dart';
 import '../widgets/instrument_row.dart';
 import 'add_instrument_screen.dart';
@@ -62,6 +63,7 @@ class _WatchlistScreenState extends State<WatchlistScreen> with WidgetsBindingOb
   Widget build(BuildContext context) {
     final cubit = context.read<AppCubit>();
     final l10n = AppLocalizations.of(context)!;
+    final colors = context.colors;
 
     return ScreenBackground(
       child: Scaffold(
@@ -110,17 +112,17 @@ class _WatchlistScreenState extends State<WatchlistScreen> with WidgetsBindingOb
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(Icons.star_border, color: DS.textTertiary, size: 48),
+                      Icon(Icons.star_border, color: colors.textTertiary, size: 48),
                       const SizedBox(height: DS.spaceMD),
                       Text(
                         l10n.watchlistEmptyTitle,
-                        style: const TextStyle(color: DS.textPrimary, fontSize: 18, fontWeight: FontWeight.w700),
+                        style: TextStyle(color: colors.textPrimary, fontSize: 18, fontWeight: FontWeight.w700),
                       ),
                       const SizedBox(height: DS.spaceXS),
                       Text(
                         l10n.watchlistEmptyMessage,
                         textAlign: TextAlign.center,
-                        style: const TextStyle(color: DS.textTertiary),
+                        style: TextStyle(color: colors.textTertiary),
                       ),
                       const SizedBox(height: DS.spaceLG),
                       FilledButton(
@@ -166,24 +168,24 @@ class _WatchlistScreenState extends State<WatchlistScreen> with WidgetsBindingOb
                         MaterialPageRoute(builder: (_) => const PortfolioDetailScreen()),
                       ),
                       child: DSHeroCard(
-                        accent: DS.brand,
+                        accent: colors.brand,
                         child: Row(
                           children: [
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(l10n.portfolioTitle, style: const TextStyle(color: DS.textTertiary, fontSize: 12)),
+                                  Text(l10n.portfolioTitle, style: TextStyle(color: colors.textTertiary, fontSize: 12)),
                                   Text(
                                     valuation.value.formatted(),
-                                    style: const TextStyle(color: DS.textPrimary, fontSize: 26, fontWeight: FontWeight.w800),
+                                    style: TextStyle(color: colors.textPrimary, fontSize: 26, fontWeight: FontWeight.w800),
                                   ),
                                 ],
                               ),
                             ),
                             Text(
                               signedFigure('${(valuation.gainFraction * 100).toStringAsFixed(2)}%', isUp: valuation.isUp),
-                              style: TextStyle(color: DS.trendColor(valuation.isUp), fontWeight: FontWeight.w700),
+                              style: TextStyle(color: QimaColors.trendColor(valuation.isUp, colors), fontWeight: FontWeight.w700),
                             ),
                           ],
                         ),
@@ -206,7 +208,7 @@ class _WatchlistScreenState extends State<WatchlistScreen> with WidgetsBindingOb
                     background: Container(
                       alignment: Alignment.centerRight,
                       padding: const EdgeInsets.only(right: DS.spaceMD),
-                      child: const Icon(Icons.delete, color: DS.down),
+                      child: Icon(Icons.delete, color: colors.down),
                     ),
                     child: InstrumentRow(
                       presentation: presentation,

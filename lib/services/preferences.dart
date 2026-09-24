@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/chart_range.dart';
@@ -68,6 +69,29 @@ enum AppLanguage {
   }
 }
 
+/// Light/dark override, independent of [AppLanguage]. Mirrors the "Appearance"
+/// setting added in Phase 1 (spec Figma "Settings · v2").
+enum Appearance {
+  system,
+  light,
+  dark;
+
+  ThemeMode get themeMode {
+    switch (this) {
+      case Appearance.system:
+        return ThemeMode.system;
+      case Appearance.light:
+        return ThemeMode.light;
+      case Appearance.dark:
+        return ThemeMode.dark;
+    }
+  }
+
+  static Appearance fromRawValue(String value) {
+    return Appearance.values.firstWhere((v) => v.name == value, orElse: () => Appearance.system);
+  }
+}
+
 /// User settings, mirrored between a (pluggable) cloud KV store — source of
 /// truth for cross-device sync — and local `SharedPreferences` as a fast
 /// local cache. Mirrors `Preferences.swift` (spec §2.14).
@@ -75,6 +99,7 @@ class Preferences {
   static const String _baseCurrencyKey = 'baseCurrency';
   static const String _widgetRefreshIntervalKey = 'widgetRefreshInterval';
   static const String _appLanguageKey = 'appLanguage';
+  static const String _appearanceKey = 'appearance';
   static const String _preferredChartRangeKey = 'preferredChartRange';
   static const String _legacyWatchcardsKey = 'pref.watchcards';
   static const String _legacyWatchlistKey = 'pref.watchlist';
@@ -133,6 +158,22 @@ class Preferences {
   Future<void> setAppLanguage(AppLanguage value) async {
     await local.setString(_appLanguageKey, value.name);
     await cloud.setString(_appLanguageKey, value.name);
+    await cloud.synchronize();
+  }
+
+  Future<Appearance> get appearance async {
+    final cloudValue = await cloud.getString(_appearanceKey);
+    if (cloudValue != null) {
+      await local.setString(_appearanceKey, cloudValue);
+      return Appearance.fromRawValue(cloudValue);
+    }
+    final localValue = local.getString(_appearanceKey);
+    return localValue == null ? Appearance.system : Appearance.fromRawValue(localValue);
+  }
+
+  Future<void> setAppearance(Appearance value) async {
+    await local.setString(_appearanceKey, value.name);
+    await cloud.setString(_appearanceKey, value.name);
     await cloud.synchronize();
   }
 

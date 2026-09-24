@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../theme/design_system.dart';
+import '../theme/qima_colors.dart';
 
 /// Small labeled metric tile, matching `StatPill.swift`.
 class StatPill extends StatelessWidget {
@@ -12,6 +13,7 @@ class StatPill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return DSTile(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -19,8 +21,8 @@ class StatPill extends StatelessWidget {
         children: [
           Text(
             title.toUpperCase(),
-            style: const TextStyle(
-              color: DS.textTertiary,
+            style: TextStyle(
+              color: colors.textTertiary,
               fontSize: 10,
               fontWeight: FontWeight.w600,
               letterSpacing: 0.4,
@@ -30,7 +32,7 @@ class StatPill extends StatelessWidget {
           Text(
             value,
             style: TextStyle(
-              color: tint ?? DS.textPrimary,
+              color: tint ?? colors.textPrimary,
               fontSize: 15,
               fontWeight: FontWeight.w700,
             ),

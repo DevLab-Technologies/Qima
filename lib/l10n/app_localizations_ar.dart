@@ -163,6 +163,18 @@ class AppLocalizationsAr extends AppLocalizations {
   String get settingsTitle => 'الإعدادات';
 
   @override
+  String get settingsAppearance => 'المظهر';
+
+  @override
+  String get settingsAppearanceSystem => 'النظام';
+
+  @override
+  String get settingsAppearanceLight => 'فاتح';
+
+  @override
+  String get settingsAppearanceDark => 'داكن';
+
+  @override
   String get settingsBaseCurrency => 'العملة الأساسية';
 
   @override

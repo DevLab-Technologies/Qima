@@ -10,6 +10,7 @@ import '../models/quote.dart';
 import '../models/watch_card.dart';
 import '../services/price_converter.dart';
 import '../theme/instrument_theme.dart';
+import '../theme/qima_colors.dart';
 
 /// Bridges [AppState] to the native home-screen widgets via the
 /// `home_widget` plugin.
@@ -153,7 +154,13 @@ class HomeWidgetService {
     final now = DateTime.now();
     final sparkline = presentation.sparklinePoints(now);
     final change = presentation.sparklineChange(now);
-    final accent = InstrumentTheme.accentColor(instrument);
+    // The Android/iOS home-screen widgets follow the OS's own day/night
+    // mode (there's no in-app UI hosting them to read the app's Appearance
+    // setting from), so the accent is resolved from the platform's current
+    // brightness rather than any in-app theme state.
+    final widgetColors =
+        PlatformDispatcher.instance.platformBrightness == Brightness.light ? QimaColors.light : QimaColors.dark;
+    final accent = InstrumentTheme.accentColor(instrument, widgetColors);
 
     return {
       'available': true,

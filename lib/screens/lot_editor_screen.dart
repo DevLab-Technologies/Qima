@@ -8,6 +8,7 @@ import '../models/asset.dart';
 import '../models/holding.dart';
 import '../theme/design_system.dart';
 import '../theme/instrument_theme.dart';
+import '../theme/qima_colors.dart';
 import '../theme/strings.dart';
 import 'currency_picker.dart';
 
@@ -82,7 +83,8 @@ class _LotEditorScreenState extends State<LotEditorScreen> {
     final cubit = context.read<AppCubit>();
     final isEditing = widget.existing != null;
     final l10n = AppLocalizations.of(context)!;
-    final accent = InstrumentTheme.accentColor(widget.instrument);
+    final colors = context.colors;
+    final accent = InstrumentTheme.accentColor(widget.instrument, colors);
 
     return ScreenBackground(
       child: Scaffold(
@@ -108,7 +110,7 @@ class _LotEditorScreenState extends State<LotEditorScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  _field(l10n.holdingsQuantity, _quantityController, onChanged: (_) => _onQuantityChanged()),
+                  _field(colors, l10n.holdingsQuantity, _quantityController, onChanged: (_) => _onQuantityChanged()),
                   if (widget.instrument.supportedUnits.length > 1) ...[
                     const SizedBox(height: DS.spaceSM),
                     Wrap(
@@ -132,29 +134,29 @@ class _LotEditorScreenState extends State<LotEditorScreen> {
                     ],
                     selected: {_mode},
                     onSelectionChanged: (s) => setState(() => _mode = s.first),
-                    style: DS.segmentedButtonStyle(accent),
+                    style: DS.segmentedButtonStyle(colors, accent),
                   ),
                   const SizedBox(height: DS.spaceSM),
                   if (_mode == _CostMode.perUnit) ...[
-                    _field(l10n.holdingsUnitCost, _unitCostController, onChanged: (_) => setState(_syncFromUnitCost)),
+                    _field(colors, l10n.holdingsUnitCost, _unitCostController, onChanged: (_) => setState(_syncFromUnitCost)),
                     const SizedBox(height: 4),
                     Text(
                       l10n.holdingsTotalCostPreview(_totalCostController.text),
-                      style: const TextStyle(color: DS.textTertiary, fontSize: 12),
+                      style: TextStyle(color: colors.textTertiary, fontSize: 12),
                     ),
                   ] else ...[
-                    _field(l10n.holdingsTotalCost, _totalCostController, onChanged: (_) => setState(_syncFromTotalCost)),
+                    _field(colors, l10n.holdingsTotalCost, _totalCostController, onChanged: (_) => setState(_syncFromTotalCost)),
                     const SizedBox(height: 4),
                     Text(
                       l10n.holdingsUnitCostPreview(_unitCostController.text),
-                      style: const TextStyle(color: DS.textTertiary, fontSize: 12),
+                      style: TextStyle(color: colors.textTertiary, fontSize: 12),
                     ),
                   ],
                   const SizedBox(height: DS.spaceMD),
                   ListTile(
                     contentPadding: EdgeInsets.zero,
-                    title: Text(l10n.commonCurrency, style: const TextStyle(color: DS.textPrimary)),
-                    trailing: Text(_currency, style: const TextStyle(color: DS.textSecondary)),
+                    title: Text(l10n.commonCurrency, style: TextStyle(color: colors.textPrimary)),
+                    trailing: Text(_currency, style: TextStyle(color: colors.textSecondary)),
                     onTap: () async {
                       final selected = await CurrencyPicker.show(
                         context,
@@ -166,9 +168,9 @@ class _LotEditorScreenState extends State<LotEditorScreen> {
                   ),
                   ListTile(
                     contentPadding: EdgeInsets.zero,
-                    title: Text(l10n.holdingsDate, style: const TextStyle(color: DS.textPrimary)),
+                    title: Text(l10n.holdingsDate, style: TextStyle(color: colors.textPrimary)),
                     trailing: Text('${_date.year}-${_date.month.toString().padLeft(2, '0')}-${_date.day.toString().padLeft(2, '0')}',
-                        style: const TextStyle(color: DS.textSecondary)),
+                        style: TextStyle(color: colors.textSecondary)),
                     onTap: () async {
                       final picked = await showDatePicker(
                         context: context,
@@ -207,17 +209,17 @@ class _LotEditorScreenState extends State<LotEditorScreen> {
     );
   }
 
-  Widget _field(String label, TextEditingController controller, {ValueChanged<String>? onChanged}) {
+  Widget _field(QimaColors colors, String label, TextEditingController controller, {ValueChanged<String>? onChanged}) {
     return TextField(
       controller: controller,
       keyboardType: const TextInputType.numberWithOptions(decimal: true),
-      style: const TextStyle(color: DS.textPrimary),
+      style: TextStyle(color: colors.textPrimary),
       onChanged: onChanged,
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: const TextStyle(color: DS.textTertiary),
+        labelStyle: TextStyle(color: colors.textTertiary),
         filled: true,
-        fillColor: DS.tileTop,
+        fillColor: colors.tileTop,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(DS.radiusTile), borderSide: BorderSide.none),
       ),
     );

@@ -56,6 +56,7 @@ class AppCubit extends Cubit<AppState> {
     final baseCurrency = await preferences.baseCurrency;
     final widgetRefreshInterval = await preferences.widgetRefreshInterval;
     final appLanguage = await preferences.appLanguage;
+    final appearance = await preferences.appearance;
     final preferredChartRange = preferences.preferredChartRange;
 
     final seedCards = await preferences.seedWatchcards();
@@ -75,6 +76,7 @@ class AppCubit extends Cubit<AppState> {
       baseCurrency: baseCurrency,
       widgetRefreshInterval: widgetRefreshInterval,
       appLanguage: appLanguage,
+      appearance: appearance,
       preferredChartRange: preferredChartRange,
       cards: cards,
       lots: lots,
@@ -369,6 +371,12 @@ class AppCubit extends Cubit<AppState> {
     if (value == state.appLanguage) return;
     await preferences.setAppLanguage(value);
     emit(state.copyWith(appLanguage: value));
+  }
+
+  Future<void> setAppearance(Appearance value) async {
+    if (value == state.appearance) return;
+    await preferences.setAppearance(value);
+    emit(state.copyWith(appearance: value));
   }
 
   Future<void> setPreferredChartRange(ChartRange value) async {

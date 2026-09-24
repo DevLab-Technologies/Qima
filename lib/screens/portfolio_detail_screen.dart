@@ -5,6 +5,7 @@ import '../blocs/app_cubit.dart';
 import '../blocs/app_state.dart';
 import '../l10n/app_localizations.dart';
 import '../theme/design_system.dart';
+import '../theme/qima_colors.dart';
 import '../theme/strings.dart';
 import '../widgets/instrument_icon.dart';
 import 'instrument_detail_screen.dart';
@@ -18,6 +19,7 @@ class PortfolioDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final cubit = context.read<AppCubit>();
     final l10n = AppLocalizations.of(context)!;
+    final colors = context.colors;
 
     return ScreenBackground(
       child: Scaffold(
@@ -33,26 +35,27 @@ class PortfolioDetailScreen extends StatelessWidget {
               children: [
                 if (valuation != null)
                   DSHeroCard(
-                    accent: DS.brand,
+                    accent: colors.brand,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(l10n.portfolioValue, style: const TextStyle(color: DS.textTertiary, fontSize: 12)),
+                        Text(l10n.portfolioValue, style: TextStyle(color: colors.textTertiary, fontSize: 12)),
                         const SizedBox(height: 4),
                         Text(
                           valuation.value.formatted(),
-                          style: const TextStyle(color: DS.textPrimary, fontSize: 30, fontWeight: FontWeight.w800),
+                          style: TextStyle(color: colors.textPrimary, fontSize: 30, fontWeight: FontWeight.w800),
                         ),
                         const SizedBox(height: DS.spaceSM),
                         Row(
                           children: [
-                            Expanded(child: _metricTile(l10n.holdingsCost, valuation.cost.formatted())),
+                            Expanded(child: _metricTile(colors, l10n.holdingsCost, valuation.cost.formatted())),
                             const SizedBox(width: DS.spaceXS),
                             Expanded(
                               child: _metricTile(
+                                colors,
                                 l10n.holdingsGain,
                                 signedFigure(valuation.gain.formatted(), isUp: valuation.isUp),
-                                tint: DS.trendColor(valuation.isUp),
+                                tint: QimaColors.trendColor(valuation.isUp, colors),
                               ),
                             ),
                           ],
@@ -63,7 +66,7 @@ class PortfolioDetailScreen extends StatelessWidget {
                 else
                   DSCard(
                     child: Text(l10n.portfolioEmpty,
-                        style: const TextStyle(color: DS.textTertiary)),
+                        style: TextStyle(color: colors.textTertiary)),
                   ),
                 const SizedBox(height: DS.spaceLG),
                 for (final held in heldInstruments)
@@ -88,9 +91,9 @@ class PortfolioDetailScreen extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(displayLabel(context, held.instrument.nameKey),
-                                      style: const TextStyle(color: DS.textPrimary, fontWeight: FontWeight.w600)),
+                                      style: TextStyle(color: colors.textPrimary, fontWeight: FontWeight.w600)),
                                   Text(l10n.portfolioLotCount(held.lotCount),
-                                      style: const TextStyle(color: DS.textTertiary, fontSize: 12)),
+                                      style: TextStyle(color: colors.textTertiary, fontSize: 12)),
                                 ],
                               ),
                             ),
@@ -98,10 +101,10 @@ class PortfolioDetailScreen extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
                                 Text(held.valuation.value.formatted(),
-                                    style: const TextStyle(color: DS.textPrimary, fontWeight: FontWeight.w700)),
+                                    style: TextStyle(color: colors.textPrimary, fontWeight: FontWeight.w700)),
                                 Text(
                                   signedFigure(held.valuation.gain.formatted(), isUp: held.valuation.isUp),
-                                  style: TextStyle(color: DS.trendColor(held.valuation.isUp), fontSize: 12),
+                                  style: TextStyle(color: QimaColors.trendColor(held.valuation.isUp, colors), fontSize: 12),
                                 ),
                               ],
                             ),
@@ -118,15 +121,15 @@ class PortfolioDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _metricTile(String label, String value, {Color? tint}) {
+  Widget _metricTile(QimaColors colors, String label, String value, {Color? tint}) {
     return DSTile(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(label.toUpperCase(), style: const TextStyle(color: DS.textTertiary, fontSize: 10)),
+          Text(label.toUpperCase(), style: TextStyle(color: colors.textTertiary, fontSize: 10)),
           const SizedBox(height: 2),
-          Text(value, style: TextStyle(color: tint ?? DS.textPrimary, fontWeight: FontWeight.w700)),
+          Text(value, style: TextStyle(color: tint ?? colors.textPrimary, fontWeight: FontWeight.w700)),
         ],
       ),
     );

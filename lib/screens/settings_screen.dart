@@ -7,6 +7,7 @@ import '../l10n/app_localizations.dart';
 import '../models/chart_range.dart';
 import '../services/preferences.dart';
 import '../theme/design_system.dart';
+import '../theme/qima_colors.dart';
 import '../theme/strings.dart';
 import 'currency_picker.dart';
 
@@ -20,6 +21,7 @@ class SettingsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final cubit = context.read<AppCubit>();
     final l10n = AppLocalizations.of(context)!;
+    final colors = context.colors;
 
     return ScreenBackground(
       child: Scaffold(
@@ -31,16 +33,30 @@ class SettingsScreen extends StatelessWidget {
             return ListView(
               padding: const EdgeInsets.all(DS.spaceMD),
               children: [
+                _SectionHeader(l10n.settingsAppearance),
+                DSCard(
+                  child: SegmentedButton<Appearance>(
+                    segments: [
+                      ButtonSegment(value: Appearance.system, label: Text(l10n.settingsAppearanceSystem)),
+                      ButtonSegment(value: Appearance.light, label: Text(l10n.settingsAppearanceLight)),
+                      ButtonSegment(value: Appearance.dark, label: Text(l10n.settingsAppearanceDark)),
+                    ],
+                    selected: {state.appearance},
+                    onSelectionChanged: (selection) => cubit.setAppearance(selection.first),
+                    style: DS.segmentedButtonStyle(colors, colors.brand),
+                  ),
+                ),
+                const SizedBox(height: DS.spaceLG),
                 _SectionHeader(l10n.settingsBaseCurrency),
                 DSCard(
                   child: ListTile(
                     contentPadding: EdgeInsets.zero,
-                    title: Text(l10n.settingsPortfolioCurrency, style: const TextStyle(color: DS.textPrimary)),
+                    title: Text(l10n.settingsPortfolioCurrency, style: TextStyle(color: colors.textPrimary)),
                     subtitle: Text(
                       l10n.settingsBaseCurrencyFooter,
-                      style: const TextStyle(color: DS.textTertiary),
+                      style: TextStyle(color: colors.textTertiary),
                     ),
-                    trailing: Text(state.baseCurrency, style: const TextStyle(color: DS.textSecondary)),
+                    trailing: Text(state.baseCurrency, style: TextStyle(color: colors.textSecondary)),
                     onTap: () async {
                       final selected = await CurrencyPicker.show(
                         context,
@@ -70,7 +86,7 @@ class SettingsScreen extends StatelessWidget {
                         ],
                       ),
                       const SizedBox(height: DS.spaceXS),
-                      Text(l10n.settingsDefaultRangeFooter, style: const TextStyle(color: DS.textTertiary, fontSize: 12)),
+                      Text(l10n.settingsDefaultRangeFooter, style: TextStyle(color: colors.textTertiary, fontSize: 12)),
                     ],
                   ),
                 ),
@@ -89,19 +105,19 @@ class SettingsScreen extends StatelessWidget {
                             for (final interval in WidgetRefreshInterval.values)
                               RadioListTile<WidgetRefreshInterval>(
                                 contentPadding: EdgeInsets.zero,
-                                title: Text(displayLabel(context, interval.labelKey), style: const TextStyle(color: DS.textPrimary)),
+                                title: Text(displayLabel(context, interval.labelKey), style: TextStyle(color: colors.textPrimary)),
                                 value: interval,
-                                activeColor: DS.brand,
+                                activeColor: colors.brand,
                               ),
                           ],
                         ),
                       ),
-                      const Divider(color: DS.hairline),
+                      Divider(color: colors.hairline),
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: DS.spaceSM),
                         child: Text(
                           l10n.settingsWidgetRefreshFooter,
-                          style: const TextStyle(color: DS.textTertiary, fontSize: 12),
+                          style: TextStyle(color: colors.textTertiary, fontSize: 12),
                         ),
                       ),
                     ],
@@ -124,20 +140,20 @@ class SettingsScreen extends StatelessWidget {
                                 contentPadding: EdgeInsets.zero,
                                 title: Text(
                                   language == AppLanguage.system ? l10n.settingsLanguageSystem : language.nativeName,
-                                  style: const TextStyle(color: DS.textPrimary),
+                                  style: TextStyle(color: colors.textPrimary),
                                 ),
                                 value: language,
-                                activeColor: DS.brand,
+                                activeColor: colors.brand,
                               ),
                           ],
                         ),
                       ),
-                      const Divider(color: DS.hairline),
+                      Divider(color: colors.hairline),
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: DS.spaceSM),
                         child: Text(
                           l10n.settingsDataSource,
-                          style: const TextStyle(color: DS.textTertiary, fontSize: 12),
+                          style: TextStyle(color: colors.textTertiary, fontSize: 12),
                         ),
                       ),
                     ],
@@ -163,7 +179,7 @@ class _SectionHeader extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: DS.spaceXS, left: 4),
       child: Text(
         title.toUpperCase(),
-        style: const TextStyle(color: DS.textTertiary, fontSize: 12, fontWeight: FontWeight.w600, letterSpacing: 0.5),
+        style: TextStyle(color: context.colors.textTertiary, fontSize: 12, fontWeight: FontWeight.w600, letterSpacing: 0.5),
       ),
     );
   }

@@ -25,6 +25,7 @@ class AppState extends Equatable {
   final String baseCurrency;
   final WidgetRefreshInterval widgetRefreshInterval;
   final AppLanguage appLanguage;
+  final Appearance appearance;
   final ChartRange preferredChartRange;
   final DateTime? lastRefresh;
   final bool isBackfilling;
@@ -42,6 +43,7 @@ class AppState extends Equatable {
     this.baseCurrency = 'USD',
     this.widgetRefreshInterval = WidgetRefreshInterval.defaultValue,
     this.appLanguage = AppLanguage.system,
+    this.appearance = Appearance.system,
     this.preferredChartRange = ChartRange.fallbackDefault,
     this.lastRefresh,
     this.isBackfilling = false,
@@ -62,6 +64,7 @@ class AppState extends Equatable {
     String? baseCurrency,
     WidgetRefreshInterval? widgetRefreshInterval,
     AppLanguage? appLanguage,
+    Appearance? appearance,
     ChartRange? preferredChartRange,
     DateTime? lastRefresh,
     bool? isBackfilling,
@@ -79,6 +82,7 @@ class AppState extends Equatable {
       baseCurrency: baseCurrency ?? this.baseCurrency,
       widgetRefreshInterval: widgetRefreshInterval ?? this.widgetRefreshInterval,
       appLanguage: appLanguage ?? this.appLanguage,
+      appearance: appearance ?? this.appearance,
       preferredChartRange: preferredChartRange ?? this.preferredChartRange,
       lastRefresh: lastRefresh ?? this.lastRefresh,
       isBackfilling: isBackfilling ?? this.isBackfilling,
@@ -99,6 +103,7 @@ class AppState extends Equatable {
         baseCurrency,
         widgetRefreshInterval,
         appLanguage,
+        appearance,
         preferredChartRange,
         lastRefresh,
         isBackfilling,
