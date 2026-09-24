@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
@@ -85,6 +86,36 @@ void main() {
         'reason': reason,
       });
     }
+  }
+
+  /// Starts watching [cubit]'s state stream for a FRESH arrival at [status]
+  /// — call this BEFORE triggering whatever change is expected to produce
+  /// it (a broadcast cloud-change event, or a user-initiated toggle), then
+  /// call the returned function to await it. Subscribing first (rather than
+  /// checking `cubit.state.cloudSyncStatus == status` after the fact) is the
+  /// point: the cubit is very often ALREADY sitting at [status] (e.g.
+  /// `upToDate` left over from a previous cycle) at the moment a naive
+  /// check would run, so a check-after-triggering shortcut is wrong here —
+  /// it accepts stale state and returns immediately without ever having
+  /// waited for the real `syncing` -> (reload) -> `upToDate` (or
+  /// `quotaViolationChange` -> `storageFull`) cycle the trigger actually
+  /// caused. This is the same class of bug as the `pumpEventQueue()` it
+  /// replaces, just one level up: both accept "looks done" instead of
+  /// awaiting the specific async work that was just started.
+  Future<void> Function() watchForCloudSyncStatus(AppCubit cubit, CloudSyncStatus status) {
+    final completer = Completer<void>();
+    final subscription = cubit.stream.listen((s) {
+      if (s.cloudSyncStatus == status && !completer.isCompleted) {
+        completer.complete();
+      }
+    });
+    return () async {
+      try {
+        await completer.future.timeout(const Duration(seconds: 5));
+      } finally {
+        await subscription.cancel();
+      }
+    };
   }
 
   setUp(() {
@@ -276,15 +307,18 @@ void main() {
       final dirA = await Directory.systemTemp.createTemp('qima_icloud_toggle_a');
       final deviceA = await device(dirA);
       final defaultIds = deviceA.state.cards.map((c) => c.id).toSet();
-      await deviceA.addCard(WatchCard(id: 'c1', instrumentID: gold.id, currency: 'EGP', unit: PriceUnit.troyOunce));
       // NOTE: unlike the real `NSUbiquitousKeyValueStore` (which never fires
       // `didChangeExternallyNotification` for a change this same process
       // just made), this test's mocked channel broadcasts on every
       // `setString` regardless of origin, so `addCard`'s own write loops
       // back as a (harmless, self-)external-change event here — its
       // asynchronous re-sync briefly reports `syncing` before settling back
-      // to `upToDate`. Pump once so that's landed before asserting.
-      await pumpEventQueue();
+      // to `upToDate`. Subscribe BEFORE triggering the add, so the wait
+      // below can't miss (or mistake a stale prior state for) the fresh
+      // reload cycle this specific write causes.
+      final settled = watchForCloudSyncStatus(deviceA, CloudSyncStatus.upToDate);
+      await deviceA.addCard(WatchCard(id: 'c1', instrumentID: gold.id, currency: 'EGP', unit: PriceUnit.troyOunce));
+      await settled();
       expect(deviceA.state.cloudSyncStatus, CloudSyncStatus.upToDate);
 
       await deviceA.setICloudSyncEnabled(false);
@@ -312,8 +346,9 @@ void main() {
       final deviceCubit = await device(dir);
       expect(deviceCubit.state.cloudSyncStatus, CloudSyncStatus.upToDate);
 
+      final settled = watchForCloudSyncStatus(deviceCubit, CloudSyncStatus.storageFull);
       broadcastChange('watchcards.records', reason: 'quotaViolationChange');
-      await pumpEventQueue();
+      await settled();
       expect(deviceCubit.state.cloudSyncStatus, CloudSyncStatus.storageFull);
 
       await deviceCubit.disposeCloudSync();
@@ -334,9 +369,22 @@ void main() {
       // another device wrote a lot) and confirm B's cards list is untouched
       // (same identity) while a reload for holdings was attempted (no crash,
       // no unrelated card churn).
+      //
+      // NOTE: `EventChannel.receiveBroadcastStream()` registers its message
+      // handler via `binaryMessenger.setMessageHandler(name, ...)`, keyed
+      // only by channel NAME — with two devices (two independent
+      // `IcloudKVStore`s) both listening on the same static
+      // `qima/cloud_kv/changes` channel, the second `listen()` overwrites
+      // the first's handler, so only the most-recently-listening device
+      // (B) actually receives a dispatched event here; A's Dart-side
+      // subscription stays alive but silently never gets this one. That's a
+      // limitation of two `AppCubit`s sharing one static channel name
+      // in-process — real usage never has two — so only B's reload is
+      // awaited/asserted on.
       cloudValues['holdings.records'] = '[]';
+      final settled = watchForCloudSyncStatus(deviceB, CloudSyncStatus.upToDate);
       broadcastChange('holdings.records');
-      await pumpEventQueue();
+      await settled();
 
       expect(deviceB.state.cards, same(cardsIdentityBefore));
 

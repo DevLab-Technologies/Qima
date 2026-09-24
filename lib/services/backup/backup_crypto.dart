@@ -26,20 +26,29 @@ class BackupCrypto {
   /// [password]. Generates a fresh random salt and nonce for every call, so
   /// the same payload encrypted twice with the same password never produces
   /// the same ciphertext.
+  ///
+  /// [iterations] defaults to the production PBKDF2 cost
+  /// ([EncryptedPayload.kdfIterations], 600,000) and must never be lowered
+  /// outside tests — it's written into the file's `kdf.iterations` field, so
+  /// [decrypt] always uses whatever cost the file was actually encrypted
+  /// with regardless of this call's default. Tests pass a much smaller value
+  /// so encrypted-backup fixtures build in milliseconds instead of the real
+  /// KDF's hundreds-of-milliseconds-to-seconds cost.
   static Future<EncryptedPayload> encrypt({
     required Map<String, dynamic> plainPayloadJson,
     required String password,
+    int iterations = EncryptedPayload.kdfIterations,
   }) async {
     final salt = _randomBytes(EncryptedPayload.saltLength);
     final plainBytes = utf8.encode(jsonEncode(plainPayloadJson));
 
-    final secretKey = await _deriveKey(password: password, salt: salt);
+    final secretKey = await _deriveKey(password: password, salt: salt, iterations: iterations);
     final algorithm = AesGcm.with256bits();
     final nonce = algorithm.newNonce();
     final secretBox = await algorithm.encrypt(plainBytes, secretKey: secretKey, nonce: nonce);
 
     return EncryptedPayload(
-      kdfIterationsUsed: EncryptedPayload.kdfIterations,
+      kdfIterationsUsed: iterations,
       salt: salt,
       nonce: nonce,
       // `SecretBox.concatenation()` appends the GCM tag to the ciphertext,

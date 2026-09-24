@@ -28,6 +28,13 @@ BackupPayload _payload() => const BackupPayload(
 
 const _app = BackupAppInfo(version: '1.2.0', build: '42');
 
+/// Every `encodeEncrypted` call below passes this instead of the production
+/// 600,000-iteration default — see `BackupCrypto.encrypt`'s doc comment.
+/// This file only exercises the codec's own encode/decode/error-mapping
+/// logic, not the KDF's cost, and the on-disk format is unaffected either
+/// way: `kdf.iterations` is always read back from the file on decode.
+const _testKdfIterations = 10;
+
 void main() {
   final l10n = AppLocalizationsEn();
 
@@ -48,7 +55,12 @@ void main() {
 
   group('encrypted round trip', () {
     test('encodes and decodes back to the same payload with the right password', () async {
-      final json = await BackupCodec.encodeEncrypted(payload: _payload(), app: _app, password: 'correct horse');
+      final json = await BackupCodec.encodeEncrypted(
+        payload: _payload(),
+        app: _app,
+        password: 'correct horse',
+        kdfIterations: _testKdfIterations,
+      );
       final envelope = BackupCodec.parseEnvelope(json);
 
       expect(envelope.encrypted, isTrue);
@@ -58,7 +70,12 @@ void main() {
     });
 
     test('wrong password fails with BackupErrorKind.wrongPassword', () async {
-      final json = await BackupCodec.encodeEncrypted(payload: _payload(), app: _app, password: 'correct horse');
+      final json = await BackupCodec.encodeEncrypted(
+        payload: _payload(),
+        app: _app,
+        password: 'correct horse',
+        kdfIterations: _testKdfIterations,
+      );
       final envelope = BackupCodec.parseEnvelope(json);
 
       await expectLater(
@@ -68,7 +85,12 @@ void main() {
     });
 
     test('empty password fails with BackupErrorKind.wrongPassword', () async {
-      final json = await BackupCodec.encodeEncrypted(payload: _payload(), app: _app, password: 'correct horse');
+      final json = await BackupCodec.encodeEncrypted(
+        payload: _payload(),
+        app: _app,
+        password: 'correct horse',
+        kdfIterations: _testKdfIterations,
+      );
       final envelope = BackupCodec.parseEnvelope(json);
 
       await expectLater(
@@ -78,7 +100,12 @@ void main() {
     });
 
     test('tampered ciphertext fails with BackupErrorKind.wrongPassword (GCM tag mismatch)', () async {
-      final json = await BackupCodec.encodeEncrypted(payload: _payload(), app: _app, password: 'correct horse');
+      final json = await BackupCodec.encodeEncrypted(
+        payload: _payload(),
+        app: _app,
+        password: 'correct horse',
+        kdfIterations: _testKdfIterations,
+      );
       final decoded = jsonDecode(json) as Map<String, dynamic>;
       final payload = decoded['payload'] as Map<String, dynamic>;
       // Flip one character of the base64 ciphertext.
@@ -95,8 +122,18 @@ void main() {
     });
 
     test('different encryptions of the same payload produce different ciphertext', () async {
-      final json1 = await BackupCodec.encodeEncrypted(payload: _payload(), app: _app, password: 'pw');
-      final json2 = await BackupCodec.encodeEncrypted(payload: _payload(), app: _app, password: 'pw');
+      final json1 = await BackupCodec.encodeEncrypted(
+        payload: _payload(),
+        app: _app,
+        password: 'pw',
+        kdfIterations: _testKdfIterations,
+      );
+      final json2 = await BackupCodec.encodeEncrypted(
+        payload: _payload(),
+        app: _app,
+        password: 'pw',
+        kdfIterations: _testKdfIterations,
+      );
       final e1 = jsonDecode(json1)['payload']['ciphertext'];
       final e2 = jsonDecode(json2)['payload']['ciphertext'];
       expect(e1, isNot(equals(e2)));

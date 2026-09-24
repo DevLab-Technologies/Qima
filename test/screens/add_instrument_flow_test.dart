@@ -1,9 +1,11 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:qima/blocs/app_cubit.dart';
+import 'package:qima/blocs/app_state.dart';
 import 'package:qima/l10n/app_localizations.dart';
 import 'package:qima/models/asset.dart';
 import 'package:qima/models/fx_history.dart';
@@ -47,19 +49,53 @@ class _FakeRepository extends PriceRepository {
       {};
 }
 
-/// Taps [finder] and lets any real (file IO) async work it triggers actually
-/// run to completion. `addCard`/`addCustomTicker` do real on-disk file IO,
-/// which doesn't progress under the fake async zone `testWidgets` normally
-/// runs pumps in — `runAsync` escapes to a real zone for the tap AND a short
-/// real delay, so the awaited Future inside the tapped button's `onPressed`
-/// actually completes before we return to pumping frames.
-Future<void> _tapAndAwaitRealWork(WidgetTester tester, Finder finder) async {
+/// Polls [condition] in real time (inside the caller's `runAsync` block)
+/// until it's true, instead of a fixed real-time sleep and hoping it was
+/// long enough. Used to await the ACTUAL completion of `addCard`/
+/// `undoAdd`'s real on-disk file IO (and everything chained after it —
+/// `CardConfigScreen`'s `onPressed` doesn't return, and doesn't call
+/// `completeAdd`'s navigation, until the whole `await cubit.addCard(...)`
+/// chain resolves). A fixed delay that's too short leaves this work still
+/// in flight when the test (and `tearDown`'s `cubit.close()`) completes,
+/// which then throws "Cannot emit new states after calling close" during a
+/// LATER test; polling instead of guessing a duration is what actually
+/// removes that race.
+Future<void> _pollUntil(bool Function() condition, {Duration timeout = const Duration(seconds: 5)}) async {
+  final deadline = DateTime.now().add(timeout);
+  while (!condition()) {
+    if (DateTime.now().isAfter(deadline)) {
+      throw TimeoutException('_pollUntil: condition not met within $timeout');
+    }
+    await Future<void>.delayed(const Duration(milliseconds: 10));
+  }
+}
+
+/// Waits for `addCard`'s own Future to have effectively resolved (via
+/// [_pollUntil] on [instrumentID] landing in `seriesByID` — its last `emit`
+/// before returning, see its body), THEN also waits out the un-awaited
+/// background `refresh()` call `addCard` fires right after for a brand-new
+/// instrument if one is still in flight. Both are real on-disk-IO-backed
+/// async work that must be fully drained before a test (and `tearDown`'s
+/// `cubit.close()`) completes, or either can throw "Cannot emit new states
+/// after calling close" into a LATER test.
+Future<void> _awaitAddCardSettled(AppCubit cubit, String instrumentID) async {
+  await _pollUntil(() => cubit.state.seriesByID.containsKey(instrumentID));
+  if (cubit.state.phase == RefreshPhase.refreshing) {
+    await cubit.stream.firstWhere((s) => s.phase != RefreshPhase.refreshing).timeout(const Duration(seconds: 5));
+  }
+}
+
+/// Taps [finder] and awaits the real (file IO) async work it triggers —
+/// `addCard`/`addCustomTicker`, and everything `CardConfigScreen`'s/
+/// `CustomTickerScreen`'s `onPressed` chains after it (including the
+/// `completeAdd` navigation) — actually finishing, via [settled] (built
+/// with [_pollUntil]/[_awaitAddCardSettled] from the caller). `runAsync`
+/// escapes to a real zone so the awaited Future inside the tapped button's
+/// `onPressed` can actually progress in the first place.
+Future<void> _tapAndAwaitRealWork(WidgetTester tester, Finder finder, Future<void> Function() settled) async {
   await tester.runAsync(() async {
     await tester.tap(finder, warnIfMissed: false);
-    // Some flows chain several real-IO awaits back to back (validate, then
-    // create the custom ticker, then add the card) — give them enough real
-    // time to actually finish before returning to fake-async pumping.
-    await Future<void>.delayed(const Duration(milliseconds: 300));
+    await settled();
   });
 }
 
@@ -67,15 +103,16 @@ Future<void> _tapAndAwaitRealWork(WidgetTester tester, Finder finder) async {
 /// SnackBarAction ("Undo") legitimately renders partly outside the default
 /// 800x600 test surface, and tapping through the gesture pipeline at an
 /// off-screen offset isn't reliable, so this calls the handler directly
-/// instead (exactly what a real tap would trigger).
-Future<void> _tapUndo(WidgetTester tester) async {
+/// instead (exactly what a real tap would trigger). Awaits [settled] (built
+/// with [_pollUntil]) rather than a fixed sleep, for the same reason as
+/// [_tapAndAwaitRealWork]: `onPressed` fires `cubit.undoAdd(...)` without
+/// awaiting it (a snackbar action can't await), so its real file IO needs to
+/// be awaited some other way before pumping frames again.
+Future<void> _tapUndo(WidgetTester tester, Future<void> Function() settled) async {
   final action = tester.widget<SnackBarAction>(find.byType(SnackBarAction));
   await tester.runAsync(() async {
     action.onPressed();
-    // `onPressed` fires `cubit.undoAdd(...)` without awaiting it (a snackbar
-    // action can't await), so give its real file IO time to actually finish
-    // before pumping frames again.
-    await Future<void>.delayed(const Duration(milliseconds: 300));
+    await settled();
   });
 }
 
@@ -175,8 +212,10 @@ void main() {
     // addCard performs real file IO (the on-disk watchlist store), which
     // doesn't progress under the fake async zone testWidgets normally runs
     // in — runAsync escapes to a real zone so the awaited Future actually
-    // completes.
-    await _tapAndAwaitRealWork(tester, find.byType(FilledButton));
+    // completes. See `_awaitAddCardSettled`'s doc comment for why this
+    // (rather than an earlier intermediate state) is the real completion
+    // signal.
+    await _tapAndAwaitRealWork(tester, find.byType(FilledButton), () => _awaitAddCardSettled(cubit, gold.id));
     await _settle(tester);
 
     expect(find.byType(InstrumentDetailScreen), findsOneWidget);
@@ -198,15 +237,16 @@ void main() {
     await tester.tap(find.byIcon(Icons.add));
     await tester.pumpAndSettle();
 
+    final gold = InstrumentCatalog.instrument('metal.XAU')!;
     await tester.tap(find.text('Gold').first);
     await tester.pumpAndSettle();
-    await _tapAndAwaitRealWork(tester, find.byType(FilledButton));
+    await _tapAndAwaitRealWork(tester, find.byType(FilledButton), () => _awaitAddCardSettled(cubit, gold.id));
     await _settle(tester);
 
     expect(find.byType(InstrumentDetailScreen), findsOneWidget);
     expect(cubit.state.cards, isNotEmpty);
 
-    await _tapUndo(tester);
+    await _tapUndo(tester, () => _pollUntil(() => cubit.state.cards.isEmpty));
     await _settle(tester);
 
     expect(cubit.state.cards, isEmpty);
@@ -218,10 +258,17 @@ void main() {
     // `addCustomTicker`/`addCard` do real on-disk file IO, which needs
     // runAsync to actually progress inside a testWidgets body (see
     // `_tapAndAwaitRealWork` above).
+    // `preExisting` is a NEW instrument, so `addCard` also fires an
+    // un-awaited background `refresh()` — wait for that to settle too
+    // (see `_awaitAddCardSettled`'s doc comment), or it can still be in
+    // flight when `tearDown` closes the cubit.
     late Instrument preExisting;
     await tester.runAsync(() async {
       preExisting = await cubit.addCustomTicker('PREV', 'Previous Co', assetClass: AssetClass.stock);
       await cubit.addCard(WatchCard(id: 'pre', instrumentID: preExisting.id, currency: 'EUR', unit: PriceUnit.each));
+      if (cubit.state.phase == RefreshPhase.refreshing) {
+        await cubit.stream.firstWhere((s) => s.phase != RefreshPhase.refreshing).timeout(const Duration(seconds: 5));
+      }
     });
 
     await tester.pumpWidget(_app(cubit));
@@ -239,15 +286,24 @@ void main() {
 
     expect(find.byType(CustomTickerScreen), findsOneWidget);
     await tester.enterText(find.widgetWithText(TextField, 'Ticker symbol'), 'NEWCO');
-    await _tapAndAwaitRealWork(tester, find.text('Add ticker'));
+    const newInstrumentID = 'stock.NEWCO';
+    await _tapAndAwaitRealWork(tester, find.text('Add ticker'), () => _awaitAddCardSettled(cubit, newInstrumentID));
     await _settle(tester);
 
     expect(find.byType(InstrumentDetailScreen), findsOneWidget);
-    final newInstrumentID = 'stock.NEWCO';
     expect(cubit.isCustom(newInstrumentID), isTrue);
     expect(cubit.state.cards.any((c) => c.instrumentID == newInstrumentID), isTrue);
 
-    await _tapUndo(tester);
+    // `undoAdd` (with a `customInstrumentID`) ends with
+    // `removeCustomInstrument`, which reloads the catalog BEFORE removing
+    // the card — poll on BOTH conditions so this doesn't resolve on the
+    // catalog-reload step alone, ahead of the card actually being gone.
+    await _tapUndo(
+      tester,
+      () => _pollUntil(
+        () => !cubit.isCustom(newInstrumentID) && !cubit.state.cards.any((c) => c.instrumentID == newInstrumentID),
+      ),
+    );
     await _settle(tester);
 
     expect(cubit.state.cards.any((c) => c.instrumentID == newInstrumentID), isFalse);
@@ -261,8 +317,18 @@ void main() {
     final gold = InstrumentCatalog.instrument('metal.XAU')!;
     final existing = WatchCard(id: 'existing', instrumentID: gold.id, currency: 'USD', unit: PriceUnit.troyOunce);
     // addCard does real on-disk file IO — needs runAsync (see
-    // `_tapAndAwaitRealWork` above for why).
-    await tester.runAsync(() => cubit.addCard(existing));
+    // `_tapAndAwaitRealWork` above for why). `existing` is a NEW instrument
+    // the first time (this is the only card added so far), so `addCard`
+    // also fires an un-awaited background `refresh()` — wait for that to
+    // actually settle too (back to `RefreshPhase.idle`), or it can still be
+    // in flight when `tearDown` closes the cubit and throws "Cannot emit
+    // new states after calling close" into a LATER test.
+    await tester.runAsync(() async {
+      await cubit.addCard(existing);
+      if (cubit.state.phase == RefreshPhase.refreshing) {
+        await cubit.stream.firstWhere((s) => s.phase != RefreshPhase.refreshing).timeout(const Duration(seconds: 5));
+      }
+    });
 
     await tester.pumpWidget(_app(cubit));
     await tester.tap(find.byIcon(Icons.add));
@@ -272,8 +338,11 @@ void main() {
     await tester.pumpAndSettle();
     // Default currency/unit in CardConfigScreen match `existing` (base
     // currency USD, default unit troy ounce), so this reproduces the exact
-    // same combo without changing any selector.
-    await _tapAndAwaitRealWork(tester, find.byType(FilledButton));
+    // same combo without changing any selector. `addCard`'s duplicate path
+    // (`isSameCombo`) returns before its first `await`, so there's no real
+    // I/O to bridge with `runAsync` here — a plain tap and frame pumps are
+    // enough.
+    await tester.tap(find.byType(FilledButton));
     await _settle(tester);
 
     expect(find.byType(InstrumentDetailScreen), findsOneWidget);

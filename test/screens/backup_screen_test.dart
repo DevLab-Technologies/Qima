@@ -117,9 +117,16 @@ void main() {
     final switchFinder = find.byType(SwitchListTile).last;
     expect(tester.widget<SwitchListTile>(switchFinder).value, isTrue);
 
+    // `onChanged` flips local widget state synchronously but awaits the
+    // real (shared_preferences) write separately — poll for the actual
+    // persisted value instead of a fixed real-time delay, which can expire
+    // before that write finishes under load.
     await tester.runAsync(() async {
       await tester.tap(switchFinder, warnIfMissed: false);
-      await Future<void>.delayed(const Duration(milliseconds: 100));
+      final deadline = DateTime.now().add(const Duration(seconds: 5));
+      while (cubit.backupService.reminderEnabled && DateTime.now().isBefore(deadline)) {
+        await Future<void>.delayed(const Duration(milliseconds: 10));
+      }
     });
     await tester.pump();
 

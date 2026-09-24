@@ -158,13 +158,17 @@ class BackupService {
 
   /// Builds the full backup JSON, optionally password-protected. Does not
   /// write/share anything — see [exportJson] for that.
-  Future<String> buildJson({String? password}) async {
+  ///
+  /// [kdfIterations] is test-only — see [BackupCrypto.encrypt]'s doc
+  /// comment — and defaults to the production PBKDF2 cost, which
+  /// [exportJson] (the only production caller) never overrides.
+  Future<String> buildJson({String? password, int kdfIterations = EncryptedPayload.kdfIterations}) async {
     final payload = await buildPayload();
     final app = await _appInfo();
     if (password == null || password.isEmpty) {
       return BackupCodec.encodePlain(payload: payload, app: app);
     }
-    return BackupCodec.encodeEncrypted(payload: payload, app: app, password: password);
+    return BackupCodec.encodeEncrypted(payload: payload, app: app, password: password, kdfIterations: kdfIterations);
   }
 
   /// Exports the full backup: shares it on mobile (with an iPad popover

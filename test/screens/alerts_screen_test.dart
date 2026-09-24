@@ -180,9 +180,16 @@ void main() {
 
     expect(cubit.state.alerts.single.enabled, isTrue);
 
+    // `setAlertEnabled` fires from the Switch's `onChanged` without being
+    // awaited by the tap itself, and does real on-disk file IO — await the
+    // actual resulting state change (subscribing BEFORE the tap so nothing
+    // is missed) rather than a fixed real-time delay, which can expire
+    // before the write finishes under load and leave it dangling into a
+    // later test.
+    final toggled = cubit.stream.firstWhere((s) => s.alerts.single.enabled == false).timeout(const Duration(seconds: 5));
     await tester.runAsync(() async {
       await tester.tap(find.byType(Switch), warnIfMissed: false);
-      await Future<void>.delayed(const Duration(milliseconds: 200));
+      await toggled;
     });
     await tester.pumpAndSettle();
 

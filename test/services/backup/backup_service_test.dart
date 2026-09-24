@@ -244,7 +244,16 @@ void main() {
       final service = await makeService();
       await service.watchlistStore.upsert(_card('c1'));
       final payload = await service.buildPayload();
-      final json = await BackupCodec.encodeEncrypted(payload: payload, app: _testAppInfo, password: 'right');
+      // A low test iteration count (see `BackupCrypto.encrypt`'s doc
+      // comment) — this test is about the wrong-password error path, not
+      // the KDF's real cost, and decoding always reads `kdf.iterations`
+      // back from the file regardless.
+      final json = await BackupCodec.encodeEncrypted(
+        payload: payload,
+        app: _testAppInfo,
+        password: 'right',
+        kdfIterations: 10,
+      );
       final envelope = service.parseEnvelope(json);
 
       await expectLater(

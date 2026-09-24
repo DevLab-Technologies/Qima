@@ -112,14 +112,24 @@ void main() {
 
   /// Same as [plainBackupJson] but password-protected — see its doc comment
   /// for why `runAsync` is required; encryption additionally needs it for
-  /// the PBKDF2 pass's `compute()` isolate round-trip.
+  /// the PBKDF2 pass's `compute()` isolate round-trip. Uses a low KDF
+  /// iteration count (`BackupService.buildJson`'s `kdfIterations`, test-only
+  /// — see `BackupCrypto.encrypt`'s doc comment) rather than the real
+  /// 600,000: at production cost, this fixture build plus the SCREEN's own
+  /// two decrypt attempts (once with the wrong password, once — in the
+  /// "shows the password prompt" test — never at all) can each take
+  /// hundreds of milliseconds to seconds under CPU load, which is exactly
+  /// what made "wrong password" time out at the widget-test default 30s
+  /// budget. The on-disk format/decoding path is unchanged either way —
+  /// decoding always reads `kdf.iterations` back out of the file rather than
+  /// assuming any particular cost.
   Future<String> encryptedBackupJson(WidgetTester tester, String password) async {
     late String json;
     await tester.runAsync(() async {
       final source = await populatedCubit();
       await source.watchlistStore
           .upsert(WatchCard(id: 'c1', instrumentID: 'metal.XAU', currency: 'USD', unit: PriceUnit.troyOunce));
-      json = await source.backupService.buildJson(password: password);
+      json = await source.backupService.buildJson(password: password, kdfIterations: 10);
     });
     return json;
   }
@@ -182,13 +192,14 @@ void main() {
 
     await tester.enterText(find.byType(TextField), 'wrongpassword');
     final strings = await l10n();
-    // A larger settle budget than the default: this triggers a SECOND real
-    // PBKDF2 pass (deriving the key to attempt decryption with the wrong
-    // password), which needs its own ~600k-iteration compute() round trip.
+    // This triggers a SECOND real PBKDF2 pass (deriving the key to attempt
+    // decryption with the wrong password) via `compute()`, but the fixture
+    // above was built at a low test iteration count, so the default settle
+    // budget is plenty — no need to inflate it to absorb a ~600k-iteration
+    // round trip that isn't happening here.
     await _runAsyncAndSettle(
       tester,
       () async => tester.tap(find.text(strings.backupImportUnlock)),
-      times: 100,
     );
 
     expect(find.text(strings.backupImportPasswordIncorrect), findsOneWidget);

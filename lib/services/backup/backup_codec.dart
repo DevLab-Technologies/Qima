@@ -74,15 +74,21 @@ class BackupCodec {
 
   /// Builds the final JSON string for a password-protected backup. The KDF
   /// pass runs off the UI thread — see [BackupCrypto.encrypt].
+  ///
+  /// [kdfIterations] defaults to the production cost
+  /// ([EncryptedPayload.kdfIterations]) and exists only so tests can build
+  /// encrypted fixtures cheaply — see [BackupCrypto.encrypt]'s doc comment.
   static Future<String> encodeEncrypted({
     required BackupPayload payload,
     required BackupAppInfo app,
     required String password,
     DateTime? createdAt,
+    int kdfIterations = EncryptedPayload.kdfIterations,
   }) async {
     final encryptedPayload = await BackupCrypto.encrypt(
       plainPayloadJson: payload.toJson(),
       password: password,
+      iterations: kdfIterations,
     );
     final envelope = BackupEnvelope(
       format: BackupEnvelope.formatMagic,
