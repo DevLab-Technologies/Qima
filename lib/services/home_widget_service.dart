@@ -10,6 +10,7 @@ import '../models/quote.dart';
 import '../models/watch_card.dart';
 import '../services/price_converter.dart';
 import '../theme/instrument_theme.dart';
+import '../theme/masking.dart';
 import '../theme/qima_colors.dart';
 
 /// Bridges [AppState] to the native home-screen widgets via the
@@ -107,14 +108,17 @@ class HomeWidgetService {
     if (valuation == null) {
       await HomeWidget.saveWidgetData<String>(portfolioWidgetDataKey, jsonEncode({'available': false}));
     } else {
+      final hidden = state.hideBalances;
       final payload = {
         'available': true,
         'currency': state.baseCurrency,
-        'value': valuation.value.formatted(useFallbackSymbol: true),
-        'cost': valuation.cost.formatted(useFallbackSymbol: true),
-        'gain': valuation.gain.formatted(useFallbackSymbol: true),
+        'value': Masking.amount(valuation.value, hidden: hidden, useFallbackSymbol: true),
+        'cost': Masking.amount(valuation.cost, hidden: hidden, useFallbackSymbol: true),
+        'gain': Masking.amount(valuation.gain, hidden: hidden, useFallbackSymbol: true),
+        // Percentages stay visible even when hidden, per spec.
         'percent': (valuation.gainFraction * 100),
         'isUp': valuation.isUp,
+        'hidden': hidden,
         'updatedAtMillis': DateTime.now().millisecondsSinceEpoch,
       };
       await HomeWidget.saveWidgetData<String>(portfolioWidgetDataKey, jsonEncode(payload));

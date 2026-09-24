@@ -185,6 +185,8 @@ class _WatchlistScreenState extends State<WatchlistScreen> with WidgetsBindingOb
                     onTap: () => Navigator.of(context).push(
                       MaterialPageRoute(builder: (_) => const PortfolioDetailScreen()),
                     ),
+                    hideBalances: state.hideBalances,
+                    onToggleHideBalances: cubit.toggleHideBalances,
                   ),
                   const SizedBox(height: DS.spaceMD),
                 ],

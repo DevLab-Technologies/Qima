@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb, TargetPlatform, defaultTargetPlatform;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -5,6 +6,7 @@ import '../blocs/app_cubit.dart';
 import '../blocs/app_state.dart';
 import '../l10n/app_localizations.dart';
 import '../models/chart_range.dart';
+import '../services/app_lock_service.dart';
 import '../services/preferences.dart';
 import '../theme/design_system.dart';
 import '../theme/qima_colors.dart';
@@ -46,6 +48,9 @@ class SettingsScreen extends StatelessWidget {
                     style: DS.segmentedButtonStyle(colors, colors.brand),
                   ),
                 ),
+                const SizedBox(height: DS.spaceLG),
+                _SectionHeader(l10n.settingsPrivacy),
+                const _PrivacySecuritySection(),
                 const SizedBox(height: DS.spaceLG),
                 _SectionHeader(l10n.settingsBaseCurrency),
                 DSCard(
@@ -164,6 +169,183 @@ class SettingsScreen extends StatelessWidget {
           },
         ),
       ),
+    );
+  }
+}
+
+/// "Privacy & security" settings card: a "Hide balances" switch and an "App
+/// lock" switch + "Lock after" row (spec Phase 4, Figma "Settings hub ·
+/// Privacy & security card"). App lock is only offered when the device
+/// actually supports biometrics or a passcode — [AppLockService.isSupported]
+/// is resolved once via a [FutureBuilder] and, while it's false, the tile is
+/// shown disabled with an explanatory subtitle rather than hidden entirely,
+/// so a user on unsupported hardware understands why it's unavailable
+/// instead of wondering if the feature is missing.
+class _PrivacySecuritySection extends StatefulWidget {
+  const _PrivacySecuritySection();
+
+  @override
+  State<_PrivacySecuritySection> createState() => _PrivacySecuritySectionState();
+}
+
+class _PrivacySecuritySectionState extends State<_PrivacySecuritySection> {
+  late final Future<bool> _supported;
+
+  @override
+  void initState() {
+    super.initState();
+    _supported = context.read<AppCubit>().appLockService.isSupported;
+  }
+
+  /// `local_auth` ships no web or Linux implementation at all — rather than
+  /// showing a permanently-disabled tile on platforms that can never
+  /// support it, the App lock rows are omitted entirely there (spec Phase 4:
+  /// "hide the setting on web/linux"). Other platforms with no biometric
+  /// enrollment/passcode instead show the tile disabled with an
+  /// explanation, since that's a fixable state the user can act on.
+  bool get _appLockPlatformSupported {
+    if (kIsWeb) return false;
+    return defaultTargetPlatform != TargetPlatform.linux;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final cubit = context.read<AppCubit>();
+    final l10n = AppLocalizations.of(context)!;
+    final colors = context.colors;
+
+    // This widget is placed as a `const` child inside SettingsScreen's own
+    // outer BlocBuilder, so Flutter's element diffing can skip rebuilding
+    // this whole subtree when the parent rebuilds but the const widget
+    // instance is unchanged — its own BlocBuilder subscription is what
+    // actually keeps the hide-balances/app-lock switches and the "Lock
+    // after" row in sync with AppCubit, independent of the parent.
+    return BlocBuilder<AppCubit, AppState>(
+      bloc: cubit,
+      builder: (context, state) {
+        return FutureBuilder<bool>(
+          future: _supported,
+          builder: (context, snapshot) {
+            // Defaults to "supported" while the check is in flight, so the
+            // switch doesn't flash disabled-then-enabled on every settings
+            // open; it only locks into the disabled state once the check
+            // resolves false.
+            final lockSupported = snapshot.data ?? true;
+            final checkDone = snapshot.connectionState == ConnectionState.done;
+
+            return DSCard(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  SwitchListTile(
+                    contentPadding: EdgeInsets.zero,
+                    title: Text(l10n.settingsHideBalances, style: TextStyle(color: colors.textPrimary)),
+                    subtitle:
+                        Text(l10n.settingsHideBalancesFooter, style: TextStyle(color: colors.textTertiary, fontSize: 12)),
+                    value: state.hideBalances,
+                    activeThumbColor: colors.onBrand,
+                    activeTrackColor: colors.brand,
+                    onChanged: (value) => cubit.setHideBalances(value),
+                  ),
+                  if (_appLockPlatformSupported) ...[
+                    Divider(color: colors.hairline, height: DS.spaceLG),
+                    SwitchListTile(
+                      contentPadding: EdgeInsets.zero,
+                      title: Text(l10n.settingsAppLock, style: TextStyle(color: colors.textPrimary)),
+                      subtitle: Text(
+                        checkDone && !lockSupported ? l10n.settingsAppLockUnavailable : l10n.settingsAppLockFooter,
+                        style: TextStyle(color: colors.textTertiary, fontSize: 12),
+                      ),
+                      value: state.appLockEnabled,
+                      activeThumbColor: colors.onBrand,
+                      activeTrackColor: colors.brand,
+                      onChanged: !checkDone || !lockSupported
+                          ? null
+                          : (value) async {
+                              final enabled = await cubit.setAppLockEnabled(value, reason: l10n.appLockAuthReason);
+                              if (!enabled && value && context.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text(l10n.settingsAppLockFailed)),
+                                );
+                              }
+                            },
+                    ),
+                    if (state.appLockEnabled) ...[
+                      Divider(color: colors.hairline, height: DS.spaceLG),
+                      ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        title: Text(l10n.settingsLockAfter, style: TextStyle(color: colors.textPrimary)),
+                        trailing: Text(
+                          displayLabel(context, state.lockGrace.labelKey),
+                          style: TextStyle(color: colors.textSecondary),
+                        ),
+                        onTap: () => _showLockAfterSheet(context, cubit),
+                      ),
+                    ],
+                  ],
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Future<void> _showLockAfterSheet(BuildContext context, AppCubit cubit) async {
+    final l10n = AppLocalizations.of(context)!;
+    final colors = context.colors;
+    await showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: colors.overlay,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(DS.radiusCard)),
+      ),
+      builder: (sheetContext) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: DS.spaceMD),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: DS.spaceMD),
+                  child: Align(
+                    alignment: AlignmentDirectional.centerStart,
+                    child: Text(
+                      l10n.settingsLockAfter,
+                      style: TextStyle(color: colors.textPrimary, fontWeight: FontWeight.w700, fontSize: 16),
+                    ),
+                  ),
+                ),
+                BlocBuilder<AppCubit, AppState>(
+                  bloc: cubit,
+                  builder: (context, state) {
+                    return RadioGroup<LockGrace>(
+                      groupValue: state.lockGrace,
+                      onChanged: (value) {
+                        if (value == null) return;
+                        cubit.setLockGrace(value);
+                        Navigator.of(sheetContext).pop();
+                      },
+                      child: Column(
+                        children: [
+                          for (final grace in LockGrace.values)
+                            RadioListTile<LockGrace>(
+                              title: Text(displayLabel(context, grace.labelKey), style: TextStyle(color: colors.textPrimary)),
+                              value: grace,
+                              activeColor: colors.brand,
+                            ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

@@ -271,6 +271,75 @@ class AppLocalizationsFr extends AppLocalizations {
       'finance.yahoo.com · gold-api.com · er-api.com';
 
   @override
+  String get settingsPrivacy => 'Confidentialité et sécurité';
+
+  @override
+  String get settingsHideBalances => 'Masquer les soldes';
+
+  @override
+  String get settingsHideBalancesFooter =>
+      'Masque les montants du portefeuille, des positions et des lots dans toute l\'app.';
+
+  @override
+  String get settingsAppLock => 'Verrouillage de l\'app';
+
+  @override
+  String get settingsAppLockFooter =>
+      'Exiger Face ID, Touch ID ou le code de l\'appareil pour ouvrir Qima.';
+
+  @override
+  String get settingsAppLockUnavailable =>
+      'Configurez d\'abord Face ID, Touch ID ou un code sur cet appareil.';
+
+  @override
+  String get settingsAppLockFailed =>
+      'Impossible de vous authentifier — le verrouillage reste désactivé.';
+
+  @override
+  String get settingsLockAfter => 'Verrouiller après';
+
+  @override
+  String get lockGraceImmediately => 'Immédiatement';
+
+  @override
+  String get lockGrace1m => '1 minute';
+
+  @override
+  String get lockGrace5m => '5 minutes';
+
+  @override
+  String get lockGrace15m => '15 minutes';
+
+  @override
+  String get privacyHideBalances => 'Masquer les soldes';
+
+  @override
+  String get privacyShowBalances => 'Afficher les soldes';
+
+  @override
+  String get appLockAuthReason =>
+      'Déverrouillez Qima pour voir votre portefeuille';
+
+  @override
+  String get appLockLockedTitle => 'Qima est verrouillée';
+
+  @override
+  String get appLockLockedMessage =>
+      'Déverrouillez pour voir votre portefeuille et vos positions.';
+
+  @override
+  String get appLockUnlockFaceID => 'Déverrouiller avec Face ID';
+
+  @override
+  String get appLockUnlockTouchID => 'Déverrouiller avec Touch ID';
+
+  @override
+  String get appLockUnlockGeneric => 'Déverrouiller';
+
+  @override
+  String get appLockUseDevicePasscode => 'Utiliser le code de l\'appareil';
+
+  @override
   String get statChange => 'Variation';
 
   @override

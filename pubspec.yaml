@@ -45,6 +45,7 @@ dependencies:
   uuid: ^4.6.0
   equatable: ^2.1.0
   home_widget: ^0.9.3
+  local_auth: ^3.0.2
 
 dev_dependencies:
   flutter_test:
@@ -128,6 +129,11 @@ flutter:
   assets:
     - assets/fonts/almarai/OFL.txt
     - assets/fonts/riyal/LICENSE
+    # Reused by the lock screen and privacy cover (spec Phase 4 "App lock")
+    # — same master image `flutter_launcher_icons` generates the native
+    # launcher icons from, bundled here so `Image.asset` can render it
+    # in-app too.
+    - assets/icon/app_icon.png
 
 # Launcher icons for iOS and Android are generated from one master image.
 # Regenerate after changing it: `dart run flutter_launcher_icons`.

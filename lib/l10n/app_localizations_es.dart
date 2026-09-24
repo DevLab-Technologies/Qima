@@ -271,6 +271,74 @@ class AppLocalizationsEs extends AppLocalizations {
       'finance.yahoo.com · gold-api.com · er-api.com';
 
   @override
+  String get settingsPrivacy => 'Privacidad y seguridad';
+
+  @override
+  String get settingsHideBalances => 'Ocultar saldos';
+
+  @override
+  String get settingsHideBalancesFooter =>
+      'Oculta los importes de la cartera, las posiciones y los lotes en toda la app.';
+
+  @override
+  String get settingsAppLock => 'Bloqueo de la app';
+
+  @override
+  String get settingsAppLockFooter =>
+      'Requiere Face ID, Touch ID o el código del dispositivo para abrir Qima.';
+
+  @override
+  String get settingsAppLockUnavailable =>
+      'Configura Face ID, Touch ID o un código de dispositivo primero.';
+
+  @override
+  String get settingsAppLockFailed =>
+      'No se pudo verificar tu identidad — el bloqueo de la app sigue desactivado.';
+
+  @override
+  String get settingsLockAfter => 'Bloquear después de';
+
+  @override
+  String get lockGraceImmediately => 'Inmediatamente';
+
+  @override
+  String get lockGrace1m => '1 minuto';
+
+  @override
+  String get lockGrace5m => '5 minutos';
+
+  @override
+  String get lockGrace15m => '15 minutos';
+
+  @override
+  String get privacyHideBalances => 'Ocultar saldos';
+
+  @override
+  String get privacyShowBalances => 'Mostrar saldos';
+
+  @override
+  String get appLockAuthReason => 'Desbloquea Qima para ver tu cartera';
+
+  @override
+  String get appLockLockedTitle => 'Qima está bloqueada';
+
+  @override
+  String get appLockLockedMessage =>
+      'Desbloquea para ver tu cartera y tus posiciones.';
+
+  @override
+  String get appLockUnlockFaceID => 'Desbloquear con Face ID';
+
+  @override
+  String get appLockUnlockTouchID => 'Desbloquear con Touch ID';
+
+  @override
+  String get appLockUnlockGeneric => 'Desbloquear';
+
+  @override
+  String get appLockUseDevicePasscode => 'Usar el código del dispositivo';
+
+  @override
   String get statChange => 'Cambio';
 
   @override

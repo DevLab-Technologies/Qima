@@ -11,6 +11,7 @@ import 'screens/watchlist_screen.dart';
 import 'services/preferences.dart';
 import 'theme/app_theme.dart';
 import 'theme/design_system.dart';
+import 'widgets/lock_gate.dart';
 
 /// Wear OS screens are typically 192-227dp square/round; a normal phone's
 /// shortest side is comfortably larger than this, so a simple threshold is
@@ -64,15 +65,22 @@ class QimaApp extends StatelessWidget {
             // Arabic is set entirely in the Arabic family; other locales keep
             // the platform font and reach it only through the fallback chain.
             builder: (context, child) {
-              if (Localizations.localeOf(context).languageCode != 'ar') return child!;
-              final theme = Theme.of(context);
-              return Theme(
-                data: theme.copyWith(
-                  textTheme: theme.textTheme.apply(fontFamily: DS.arabicFontFamily),
-                  primaryTextTheme: theme.primaryTextTheme.apply(fontFamily: DS.arabicFontFamily),
-                ),
-                child: child!,
-              );
+              Widget content = child!;
+              if (Localizations.localeOf(context).languageCode == 'ar') {
+                final theme = Theme.of(context);
+                content = Theme(
+                  data: theme.copyWith(
+                    textTheme: theme.textTheme.apply(fontFamily: DS.arabicFontFamily),
+                    primaryTextTheme: theme.primaryTextTheme.apply(fontFamily: DS.arabicFontFamily),
+                  ),
+                  child: content,
+                );
+              }
+              // LockGate sits above the app's screens but below the root
+              // ScaffoldMessenger/Navigator that `MaterialApp` itself
+              // supplies around `builder`'s output, so in-app snackbars
+              // triggered right after unlocking still surface normally.
+              return LockGate(child: content);
             },
             home: Builder(
               builder: (context) => isWatchFormFactor(context) ? const WatchWatchlistScreen() : const WatchlistScreen(),

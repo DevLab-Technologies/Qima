@@ -100,10 +100,12 @@ class _LotEditorScreenState extends State<LotEditorScreen> {
                 icon: const Icon(Icons.delete_outline),
                 onPressed: () async {
                   final lot = widget.existing!;
+                  final hidden = cubit.state.hideBalances;
                   final confirmed = await confirmDelete(
                     context,
                     title: l10n.confirmDeleteLotTitle,
-                    message: l10n.confirmDeleteLotMessage('${lotQuantityLabel(context, lot)} · ${lotDetailLabel(lot)}'),
+                    message: l10n.confirmDeleteLotMessage(
+                        '${lotQuantityLabel(context, lot)} · ${lotDetailLabel(lot, hidden: hidden)}'),
                     confirmLabel: l10n.commonDelete,
                   );
                   if (!confirmed) return;

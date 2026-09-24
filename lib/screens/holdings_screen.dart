@@ -8,6 +8,7 @@ import '../models/asset.dart';
 import '../models/holding.dart';
 import '../models/money.dart';
 import '../theme/design_system.dart';
+import '../theme/masking.dart';
 import '../theme/qima_colors.dart';
 import '../theme/strings.dart';
 import '../widgets/confirm_delete_dialog.dart';
@@ -48,15 +49,16 @@ class HoldingsScreen extends StatelessWidget {
           ],
         ),
         body: BlocBuilder<AppCubit, AppState>(
-          builder: (context, _) {
+          builder: (context, state) {
             final lots = cubit.lotsFor(instrument);
             final valuation = cubit.valuationFor(instrument, displayCurrency);
+            final hidden = state.hideBalances;
 
             return ListView(
               padding: const EdgeInsets.all(DS.spaceMD),
               children: [
                 if (valuation != null) ...[
-                  DSCard(child: _SummaryGrid(valuation: valuation)),
+                  DSCard(child: _SummaryGrid(valuation: valuation, hidden: hidden)),
                   const SizedBox(height: DS.spaceMD),
                 ] else
                   Padding(
@@ -68,6 +70,7 @@ class HoldingsScreen extends StatelessWidget {
                     padding: const EdgeInsets.only(bottom: DS.spaceXS),
                     child: _LotTile(
                       lot: lot,
+                      hidden: hidden,
                       onTap: () => Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (_) => LotEditorScreen(
@@ -91,8 +94,9 @@ class HoldingsScreen extends StatelessWidget {
 
 class _SummaryGrid extends StatelessWidget {
   final HoldingValuation valuation;
+  final bool hidden;
 
-  const _SummaryGrid({required this.valuation});
+  const _SummaryGrid({required this.valuation, required this.hidden});
 
   @override
   Widget build(BuildContext context) {
@@ -110,9 +114,9 @@ class _SummaryGrid extends StatelessWidget {
         crossAxisSpacing: DS.spaceXS,
       ),
       children: [
-        _metric(colors, l10n.holdingsValue, valuation.value.formatted()),
-        _metric(colors, l10n.holdingsCost, valuation.cost.formatted()),
-        _metric(colors, l10n.holdingsGain, signedFigure(valuation.gain.formatted(), isUp: valuation.isUp),
+        _metric(colors, l10n.holdingsValue, Masking.amount(valuation.value, hidden: hidden)),
+        _metric(colors, l10n.holdingsCost, Masking.amount(valuation.cost, hidden: hidden)),
+        _metric(colors, l10n.holdingsGain, Masking.signedAmount(valuation.gain, hidden: hidden, isUp: valuation.isUp),
             tint: QimaColors.trendColor(valuation.isUp, colors)),
         _metric(colors, l10n.holdingsGainPercent, signedFigure('$gainPercent%', isUp: valuation.isUp),
             tint: QimaColors.trendColor(valuation.isUp, colors)),
@@ -137,16 +141,17 @@ class _SummaryGrid extends StatelessWidget {
 
 class _LotTile extends StatelessWidget {
   final HoldingLot lot;
+  final bool hidden;
   final VoidCallback onTap;
   final VoidCallback onDelete;
 
-  const _LotTile({required this.lot, required this.onTap, required this.onDelete});
+  const _LotTile({required this.lot, required this.hidden, required this.onTap, required this.onDelete});
 
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
     final qtyText = lotQuantityLabel(context, lot);
-    final detailText = lotDetailLabel(lot);
+    final detailText = lotDetailLabel(lot, hidden: hidden);
     final l10n = AppLocalizations.of(context)!;
     return Dismissible(
       key: ValueKey(lot.id),
@@ -177,7 +182,7 @@ class _LotTile extends StatelessWidget {
             style: TextStyle(color: colors.textTertiary, fontSize: 12),
           ),
           trailing: Text(
-            Money(lot.totalCost, lot.costCurrency).formatted(),
+            Masking.amount(Money(lot.totalCost, lot.costCurrency), hidden: hidden),
             style: TextStyle(color: colors.textSecondary),
           ),
         ),
@@ -186,15 +191,20 @@ class _LotTile extends StatelessWidget {
   }
 }
 
-/// "5 oz t" — the lot's quantity with its unit, as shown in lot lists.
+/// "5 oz t" — the lot's quantity with its unit, as shown in lot lists. Never
+/// masked: a bare quantity isn't a money amount.
 String lotQuantityLabel(BuildContext context, HoldingLot lot) {
   final unitSuffix = lot.unit.abbreviationKey != null ? ' ${displayLabel(context, lot.unit.abbreviationKey!)}' : '';
   return '${_formatQty(lot.quantity)}$unitSuffix';
 }
 
-/// "$3,120.00 · 2024-03-14" — the lot's unit cost and purchase date.
-String lotDetailLabel(HoldingLot lot) =>
-    '${Money(lot.unitCost, lot.costCurrency).formatted()} · ${lot.date.year}-${lot.date.month.toString().padLeft(2, '0')}-${lot.date.day.toString().padLeft(2, '0')}';
+/// "$3,120.00 · 2024-03-14" — the lot's unit cost and purchase date. The
+/// unit cost is masked when [hidden] (used in both the lot list subtitle and
+/// the delete-confirmation message, so a swipe-to-delete prompt never leaks
+/// an amount while balances are hidden).
+String lotDetailLabel(HoldingLot lot, {bool hidden = false}) =>
+    '${Masking.amount(Money(lot.unitCost, lot.costCurrency), hidden: hidden)} · '
+    '${lot.date.year}-${lot.date.month.toString().padLeft(2, '0')}-${lot.date.day.toString().padLeft(2, '0')}';
 
 String _formatQty(double value) {
   var text = value.toStringAsFixed(4);

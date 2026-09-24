@@ -13,6 +13,7 @@ import '../models/portfolio_history.dart';
 import '../models/quote.dart';
 import '../models/watch_card.dart';
 import '../models/chart_range.dart';
+import '../services/app_lock_service.dart';
 import '../services/custom_instrument_store.dart';
 import '../services/holdings_store.dart';
 import '../services/preferences.dart';
@@ -32,6 +33,7 @@ class AppCubit extends Cubit<AppState> {
   final WatchlistStore watchlistStore;
   final HoldingsStore holdingsStore;
   final CustomInstrumentStore customInstrumentStore;
+  final AppLockService appLockService;
   late Preferences preferences;
 
   AppCubit({
@@ -39,10 +41,12 @@ class AppCubit extends Cubit<AppState> {
     WatchlistStore? watchlistStore,
     HoldingsStore? holdingsStore,
     CustomInstrumentStore? customInstrumentStore,
+    AppLockService? appLockService,
   })  : repository = repository ?? PriceRepository(),
         watchlistStore = watchlistStore ?? WatchlistStore(),
         holdingsStore = holdingsStore ?? HoldingsStore(),
         customInstrumentStore = customInstrumentStore ?? CustomInstrumentStore(),
+        appLockService = appLockService ?? AppLockService(),
         super(AppState());
 
   // ---------------------------------------------------------------------
@@ -61,6 +65,9 @@ class AppCubit extends Cubit<AppState> {
     final appearance = await preferences.appearance;
     final preferredChartRange = preferences.preferredChartRange;
     final preferredPortfolioRange = preferences.preferredPortfolioRange;
+    final hideBalances = preferences.hideBalances;
+    final appLockEnabled = preferences.appLockEnabled;
+    final lockGrace = preferences.lockGrace;
 
     final seedCards = await preferences.seedWatchcards();
     final cards = await _loadCardsSeeding(watchlistStore, seedCards);
@@ -87,6 +94,9 @@ class AppCubit extends Cubit<AppState> {
       rates: rates,
       fxHistory: fxHistory,
       seriesByID: seriesByID,
+      hideBalances: hideBalances,
+      appLockEnabled: appLockEnabled,
+      lockGrace: lockGrace,
     ));
 
     startSync();
@@ -426,6 +436,46 @@ class AppCubit extends Cubit<AppState> {
   }
 
   // ---------------------------------------------------------------------
+  // Privacy: hide balances + app lock
+  // ---------------------------------------------------------------------
+
+  Future<void> toggleHideBalances() async {
+    final value = !state.hideBalances;
+    await preferences.setHideBalances(value);
+    emit(state.copyWith(hideBalances: value));
+  }
+
+  Future<void> setHideBalances(bool value) async {
+    if (value == state.hideBalances) return;
+    await preferences.setHideBalances(value);
+    emit(state.copyWith(hideBalances: value));
+  }
+
+  /// Enabling app lock requires a successful authentication first — the
+  /// user proves they can actually unlock before the app starts depending on
+  /// it. Returns whether the setting ended up enabled: `true` on success,
+  /// `false` if authentication failed/was cancelled (the switch should
+  /// bounce back to off). Disabling never needs authentication.
+  Future<bool> setAppLockEnabled(bool value, {String reason = 'Confirm it\'s you to enable App lock'}) async {
+    if (!value) {
+      await preferences.setAppLockEnabled(false);
+      emit(state.copyWith(appLockEnabled: false));
+      return true;
+    }
+    final authenticated = await appLockService.authenticate(reason: reason);
+    if (!authenticated) return false;
+    await preferences.setAppLockEnabled(true);
+    emit(state.copyWith(appLockEnabled: true));
+    return true;
+  }
+
+  Future<void> setLockGrace(LockGrace value) async {
+    if (value == state.lockGrace) return;
+    await preferences.setLockGrace(value);
+    emit(state.copyWith(lockGrace: value));
+  }
+
+  // ---------------------------------------------------------------------
   // Holdings
   // ---------------------------------------------------------------------
 
@@ -618,7 +668,8 @@ class AppCubit extends Cubit<AppState> {
         prev.fxHistory != next.fxHistory ||
         prev.cards != next.cards ||
         prev.lots != next.lots ||
-        prev.baseCurrency != next.baseCurrency;
+        prev.baseCurrency != next.baseCurrency ||
+        prev.hideBalances != next.hideBalances;
     if (widgetRelevant) {
       unawaited(HomeWidgetService.publish(next));
     }

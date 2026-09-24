@@ -546,6 +546,132 @@ abstract class AppLocalizations {
   /// **'finance.yahoo.com · gold-api.com · er-api.com'**
   String get settingsDataSource;
 
+  /// No description provided for @settingsPrivacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy & security'**
+  String get settingsPrivacy;
+
+  /// No description provided for @settingsHideBalances.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide balances'**
+  String get settingsHideBalances;
+
+  /// No description provided for @settingsHideBalancesFooter.
+  ///
+  /// In en, this message translates to:
+  /// **'Mask portfolio, holdings and lot amounts throughout the app.'**
+  String get settingsHideBalancesFooter;
+
+  /// No description provided for @settingsAppLock.
+  ///
+  /// In en, this message translates to:
+  /// **'App lock'**
+  String get settingsAppLock;
+
+  /// No description provided for @settingsAppLockFooter.
+  ///
+  /// In en, this message translates to:
+  /// **'Require Face ID, Touch ID or your device passcode to open Qima.'**
+  String get settingsAppLockFooter;
+
+  /// No description provided for @settingsAppLockUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Set up Face ID, Touch ID or a device passcode first.'**
+  String get settingsAppLockUnavailable;
+
+  /// No description provided for @settingsAppLockFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t verify it\'s you — app lock stays off.'**
+  String get settingsAppLockFailed;
+
+  /// No description provided for @settingsLockAfter.
+  ///
+  /// In en, this message translates to:
+  /// **'Lock after'**
+  String get settingsLockAfter;
+
+  /// No description provided for @lockGraceImmediately.
+  ///
+  /// In en, this message translates to:
+  /// **'Immediately'**
+  String get lockGraceImmediately;
+
+  /// No description provided for @lockGrace1m.
+  ///
+  /// In en, this message translates to:
+  /// **'1 minute'**
+  String get lockGrace1m;
+
+  /// No description provided for @lockGrace5m.
+  ///
+  /// In en, this message translates to:
+  /// **'5 minutes'**
+  String get lockGrace5m;
+
+  /// No description provided for @lockGrace15m.
+  ///
+  /// In en, this message translates to:
+  /// **'15 minutes'**
+  String get lockGrace15m;
+
+  /// No description provided for @privacyHideBalances.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide balances'**
+  String get privacyHideBalances;
+
+  /// No description provided for @privacyShowBalances.
+  ///
+  /// In en, this message translates to:
+  /// **'Show balances'**
+  String get privacyShowBalances;
+
+  /// No description provided for @appLockAuthReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock Qima to see your portfolio'**
+  String get appLockAuthReason;
+
+  /// No description provided for @appLockLockedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Qima is locked'**
+  String get appLockLockedTitle;
+
+  /// No description provided for @appLockLockedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock to see your portfolio and holdings.'**
+  String get appLockLockedMessage;
+
+  /// No description provided for @appLockUnlockFaceID.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock with Face ID'**
+  String get appLockUnlockFaceID;
+
+  /// No description provided for @appLockUnlockTouchID.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock with Touch ID'**
+  String get appLockUnlockTouchID;
+
+  /// No description provided for @appLockUnlockGeneric.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock'**
+  String get appLockUnlockGeneric;
+
+  /// No description provided for @appLockUseDevicePasscode.
+  ///
+  /// In en, this message translates to:
+  /// **'Use device passcode'**
+  String get appLockUseDevicePasscode;
+
   /// No description provided for @statChange.
   ///
   /// In en, this message translates to:

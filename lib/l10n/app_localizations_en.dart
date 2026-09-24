@@ -270,6 +270,74 @@ class AppLocalizationsEn extends AppLocalizations {
       'finance.yahoo.com · gold-api.com · er-api.com';
 
   @override
+  String get settingsPrivacy => 'Privacy & security';
+
+  @override
+  String get settingsHideBalances => 'Hide balances';
+
+  @override
+  String get settingsHideBalancesFooter =>
+      'Mask portfolio, holdings and lot amounts throughout the app.';
+
+  @override
+  String get settingsAppLock => 'App lock';
+
+  @override
+  String get settingsAppLockFooter =>
+      'Require Face ID, Touch ID or your device passcode to open Qima.';
+
+  @override
+  String get settingsAppLockUnavailable =>
+      'Set up Face ID, Touch ID or a device passcode first.';
+
+  @override
+  String get settingsAppLockFailed =>
+      'Couldn\'t verify it\'s you — app lock stays off.';
+
+  @override
+  String get settingsLockAfter => 'Lock after';
+
+  @override
+  String get lockGraceImmediately => 'Immediately';
+
+  @override
+  String get lockGrace1m => '1 minute';
+
+  @override
+  String get lockGrace5m => '5 minutes';
+
+  @override
+  String get lockGrace15m => '15 minutes';
+
+  @override
+  String get privacyHideBalances => 'Hide balances';
+
+  @override
+  String get privacyShowBalances => 'Show balances';
+
+  @override
+  String get appLockAuthReason => 'Unlock Qima to see your portfolio';
+
+  @override
+  String get appLockLockedTitle => 'Qima is locked';
+
+  @override
+  String get appLockLockedMessage =>
+      'Unlock to see your portfolio and holdings.';
+
+  @override
+  String get appLockUnlockFaceID => 'Unlock with Face ID';
+
+  @override
+  String get appLockUnlockTouchID => 'Unlock with Touch ID';
+
+  @override
+  String get appLockUnlockGeneric => 'Unlock';
+
+  @override
+  String get appLockUseDevicePasscode => 'Use device passcode';
+
+  @override
   String get statChange => 'Change';
 
   @override

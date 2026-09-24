@@ -69,6 +69,41 @@ enum AppLanguage {
   }
 }
 
+/// How long the app may sit in the background before [LockGate] re-locks it
+/// on return, once app lock is enabled (spec Phase 4 "App lock · Lock
+/// after"). `immediately` re-locks on every backgrounding, with no grace at
+/// all.
+enum LockGrace {
+  immediately(0),
+  oneMinute(1),
+  fiveMinutes(5),
+  fifteenMinutes(15);
+
+  final int minutes;
+  const LockGrace(this.minutes);
+
+  Duration get duration => Duration(minutes: minutes);
+
+  static const LockGrace defaultValue = LockGrace.oneMinute;
+
+  String get labelKey {
+    switch (this) {
+      case LockGrace.immediately:
+        return 'lockGrace.immediately';
+      case LockGrace.oneMinute:
+        return 'lockGrace.1m';
+      case LockGrace.fiveMinutes:
+        return 'lockGrace.5m';
+      case LockGrace.fifteenMinutes:
+        return 'lockGrace.15m';
+    }
+  }
+
+  static LockGrace fromRawValue(int value) {
+    return LockGrace.values.firstWhere((v) => v.minutes == value, orElse: () => defaultValue);
+  }
+}
+
 /// Light/dark override, independent of [AppLanguage]. Mirrors the "Appearance"
 /// setting added in Phase 1 (spec Figma "Settings · v2").
 enum Appearance {
@@ -102,6 +137,9 @@ class Preferences {
   static const String _appearanceKey = 'appearance';
   static const String _preferredChartRangeKey = 'preferredChartRange';
   static const String _preferredPortfolioRangeKey = 'preferredPortfolioRange';
+  static const String _hideBalancesKey = 'hideBalances';
+  static const String _appLockEnabledKey = 'appLockEnabled';
+  static const String _lockGraceKey = 'lockGrace';
   static const String _legacyWatchcardsKey = 'pref.watchcards';
   static const String _legacyWatchlistKey = 'pref.watchlist';
 
@@ -207,6 +245,33 @@ class Preferences {
   Future<void> setPreferredPortfolioRange(ChartRange value) async {
     if (!ChartRange.portfolioSelectable.contains(value)) return;
     await local.setString(_preferredPortfolioRangeKey, value.name);
+  }
+
+  /// Local-only, NOT synced — hiding balances is a per-device, in-the-moment
+  /// privacy choice (e.g. "don't show this over someone's shoulder right
+  /// now"), not something that should silently reveal or hide amounts on a
+  /// second device.
+  bool get hideBalances => local.getBool(_hideBalancesKey) ?? false;
+
+  Future<void> setHideBalances(bool value) async {
+    await local.setBool(_hideBalancesKey, value);
+  }
+
+  /// Local-only, like [hideBalances] — app lock is tied to this device's own
+  /// biometric/passcode enrollment, so it can never be meaningfully synced.
+  bool get appLockEnabled => local.getBool(_appLockEnabledKey) ?? false;
+
+  Future<void> setAppLockEnabled(bool value) async {
+    await local.setBool(_appLockEnabledKey, value);
+  }
+
+  LockGrace get lockGrace {
+    final raw = local.getInt(_lockGraceKey);
+    return raw == null ? LockGrace.defaultValue : LockGrace.fromRawValue(raw);
+  }
+
+  Future<void> setLockGrace(LockGrace value) async {
+    await local.setInt(_lockGraceKey, value.minutes);
   }
 
   /// Migration chain, simplified for a from-scratch app: (1) pre-sync

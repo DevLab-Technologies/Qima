@@ -169,6 +169,16 @@ String? _resolve(AppLocalizations loc, String key) {
     case 'error.refreshFailed':
       return loc.errorRefreshFailed;
 
+    // App lock grace periods
+    case 'lockGrace.immediately':
+      return loc.lockGraceImmediately;
+    case 'lockGrace.1m':
+      return loc.lockGrace1m;
+    case 'lockGrace.5m':
+      return loc.lockGrace5m;
+    case 'lockGrace.15m':
+      return loc.lockGrace15m;
+
     default:
       return null;
   }

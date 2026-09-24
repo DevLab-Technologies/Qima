@@ -6,6 +6,7 @@ import '../blocs/app_state.dart';
 import '../l10n/app_localizations.dart';
 import '../models/holding.dart';
 import '../theme/design_system.dart';
+import '../theme/masking.dart';
 import '../theme/qima_colors.dart';
 import '../theme/strings.dart';
 import '../widgets/allocation_donut.dart';
@@ -28,9 +29,25 @@ class PortfolioDetailScreen extends StatelessWidget {
     return ScreenBackground(
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        appBar: AppBar(backgroundColor: Colors.transparent, title: Text(l10n.portfolioTitle)),
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          title: Text(l10n.portfolioTitle),
+          actions: [
+            BlocBuilder<AppCubit, AppState>(
+              buildWhen: (previous, current) => previous.hideBalances != current.hideBalances,
+              builder: (context, state) {
+                return IconButton(
+                  icon: Icon(state.hideBalances ? Icons.visibility_off_outlined : Icons.visibility_outlined),
+                  tooltip: state.hideBalances ? l10n.privacyShowBalances : l10n.privacyHideBalances,
+                  onPressed: cubit.toggleHideBalances,
+                );
+              },
+            ),
+          ],
+        ),
         body: BlocBuilder<AppCubit, AppState>(
-          builder: (context, _) {
+          builder: (context, state) {
+            final hidden = state.hideBalances;
             final valuation = cubit.portfolioValuation;
             final heldInstruments = cubit.heldInstruments;
             final slices = resolveAllocation(heldInstruments, colors);
@@ -47,7 +64,7 @@ class PortfolioDetailScreen extends StatelessWidget {
                       children: [
                         AllocationDonut(
                           slices: slices,
-                          centerValue: valuation.value.compact(),
+                          centerValue: Masking.compactAmount(valuation.value, hidden: hidden),
                           centerLabel: l10n.portfolioValue,
                         ),
                         const SizedBox(width: DS.spaceLG),
@@ -58,18 +75,18 @@ class PortfolioDetailScreen extends StatelessWidget {
                               Text(l10n.portfolioValue, style: TextStyle(color: colors.textTertiary, fontSize: 12)),
                               const SizedBox(height: 4),
                               Text(
-                                valuation.value.formatted(),
+                                Masking.amount(valuation.value, hidden: hidden),
                                 style: TextStyle(color: colors.textPrimary, fontSize: 24, fontWeight: FontWeight.w800),
                               ),
                               const SizedBox(height: DS.spaceSM),
                               _metricTile(
                                 colors,
                                 l10n.holdingsGain,
-                                signedFigure(valuation.gain.formatted(), isUp: valuation.isUp),
+                                Masking.signedAmount(valuation.gain, hidden: hidden, isUp: valuation.isUp),
                                 tint: QimaColors.trendColor(valuation.isUp, colors),
                               ),
                               const SizedBox(height: DS.spaceXS),
-                              _metricTile(colors, l10n.holdingsCost, valuation.cost.formatted()),
+                              _metricTile(colors, l10n.holdingsCost, Masking.amount(valuation.cost, hidden: hidden)),
                             ],
                           ),
                         ),
@@ -89,6 +106,7 @@ class PortfolioDetailScreen extends StatelessWidget {
                       held: held,
                       color: sliceByID[held.id]?.color ?? colors.brand,
                       fraction: sliceByID[held.id]?.fraction ?? 0,
+                      hidden: hidden,
                       onTap: () {
                         final card = cubit.firstCard(held.instrument);
                         if (card != null) {
@@ -126,9 +144,16 @@ class _HoldingRow extends StatelessWidget {
   final HeldInstrument held;
   final Color color;
   final double fraction;
+  final bool hidden;
   final VoidCallback onTap;
 
-  const _HoldingRow({required this.held, required this.color, required this.fraction, required this.onTap});
+  const _HoldingRow({
+    required this.held,
+    required this.color,
+    required this.fraction,
+    required this.hidden,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -163,10 +188,10 @@ class _HoldingRow extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Text(held.valuation.value.formatted(),
+                    Text(Masking.amount(held.valuation.value, hidden: hidden),
                         style: TextStyle(color: colors.textPrimary, fontWeight: FontWeight.w700)),
                     Text(
-                      signedFigure(held.valuation.gain.formatted(), isUp: held.valuation.isUp),
+                      Masking.signedAmount(held.valuation.gain, hidden: hidden, isUp: held.valuation.isUp),
                       style: TextStyle(color: QimaColors.trendColor(held.valuation.isUp, colors), fontSize: 12),
                     ),
                   ],

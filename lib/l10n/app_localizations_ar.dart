@@ -270,6 +270,73 @@ class AppLocalizationsAr extends AppLocalizations {
       'finance.yahoo.com · gold-api.com · er-api.com';
 
   @override
+  String get settingsPrivacy => 'الخصوصية والأمان';
+
+  @override
+  String get settingsHideBalances => 'إخفاء الأرصدة';
+
+  @override
+  String get settingsHideBalancesFooter =>
+      'إخفاء مبالغ المحفظة والممتلكات والصفقات في جميع أنحاء التطبيق.';
+
+  @override
+  String get settingsAppLock => 'قفل التطبيق';
+
+  @override
+  String get settingsAppLockFooter =>
+      'طلب بصمة الوجه أو بصمة الإصبع أو رمز مرور الجهاز لفتح Qima.';
+
+  @override
+  String get settingsAppLockUnavailable =>
+      'يرجى إعداد بصمة الوجه أو بصمة الإصبع أو رمز مرور للجهاز أولاً.';
+
+  @override
+  String get settingsAppLockFailed =>
+      'تعذر التحقق من هويتك — سيبقى قفل التطبيق متوقفًا.';
+
+  @override
+  String get settingsLockAfter => 'القفل بعد';
+
+  @override
+  String get lockGraceImmediately => 'فورًا';
+
+  @override
+  String get lockGrace1m => 'دقيقة واحدة';
+
+  @override
+  String get lockGrace5m => '5 دقائق';
+
+  @override
+  String get lockGrace15m => '15 دقيقة';
+
+  @override
+  String get privacyHideBalances => 'إخفاء الأرصدة';
+
+  @override
+  String get privacyShowBalances => 'إظهار الأرصدة';
+
+  @override
+  String get appLockAuthReason => 'افتح قفل Qima لرؤية محفظتك';
+
+  @override
+  String get appLockLockedTitle => 'Qima مقفل';
+
+  @override
+  String get appLockLockedMessage => 'افتح القفل لرؤية محفظتك وممتلكاتك.';
+
+  @override
+  String get appLockUnlockFaceID => 'فتح القفل باستخدام Face ID';
+
+  @override
+  String get appLockUnlockTouchID => 'فتح القفل باستخدام Touch ID';
+
+  @override
+  String get appLockUnlockGeneric => 'فتح القفل';
+
+  @override
+  String get appLockUseDevicePasscode => 'استخدام رمز مرور الجهاز';
+
+  @override
   String get statChange => 'التغير';
 
   @override

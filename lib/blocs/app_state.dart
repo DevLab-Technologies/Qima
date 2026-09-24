@@ -32,6 +32,12 @@ class AppState extends Equatable {
   final bool isBackfilling;
   final bool isLoadingHistory;
 
+  /// Local-only privacy settings (spec Phase 4 "Hide balances + App lock") —
+  /// never synced, see `Preferences`.
+  final bool hideBalances;
+  final bool appLockEnabled;
+  final LockGrace lockGrace;
+
   AppState({
     this.initialized = false,
     Map<String, QuoteSeries>? seriesByID,
@@ -50,6 +56,9 @@ class AppState extends Equatable {
     this.lastRefresh,
     this.isBackfilling = false,
     this.isLoadingHistory = false,
+    this.hideBalances = false,
+    this.appLockEnabled = false,
+    this.lockGrace = LockGrace.defaultValue,
   })  : seriesByID = seriesByID ?? const {},
         rates = rates ?? FXRates.usdIdentity;
 
@@ -72,6 +81,9 @@ class AppState extends Equatable {
     DateTime? lastRefresh,
     bool? isBackfilling,
     bool? isLoadingHistory,
+    bool? hideBalances,
+    bool? appLockEnabled,
+    LockGrace? lockGrace,
   }) {
     return AppState(
       initialized: initialized ?? this.initialized,
@@ -91,6 +103,9 @@ class AppState extends Equatable {
       lastRefresh: lastRefresh ?? this.lastRefresh,
       isBackfilling: isBackfilling ?? this.isBackfilling,
       isLoadingHistory: isLoadingHistory ?? this.isLoadingHistory,
+      hideBalances: hideBalances ?? this.hideBalances,
+      appLockEnabled: appLockEnabled ?? this.appLockEnabled,
+      lockGrace: lockGrace ?? this.lockGrace,
     );
   }
 
@@ -113,5 +128,8 @@ class AppState extends Equatable {
         lastRefresh,
         isBackfilling,
         isLoadingHistory,
+        hideBalances,
+        appLockEnabled,
+        lockGrace,
       ];
 }
