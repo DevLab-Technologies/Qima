@@ -857,6 +857,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'6 hours'**
   String get refresh6h;
+
+  /// No description provided for @commonCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get commonCancel;
+
+  /// No description provided for @commonRemove.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get commonRemove;
+
+  /// No description provided for @commonDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get commonDelete;
+
+  /// No description provided for @confirmRemoveCardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove {name} from your watchlist?'**
+  String confirmRemoveCardTitle(String name);
+
+  /// No description provided for @confirmRemoveCardMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your holdings for this instrument are kept.'**
+  String get confirmRemoveCardMessage;
+
+  /// No description provided for @confirmDeleteLotTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this lot?'**
+  String get confirmDeleteLotTitle;
+
+  /// No description provided for @confirmDeleteLotMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'{details}. This can\'t be undone.'**
+  String confirmDeleteLotMessage(String details);
+
+  /// No description provided for @confirmRemoveTickerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove custom ticker {symbol}?'**
+  String confirmRemoveTickerTitle(String symbol);
+
+  /// No description provided for @confirmRemoveTickerMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Any watchlist cards for it are removed too.'**
+  String get confirmRemoveTickerMessage;
 }
 
 class _AppLocalizationsDelegate

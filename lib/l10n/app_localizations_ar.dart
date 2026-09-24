@@ -409,4 +409,38 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get refresh6h => '٦ ساعات';
+
+  @override
+  String get commonCancel => 'إلغاء';
+
+  @override
+  String get commonRemove => 'إزالة';
+
+  @override
+  String get commonDelete => 'حذف';
+
+  @override
+  String confirmRemoveCardTitle(String name) {
+    return 'إزالة $name من قائمة المتابعة؟';
+  }
+
+  @override
+  String get confirmRemoveCardMessage => 'ستبقى مقتنياتك من هذه الأداة محفوظة.';
+
+  @override
+  String get confirmDeleteLotTitle => 'حذف هذه الدفعة؟';
+
+  @override
+  String confirmDeleteLotMessage(String details) {
+    return '$details. لا يمكن التراجع عن ذلك.';
+  }
+
+  @override
+  String confirmRemoveTickerTitle(String symbol) {
+    return 'إزالة الرمز المخصص $symbol؟';
+  }
+
+  @override
+  String get confirmRemoveTickerMessage =>
+      'ستُزال أيضًا بطاقاته من قائمة المتابعة.';
 }

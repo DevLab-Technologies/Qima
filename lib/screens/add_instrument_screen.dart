@@ -8,6 +8,7 @@ import '../models/instrument_catalog.dart';
 import '../theme/design_system.dart';
 import '../theme/qima_colors.dart';
 import '../theme/strings.dart';
+import '../widgets/confirm_delete_dialog.dart';
 import '../widgets/instrument_icon.dart';
 import 'card_config_screen.dart';
 import 'custom_ticker_screen.dart';
@@ -120,9 +121,16 @@ class _InstrumentTile extends StatelessWidget {
 
     if (!isCustom) return tile;
 
+    final l10n = AppLocalizations.of(context)!;
     return Dismissible(
       key: ValueKey(instrument.id),
       direction: DismissDirection.endToStart,
+      confirmDismiss: (_) => confirmDelete(
+        context,
+        title: l10n.confirmRemoveTickerTitle(instrument.symbol),
+        message: l10n.confirmRemoveTickerMessage,
+        confirmLabel: l10n.commonRemove,
+      ),
       onDismissed: (_) => onDeleteCustom(),
       background: Container(
         alignment: Alignment.centerRight,

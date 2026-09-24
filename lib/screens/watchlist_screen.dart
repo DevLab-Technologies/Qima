@@ -9,6 +9,7 @@ import '../l10n/app_localizations.dart';
 import '../theme/design_system.dart';
 import '../theme/qima_colors.dart';
 import '../theme/strings.dart';
+import '../widgets/confirm_delete_dialog.dart';
 import '../widgets/instrument_row.dart';
 import 'add_instrument_screen.dart';
 import 'instrument_detail_screen.dart';
@@ -204,6 +205,12 @@ class _WatchlistScreenState extends State<WatchlistScreen> with WidgetsBindingOb
                   child: Dismissible(
                     key: ValueKey('dismissible-${card.id}'),
                     direction: DismissDirection.endToStart,
+                    confirmDismiss: (_) => confirmDelete(
+                      context,
+                      title: l10n.confirmRemoveCardTitle(displayLabel(context, presentation.instrument.nameKey)),
+                      message: l10n.confirmRemoveCardMessage,
+                      confirmLabel: l10n.commonRemove,
+                    ),
                     onDismissed: (_) => cubit.removeCard(card.id),
                     background: Container(
                       alignment: Alignment.centerRight,

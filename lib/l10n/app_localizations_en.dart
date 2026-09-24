@@ -409,4 +409,39 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get refresh6h => '6 hours';
+
+  @override
+  String get commonCancel => 'Cancel';
+
+  @override
+  String get commonRemove => 'Remove';
+
+  @override
+  String get commonDelete => 'Delete';
+
+  @override
+  String confirmRemoveCardTitle(String name) {
+    return 'Remove $name from your watchlist?';
+  }
+
+  @override
+  String get confirmRemoveCardMessage =>
+      'Your holdings for this instrument are kept.';
+
+  @override
+  String get confirmDeleteLotTitle => 'Delete this lot?';
+
+  @override
+  String confirmDeleteLotMessage(String details) {
+    return '$details. This can\'t be undone.';
+  }
+
+  @override
+  String confirmRemoveTickerTitle(String symbol) {
+    return 'Remove custom ticker $symbol?';
+  }
+
+  @override
+  String get confirmRemoveTickerMessage =>
+      'Any watchlist cards for it are removed too.';
 }

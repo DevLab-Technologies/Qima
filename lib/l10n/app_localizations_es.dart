@@ -409,4 +409,39 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get refresh6h => '6 horas';
+
+  @override
+  String get commonCancel => 'Cancelar';
+
+  @override
+  String get commonRemove => 'Quitar';
+
+  @override
+  String get commonDelete => 'Eliminar';
+
+  @override
+  String confirmRemoveCardTitle(String name) {
+    return '¿Quitar $name de tu lista de seguimiento?';
+  }
+
+  @override
+  String get confirmRemoveCardMessage =>
+      'Tus posiciones de este instrumento se conservan.';
+
+  @override
+  String get confirmDeleteLotTitle => '¿Eliminar este lote?';
+
+  @override
+  String confirmDeleteLotMessage(String details) {
+    return '$details. No se puede deshacer.';
+  }
+
+  @override
+  String confirmRemoveTickerTitle(String symbol) {
+    return '¿Quitar el símbolo personalizado $symbol?';
+  }
+
+  @override
+  String get confirmRemoveTickerMessage =>
+      'También se quitarán sus tarjetas de la lista de seguimiento.';
 }

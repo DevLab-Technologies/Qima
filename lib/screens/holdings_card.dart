@@ -9,6 +9,7 @@ import '../models/money.dart';
 import '../theme/design_system.dart';
 import '../theme/qima_colors.dart';
 import '../theme/strings.dart';
+import '../widgets/confirm_delete_dialog.dart';
 import 'lot_editor_screen.dart';
 
 /// Holdings summary + lot list for one instrument. Mirrors
@@ -133,11 +134,18 @@ class _LotTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
-    final unitSuffix = lot.unit.abbreviationKey != null ? ' ${displayLabel(context, lot.unit.abbreviationKey!)}' : '';
-    final qtyText = '${_formatQty(lot.quantity)}$unitSuffix';
+    final qtyText = lotQuantityLabel(context, lot);
+    final detailText = lotDetailLabel(lot);
+    final l10n = AppLocalizations.of(context)!;
     return Dismissible(
       key: ValueKey(lot.id),
       direction: DismissDirection.endToStart,
+      confirmDismiss: (_) => confirmDelete(
+        context,
+        title: l10n.confirmDeleteLotTitle,
+        message: l10n.confirmDeleteLotMessage('$qtyText · $detailText'),
+        confirmLabel: l10n.commonDelete,
+      ),
       onDismissed: (_) => onDelete(),
       background: Container(
         alignment: Alignment.centerRight,
@@ -149,7 +157,7 @@ class _LotTile extends StatelessWidget {
         onTap: onTap,
         title: Text(qtyText, style: TextStyle(color: colors.textPrimary)),
         subtitle: Text(
-          '${Money(lot.unitCost, lot.costCurrency).formatted()} · ${lot.date.year}-${lot.date.month.toString().padLeft(2, '0')}-${lot.date.day.toString().padLeft(2, '0')}',
+          detailText,
           style: TextStyle(color: colors.textTertiary, fontSize: 12),
         ),
         trailing: Text(
@@ -159,13 +167,23 @@ class _LotTile extends StatelessWidget {
       ),
     );
   }
+}
 
-  String _formatQty(double value) {
-    var text = value.toStringAsFixed(4);
-    while (text.endsWith('0')) {
-      text = text.substring(0, text.length - 1);
-    }
-    if (text.endsWith('.')) text = text.substring(0, text.length - 1);
-    return text;
+/// "5 oz t" — the lot's quantity with its unit, as shown in lot lists.
+String lotQuantityLabel(BuildContext context, HoldingLot lot) {
+  final unitSuffix = lot.unit.abbreviationKey != null ? ' ${displayLabel(context, lot.unit.abbreviationKey!)}' : '';
+  return '${_formatQty(lot.quantity)}$unitSuffix';
+}
+
+/// "$3,120.00 · 2024-03-14" — the lot's unit cost and purchase date.
+String lotDetailLabel(HoldingLot lot) =>
+    '${Money(lot.unitCost, lot.costCurrency).formatted()} · ${lot.date.year}-${lot.date.month.toString().padLeft(2, '0')}-${lot.date.day.toString().padLeft(2, '0')}';
+
+String _formatQty(double value) {
+  var text = value.toStringAsFixed(4);
+  while (text.endsWith('0')) {
+    text = text.substring(0, text.length - 1);
   }
+  if (text.endsWith('.')) text = text.substring(0, text.length - 1);
+  return text;
 }

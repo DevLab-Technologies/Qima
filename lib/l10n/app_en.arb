@@ -156,5 +156,35 @@
   "refresh30m": "30 minutes",
   "refresh1h": "1 hour",
   "refresh3h": "3 hours",
-  "refresh6h": "6 hours"
+  "refresh6h": "6 hours",
+  "commonCancel": "Cancel",
+  "commonRemove": "Remove",
+  "commonDelete": "Delete",
+  "confirmRemoveCardTitle": "Remove {name} from your watchlist?",
+  "@confirmRemoveCardTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "confirmRemoveCardMessage": "Your holdings for this instrument are kept.",
+  "confirmDeleteLotTitle": "Delete this lot?",
+  "confirmDeleteLotMessage": "{details}. This can't be undone.",
+  "@confirmDeleteLotMessage": {
+    "placeholders": {
+      "details": {
+        "type": "String"
+      }
+    }
+  },
+  "confirmRemoveTickerTitle": "Remove custom ticker {symbol}?",
+  "@confirmRemoveTickerTitle": {
+    "placeholders": {
+      "symbol": {
+        "type": "String"
+      }
+    }
+  },
+  "confirmRemoveTickerMessage": "Any watchlist cards for it are removed too."
 }

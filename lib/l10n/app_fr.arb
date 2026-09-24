@@ -125,5 +125,14 @@
   "refresh30m": "30 minutes",
   "refresh1h": "1 heure",
   "refresh3h": "3 heures",
-  "refresh6h": "6 heures"
+  "refresh6h": "6 heures",
+  "commonCancel": "Annuler",
+  "commonRemove": "Retirer",
+  "commonDelete": "Supprimer",
+  "confirmRemoveCardTitle": "Retirer {name} de votre liste de suivi ?",
+  "confirmRemoveCardMessage": "Vos positions pour cet instrument sont conservées.",
+  "confirmDeleteLotTitle": "Supprimer ce lot ?",
+  "confirmDeleteLotMessage": "{details}. Cette action est irréversible.",
+  "confirmRemoveTickerTitle": "Retirer le symbole personnalisé {symbol} ?",
+  "confirmRemoveTickerMessage": "Ses cartes dans la liste de suivi seront aussi retirées."
 }

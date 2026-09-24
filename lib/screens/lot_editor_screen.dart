@@ -10,7 +10,9 @@ import '../theme/design_system.dart';
 import '../theme/instrument_theme.dart';
 import '../theme/qima_colors.dart';
 import '../theme/strings.dart';
+import '../widgets/confirm_delete_dialog.dart';
 import 'currency_picker.dart';
+import 'holdings_card.dart';
 
 enum _CostMode { perUnit, total }
 
@@ -97,7 +99,15 @@ class _LotEditorScreenState extends State<LotEditorScreen> {
               IconButton(
                 icon: const Icon(Icons.delete_outline),
                 onPressed: () async {
-                  await cubit.deleteLot(widget.existing!);
+                  final lot = widget.existing!;
+                  final confirmed = await confirmDelete(
+                    context,
+                    title: l10n.confirmDeleteLotTitle,
+                    message: l10n.confirmDeleteLotMessage('${lotQuantityLabel(context, lot)} · ${lotDetailLabel(lot)}'),
+                    confirmLabel: l10n.commonDelete,
+                  );
+                  if (!confirmed) return;
+                  await cubit.deleteLot(lot);
                   if (context.mounted) Navigator.of(context).pop();
                 },
               ),

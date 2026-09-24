@@ -125,5 +125,14 @@
   "refresh30m": "٣٠ دقيقة",
   "refresh1h": "ساعة واحدة",
   "refresh3h": "٣ ساعات",
-  "refresh6h": "٦ ساعات"
+  "refresh6h": "٦ ساعات",
+  "commonCancel": "إلغاء",
+  "commonRemove": "إزالة",
+  "commonDelete": "حذف",
+  "confirmRemoveCardTitle": "إزالة {name} من قائمة المتابعة؟",
+  "confirmRemoveCardMessage": "ستبقى مقتنياتك من هذه الأداة محفوظة.",
+  "confirmDeleteLotTitle": "حذف هذه الدفعة؟",
+  "confirmDeleteLotMessage": "{details}. لا يمكن التراجع عن ذلك.",
+  "confirmRemoveTickerTitle": "إزالة الرمز المخصص {symbol}؟",
+  "confirmRemoveTickerMessage": "ستُزال أيضًا بطاقاته من قائمة المتابعة."
 }
