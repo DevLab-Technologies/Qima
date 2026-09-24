@@ -1,18 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- Not required, so the same APK still installs on phones/tablets.
-         Wear OS devices treat this as a signal they can install the app. -->
-    <uses-feature android:name="android.hardware.type.watch" android:required="false"/>
     <application
         android:label="Qima"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
-        <!-- Lets the app run on Wear OS without a paired phone app. There is
-             no phone-companion pairing here: this app has no backend beyond
-             the price providers it talks to directly, so it works the same
-             way stand-alone on a watch as it does on a phone. -->
-        <meta-data
-            android:name="com.google.android.wearable.standalone"
-            android:value="true" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
