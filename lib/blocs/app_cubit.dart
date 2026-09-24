@@ -272,8 +272,16 @@ class AppCubit extends Cubit<AppState> {
   // Watchlist mutations
   // ---------------------------------------------------------------------
 
-  Future<void> addCard(WatchCard card) async {
-    if (state.cards.any((c) => c.isSameCombo(card))) return;
+  /// Adds [card] to the watchlist, unless a card with the same
+  /// instrument/currency/unit/karat combo already exists — in which case the
+  /// EXISTING card is returned with `created: false` instead of adding a
+  /// duplicate. Callers use `created` to decide whether to show an "added"
+  /// or "already in your watchlist" confirmation (see `AddFlowNavigation`).
+  Future<({WatchCard card, bool created})> addCard(WatchCard card) async {
+    for (final c in state.cards) {
+      if (c.isSameCombo(card)) return (card: c, created: false);
+    }
+
     final isNewInstrument = card.instrument != null && !state.seriesByID.containsKey(card.instrumentID);
     final cards = await watchlistStore.upsert(card);
     emit(state.copyWith(cards: cards));
@@ -284,6 +292,22 @@ class AppCubit extends Cubit<AppState> {
       emit(state.copyWith(seriesByID: {...state.seriesByID, instrument.id: cached}));
       unawaited(refresh(instrument));
       unawaited(backfillHistoryIfNeeded());
+    }
+    return (card: card, created: true);
+  }
+
+  /// Reverses a just-completed add-instrument flow: removes [card] from the
+  /// watchlist, and — if [customInstrumentID] is given (the ticker was
+  /// created fresh in that same flow, not a pre-existing custom ticker) —
+  /// also removes the custom instrument itself, but only when no other
+  /// watchlist card still references it (a user could have added the same
+  /// freshly-created ticker at two currencies before hitting Undo on one).
+  Future<void> undoAdd(WatchCard card, {String? customInstrumentID}) async {
+    await removeCard(card.id);
+    if (customInstrumentID == null) return;
+    final stillUsed = state.cards.any((c) => c.instrumentID == customInstrumentID);
+    if (!stillUsed) {
+      await removeCustomInstrument(customInstrumentID);
     }
   }
 

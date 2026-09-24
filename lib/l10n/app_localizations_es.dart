@@ -28,6 +28,42 @@ class AppLocalizationsEs extends AppLocalizations {
   String get addTitle => 'Añadir instrumento';
 
   @override
+  String get addSearchHint => 'Buscar instrumentos';
+
+  @override
+  String addSearchCustomTickerTitle(String query) {
+    return 'Añadir “$query” como símbolo personalizado';
+  }
+
+  @override
+  String get addSearchCustomTickerSubtitle =>
+      'Para acciones, ETFs o índices que no aparecen aquí';
+
+  @override
+  String addSearchNoResultsTitle(String query) {
+    return 'Sin resultados para “$query”';
+  }
+
+  @override
+  String get addSearchNoResultsMessage =>
+      'Nada en el catálogo coincide con eso. Aún puedes añadirlo como símbolo personalizado.';
+
+  @override
+  String addSearchNoResultsButton(String query) {
+    return 'Añadir $query como símbolo personalizado';
+  }
+
+  @override
+  String addedToWatchlist(String name) {
+    return '$name añadido a la lista de seguimiento';
+  }
+
+  @override
+  String alreadyInWatchlist(String name) {
+    return '$name ya está en tu lista de seguimiento';
+  }
+
+  @override
   String get addCustomTickerTitle => 'Añadir símbolo personalizado';
 
   @override
@@ -443,6 +479,9 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get commonDelete => 'Eliminar';
+
+  @override
+  String get commonUndo => 'Deshacer';
 
   @override
   String confirmRemoveCardTitle(String name) {

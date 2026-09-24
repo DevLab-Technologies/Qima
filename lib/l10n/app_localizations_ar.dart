@@ -28,6 +28,42 @@ class AppLocalizationsAr extends AppLocalizations {
   String get addTitle => 'إضافة أداة';
 
   @override
+  String get addSearchHint => 'ابحث عن أداة';
+
+  @override
+  String addSearchCustomTickerTitle(String query) {
+    return 'إضافة ”$query“ كرمز مخصص';
+  }
+
+  @override
+  String get addSearchCustomTickerSubtitle =>
+      'للأسهم أو الصناديق المتداولة أو المؤشرات غير المدرجة هنا';
+
+  @override
+  String addSearchNoResultsTitle(String query) {
+    return 'لا نتائج لـ ”$query“';
+  }
+
+  @override
+  String get addSearchNoResultsMessage =>
+      'لا شيء في القائمة يطابق هذا البحث. يمكنك إضافته كرمز مخصص.';
+
+  @override
+  String addSearchNoResultsButton(String query) {
+    return 'إضافة $query كرمز مخصص';
+  }
+
+  @override
+  String addedToWatchlist(String name) {
+    return 'أُضيف $name إلى قائمة المتابعة';
+  }
+
+  @override
+  String alreadyInWatchlist(String name) {
+    return '$name موجود بالفعل في قائمة المتابعة';
+  }
+
+  @override
   String get addCustomTickerTitle => 'إضافة رمز مخصص';
 
   @override
@@ -442,6 +478,9 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get commonDelete => 'حذف';
+
+  @override
+  String get commonUndo => 'تراجع';
 
   @override
   String confirmRemoveCardTitle(String name) {

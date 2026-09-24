@@ -9,6 +9,49 @@
   "watchlistEmptyMessage": "Add metals, crypto, stocks, or currencies to start tracking prices.",
   "watchlistFilterAll": "All",
   "addTitle": "Add instrument",
+  "addSearchHint": "Search instruments",
+  "addSearchCustomTickerTitle": "Add “{query}” as a custom ticker",
+  "@addSearchCustomTickerTitle": {
+    "placeholders": {
+      "query": {
+        "type": "String"
+      }
+    }
+  },
+  "addSearchCustomTickerSubtitle": "For stocks, ETFs or indices not listed here",
+  "addSearchNoResultsTitle": "No matches for “{query}”",
+  "@addSearchNoResultsTitle": {
+    "placeholders": {
+      "query": {
+        "type": "String"
+      }
+    }
+  },
+  "addSearchNoResultsMessage": "Nothing in the catalog matches that. You can still add it as a custom ticker.",
+  "addSearchNoResultsButton": "Add {query} as custom ticker",
+  "@addSearchNoResultsButton": {
+    "placeholders": {
+      "query": {
+        "type": "String"
+      }
+    }
+  },
+  "addedToWatchlist": "{name} added to watchlist",
+  "@addedToWatchlist": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "alreadyInWatchlist": "{name} is already in your watchlist",
+  "@alreadyInWatchlist": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "addCustomTickerTitle": "Add custom ticker",
   "addCustomTickerSymbol": "Ticker symbol",
   "addCustomTickerName": "Display name (optional)",
@@ -174,6 +217,7 @@
   "commonCancel": "Cancel",
   "commonRemove": "Remove",
   "commonDelete": "Delete",
+  "commonUndo": "Undo",
   "confirmRemoveCardTitle": "Remove {name} from your watchlist?",
   "@confirmRemoveCardTitle": {
     "placeholders": {

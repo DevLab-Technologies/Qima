@@ -5,10 +5,12 @@ import 'package:uuid/uuid.dart';
 import '../blocs/app_cubit.dart';
 import '../l10n/app_localizations.dart';
 import '../models/asset.dart';
+import '../models/custom_instrument.dart';
 import '../models/watch_card.dart';
 import '../theme/design_system.dart';
 import '../theme/qima_colors.dart';
 import '../theme/strings.dart';
+import 'add_flow_navigation.dart';
 import 'currency_picker.dart';
 
 /// Add a custom stock or index/ETF ticker not in the built-in catalog.
@@ -22,7 +24,11 @@ class CustomTickerScreen extends StatefulWidget {
   /// instead.
   final AssetClass initialAssetClass;
 
-  const CustomTickerScreen({super.key, this.initialAssetClass = AssetClass.stock});
+  /// Prefills the symbol field (uppercased), e.g. when arriving here from
+  /// the `Add "<query>" as a custom ticker` row in the add-instrument search.
+  final String? initialSymbol;
+
+  const CustomTickerScreen({super.key, this.initialAssetClass = AssetClass.stock, this.initialSymbol});
 
   @override
   State<CustomTickerScreen> createState() => _CustomTickerScreenState();
@@ -42,6 +48,9 @@ class _CustomTickerScreenState extends State<CustomTickerScreen> {
     final cubit = context.read<AppCubit>();
     _currency = cubit.state.baseCurrency;
     _assetClass = widget.initialAssetClass;
+    if (widget.initialSymbol != null) {
+      _symbolController.text = widget.initialSymbol!.toUpperCase();
+    }
   }
 
   Future<void> _submit() async {
@@ -58,6 +67,12 @@ class _CustomTickerScreenState extends State<CustomTickerScreen> {
     final cubit = context.read<AppCubit>();
     try {
       await cubit.validateCustomTicker(symbol, _nameController.text.trim(), assetClass: _assetClass);
+      // Checked BEFORE addCustomTicker (which would make it true
+      // unconditionally) so we can tell "this ticker already existed" apart
+      // from "this flow just created it" — only the latter should be undone
+      // by Undo removing the ticker itself, not just the watchlist card.
+      final candidateID = CustomInstrument(symbol: symbol, assetClass: _assetClass).instrumentID;
+      final tickerAlreadyExisted = cubit.isCustom(candidateID);
       final instrument = await cubit.addCustomTicker(symbol, _nameController.text.trim(), assetClass: _assetClass);
       final card = WatchCard(
         id: const Uuid().v4(),
@@ -65,8 +80,15 @@ class _CustomTickerScreenState extends State<CustomTickerScreen> {
         currency: _currency,
         unit: instrument.quotation.defaultUnit,
       );
-      await cubit.addCard(card);
-      if (mounted) Navigator.of(context).pop();
+      final result = await cubit.addCard(card);
+      if (mounted) {
+        completeAdd(
+          context,
+          result.card,
+          created: result.created,
+          customInstrumentID: tickerAlreadyExisted ? null : instrument.id,
+        );
+      }
     } catch (_) {
       if (mounted) {
         setState(() {

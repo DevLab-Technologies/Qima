@@ -6,6 +6,49 @@
   "watchlistEmptyTitle": "Votre liste de suivi est vide",
   "watchlistEmptyMessage": "Ajoutez des métaux, cryptomonnaies, actions ou devises pour suivre leurs prix.",
   "addTitle": "Ajouter un instrument",
+  "addSearchHint": "Rechercher un instrument",
+  "addSearchCustomTickerTitle": "Ajouter « {query} » comme symbole personnalisé",
+  "@addSearchCustomTickerTitle": {
+    "placeholders": {
+      "query": {
+        "type": "String"
+      }
+    }
+  },
+  "addSearchCustomTickerSubtitle": "Pour les actions, ETF ou indices non listés ici",
+  "addSearchNoResultsTitle": "Aucun résultat pour « {query} »",
+  "@addSearchNoResultsTitle": {
+    "placeholders": {
+      "query": {
+        "type": "String"
+      }
+    }
+  },
+  "addSearchNoResultsMessage": "Rien dans le catalogue ne correspond à cette recherche. Vous pouvez tout de même l'ajouter comme symbole personnalisé.",
+  "addSearchNoResultsButton": "Ajouter {query} comme symbole personnalisé",
+  "@addSearchNoResultsButton": {
+    "placeholders": {
+      "query": {
+        "type": "String"
+      }
+    }
+  },
+  "addedToWatchlist": "{name} ajouté à la liste de suivi",
+  "@addedToWatchlist": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "alreadyInWatchlist": "{name} est déjà dans votre liste de suivi",
+  "@alreadyInWatchlist": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "addCustomTickerTitle": "Ajouter un symbole personnalisé",
   "addCustomTickerSymbol": "Symbole boursier",
   "addCustomTickerName": "Nom affiché (facultatif)",
@@ -136,6 +179,7 @@
   "commonCancel": "Annuler",
   "commonRemove": "Retirer",
   "commonDelete": "Supprimer",
+  "commonUndo": "Annuler l'action",
   "confirmRemoveCardTitle": "Retirer {name} de votre liste de suivi ?",
   "confirmRemoveCardMessage": "Vos positions pour cet instrument sont conservées.",
   "confirmDeleteLotTitle": "Supprimer ce lot ?",

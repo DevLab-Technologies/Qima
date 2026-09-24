@@ -28,6 +28,42 @@ class AppLocalizationsEn extends AppLocalizations {
   String get addTitle => 'Add instrument';
 
   @override
+  String get addSearchHint => 'Search instruments';
+
+  @override
+  String addSearchCustomTickerTitle(String query) {
+    return 'Add “$query” as a custom ticker';
+  }
+
+  @override
+  String get addSearchCustomTickerSubtitle =>
+      'For stocks, ETFs or indices not listed here';
+
+  @override
+  String addSearchNoResultsTitle(String query) {
+    return 'No matches for “$query”';
+  }
+
+  @override
+  String get addSearchNoResultsMessage =>
+      'Nothing in the catalog matches that. You can still add it as a custom ticker.';
+
+  @override
+  String addSearchNoResultsButton(String query) {
+    return 'Add $query as custom ticker';
+  }
+
+  @override
+  String addedToWatchlist(String name) {
+    return '$name added to watchlist';
+  }
+
+  @override
+  String alreadyInWatchlist(String name) {
+    return '$name is already in your watchlist';
+  }
+
+  @override
   String get addCustomTickerTitle => 'Add custom ticker';
 
   @override
@@ -442,6 +478,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get commonDelete => 'Delete';
+
+  @override
+  String get commonUndo => 'Undo';
 
   @override
   String confirmRemoveCardTitle(String name) {

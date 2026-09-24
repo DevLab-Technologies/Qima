@@ -11,6 +11,7 @@ import '../theme/design_system.dart';
 import '../theme/instrument_theme.dart';
 import '../theme/qima_colors.dart';
 import '../theme/strings.dart';
+import 'add_flow_navigation.dart';
 import 'currency_picker.dart';
 
 /// Configure currency/unit/karat before adding an instrument to the
@@ -112,8 +113,10 @@ class _CardConfigScreenState extends State<CardConfigScreen> {
                   unit: _unit,
                   karat: karat,
                 );
-                await cubit.addCard(card);
-                if (context.mounted) Navigator.of(context).pop();
+                final result = await cubit.addCard(card);
+                if (context.mounted) {
+                  completeAdd(context, result.card, created: result.created);
+                }
               },
               child: Text(l10n.cardConfigAddToWatchlist),
             ),

@@ -138,6 +138,54 @@ abstract class AppLocalizations {
   /// **'Add instrument'**
   String get addTitle;
 
+  /// No description provided for @addSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search instruments'**
+  String get addSearchHint;
+
+  /// No description provided for @addSearchCustomTickerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add “{query}” as a custom ticker'**
+  String addSearchCustomTickerTitle(String query);
+
+  /// No description provided for @addSearchCustomTickerSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'For stocks, ETFs or indices not listed here'**
+  String get addSearchCustomTickerSubtitle;
+
+  /// No description provided for @addSearchNoResultsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No matches for “{query}”'**
+  String addSearchNoResultsTitle(String query);
+
+  /// No description provided for @addSearchNoResultsMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing in the catalog matches that. You can still add it as a custom ticker.'**
+  String get addSearchNoResultsMessage;
+
+  /// No description provided for @addSearchNoResultsButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Add {query} as custom ticker'**
+  String addSearchNoResultsButton(String query);
+
+  /// No description provided for @addedToWatchlist.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} added to watchlist'**
+  String addedToWatchlist(String name);
+
+  /// No description provided for @alreadyInWatchlist.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} is already in your watchlist'**
+  String alreadyInWatchlist(String name);
+
   /// No description provided for @addCustomTickerTitle.
   ///
   /// In en, this message translates to:
@@ -917,6 +965,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Delete'**
   String get commonDelete;
+
+  /// No description provided for @commonUndo.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo'**
+  String get commonUndo;
 
   /// No description provided for @confirmRemoveCardTitle.
   ///

@@ -6,6 +6,49 @@
   "watchlistEmptyMessage": "أضف معادن أو عملات رقمية أو أسهمًا أو عملات لبدء تتبع الأسعار.",
   "watchlistFilterAll": "الكل",
   "addTitle": "إضافة أداة",
+  "addSearchHint": "ابحث عن أداة",
+  "addSearchCustomTickerTitle": "إضافة ”{query}“ كرمز مخصص",
+  "@addSearchCustomTickerTitle": {
+    "placeholders": {
+      "query": {
+        "type": "String"
+      }
+    }
+  },
+  "addSearchCustomTickerSubtitle": "للأسهم أو الصناديق المتداولة أو المؤشرات غير المدرجة هنا",
+  "addSearchNoResultsTitle": "لا نتائج لـ ”{query}“",
+  "@addSearchNoResultsTitle": {
+    "placeholders": {
+      "query": {
+        "type": "String"
+      }
+    }
+  },
+  "addSearchNoResultsMessage": "لا شيء في القائمة يطابق هذا البحث. يمكنك إضافته كرمز مخصص.",
+  "addSearchNoResultsButton": "إضافة {query} كرمز مخصص",
+  "@addSearchNoResultsButton": {
+    "placeholders": {
+      "query": {
+        "type": "String"
+      }
+    }
+  },
+  "addedToWatchlist": "أُضيف {name} إلى قائمة المتابعة",
+  "@addedToWatchlist": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "alreadyInWatchlist": "{name} موجود بالفعل في قائمة المتابعة",
+  "@alreadyInWatchlist": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "addCustomTickerTitle": "إضافة رمز مخصص",
   "addCustomTickerSymbol": "رمز التداول",
   "addCustomTickerName": "اسم العرض (اختياري)",
@@ -136,6 +179,7 @@
   "commonCancel": "إلغاء",
   "commonRemove": "إزالة",
   "commonDelete": "حذف",
+  "commonUndo": "تراجع",
   "confirmRemoveCardTitle": "إزالة {name} من قائمة المتابعة؟",
   "confirmRemoveCardMessage": "ستبقى مقتنياتك من هذه الأداة محفوظة.",
   "confirmDeleteLotTitle": "حذف هذه الدفعة؟",
