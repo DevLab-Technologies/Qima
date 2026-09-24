@@ -263,7 +263,12 @@ class _InstrumentDetailScreenState extends State<InstrumentDetailScreen> {
                     UnitPriceCarousel(rows: presentation.metalBreakdown),
                   ],
                   const SizedBox(height: DS.spaceMD),
-                  HoldingsCard(instrument: instrument, displayCurrency: _card.currency),
+                  HoldingsCard(
+                    instrument: instrument,
+                    displayCurrency: _card.currency,
+                    refUnit: _card.unit,
+                    refKarat: _card.karat,
+                  ),
                   if (state.phase == RefreshPhase.failed && state.errorMessage != null) ...[
                     const SizedBox(height: DS.spaceMD),
                     DSCard(

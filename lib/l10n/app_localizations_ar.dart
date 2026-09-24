@@ -167,6 +167,16 @@ class AppLocalizationsAr extends AppLocalizations {
   String get holdingsUnitCost => 'تكلفة الوحدة';
 
   @override
+  String holdingsUnitCostWithUnit(String unit) {
+    return 'تكلفة الوحدة (لكل $unit)';
+  }
+
+  @override
+  String holdingsUnitCostWithKarat(String unit, String karat) {
+    return 'تكلفة الوحدة (لكل $unit · $karat)';
+  }
+
+  @override
   String holdingsUnitCostPreview(String value) {
     return 'لكل وحدة: $value';
   }
@@ -184,6 +194,40 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get holdingsSave => 'حفظ';
+
+  @override
+  String get holdingsTotalHeld => 'إجمالي المملوك';
+
+  @override
+  String get holdingsAverageCost => 'متوسط التكلفة';
+
+  @override
+  String holdingsAverageCostPerUnit(String value, String unit) {
+    return '$value لكل $unit';
+  }
+
+  @override
+  String holdingsAverageCostPerUnitKarat(
+    String value,
+    String unit,
+    String karat,
+  ) {
+    return '$value لكل $unit · $karat';
+  }
+
+  @override
+  String holdingsMixedNote(String karat) {
+    return 'تم احتساب العيارات المختلطة حسب محتوى الذهب، ويُعرض كـ $karat.';
+  }
+
+  @override
+  String get holdingsMixedUnitsNote =>
+      'تم احتساب الوحدات المختلطة حسب محتوى الذهب.';
+
+  @override
+  String holdingsHeldLine(String quantity, String average) {
+    return 'المملوك $quantity · بمتوسط $average';
+  }
 
   @override
   String get portfolioTitle => 'المحفظة';
@@ -1068,6 +1112,9 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get backupCsvHeaderUnit => 'الوحدة';
+
+  @override
+  String get backupCsvHeaderKarat => 'العيار';
 
   @override
   String get backupCsvHeaderUnitCost => 'تكلفة الوحدة';

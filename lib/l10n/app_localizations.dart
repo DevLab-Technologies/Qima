@@ -378,6 +378,18 @@ abstract class AppLocalizations {
   /// **'Unit cost'**
   String get holdingsUnitCost;
 
+  /// No description provided for @holdingsUnitCostWithUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'Unit cost (per {unit})'**
+  String holdingsUnitCostWithUnit(String unit);
+
+  /// No description provided for @holdingsUnitCostWithKarat.
+  ///
+  /// In en, this message translates to:
+  /// **'Unit cost (per {unit} · {karat})'**
+  String holdingsUnitCostWithKarat(String unit, String karat);
+
   /// No description provided for @holdingsUnitCostPreview.
   ///
   /// In en, this message translates to:
@@ -407,6 +419,52 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Save'**
   String get holdingsSave;
+
+  /// No description provided for @holdingsTotalHeld.
+  ///
+  /// In en, this message translates to:
+  /// **'Total held'**
+  String get holdingsTotalHeld;
+
+  /// No description provided for @holdingsAverageCost.
+  ///
+  /// In en, this message translates to:
+  /// **'Average cost'**
+  String get holdingsAverageCost;
+
+  /// No description provided for @holdingsAverageCostPerUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'{value} per {unit}'**
+  String holdingsAverageCostPerUnit(String value, String unit);
+
+  /// No description provided for @holdingsAverageCostPerUnitKarat.
+  ///
+  /// In en, this message translates to:
+  /// **'{value} per {unit} · {karat}'**
+  String holdingsAverageCostPerUnitKarat(
+    String value,
+    String unit,
+    String karat,
+  );
+
+  /// No description provided for @holdingsMixedNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Mixed karats counted by gold content, shown as {karat}.'**
+  String holdingsMixedNote(String karat);
+
+  /// No description provided for @holdingsMixedUnitsNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Mixed units counted by gold content.'**
+  String get holdingsMixedUnitsNote;
+
+  /// No description provided for @holdingsHeldLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Held {quantity} · avg {average}'**
+  String holdingsHeldLine(String quantity, String average);
 
   /// No description provided for @portfolioTitle.
   ///
@@ -1951,6 +2009,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Unit'**
   String get backupCsvHeaderUnit;
+
+  /// No description provided for @backupCsvHeaderKarat.
+  ///
+  /// In en, this message translates to:
+  /// **'Karat'**
+  String get backupCsvHeaderKarat;
 
   /// No description provided for @backupCsvHeaderUnitCost.
   ///

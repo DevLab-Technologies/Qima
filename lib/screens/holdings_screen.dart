@@ -6,6 +6,8 @@ import '../blocs/app_state.dart';
 import '../l10n/app_localizations.dart';
 import '../models/asset.dart';
 import '../models/holding.dart';
+import '../models/holding_totals.dart';
+import '../models/metal_breakdown.dart';
 import '../models/money.dart';
 import '../theme/design_system.dart';
 import '../theme/masking.dart';
@@ -23,13 +25,27 @@ class HoldingsScreen extends StatelessWidget {
   final Instrument instrument;
   final String displayCurrency;
 
-  const HoldingsScreen({super.key, required this.instrument, required this.displayCurrency});
+  /// The unit/karat of the watch card the user opened Holdings from — the
+  /// reference totals are expressed at. Falls back to the instrument's
+  /// default unit and no karat (fine gold) when there's no originating card
+  /// (e.g. instrument opened directly).
+  final PriceUnit? refUnit;
+  final GoldKarat? refKarat;
+
+  const HoldingsScreen({
+    super.key,
+    required this.instrument,
+    required this.displayCurrency,
+    this.refUnit,
+    this.refKarat,
+  });
 
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<AppCubit>();
     final l10n = AppLocalizations.of(context)!;
     final colors = context.colors;
+    final unit = refUnit ?? instrument.quotation.defaultUnit;
 
     return ScreenBackground(
       child: Scaffold(
@@ -42,7 +58,12 @@ class HoldingsScreen extends StatelessWidget {
               icon: Icon(Icons.add_circle_outline, color: colors.textPrimary),
               onPressed: () => Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (_) => LotEditorScreen(instrument: instrument, defaultCurrency: displayCurrency),
+                  builder: (_) => LotEditorScreen(
+                    instrument: instrument,
+                    defaultCurrency: displayCurrency,
+                    defaultUnit: unit,
+                    defaultKarat: refKarat,
+                  ),
                 ),
               ),
             ),
@@ -58,7 +79,17 @@ class HoldingsScreen extends StatelessWidget {
               padding: const EdgeInsets.all(DS.spaceMD),
               children: [
                 if (valuation != null) ...[
-                  DSCard(child: _SummaryGrid(valuation: valuation, hidden: hidden)),
+                  DSCard(
+                    child: _SummaryGrid(
+                      valuation: valuation,
+                      hidden: hidden,
+                      lots: lots,
+                      unit: unit,
+                      karat: refKarat,
+                      displayCurrency: displayCurrency,
+                      rates: state.rates,
+                    ),
+                  ),
                   const SizedBox(height: DS.spaceMD),
                 ] else
                   Padding(
@@ -76,6 +107,8 @@ class HoldingsScreen extends StatelessWidget {
                           builder: (_) => LotEditorScreen(
                             instrument: instrument,
                             defaultCurrency: displayCurrency,
+                            defaultUnit: unit,
+                            defaultKarat: refKarat,
                             existing: lot,
                           ),
                         ),
@@ -95,31 +128,85 @@ class HoldingsScreen extends StatelessWidget {
 class _SummaryGrid extends StatelessWidget {
   final HoldingValuation valuation;
   final bool hidden;
+  final List<HoldingLot> lots;
+  final PriceUnit unit;
+  final GoldKarat? karat;
+  final String displayCurrency;
+  final FXRates rates;
 
-  const _SummaryGrid({required this.valuation, required this.hidden});
+  const _SummaryGrid({
+    required this.valuation,
+    required this.hidden,
+    required this.lots,
+    required this.unit,
+    required this.karat,
+    required this.displayCurrency,
+    required this.rates,
+  });
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final colors = context.colors;
     final gainPercent = (valuation.gainFraction * 100).toStringAsFixed(2);
-    // Fixed tile height: an aspect ratio made tiles balloon on tablets.
-    return GridView(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        mainAxisExtent: 62,
-        mainAxisSpacing: DS.spaceXS,
-        crossAxisSpacing: DS.spaceXS,
-      ),
+    final held = HoldingTotals.totalHeld(lots: lots, refUnit: unit, refKarat: karat);
+    final averageCost = HoldingTotals.averageCost(
+      lots: lots,
+      refUnit: unit,
+      refKarat: karat,
+      displayCurrency: displayCurrency,
+      rates: rates,
+    );
+    final mixed = HoldingTotals.isMixed(lots);
+    final mixedKarat = HoldingTotals.isMixedKarat(lots);
+    final heldText = quantityWithUnitKaratLabel(context, held, unit, karat);
+    final unitText = displayLabel(context, unit.labelKey);
+    final averageText = averageCost == null
+        ? '—'
+        : karat == null
+            ? l10n.holdingsAverageCostPerUnit(Masking.amount(averageCost, hidden: false), unitText)
+            : l10n.holdingsAverageCostPerUnitKarat(
+                Masking.amount(averageCost, hidden: false), unitText, displayLabel(context, karat!.shortLabelKey));
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _metric(colors, l10n.holdingsValue, Masking.amount(valuation.value, hidden: hidden)),
-        _metric(colors, l10n.holdingsCost, Masking.amount(valuation.cost, hidden: hidden)),
-        _metric(colors, l10n.holdingsGain, Masking.signedAmount(valuation.gain, hidden: hidden, isUp: valuation.isUp),
-            tint: QimaColors.trendColor(valuation.isUp, colors)),
-        _metric(colors, l10n.holdingsGainPercent, signedFigure('$gainPercent%', isUp: valuation.isUp),
-            tint: QimaColors.trendColor(valuation.isUp, colors)),
+        // Fixed tile height: an aspect ratio made tiles balloon on tablets.
+        GridView(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            mainAxisExtent: 62,
+            mainAxisSpacing: DS.spaceXS,
+            crossAxisSpacing: DS.spaceXS,
+          ),
+          children: [
+            // Total held is a bare quantity, which — like a balance — reveals
+            // wealth, so it's masked along with money amounts.
+            _metric(colors, l10n.holdingsTotalHeld, hidden ? Masking.mask : heldText),
+            _metric(colors, l10n.holdingsAverageCost, averageText),
+            _metric(colors, l10n.holdingsValue, Masking.amount(valuation.value, hidden: hidden)),
+            _metric(colors, l10n.holdingsCost, Masking.amount(valuation.cost, hidden: hidden)),
+            _metric(colors, l10n.holdingsGain, Masking.signedAmount(valuation.gain, hidden: hidden, isUp: valuation.isUp),
+                tint: QimaColors.trendColor(valuation.isUp, colors)),
+            _metric(colors, l10n.holdingsGainPercent, signedFigure('$gainPercent%', isUp: valuation.isUp),
+                tint: QimaColors.trendColor(valuation.isUp, colors)),
+          ],
+        ),
+        if (mixed) ...[
+          const SizedBox(height: DS.spaceXS),
+          Text(
+            // "Mixed karats" only when the karats actually differ (24K is
+            // still a karat, so a null ref karat still gets its own label)
+            // — a pure unit mismatch (e.g. some lots in g, some in oz t, all
+            // fine gold) gets the plainer wording instead.
+            mixedKarat
+                ? l10n.holdingsMixedNote(displayLabel(context, (karat ?? GoldKarat.k24).shortLabelKey))
+                : l10n.holdingsMixedUnitsNote,
+            style: TextStyle(color: colors.textTertiary, fontSize: 11),
+          ),
+        ],
       ],
     );
   }
@@ -191,11 +278,24 @@ class _LotTile extends StatelessWidget {
   }
 }
 
-/// "5 oz t" — the lot's quantity with its unit, as shown in lot lists. Never
-/// masked: a bare quantity isn't a money amount.
+/// "5 oz t" or "100 g · 21K" — the lot's quantity with its unit and (for a
+/// karat lot) its karat, as shown in lot lists. Never masked: a bare
+/// quantity isn't a money amount. Unlike [quantityWithUnitKaratLabel] this
+/// always shows the LOT's own stored karat, never a reference karat — a
+/// lot tile must reflect what the lot actually is.
 String lotQuantityLabel(BuildContext context, HoldingLot lot) {
   final unitSuffix = lot.unit.abbreviationKey != null ? ' ${displayLabel(context, lot.unit.abbreviationKey!)}' : '';
-  return '${_formatQty(lot.quantity)}$unitSuffix';
+  final karatSuffix = lot.karat != null ? ' · ${displayLabel(context, lot.karat!.shortLabelKey)}' : '';
+  return '${_formatQty(lot.quantity)}$unitSuffix$karatSuffix';
+}
+
+/// "150 g · 21K" — a quantity already expressed at [unit]/[karat] (e.g. a
+/// totals figure from [HoldingTotals]), formatted the same way
+/// [lotQuantityLabel] formats a single lot's own quantity/unit/karat.
+String quantityWithUnitKaratLabel(BuildContext context, double quantity, PriceUnit unit, GoldKarat? karat) {
+  final unitSuffix = unit.abbreviationKey != null ? ' ${displayLabel(context, unit.abbreviationKey!)}' : '';
+  final karatSuffix = karat != null ? ' · ${displayLabel(context, karat.shortLabelKey)}' : '';
+  return '${_formatQty(quantity)}$unitSuffix$karatSuffix';
 }
 
 /// "$3,120.00 · 2024-03-14" — the lot's unit cost and purchase date. The

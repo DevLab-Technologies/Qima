@@ -6,6 +6,7 @@ import 'package:qima/models/asset.dart';
 import 'package:qima/models/custom_instrument.dart';
 import 'package:qima/models/holding.dart';
 import 'package:qima/models/instrument_catalog.dart';
+import 'package:qima/models/metal_breakdown.dart';
 import 'package:qima/services/backup/holdings_csv.dart';
 
 HoldingLot _lot({
@@ -15,6 +16,7 @@ HoldingLot _lot({
   double unitCost = 1900,
   String costCurrency = 'USD',
   DateTime? date,
+  GoldKarat? karat,
 }) {
   return HoldingLot(
     id: 'lot-1',
@@ -24,6 +26,7 @@ HoldingLot _lot({
     unitCost: unitCost,
     costCurrency: costCurrency,
     date: date ?? DateTime(2026, 1, 15),
+    karat: karat,
   );
 }
 
@@ -45,10 +48,46 @@ void main() {
     final text = HoldingsCsv.build([_lot()], l10n);
     final lines = text.split('\r\n')..removeWhere((l) => l.isEmpty);
     expect(lines, hasLength(2));
-    expect(lines[0].split(','), hasLength(8));
+    expect(lines[0].split(','), hasLength(9));
     expect(lines[1], contains('XAU'));
     expect(lines[1], contains('1900'));
     expect(lines[1], contains('2026-01-15'));
+  });
+
+  group('Karat column', () {
+    test('header includes a Karat column right after Unit', () {
+      final text = HoldingsCsv.build([_lot()], l10n);
+      final header = text.split('\r\n').first.split(',');
+      final unitIndex = header.indexOf(l10n.backupCsvHeaderUnit);
+      expect(header[unitIndex + 1], l10n.backupCsvHeaderKarat);
+    });
+
+    test('a non-gold lot has an empty Karat cell', () {
+      final lot = _lot(instrumentID: 'metal.XAG', unit: PriceUnit.troyOunce);
+      final text = HoldingsCsv.build([lot], l10n);
+      final row = text.split('\r\n')[1].split(',');
+      final header = text.split('\r\n').first.split(',');
+      final karatIndex = header.indexOf(l10n.backupCsvHeaderKarat);
+      expect(row[karatIndex], '');
+    });
+
+    test('a 24K/fine gold lot (null karat) has an empty Karat cell', () {
+      final lot = _lot(unit: PriceUnit.gram);
+      final text = HoldingsCsv.build([lot], l10n);
+      final row = text.split('\r\n')[1].split(',');
+      final header = text.split('\r\n').first.split(',');
+      final karatIndex = header.indexOf(l10n.backupCsvHeaderKarat);
+      expect(row[karatIndex], '');
+    });
+
+    test('a 21K gold lot shows its karat in the Karat cell', () {
+      final lot = _lot(unit: PriceUnit.gram, karat: GoldKarat.k21);
+      final text = HoldingsCsv.build([lot], l10n);
+      final row = text.split('\r\n')[1].split(',');
+      final header = text.split('\r\n').first.split(',');
+      final karatIndex = header.indexOf(l10n.backupCsvHeaderKarat);
+      expect(row[karatIndex], l10n.karatShort21);
+    });
   });
 
   test('a value containing a comma is quoted', () {

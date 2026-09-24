@@ -9,8 +9,10 @@ import '../models/backup.dart';
 import '../models/custom_instrument.dart';
 import '../models/fx_history.dart';
 import '../models/holding.dart';
+import '../models/holding_totals.dart';
 import '../models/instrument_catalog.dart';
 import '../models/instrument_presentation.dart';
+import '../models/metal_breakdown.dart';
 import '../models/money.dart';
 import '../models/portfolio_history.dart';
 import '../models/price_alert.dart';
@@ -927,22 +929,28 @@ class AppCubit extends Cubit<AppState> {
     return null;
   }
 
-  double? totalQuantity(Instrument instrument, PriceUnit unit) {
+  /// Total held across every lot of [instrument], expressed in [unit] at
+  /// [karat]'s purity (e.g. the originating watch card's unit/karat). Each
+  /// lot's own karat is applied exactly once, inside
+  /// [HoldingLot.fineOunces] — [karat] only controls how that already
+  /// purity-adjusted total is re-expressed for display.
+  double? totalQuantity(Instrument instrument, PriceUnit unit, {GoldKarat? karat}) {
     final lots = lotsFor(instrument);
     if (lots.isEmpty) return null;
-    double canonical = 0;
-    for (final lot in lots) {
-      canonical += lot.quantity * lot.unit.multiplier;
-    }
-    return canonical / unit.multiplier;
+    return HoldingTotals.totalHeld(lots: lots, refUnit: unit, refKarat: karat);
   }
 
-  double? averageCost(Instrument instrument, String currency, PriceUnit unit) {
-    final valuation = valuationFor(instrument, currency);
-    final avgUSD = valuation?.averageUnitCostUSD;
-    if (avgUSD == null) return null;
-    final converter = PriceConverter(rates: state.rates, currencyCode: currency, unit: unit);
-    return converter.money(avgUSD).amount;
+  /// Average cost per [unit] at [karat]'s purity, in [currency], at the
+  /// live FX rate (same rule [HoldingValuation.aggregate] uses).
+  Money? averageCost(Instrument instrument, String currency, PriceUnit unit, {GoldKarat? karat}) {
+    final lots = lotsFor(instrument);
+    return HoldingTotals.averageCost(
+      lots: lots,
+      refUnit: unit,
+      refKarat: karat,
+      displayCurrency: currency,
+      rates: state.rates,
+    );
   }
 
   Future<void> saveLot(HoldingLot lot) async {

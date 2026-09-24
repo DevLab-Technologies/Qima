@@ -36,6 +36,9 @@ class HoldingsCsv {
         symbol,
         _formatNumber(lot.quantity),
         displayLabelFor(l10n, lot.unit.labelKey),
+        // Empty for non-gold lots and for 24K/fine gold — a karat column is
+        // only meaningful for physical gold bought at less than fine purity.
+        lot.karat == null ? '' : displayLabelFor(l10n, lot.karat!.shortLabelKey),
         _formatNumber(lot.unitCost),
         lot.costCurrency,
         _formatNumber(lot.totalCost),
@@ -53,6 +56,7 @@ class HoldingsCsv {
       l10n.backupCsvHeaderSymbol,
       l10n.backupCsvHeaderQuantity,
       l10n.backupCsvHeaderUnit,
+      l10n.backupCsvHeaderKarat,
       l10n.backupCsvHeaderUnitCost,
       l10n.backupCsvHeaderCostCurrency,
       l10n.backupCsvHeaderTotalCost,

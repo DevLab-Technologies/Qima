@@ -168,6 +168,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get holdingsUnitCost => 'Unit cost';
 
   @override
+  String holdingsUnitCostWithUnit(String unit) {
+    return 'Unit cost (per $unit)';
+  }
+
+  @override
+  String holdingsUnitCostWithKarat(String unit, String karat) {
+    return 'Unit cost (per $unit · $karat)';
+  }
+
+  @override
   String holdingsUnitCostPreview(String value) {
     return 'Per unit: $value';
   }
@@ -185,6 +195,39 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get holdingsSave => 'Save';
+
+  @override
+  String get holdingsTotalHeld => 'Total held';
+
+  @override
+  String get holdingsAverageCost => 'Average cost';
+
+  @override
+  String holdingsAverageCostPerUnit(String value, String unit) {
+    return '$value per $unit';
+  }
+
+  @override
+  String holdingsAverageCostPerUnitKarat(
+    String value,
+    String unit,
+    String karat,
+  ) {
+    return '$value per $unit · $karat';
+  }
+
+  @override
+  String holdingsMixedNote(String karat) {
+    return 'Mixed karats counted by gold content, shown as $karat.';
+  }
+
+  @override
+  String get holdingsMixedUnitsNote => 'Mixed units counted by gold content.';
+
+  @override
+  String holdingsHeldLine(String quantity, String average) {
+    return 'Held $quantity · avg $average';
+  }
 
   @override
   String get portfolioTitle => 'Portfolio';
@@ -1067,6 +1110,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get backupCsvHeaderUnit => 'Unit';
+
+  @override
+  String get backupCsvHeaderKarat => 'Karat';
 
   @override
   String get backupCsvHeaderUnitCost => 'Unit cost';

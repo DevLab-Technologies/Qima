@@ -48,8 +48,9 @@ class PortfolioRangeChange extends Equatable {
 /// Computed (never snapshotted) day-by-day portfolio value across a range.
 ///
 /// For each day `d`, `value(d)` sums, over every lot dated on or before `d`,
-/// `quantity * unit.multiplier * instrument's last known USD price on/before
-/// d * base-currency FX rate on d`. `cost(d)` follows the same
+/// `fineOunces (quantity * unit.multiplier * karat purity) * instrument's
+/// last known USD price on/before d * base-currency FX rate on d`. `cost(d)`
+/// follows the same
 /// lots-dated-on-or-before-`d` rule but reuses [HoldingValuation.aggregate]'s
 /// exact (live-FX, not historical) currency conversion, so a day's cost
 /// figure always matches what the Holdings screen would show if you looked
@@ -157,7 +158,9 @@ class PortfolioHistory {
 
         for (var i = 0; i < includedCount; i++) {
           final lot = instrumentLots[i];
-          valueUSD += lot.quantity * lot.unit.multiplier * priceUSD;
+          // fineOunces already folds in unit.multiplier and the lot's own
+          // karat purity — see HoldingLot.fineOunces.
+          valueUSD += lot.fineOunces * priceUSD;
           costDisplay += liveCostFor(lot);
         }
       }

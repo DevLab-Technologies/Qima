@@ -98,6 +98,25 @@
   "holdingsCostModePerUnit": "Per unit",
   "holdingsCostModeTotal": "Total",
   "holdingsUnitCost": "Unit cost",
+  "holdingsUnitCostWithUnit": "Unit cost (per {unit})",
+  "@holdingsUnitCostWithUnit": {
+    "placeholders": {
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "holdingsUnitCostWithKarat": "Unit cost (per {unit} · {karat})",
+  "@holdingsUnitCostWithKarat": {
+    "placeholders": {
+      "unit": {
+        "type": "String"
+      },
+      "karat": {
+        "type": "String"
+      }
+    }
+  },
   "holdingsUnitCostPreview": "Per unit: {value}",
   "@holdingsUnitCostPreview": {
     "placeholders": {
@@ -117,6 +136,53 @@
   },
   "holdingsDate": "Date",
   "holdingsSave": "Save",
+  "holdingsTotalHeld": "Total held",
+  "holdingsAverageCost": "Average cost",
+  "holdingsAverageCostPerUnit": "{value} per {unit}",
+  "@holdingsAverageCostPerUnit": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "holdingsAverageCostPerUnitKarat": "{value} per {unit} · {karat}",
+  "@holdingsAverageCostPerUnitKarat": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      },
+      "karat": {
+        "type": "String"
+      }
+    }
+  },
+  "holdingsMixedNote": "Mixed karats counted by gold content, shown as {karat}.",
+  "@holdingsMixedNote": {
+    "placeholders": {
+      "karat": {
+        "type": "String"
+      }
+    }
+  },
+  "holdingsMixedUnitsNote": "Mixed units counted by gold content.",
+  "holdingsHeldLine": "Held {quantity} · avg {average}",
+  "@holdingsHeldLine": {
+    "placeholders": {
+      "quantity": {
+        "type": "String"
+      },
+      "average": {
+        "type": "String"
+      }
+    }
+  },
   "portfolioTitle": "Portfolio",
   "portfolioValue": "Total value",
   "portfolioEmpty": "No portfolio value yet — add a holding lot to get started.",
@@ -528,6 +594,7 @@
   "backupCsvHeaderSymbol": "Symbol",
   "backupCsvHeaderQuantity": "Quantity",
   "backupCsvHeaderUnit": "Unit",
+  "backupCsvHeaderKarat": "Karat",
   "backupCsvHeaderUnitCost": "Unit cost",
   "backupCsvHeaderCostCurrency": "Cost currency",
   "backupCsvHeaderTotalCost": "Total cost",

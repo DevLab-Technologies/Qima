@@ -4,6 +4,7 @@ import 'package:qima/models/chart_range.dart';
 import 'package:qima/models/fx_history.dart';
 import 'package:qima/models/holding.dart';
 import 'package:qima/models/instrument_catalog.dart';
+import 'package:qima/models/metal_breakdown.dart';
 import 'package:qima/models/money.dart';
 import 'package:qima/models/portfolio_history.dart';
 import 'package:qima/models/quote.dart';
@@ -70,6 +71,44 @@ void main() {
       expect(byDate[DateTime(2024, 6, 5)]?.value, closeTo(2 * 2000, 1e-9));
       expect(byDate[DateTime(2024, 6, 10)]?.value, closeTo(2 * 2100, 1e-9));
       expect(byDate[DateTime(2024, 6, 10)]?.cost, closeTo(2 * 1900, 1e-9));
+    });
+
+    test('a 21K karat lot values at 0.875x a 24K lot of the same quantity', () {
+      final now = DateTime(2024, 6, 10);
+      final k24 = HoldingLot(
+        id: '24k',
+        instrumentID: gold.id,
+        quantity: 100,
+        unit: PriceUnit.gram,
+        unitCost: 50,
+        costCurrency: 'USD',
+        date: DateTime(2024, 6, 5),
+      );
+      final k21 = k24.copyWith(id: '21k', karat: GoldKarat.k21);
+      final series = seriesOf(gold, [MapEntry(DateTime(2024, 6, 5), 2000)]);
+
+      final points24 = PortfolioHistory.build(
+        lots: [k24],
+        seriesByID: {gold.id: series},
+        rates: usdRates,
+        fxHistory: FXHistory.empty,
+        baseCurrency: 'USD',
+        range: ChartRange.month1,
+        now: now,
+      );
+      final points21 = PortfolioHistory.build(
+        lots: [k21],
+        seriesByID: {gold.id: series},
+        rates: usdRates,
+        fxHistory: FXHistory.empty,
+        baseCurrency: 'USD',
+        range: ChartRange.month1,
+        now: now,
+      );
+
+      final value24 = {for (final p in points24) p.date: p.value}[DateTime(2024, 6, 10)]!;
+      final value21 = {for (final p in points21) p.date: p.value}[DateTime(2024, 6, 10)]!;
+      expect(value21, closeTo(value24 * GoldKarat.k21.purity, 1e-6));
     });
 
     test('value uses the base-currency FX rate on each day (FX conversion)', () {
