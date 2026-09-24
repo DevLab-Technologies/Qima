@@ -42,6 +42,10 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
+        // Required by flutter_local_notifications v10+ regardless of whether
+        // scheduled (not just immediate) notifications are used — see its
+        // README "Android Setup · Gradle setup".
+        isCoreLibraryDesugaringEnabled = true
     }
 
     kotlinOptions {
@@ -103,4 +107,7 @@ dependencies {
     // transitive dependency) so the app module's Compose classpath is
     // predictable regardless of what the plugin bundles in a future update.
     implementation("androidx.glance:glance-appwidget:1.1.1")
+    // flutter_local_notifications' core-library desugaring requirement (see
+    // compileOptions above).
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
 }

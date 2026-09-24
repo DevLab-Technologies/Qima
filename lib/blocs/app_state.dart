@@ -3,6 +3,7 @@ import 'package:equatable/equatable.dart';
 import '../models/fx_history.dart';
 import '../models/holding.dart';
 import '../models/money.dart';
+import '../models/price_alert.dart';
 import '../models/quote.dart';
 import '../models/watch_card.dart';
 import '../models/chart_range.dart';
@@ -38,6 +39,19 @@ class AppState extends Equatable {
   final bool appLockEnabled;
   final LockGrace lockGrace;
 
+  /// Price alert definitions (spec Phase 5) — synced like [cards]/[lots].
+  final List<PriceAlert> alerts;
+
+  /// Local-only (never synced), like [hideBalances]/[appLockEnabled]: whether
+  /// this device delivers alert notifications at all.
+  final bool deliverAlertsOnThisDevice;
+
+  /// Best-effort OS notification-permission status, refreshed whenever the
+  /// Alerts/Settings screens check it — drives the "Notifications are off"
+  /// banner. Defaults to true (no banner) until the first check resolves, so
+  /// the banner doesn't flash on before settling.
+  final bool notificationsEnabled;
+
   AppState({
     this.initialized = false,
     Map<String, QuoteSeries>? seriesByID,
@@ -59,6 +73,9 @@ class AppState extends Equatable {
     this.hideBalances = false,
     this.appLockEnabled = false,
     this.lockGrace = LockGrace.defaultValue,
+    this.alerts = const [],
+    this.deliverAlertsOnThisDevice = true,
+    this.notificationsEnabled = true,
   })  : seriesByID = seriesByID ?? const {},
         rates = rates ?? FXRates.usdIdentity;
 
@@ -84,6 +101,9 @@ class AppState extends Equatable {
     bool? hideBalances,
     bool? appLockEnabled,
     LockGrace? lockGrace,
+    List<PriceAlert>? alerts,
+    bool? deliverAlertsOnThisDevice,
+    bool? notificationsEnabled,
   }) {
     return AppState(
       initialized: initialized ?? this.initialized,
@@ -106,6 +126,9 @@ class AppState extends Equatable {
       hideBalances: hideBalances ?? this.hideBalances,
       appLockEnabled: appLockEnabled ?? this.appLockEnabled,
       lockGrace: lockGrace ?? this.lockGrace,
+      alerts: alerts ?? this.alerts,
+      deliverAlertsOnThisDevice: deliverAlertsOnThisDevice ?? this.deliverAlertsOnThisDevice,
+      notificationsEnabled: notificationsEnabled ?? this.notificationsEnabled,
     );
   }
 
@@ -131,5 +154,8 @@ class AppState extends Equatable {
         hideBalances,
         appLockEnabled,
         lockGrace,
+        alerts,
+        deliverAlertsOnThisDevice,
+        notificationsEnabled,
       ];
 }

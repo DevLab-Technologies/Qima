@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show TargetPlatform, defaultTargetPlatform, kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -140,6 +141,8 @@ class Preferences {
   static const String _hideBalancesKey = 'hideBalances';
   static const String _appLockEnabledKey = 'appLockEnabled';
   static const String _lockGraceKey = 'lockGrace';
+  static const String _deliverAlertsOnThisDeviceKey = 'deliverAlertsOnThisDevice';
+  static const String _lastAlertEvaluationAtKey = 'lastAlertEvaluationAt';
   static const String _legacyWatchcardsKey = 'pref.watchcards';
   static const String _legacyWatchlistKey = 'pref.watchlist';
 
@@ -272,6 +275,54 @@ class Preferences {
 
   Future<void> setLockGrace(LockGrace value) async {
     await local.setInt(_lockGraceKey, value.minutes);
+  }
+
+  /// Local-only, NOT synced — like [hideBalances]/[appLockEnabled], whether
+  /// THIS device should show alert notifications is a per-device choice (a
+  /// tablet or a rarely-carried device may not need to buzz), not something
+  /// that should silently enable/disable itself when another device changes
+  /// it (spec Phase 5). Defaults to on for phones, off for macOS/desktop,
+  /// where a background-refreshed notification is far less likely to be
+  /// seen promptly and is more likely to be treated as noise.
+  bool get deliverAlertsOnThisDeviceDefault {
+    if (kIsWeb) return false;
+    switch (defaultTargetPlatform) {
+      case TargetPlatform.android:
+      case TargetPlatform.iOS:
+        return true;
+      case TargetPlatform.macOS:
+      case TargetPlatform.windows:
+      case TargetPlatform.linux:
+      case TargetPlatform.fuchsia:
+        return false;
+    }
+  }
+
+  bool get deliverAlertsOnThisDevice =>
+      local.getBool(_deliverAlertsOnThisDeviceKey) ?? deliverAlertsOnThisDeviceDefault;
+
+  Future<void> setDeliverAlertsOnThisDevice(bool value) async {
+    await local.setBool(_deliverAlertsOnThisDeviceKey, value);
+  }
+
+  /// Local-only, NOT synced — the last time [RefreshPipeline] evaluated
+  /// alerts on THIS device, from any caller (foreground or the background
+  /// task). Backed by `SharedPreferences` (a real file the OS shares between
+  /// the running app process and a background isolate's separate process, on
+  /// every platform that has a background isolate at all), rather than an
+  /// in-memory field, specifically so `RefreshPipeline`'s overlap guard
+  /// actually works ACROSS that process boundary — an in-memory-only guard
+  /// would never see the foreground app's timestamp from inside a background
+  /// isolate, since they never share a Dart VM (spec Phase 5 "Guard against
+  /// double evaluation").
+  DateTime? get lastAlertEvaluationAt {
+    final raw = local.getString(_lastAlertEvaluationAtKey);
+    if (raw == null) return null;
+    return DateTime.tryParse(raw);
+  }
+
+  Future<void> setLastAlertEvaluationAt(DateTime value) async {
+    await local.setString(_lastAlertEvaluationAtKey, value.toUtc().toIso8601String());
   }
 
   /// Migration chain, simplified for a from-scratch app: (1) pre-sync

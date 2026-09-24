@@ -80,6 +80,11 @@ jobs:
           channel: stable
           flutter-version: ${{ env.FLUTTER_VERSION }}
 
+      # Plugins resolve through Swift Package Manager (app_settings ships no
+      # podspec), matching the committed Xcode project.
+      - name: Enable Swift Package Manager
+        run: flutter config --enable-swift-package-manager
+
       - name: Install Flutter dependencies
         run: flutter pub get
 

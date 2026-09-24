@@ -576,4 +576,219 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get confirmRemoveTickerMessage =>
       'También se quitarán sus tarjetas de la lista de seguimiento.';
+
+  @override
+  String get alertKindAbove => 'Sube por encima de';
+
+  @override
+  String get alertKindBelow => 'Baja por debajo de';
+
+  @override
+  String get alertKindPercentMove => 'Variación %';
+
+  @override
+  String get alertDirectionUp => 'Sube';
+
+  @override
+  String get alertDirectionDown => 'Baja';
+
+  @override
+  String get alertDirectionEither => 'Cualquiera';
+
+  @override
+  String get alertWindowWithin24h => 'En 24 horas';
+
+  @override
+  String get alertWindowWithin7d => 'En 7 días';
+
+  @override
+  String get alertWindow24h => '24 horas';
+
+  @override
+  String get alertWindow7d => '7 días';
+
+  @override
+  String get alertBellTooltip => 'Alertas de precio';
+
+  @override
+  String get alertsCardTitle => 'Alertas';
+
+  @override
+  String get alertsCardEmpty => 'Aún no hay alertas para este instrumento.';
+
+  @override
+  String get alertsCardAdd => 'Añadir alerta';
+
+  @override
+  String get alertEditorNewTitle => 'Nueva alerta';
+
+  @override
+  String get alertEditorEditTitle => 'Editar alerta';
+
+  @override
+  String get alertEditorTypePrice => 'Precio';
+
+  @override
+  String get alertEditorTypePercent => 'Variación %';
+
+  @override
+  String get alertEditorGoesAbove => 'Sube por encima de';
+
+  @override
+  String get alertEditorGoesBelow => 'Baja por debajo de';
+
+  @override
+  String get alertEditorTargetLabel => 'Precio objetivo';
+
+  @override
+  String get alertEditorTargetRequired =>
+      'Introduce un precio objetivo mayor que cero.';
+
+  @override
+  String alertEditorHelperAbove(String delta, String percent) {
+    return '+$delta · $percent% por encima del precio actual';
+  }
+
+  @override
+  String alertEditorHelperBelow(String delta, String percent) {
+    return '−$delta · $percent% por debajo del precio actual';
+  }
+
+  @override
+  String get alertEditorDirection => 'Dirección';
+
+  @override
+  String get alertEditorWindow => 'Ventana';
+
+  @override
+  String alertEditorPercentSummary(String low, String high) {
+    return 'Se activa por debajo de $low o por encima de $high';
+  }
+
+  @override
+  String alertEditorPercentSummaryUp(String high) {
+    return 'Se activa por encima de $high';
+  }
+
+  @override
+  String alertEditorPercentSummaryDown(String low) {
+    return 'Se activa por debajo de $low';
+  }
+
+  @override
+  String get alertEditorRepeat => 'Repetir';
+
+  @override
+  String get alertEditorRepeatFooter =>
+      'Sigue vigilando después de activarse, en lugar de desactivarse.';
+
+  @override
+  String get alertEditorCreate => 'Crear alerta';
+
+  @override
+  String get alertEditorSave => 'Guardar';
+
+  @override
+  String get alertEditorDelete => 'Eliminar';
+
+  @override
+  String get alertsScreenTitle => 'Alertas';
+
+  @override
+  String get alertsScreenInfo =>
+      'Las alertas se comprueban aproximadamente cada 15 minutos en segundo plano, y en tiempo real mientras Qima está abierta.';
+
+  @override
+  String get alertsScreenEmptyTitle => 'Aún no hay alertas';
+
+  @override
+  String get alertsScreenEmptyMessage =>
+      'Abre un instrumento y toca la campana para configurar una alerta de precio.';
+
+  @override
+  String alertsScreenFiredToday(String time) {
+    return 'Activada hoy a las $time · desactivada';
+  }
+
+  @override
+  String get alertsScreenNotificationsOff =>
+      'Las notificaciones están desactivadas';
+
+  @override
+  String get alertsScreenNotificationsOffMessage =>
+      'Activa las notificaciones de Qima para que te avisemos cuando se alcance un precio objetivo.';
+
+  @override
+  String get alertsScreenOpenSettings => 'Abrir ajustes';
+
+  @override
+  String get confirmDeleteAlertTitle => '¿Eliminar esta alerta?';
+
+  @override
+  String get confirmDeleteAlertMessage =>
+      'No volverás a recibir avisos de ella.';
+
+  @override
+  String get settingsAlerts => 'Alertas';
+
+  @override
+  String get settingsAlertsPriceAlerts => 'Alertas de precio';
+
+  @override
+  String settingsAlertsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count alertas',
+      one: '1 alerta',
+      zero: 'Sin alertas',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get settingsAlertsNotifications => 'Notificaciones';
+
+  @override
+  String get settingsAlertsNotificationsOn => 'Activadas';
+
+  @override
+  String get settingsAlertsNotificationsOff => 'Desactivadas';
+
+  @override
+  String get settingsAlertsDeliverOnDevice =>
+      'Entregar alertas en este dispositivo';
+
+  @override
+  String get settingsAlertsDeliverOnDeviceFooter =>
+      'Desactívalo si no quieres que este dispositivo te avise cuando se active una alerta.';
+
+  @override
+  String alertNotificationTitleAbove(String name, String target) {
+    return '$name está por encima de $target';
+  }
+
+  @override
+  String alertNotificationTitleBelow(String name, String target) {
+    return '$name está por debajo de $target';
+  }
+
+  @override
+  String alertNotificationTitlePercent(
+    String name,
+    String percent,
+    String window,
+  ) {
+    return '$name varió un $percent% en $window';
+  }
+
+  @override
+  String alertNotificationBodyOneOff(String price, String unit) {
+    return 'Ahora $price por $unit. Esta alerta se ha desactivado.';
+  }
+
+  @override
+  String alertNotificationBodyRepeat(String price, String unit) {
+    return 'Ahora $price por $unit. Te avisaremos de nuevo la próxima vez que ocurra.';
+  }
 }

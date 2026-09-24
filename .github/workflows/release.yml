@@ -143,6 +143,11 @@ jobs:
             exit 1
           fi
 
+      # Plugins resolve through Swift Package Manager (app_settings ships no
+      # podspec), matching the committed Xcode project.
+      - name: Enable Swift Package Manager
+        run: flutter config --enable-swift-package-manager
+
       - name: Install dependencies
         run: flutter pub get
 

@@ -62,7 +62,10 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(cubit.state.appLockEnabled, isFalse);
-    await tester.tap(find.widgetWithText(SwitchListTile, l10n.settingsAppLock));
+    final appLockSwitch = find.widgetWithText(SwitchListTile, l10n.settingsAppLock);
+    await tester.ensureVisible(appLockSwitch);
+    await tester.pumpAndSettle();
+    await tester.tap(appLockSwitch);
     await tester.pumpAndSettle();
 
     expect(cubit.state.appLockEnabled, isTrue);
@@ -83,7 +86,10 @@ void main() {
     await tester.pumpWidget(harness(cubit: cubit));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.widgetWithText(SwitchListTile, l10n.settingsAppLock));
+    final appLockSwitch = find.widgetWithText(SwitchListTile, l10n.settingsAppLock);
+    await tester.ensureVisible(appLockSwitch);
+    await tester.pumpAndSettle();
+    await tester.tap(appLockSwitch);
     await tester.pumpAndSettle();
 
     expect(cubit.state.appLockEnabled, isFalse);

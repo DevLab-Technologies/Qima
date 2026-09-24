@@ -3,23 +3,31 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../models/alert_runtime_state.dart';
 import '../models/asset.dart';
 import '../models/custom_instrument.dart';
 import '../models/fx_history.dart';
 import '../models/holding.dart';
 import '../models/instrument_catalog.dart';
 import '../models/instrument_presentation.dart';
+import '../models/money.dart';
 import '../models/portfolio_history.dart';
+import '../models/price_alert.dart';
 import '../models/quote.dart';
 import '../models/watch_card.dart';
 import '../models/chart_range.dart';
+import '../services/alert_runtime_store.dart';
+import '../services/alerts_store.dart';
 import '../services/app_lock_service.dart';
+import '../services/background_refresh.dart';
 import '../services/custom_instrument_store.dart';
 import '../services/holdings_store.dart';
+import '../services/notification_service.dart';
 import '../services/preferences.dart';
 import '../services/home_widget_service.dart';
 import '../services/price_converter.dart';
 import '../services/price_repository.dart';
+import '../services/refresh_pipeline.dart';
 import '../services/watchlist_store.dart';
 import 'app_state.dart';
 
@@ -34,7 +42,11 @@ class AppCubit extends Cubit<AppState> {
   final HoldingsStore holdingsStore;
   final CustomInstrumentStore customInstrumentStore;
   final AppLockService appLockService;
+  final AlertsStore alertsStore;
+  final AlertRuntimeStore alertRuntimeStore;
+  final NotificationService notificationService;
   late Preferences preferences;
+  RefreshPipeline? _pipeline;
 
   AppCubit({
     PriceRepository? repository,
@@ -42,11 +54,17 @@ class AppCubit extends Cubit<AppState> {
     HoldingsStore? holdingsStore,
     CustomInstrumentStore? customInstrumentStore,
     AppLockService? appLockService,
+    AlertsStore? alertsStore,
+    AlertRuntimeStore? alertRuntimeStore,
+    NotificationService? notificationService,
   })  : repository = repository ?? PriceRepository(),
         watchlistStore = watchlistStore ?? WatchlistStore(),
         holdingsStore = holdingsStore ?? HoldingsStore(),
         customInstrumentStore = customInstrumentStore ?? CustomInstrumentStore(),
         appLockService = appLockService ?? AppLockService(),
+        alertsStore = alertsStore ?? AlertsStore(),
+        alertRuntimeStore = alertRuntimeStore ?? AlertRuntimeStore(),
+        notificationService = notificationService ?? NotificationService(),
         super(AppState());
 
   // ---------------------------------------------------------------------
@@ -68,9 +86,11 @@ class AppCubit extends Cubit<AppState> {
     final hideBalances = preferences.hideBalances;
     final appLockEnabled = preferences.appLockEnabled;
     final lockGrace = preferences.lockGrace;
+    final deliverAlertsOnThisDevice = preferences.deliverAlertsOnThisDevice;
 
     final seedCards = await preferences.seedWatchcards();
     final cards = await _loadCardsSeeding(watchlistStore, seedCards);
+    final alerts = await alertsStore.load();
 
     final lots = await holdingsStore.load();
     final rates = await repository.cachedRates();
@@ -81,12 +101,34 @@ class AppCubit extends Cubit<AppState> {
       seriesByID[instrument.id] = await repository.cachedSeries(instrument);
     }
 
+    await notificationService.init();
+    final notificationsEnabled = await notificationService.isEnabled();
+
+    _pipeline = RefreshPipeline(
+      repository: repository,
+      watchlistStore: watchlistStore,
+      holdingsStore: holdingsStore,
+      customInstrumentStore: customInstrumentStore,
+      alertsStore: alertsStore,
+      alertRuntimeStore: alertRuntimeStore,
+      notificationService: notificationService,
+      preferences: preferences,
+    );
+
+    // Best-effort: registers the periodic background task on platforms that
+    // support it (Android always; iOS opportunistically via BGTaskScheduler
+    // — see `background_refresh.dart`). Never blocks/fails init.
+    unawaited(BackgroundRefresh.register(interval: widgetRefreshInterval.timeInterval));
+
     emit(state.copyWith(
       initialized: true,
       baseCurrency: baseCurrency,
       widgetRefreshInterval: widgetRefreshInterval,
       appLanguage: appLanguage,
       appearance: appearance,
+      alerts: alerts,
+      deliverAlertsOnThisDevice: deliverAlertsOnThisDevice,
+      notificationsEnabled: notificationsEnabled,
       preferredChartRange: preferredChartRange,
       preferredPortfolioRange: preferredPortfolioRange,
       cards: cards,
@@ -212,6 +254,9 @@ class AppCubit extends Cubit<AppState> {
           seriesByID: merged,
           lastRefresh: DateTime.now(),
         ));
+        if (updated.isNotEmpty) {
+          await _evaluateAlertsAfterRefresh(seriesByID: merged, rates: rates);
+        }
       }
     } catch (e, st) {
       debugPrint('AppCubit: refreshAll failed: $e\n$st');
@@ -219,6 +264,34 @@ class AppCubit extends Cubit<AppState> {
     }
     // Fire-and-forget: history is larger and shouldn't block live prices.
     unawaited(backfillHistoryIfNeeded());
+  }
+
+  /// Runs alert evaluation for the alerts currently in state against a
+  /// just-refreshed price snapshot, via the same [RefreshPipeline] the
+  /// background task uses (spec Phase 5) — then reloads alerts from disk in
+  /// case a one-off alert just disabled itself, so the UI reflects it
+  /// immediately without waiting for the next unrelated state change.
+  Future<void> _evaluateAlertsAfterRefresh({
+    required Map<String, QuoteSeries> seriesByID,
+    required FXRates rates,
+  }) async {
+    final pipeline = _pipeline;
+    if (pipeline == null || state.alerts.isEmpty) return;
+    try {
+      await pipeline.evaluateAndNotify(
+        alerts: state.alerts,
+        cards: state.cards,
+        seriesByID: seriesByID,
+        rates: rates,
+        fxHistory: state.fxHistory,
+      );
+      final reloaded = await alertsStore.load();
+      if (reloaded != state.alerts) {
+        emit(state.copyWith(alerts: reloaded));
+      }
+    } catch (e, st) {
+      debugPrint('AppCubit: alert evaluation failed: $e\n$st');
+    }
   }
 
   Future<void> backfillHistoryIfNeeded() async {
@@ -265,13 +338,15 @@ class AppCubit extends Cubit<AppState> {
     try {
       final series = await repository.refresh(instrument);
       final rates = await repository.cachedRates();
+      final merged = {...state.seriesByID, instrument.id: series};
       emit(state.copyWith(
         phase: RefreshPhase.idle,
         clearError: true,
         rates: rates,
-        seriesByID: {...state.seriesByID, instrument.id: series},
+        seriesByID: merged,
         lastRefresh: DateTime.now(),
       ));
+      await _evaluateAlertsAfterRefresh(seriesByID: merged, rates: rates);
     } catch (e, st) {
       debugPrint('AppCubit: refresh(${instrument.id}) failed: $e\n$st');
       emit(state.copyWith(phase: RefreshPhase.failed, errorMessage: _refreshFailedKey));
@@ -433,6 +508,12 @@ class AppCubit extends Cubit<AppState> {
     if (value == state.widgetRefreshInterval) return;
     await preferences.setWidgetRefreshInterval(value);
     emit(state.copyWith(widgetRefreshInterval: value));
+    // Re-registering replaces the periodic task with the new cadence
+    // (Android: `ExistingPeriodicWorkPolicy.update`; iOS: the next
+    // BGTaskScheduler submission simply uses the new earliest-begin delay —
+    // see `background_refresh.dart`), so this finally gives the setting a
+    // real effect (spec Phase 5).
+    unawaited(BackgroundRefresh.register(interval: value.timeInterval));
   }
 
   // ---------------------------------------------------------------------
@@ -565,6 +646,58 @@ class AppCubit extends Cubit<AppState> {
   Future<void> deleteLot(HoldingLot lot) async {
     final lots = await holdingsStore.delete(lot.id);
     emit(state.copyWith(lots: lots));
+  }
+
+  // ---------------------------------------------------------------------
+  // Price alerts
+  // ---------------------------------------------------------------------
+
+  List<PriceAlert> alertsFor(String cardID) => state.alerts.where((a) => a.cardID == cardID).toList();
+
+  Future<void> saveAlert(PriceAlert alert) async {
+    final alerts = await alertsStore.upsert(alert);
+    emit(state.copyWith(alerts: alerts));
+  }
+
+  Future<void> deleteAlert(PriceAlert alert) async {
+    final alerts = await alertsStore.delete(alert.id);
+    emit(state.copyWith(alerts: alerts));
+  }
+
+  Future<void> setAlertEnabled(PriceAlert alert, bool enabled) async {
+    if (alert.enabled == enabled) return;
+    await saveAlert(alert.copyWith(enabled: enabled));
+  }
+
+  /// The alert's per-device runtime state (last fired time, armed) — read
+  /// straight from [alertRuntimeStore] since it's deliberately not part of
+  /// [AppState]/[PriceAlert] (never synced, see `alert_runtime_state.dart`).
+  Future<AlertRuntimeState> runtimeStateFor(String alertId) async {
+    final all = await alertRuntimeStore.loadAll();
+    return alertRuntimeStore.stateFor(all, alertId);
+  }
+
+  Future<void> setDeliverAlertsOnThisDevice(bool value) async {
+    if (value == state.deliverAlertsOnThisDevice) return;
+    await preferences.setDeliverAlertsOnThisDevice(value);
+    emit(state.copyWith(deliverAlertsOnThisDevice: value));
+  }
+
+  /// Requests OS notification permission (Android 13+, iOS/macOS) and
+  /// refreshes [AppState.notificationsEnabled] from the result, so the
+  /// Alerts/Settings screens' "Notifications are off" banner updates
+  /// immediately rather than waiting for the next unrelated rebuild.
+  Future<bool> requestNotificationPermission() async {
+    final granted = await notificationService.requestPermission();
+    await refreshNotificationStatus();
+    return granted;
+  }
+
+  Future<void> refreshNotificationStatus() async {
+    final enabled = await notificationService.isEnabled();
+    if (enabled != state.notificationsEnabled) {
+      emit(state.copyWith(notificationsEnabled: enabled));
+    }
   }
 
   // ---------------------------------------------------------------------

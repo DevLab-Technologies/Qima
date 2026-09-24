@@ -11,6 +11,7 @@ import '../services/preferences.dart';
 import '../theme/design_system.dart';
 import '../theme/qima_colors.dart';
 import '../theme/strings.dart';
+import 'alerts_screen.dart';
 import 'currency_picker.dart';
 
 /// Single settings sheet: base currency, default chart range, widget refresh
@@ -48,6 +49,9 @@ class SettingsScreen extends StatelessWidget {
                     style: DS.segmentedButtonStyle(colors, colors.brand),
                   ),
                 ),
+                const SizedBox(height: DS.spaceLG),
+                _SectionHeader(l10n.settingsAlerts),
+                const _AlertsSection(),
                 const SizedBox(height: DS.spaceLG),
                 _SectionHeader(l10n.settingsPrivacy),
                 const _PrivacySecuritySection(),
@@ -169,6 +173,65 @@ class SettingsScreen extends StatelessWidget {
           },
         ),
       ),
+    );
+  }
+}
+
+/// "Alerts" settings card (spec Phase 5): a "Price alerts" row (count
+/// summary, opens [AlertsScreen]), a "Notifications" status row, and a
+/// "Deliver alerts on this device" switch.
+class _AlertsSection extends StatelessWidget {
+  const _AlertsSection();
+
+  @override
+  Widget build(BuildContext context) {
+    final cubit = context.read<AppCubit>();
+    final l10n = AppLocalizations.of(context)!;
+    final colors = context.colors;
+
+    return BlocBuilder<AppCubit, AppState>(
+      bloc: cubit,
+      builder: (context, state) {
+        return DSCard(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              ListTile(
+                contentPadding: EdgeInsets.zero,
+                title: Text(l10n.settingsAlertsPriceAlerts, style: TextStyle(color: colors.textPrimary)),
+                subtitle: Text(
+                  l10n.settingsAlertsCount(state.alerts.length),
+                  style: TextStyle(color: colors.textTertiary, fontSize: 12),
+                ),
+                trailing: Icon(Icons.chevron_right, color: colors.textTertiary),
+                onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const AlertsScreen())),
+              ),
+              Divider(color: colors.hairline, height: DS.spaceLG),
+              ListTile(
+                contentPadding: EdgeInsets.zero,
+                title: Text(l10n.settingsAlertsNotifications, style: TextStyle(color: colors.textPrimary)),
+                trailing: Text(
+                  state.notificationsEnabled ? l10n.settingsAlertsNotificationsOn : l10n.settingsAlertsNotificationsOff,
+                  style: TextStyle(color: colors.textSecondary),
+                ),
+              ),
+              Divider(color: colors.hairline, height: DS.spaceLG),
+              SwitchListTile(
+                contentPadding: EdgeInsets.zero,
+                title: Text(l10n.settingsAlertsDeliverOnDevice, style: TextStyle(color: colors.textPrimary)),
+                subtitle: Text(
+                  l10n.settingsAlertsDeliverOnDeviceFooter,
+                  style: TextStyle(color: colors.textTertiary, fontSize: 12),
+                ),
+                value: state.deliverAlertsOnThisDevice,
+                activeThumbColor: colors.onBrand,
+                activeTrackColor: colors.brand,
+                onChanged: (value) => cubit.setDeliverAlertsOnThisDevice(value),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

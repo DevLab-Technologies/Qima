@@ -265,5 +265,137 @@
       }
     }
   },
-  "confirmRemoveTickerMessage": "Any watchlist cards for it are removed too."
+  "confirmRemoveTickerMessage": "Any watchlist cards for it are removed too.",
+
+  "alertKindAbove": "Goes above",
+  "alertKindBelow": "Goes below",
+  "alertKindPercentMove": "% move",
+  "alertDirectionUp": "Up",
+  "alertDirectionDown": "Down",
+  "alertDirectionEither": "Either",
+  "alertWindowWithin24h": "Within 24 hours",
+  "alertWindowWithin7d": "Within 7 days",
+  "alertWindow24h": "24 hours",
+  "alertWindow7d": "7 days",
+
+  "alertBellTooltip": "Price alerts",
+  "alertsCardTitle": "Alerts",
+  "alertsCardEmpty": "No alerts yet for this instrument.",
+  "alertsCardAdd": "Add alert",
+
+  "alertEditorNewTitle": "New alert",
+  "alertEditorEditTitle": "Edit alert",
+  "alertEditorTypePrice": "Price",
+  "alertEditorTypePercent": "% move",
+  "alertEditorGoesAbove": "Goes above",
+  "alertEditorGoesBelow": "Goes below",
+  "alertEditorTargetLabel": "Target price",
+  "alertEditorTargetRequired": "Enter a target price above zero.",
+  "alertEditorHelperAbove": "+{delta} · {percent}% above the current price",
+  "@alertEditorHelperAbove": {
+    "placeholders": {
+      "delta": { "type": "String" },
+      "percent": { "type": "String" }
+    }
+  },
+  "alertEditorHelperBelow": "−{delta} · {percent}% below the current price",
+  "@alertEditorHelperBelow": {
+    "placeholders": {
+      "delta": { "type": "String" },
+      "percent": { "type": "String" }
+    }
+  },
+  "alertEditorDirection": "Direction",
+  "alertEditorWindow": "Window",
+  "alertEditorPercentSummary": "Fires below {low} or above {high}",
+  "@alertEditorPercentSummary": {
+    "placeholders": {
+      "low": { "type": "String" },
+      "high": { "type": "String" }
+    }
+  },
+  "alertEditorPercentSummaryUp": "Fires above {high}",
+  "@alertEditorPercentSummaryUp": {
+    "placeholders": {
+      "high": { "type": "String" }
+    }
+  },
+  "alertEditorPercentSummaryDown": "Fires below {low}",
+  "@alertEditorPercentSummaryDown": {
+    "placeholders": {
+      "low": { "type": "String" }
+    }
+  },
+  "alertEditorRepeat": "Repeat",
+  "alertEditorRepeatFooter": "Keep watching after it fires, instead of turning off.",
+  "alertEditorCreate": "Create alert",
+  "alertEditorSave": "Save",
+  "alertEditorDelete": "Delete",
+
+  "alertsScreenTitle": "Alerts",
+  "alertsScreenInfo": "Alerts are checked roughly every 15 minutes in the background, and live while Qima is open.",
+  "alertsScreenEmptyTitle": "No alerts yet",
+  "alertsScreenEmptyMessage": "Open an instrument and tap the bell to set a price alert.",
+  "alertsScreenFiredToday": "Fired today {time} · switched off",
+  "@alertsScreenFiredToday": {
+    "placeholders": {
+      "time": { "type": "String" }
+    }
+  },
+  "alertsScreenNotificationsOff": "Notifications are off",
+  "alertsScreenNotificationsOffMessage": "Turn on notifications for Qima to be alerted when a price target is hit.",
+  "alertsScreenOpenSettings": "Open settings",
+  "confirmDeleteAlertTitle": "Delete this alert?",
+  "confirmDeleteAlertMessage": "You won't be notified for it again.",
+
+  "settingsAlerts": "Alerts",
+  "settingsAlertsPriceAlerts": "Price alerts",
+  "settingsAlertsCount": "{count, plural, =0{No alerts} =1{1 alert} other{{count} alerts}}",
+  "@settingsAlertsCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "settingsAlertsNotifications": "Notifications",
+  "settingsAlertsNotificationsOn": "On",
+  "settingsAlertsNotificationsOff": "Off",
+  "settingsAlertsDeliverOnDevice": "Deliver alerts on this device",
+  "settingsAlertsDeliverOnDeviceFooter": "Turn off if you don't want this device to notify you when an alert fires.",
+
+  "alertNotificationTitleAbove": "{name} is above {target}",
+  "@alertNotificationTitleAbove": {
+    "placeholders": {
+      "name": { "type": "String" },
+      "target": { "type": "String" }
+    }
+  },
+  "alertNotificationTitleBelow": "{name} is below {target}",
+  "@alertNotificationTitleBelow": {
+    "placeholders": {
+      "name": { "type": "String" },
+      "target": { "type": "String" }
+    }
+  },
+  "alertNotificationTitlePercent": "{name} moved {percent}% in {window}",
+  "@alertNotificationTitlePercent": {
+    "placeholders": {
+      "name": { "type": "String" },
+      "percent": { "type": "String" },
+      "window": { "type": "String" }
+    }
+  },
+  "alertNotificationBodyOneOff": "Now {price} per {unit}. This alert is now off.",
+  "@alertNotificationBodyOneOff": {
+    "placeholders": {
+      "price": { "type": "String" },
+      "unit": { "type": "String" }
+    }
+  },
+  "alertNotificationBodyRepeat": "Now {price} per {unit}. You'll be told again the next time this happens.",
+  "@alertNotificationBodyRepeat": {
+    "placeholders": {
+      "price": { "type": "String" },
+      "unit": { "type": "String" }
+    }
+  }
 }

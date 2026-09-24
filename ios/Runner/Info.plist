@@ -30,6 +30,22 @@
 	<true/>
 	<key>NSFaceIDUsageDescription</key>
 	<string>Qima uses Face ID to keep your portfolio private.</string>
+	<!-- Price alerts (spec Phase 5): lets iOS opportunistically wake the app
+	     in the background to refresh prices and evaluate alerts via
+	     BGTaskScheduler. "fetch" additionally opts into the legacy
+	     background-fetch API workmanager falls back to when BGTaskScheduler
+	     itself isn't available. Actual scheduling is opportunistic — iOS
+	     decides if/when this runs based on usage patterns; there is no
+	     guaranteed cadence. -->
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+		<string>processing</string>
+	</array>
+	<key>BGTaskSchedulerPermittedIdentifiers</key>
+	<array>
+		<string>com.devlabtechnologies.qima.refresh</string>
+	</array>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

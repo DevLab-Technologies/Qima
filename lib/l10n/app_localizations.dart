@@ -1133,6 +1133,352 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Any watchlist cards for it are removed too.'**
   String get confirmRemoveTickerMessage;
+
+  /// No description provided for @alertKindAbove.
+  ///
+  /// In en, this message translates to:
+  /// **'Goes above'**
+  String get alertKindAbove;
+
+  /// No description provided for @alertKindBelow.
+  ///
+  /// In en, this message translates to:
+  /// **'Goes below'**
+  String get alertKindBelow;
+
+  /// No description provided for @alertKindPercentMove.
+  ///
+  /// In en, this message translates to:
+  /// **'% move'**
+  String get alertKindPercentMove;
+
+  /// No description provided for @alertDirectionUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Up'**
+  String get alertDirectionUp;
+
+  /// No description provided for @alertDirectionDown.
+  ///
+  /// In en, this message translates to:
+  /// **'Down'**
+  String get alertDirectionDown;
+
+  /// No description provided for @alertDirectionEither.
+  ///
+  /// In en, this message translates to:
+  /// **'Either'**
+  String get alertDirectionEither;
+
+  /// No description provided for @alertWindowWithin24h.
+  ///
+  /// In en, this message translates to:
+  /// **'Within 24 hours'**
+  String get alertWindowWithin24h;
+
+  /// No description provided for @alertWindowWithin7d.
+  ///
+  /// In en, this message translates to:
+  /// **'Within 7 days'**
+  String get alertWindowWithin7d;
+
+  /// No description provided for @alertWindow24h.
+  ///
+  /// In en, this message translates to:
+  /// **'24 hours'**
+  String get alertWindow24h;
+
+  /// No description provided for @alertWindow7d.
+  ///
+  /// In en, this message translates to:
+  /// **'7 days'**
+  String get alertWindow7d;
+
+  /// No description provided for @alertBellTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Price alerts'**
+  String get alertBellTooltip;
+
+  /// No description provided for @alertsCardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Alerts'**
+  String get alertsCardTitle;
+
+  /// No description provided for @alertsCardEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No alerts yet for this instrument.'**
+  String get alertsCardEmpty;
+
+  /// No description provided for @alertsCardAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add alert'**
+  String get alertsCardAdd;
+
+  /// No description provided for @alertEditorNewTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'New alert'**
+  String get alertEditorNewTitle;
+
+  /// No description provided for @alertEditorEditTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit alert'**
+  String get alertEditorEditTitle;
+
+  /// No description provided for @alertEditorTypePrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Price'**
+  String get alertEditorTypePrice;
+
+  /// No description provided for @alertEditorTypePercent.
+  ///
+  /// In en, this message translates to:
+  /// **'% move'**
+  String get alertEditorTypePercent;
+
+  /// No description provided for @alertEditorGoesAbove.
+  ///
+  /// In en, this message translates to:
+  /// **'Goes above'**
+  String get alertEditorGoesAbove;
+
+  /// No description provided for @alertEditorGoesBelow.
+  ///
+  /// In en, this message translates to:
+  /// **'Goes below'**
+  String get alertEditorGoesBelow;
+
+  /// No description provided for @alertEditorTargetLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Target price'**
+  String get alertEditorTargetLabel;
+
+  /// No description provided for @alertEditorTargetRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a target price above zero.'**
+  String get alertEditorTargetRequired;
+
+  /// No description provided for @alertEditorHelperAbove.
+  ///
+  /// In en, this message translates to:
+  /// **'+{delta} · {percent}% above the current price'**
+  String alertEditorHelperAbove(String delta, String percent);
+
+  /// No description provided for @alertEditorHelperBelow.
+  ///
+  /// In en, this message translates to:
+  /// **'−{delta} · {percent}% below the current price'**
+  String alertEditorHelperBelow(String delta, String percent);
+
+  /// No description provided for @alertEditorDirection.
+  ///
+  /// In en, this message translates to:
+  /// **'Direction'**
+  String get alertEditorDirection;
+
+  /// No description provided for @alertEditorWindow.
+  ///
+  /// In en, this message translates to:
+  /// **'Window'**
+  String get alertEditorWindow;
+
+  /// No description provided for @alertEditorPercentSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Fires below {low} or above {high}'**
+  String alertEditorPercentSummary(String low, String high);
+
+  /// No description provided for @alertEditorPercentSummaryUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Fires above {high}'**
+  String alertEditorPercentSummaryUp(String high);
+
+  /// No description provided for @alertEditorPercentSummaryDown.
+  ///
+  /// In en, this message translates to:
+  /// **'Fires below {low}'**
+  String alertEditorPercentSummaryDown(String low);
+
+  /// No description provided for @alertEditorRepeat.
+  ///
+  /// In en, this message translates to:
+  /// **'Repeat'**
+  String get alertEditorRepeat;
+
+  /// No description provided for @alertEditorRepeatFooter.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep watching after it fires, instead of turning off.'**
+  String get alertEditorRepeatFooter;
+
+  /// No description provided for @alertEditorCreate.
+  ///
+  /// In en, this message translates to:
+  /// **'Create alert'**
+  String get alertEditorCreate;
+
+  /// No description provided for @alertEditorSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get alertEditorSave;
+
+  /// No description provided for @alertEditorDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get alertEditorDelete;
+
+  /// No description provided for @alertsScreenTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Alerts'**
+  String get alertsScreenTitle;
+
+  /// No description provided for @alertsScreenInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Alerts are checked roughly every 15 minutes in the background, and live while Qima is open.'**
+  String get alertsScreenInfo;
+
+  /// No description provided for @alertsScreenEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No alerts yet'**
+  String get alertsScreenEmptyTitle;
+
+  /// No description provided for @alertsScreenEmptyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Open an instrument and tap the bell to set a price alert.'**
+  String get alertsScreenEmptyMessage;
+
+  /// No description provided for @alertsScreenFiredToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Fired today {time} · switched off'**
+  String alertsScreenFiredToday(String time);
+
+  /// No description provided for @alertsScreenNotificationsOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications are off'**
+  String get alertsScreenNotificationsOff;
+
+  /// No description provided for @alertsScreenNotificationsOffMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn on notifications for Qima to be alerted when a price target is hit.'**
+  String get alertsScreenNotificationsOffMessage;
+
+  /// No description provided for @alertsScreenOpenSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Open settings'**
+  String get alertsScreenOpenSettings;
+
+  /// No description provided for @confirmDeleteAlertTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this alert?'**
+  String get confirmDeleteAlertTitle;
+
+  /// No description provided for @confirmDeleteAlertMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'You won\'t be notified for it again.'**
+  String get confirmDeleteAlertMessage;
+
+  /// No description provided for @settingsAlerts.
+  ///
+  /// In en, this message translates to:
+  /// **'Alerts'**
+  String get settingsAlerts;
+
+  /// No description provided for @settingsAlertsPriceAlerts.
+  ///
+  /// In en, this message translates to:
+  /// **'Price alerts'**
+  String get settingsAlertsPriceAlerts;
+
+  /// No description provided for @settingsAlertsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{No alerts} =1{1 alert} other{{count} alerts}}'**
+  String settingsAlertsCount(int count);
+
+  /// No description provided for @settingsAlertsNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get settingsAlertsNotifications;
+
+  /// No description provided for @settingsAlertsNotificationsOn.
+  ///
+  /// In en, this message translates to:
+  /// **'On'**
+  String get settingsAlertsNotificationsOn;
+
+  /// No description provided for @settingsAlertsNotificationsOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Off'**
+  String get settingsAlertsNotificationsOff;
+
+  /// No description provided for @settingsAlertsDeliverOnDevice.
+  ///
+  /// In en, this message translates to:
+  /// **'Deliver alerts on this device'**
+  String get settingsAlertsDeliverOnDevice;
+
+  /// No description provided for @settingsAlertsDeliverOnDeviceFooter.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn off if you don\'t want this device to notify you when an alert fires.'**
+  String get settingsAlertsDeliverOnDeviceFooter;
+
+  /// No description provided for @alertNotificationTitleAbove.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} is above {target}'**
+  String alertNotificationTitleAbove(String name, String target);
+
+  /// No description provided for @alertNotificationTitleBelow.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} is below {target}'**
+  String alertNotificationTitleBelow(String name, String target);
+
+  /// No description provided for @alertNotificationTitlePercent.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} moved {percent}% in {window}'**
+  String alertNotificationTitlePercent(
+    String name,
+    String percent,
+    String window,
+  );
+
+  /// No description provided for @alertNotificationBodyOneOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Now {price} per {unit}. This alert is now off.'**
+  String alertNotificationBodyOneOff(String price, String unit);
+
+  /// No description provided for @alertNotificationBodyRepeat.
+  ///
+  /// In en, this message translates to:
+  /// **'Now {price} per {unit}. You\'ll be told again the next time this happens.'**
+  String alertNotificationBodyRepeat(String price, String unit);
 }
 
 class _AppLocalizationsDelegate

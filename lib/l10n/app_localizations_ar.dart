@@ -573,4 +573,218 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get confirmRemoveTickerMessage =>
       'ستُزال أيضًا بطاقاته من قائمة المتابعة.';
+
+  @override
+  String get alertKindAbove => 'يتجاوز';
+
+  @override
+  String get alertKindBelow => 'ينخفض عن';
+
+  @override
+  String get alertKindPercentMove => 'تغيّر %';
+
+  @override
+  String get alertDirectionUp => 'صعود';
+
+  @override
+  String get alertDirectionDown => 'هبوط';
+
+  @override
+  String get alertDirectionEither => 'أي منهما';
+
+  @override
+  String get alertWindowWithin24h => 'خلال ٢٤ ساعة';
+
+  @override
+  String get alertWindowWithin7d => 'خلال ٧ أيام';
+
+  @override
+  String get alertWindow24h => '٢٤ ساعة';
+
+  @override
+  String get alertWindow7d => '٧ أيام';
+
+  @override
+  String get alertBellTooltip => 'تنبيهات السعر';
+
+  @override
+  String get alertsCardTitle => 'التنبيهات';
+
+  @override
+  String get alertsCardEmpty => 'لا توجد تنبيهات بعد لهذه الأداة.';
+
+  @override
+  String get alertsCardAdd => 'إضافة تنبيه';
+
+  @override
+  String get alertEditorNewTitle => 'تنبيه جديد';
+
+  @override
+  String get alertEditorEditTitle => 'تعديل التنبيه';
+
+  @override
+  String get alertEditorTypePrice => 'السعر';
+
+  @override
+  String get alertEditorTypePercent => 'تغيّر %';
+
+  @override
+  String get alertEditorGoesAbove => 'يتجاوز';
+
+  @override
+  String get alertEditorGoesBelow => 'ينخفض عن';
+
+  @override
+  String get alertEditorTargetLabel => 'السعر المستهدف';
+
+  @override
+  String get alertEditorTargetRequired => 'أدخل سعرًا مستهدفًا أكبر من صفر.';
+
+  @override
+  String alertEditorHelperAbove(String delta, String percent) {
+    return '‏+$delta · أعلى بنسبة $percent٪ من السعر الحالي';
+  }
+
+  @override
+  String alertEditorHelperBelow(String delta, String percent) {
+    return '‏−$delta · أقل بنسبة $percent٪ من السعر الحالي';
+  }
+
+  @override
+  String get alertEditorDirection => 'الاتجاه';
+
+  @override
+  String get alertEditorWindow => 'المدة';
+
+  @override
+  String alertEditorPercentSummary(String low, String high) {
+    return 'يُطلق عند الانخفاض دون $low أو الارتفاع فوق $high';
+  }
+
+  @override
+  String alertEditorPercentSummaryUp(String high) {
+    return 'يُطلق عند الارتفاع فوق $high';
+  }
+
+  @override
+  String alertEditorPercentSummaryDown(String low) {
+    return 'يُطلق عند الانخفاض دون $low';
+  }
+
+  @override
+  String get alertEditorRepeat => 'تكرار';
+
+  @override
+  String get alertEditorRepeatFooter =>
+      'يستمر المراقبة بعد إطلاقه بدلاً من إيقاف التشغيل.';
+
+  @override
+  String get alertEditorCreate => 'إنشاء تنبيه';
+
+  @override
+  String get alertEditorSave => 'حفظ';
+
+  @override
+  String get alertEditorDelete => 'حذف';
+
+  @override
+  String get alertsScreenTitle => 'التنبيهات';
+
+  @override
+  String get alertsScreenInfo =>
+      'تُفحص التنبيهات تقريبًا كل ١٥ دقيقة في الخلفية، وباستمرار أثناء فتح قيمة.';
+
+  @override
+  String get alertsScreenEmptyTitle => 'لا توجد تنبيهات بعد';
+
+  @override
+  String get alertsScreenEmptyMessage =>
+      'افتح أداة ما واضغط على الجرس لضبط تنبيه سعر.';
+
+  @override
+  String alertsScreenFiredToday(String time) {
+    return 'أُطلق اليوم $time · تم إيقاف التشغيل';
+  }
+
+  @override
+  String get alertsScreenNotificationsOff => 'الإشعارات متوقفة';
+
+  @override
+  String get alertsScreenNotificationsOffMessage =>
+      'فعّل إشعارات قيمة لتصلك تنبيهات عند بلوغ سعر مستهدف.';
+
+  @override
+  String get alertsScreenOpenSettings => 'فتح الإعدادات';
+
+  @override
+  String get confirmDeleteAlertTitle => 'حذف هذا التنبيه؟';
+
+  @override
+  String get confirmDeleteAlertMessage => 'لن تصلك إشعارات بشأنه مرة أخرى.';
+
+  @override
+  String get settingsAlerts => 'التنبيهات';
+
+  @override
+  String get settingsAlertsPriceAlerts => 'تنبيهات السعر';
+
+  @override
+  String settingsAlertsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count تنبيه',
+      many: '$count تنبيهًا',
+      few: '$count تنبيهات',
+      two: 'تنبيهان',
+      one: 'تنبيه واحد',
+      zero: 'لا تنبيهات',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get settingsAlertsNotifications => 'الإشعارات';
+
+  @override
+  String get settingsAlertsNotificationsOn => 'مفعّلة';
+
+  @override
+  String get settingsAlertsNotificationsOff => 'متوقفة';
+
+  @override
+  String get settingsAlertsDeliverOnDevice => 'تسليم التنبيهات على هذا الجهاز';
+
+  @override
+  String get settingsAlertsDeliverOnDeviceFooter =>
+      'أوقف التشغيل إذا كنت لا تريد أن يُنبّهك هذا الجهاز عند إطلاق تنبيه.';
+
+  @override
+  String alertNotificationTitleAbove(String name, String target) {
+    return '$name تجاوز $target';
+  }
+
+  @override
+  String alertNotificationTitleBelow(String name, String target) {
+    return '$name انخفض عن $target';
+  }
+
+  @override
+  String alertNotificationTitlePercent(
+    String name,
+    String percent,
+    String window,
+  ) {
+    return '$name تحرك بنسبة $percent٪ خلال $window';
+  }
+
+  @override
+  String alertNotificationBodyOneOff(String price, String unit) {
+    return 'الآن $price لكل $unit. تم إيقاف هذا التنبيه.';
+  }
+
+  @override
+  String alertNotificationBodyRepeat(String price, String unit) {
+    return 'الآن $price لكل $unit. سنُعلمك مرة أخرى في المرة القادمة.';
+  }
 }

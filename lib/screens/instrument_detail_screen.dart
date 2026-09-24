@@ -13,9 +13,11 @@ import '../theme/instrument_theme.dart';
 import '../theme/price_chart.dart';
 import '../theme/qima_colors.dart';
 import '../theme/strings.dart';
+import '../widgets/alerts_card.dart';
 import '../widgets/instrument_icon.dart';
 import '../widgets/key_stats_grid.dart';
 import '../widgets/unit_price_carousel.dart';
+import 'alert_editor_sheet.dart';
 import 'currency_picker.dart';
 import 'holdings_card.dart';
 
@@ -148,6 +150,11 @@ class _InstrumentDetailScreenState extends State<InstrumentDetailScreen> {
                   ],
                 ),
                 IconButton(
+                  icon: const Icon(Icons.notifications_outlined),
+                  tooltip: l10n.alertBellTooltip,
+                  onPressed: () => AlertEditorSheet.show(context, card: _card),
+                ),
+                IconButton(
                   icon: state.phase == RefreshPhase.refreshing
                       ? const SizedBox(
                           width: 18,
@@ -217,6 +224,8 @@ class _InstrumentDetailScreenState extends State<InstrumentDetailScreen> {
                       ),
                     ],
                   ),
+                  const SizedBox(height: DS.spaceMD),
+                  AlertsCard(card: _card),
                   const SizedBox(height: DS.spaceMD),
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,

@@ -575,4 +575,216 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get confirmRemoveTickerMessage =>
       'Any watchlist cards for it are removed too.';
+
+  @override
+  String get alertKindAbove => 'Goes above';
+
+  @override
+  String get alertKindBelow => 'Goes below';
+
+  @override
+  String get alertKindPercentMove => '% move';
+
+  @override
+  String get alertDirectionUp => 'Up';
+
+  @override
+  String get alertDirectionDown => 'Down';
+
+  @override
+  String get alertDirectionEither => 'Either';
+
+  @override
+  String get alertWindowWithin24h => 'Within 24 hours';
+
+  @override
+  String get alertWindowWithin7d => 'Within 7 days';
+
+  @override
+  String get alertWindow24h => '24 hours';
+
+  @override
+  String get alertWindow7d => '7 days';
+
+  @override
+  String get alertBellTooltip => 'Price alerts';
+
+  @override
+  String get alertsCardTitle => 'Alerts';
+
+  @override
+  String get alertsCardEmpty => 'No alerts yet for this instrument.';
+
+  @override
+  String get alertsCardAdd => 'Add alert';
+
+  @override
+  String get alertEditorNewTitle => 'New alert';
+
+  @override
+  String get alertEditorEditTitle => 'Edit alert';
+
+  @override
+  String get alertEditorTypePrice => 'Price';
+
+  @override
+  String get alertEditorTypePercent => '% move';
+
+  @override
+  String get alertEditorGoesAbove => 'Goes above';
+
+  @override
+  String get alertEditorGoesBelow => 'Goes below';
+
+  @override
+  String get alertEditorTargetLabel => 'Target price';
+
+  @override
+  String get alertEditorTargetRequired => 'Enter a target price above zero.';
+
+  @override
+  String alertEditorHelperAbove(String delta, String percent) {
+    return '+$delta · $percent% above the current price';
+  }
+
+  @override
+  String alertEditorHelperBelow(String delta, String percent) {
+    return '−$delta · $percent% below the current price';
+  }
+
+  @override
+  String get alertEditorDirection => 'Direction';
+
+  @override
+  String get alertEditorWindow => 'Window';
+
+  @override
+  String alertEditorPercentSummary(String low, String high) {
+    return 'Fires below $low or above $high';
+  }
+
+  @override
+  String alertEditorPercentSummaryUp(String high) {
+    return 'Fires above $high';
+  }
+
+  @override
+  String alertEditorPercentSummaryDown(String low) {
+    return 'Fires below $low';
+  }
+
+  @override
+  String get alertEditorRepeat => 'Repeat';
+
+  @override
+  String get alertEditorRepeatFooter =>
+      'Keep watching after it fires, instead of turning off.';
+
+  @override
+  String get alertEditorCreate => 'Create alert';
+
+  @override
+  String get alertEditorSave => 'Save';
+
+  @override
+  String get alertEditorDelete => 'Delete';
+
+  @override
+  String get alertsScreenTitle => 'Alerts';
+
+  @override
+  String get alertsScreenInfo =>
+      'Alerts are checked roughly every 15 minutes in the background, and live while Qima is open.';
+
+  @override
+  String get alertsScreenEmptyTitle => 'No alerts yet';
+
+  @override
+  String get alertsScreenEmptyMessage =>
+      'Open an instrument and tap the bell to set a price alert.';
+
+  @override
+  String alertsScreenFiredToday(String time) {
+    return 'Fired today $time · switched off';
+  }
+
+  @override
+  String get alertsScreenNotificationsOff => 'Notifications are off';
+
+  @override
+  String get alertsScreenNotificationsOffMessage =>
+      'Turn on notifications for Qima to be alerted when a price target is hit.';
+
+  @override
+  String get alertsScreenOpenSettings => 'Open settings';
+
+  @override
+  String get confirmDeleteAlertTitle => 'Delete this alert?';
+
+  @override
+  String get confirmDeleteAlertMessage =>
+      'You won\'t be notified for it again.';
+
+  @override
+  String get settingsAlerts => 'Alerts';
+
+  @override
+  String get settingsAlertsPriceAlerts => 'Price alerts';
+
+  @override
+  String settingsAlertsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count alerts',
+      one: '1 alert',
+      zero: 'No alerts',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get settingsAlertsNotifications => 'Notifications';
+
+  @override
+  String get settingsAlertsNotificationsOn => 'On';
+
+  @override
+  String get settingsAlertsNotificationsOff => 'Off';
+
+  @override
+  String get settingsAlertsDeliverOnDevice => 'Deliver alerts on this device';
+
+  @override
+  String get settingsAlertsDeliverOnDeviceFooter =>
+      'Turn off if you don\'t want this device to notify you when an alert fires.';
+
+  @override
+  String alertNotificationTitleAbove(String name, String target) {
+    return '$name is above $target';
+  }
+
+  @override
+  String alertNotificationTitleBelow(String name, String target) {
+    return '$name is below $target';
+  }
+
+  @override
+  String alertNotificationTitlePercent(
+    String name,
+    String percent,
+    String window,
+  ) {
+    return '$name moved $percent% in $window';
+  }
+
+  @override
+  String alertNotificationBodyOneOff(String price, String unit) {
+    return 'Now $price per $unit. This alert is now off.';
+  }
+
+  @override
+  String alertNotificationBodyRepeat(String price, String unit) {
+    return 'Now $price per $unit. You\'ll be told again the next time this happens.';
+  }
 }
