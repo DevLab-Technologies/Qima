@@ -269,7 +269,7 @@ class _CurrentPriceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final now = DateTime.now();
+    final lastQuoteTime = presentation.series.latest?.timestamp.toLocal();
     return DSHeroCard(
       accent: accent,
       child: Column(
@@ -289,9 +289,9 @@ class _CurrentPriceCard extends StatelessWidget {
                   ],
                 ),
               ),
-              if (presentation.hasData)
+              if (lastQuoteTime != null)
                 Text(
-                  '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}',
+                  '${lastQuoteTime.hour.toString().padLeft(2, '0')}:${lastQuoteTime.minute.toString().padLeft(2, '0')}',
                   style: const TextStyle(color: DS.textTertiary, fontSize: 12),
                 ),
             ],

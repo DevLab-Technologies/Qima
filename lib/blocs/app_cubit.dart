@@ -66,7 +66,7 @@ class AppCubit extends Cubit<AppState> {
     final fxHistory = await repository.cachedFXHistory();
 
     final seriesByID = <String, QuoteSeries>{};
-    for (final instrument in _watchInstrumentsFor(cards)) {
+    for (final instrument in _trackedInstrumentsFor(cards, lots)) {
       seriesByID[instrument.id] = await repository.cachedSeries(instrument);
     }
 
@@ -131,6 +131,25 @@ class AppCubit extends Cubit<AppState> {
 
   List<Instrument> get watchInstruments => _watchInstrumentsFor(state.cards);
 
+  /// Union of watchlist instruments and instruments that have holding lots.
+  /// Holdings can reference an instrument the user removed (or never added)
+  /// to the watchlist, and without this union those lots would be silently
+  /// excluded from refresh/backfill and therefore from portfolio valuation.
+  List<Instrument> _trackedInstrumentsFor(List<WatchCard> cards, List<HoldingLot> lots) {
+    final result = _watchInstrumentsFor(cards);
+    final seen = result.map((i) => i.id).toSet();
+    for (final lot in lots) {
+      if (seen.contains(lot.instrumentID)) continue;
+      final instrument = InstrumentCatalog.instrument(lot.instrumentID);
+      if (instrument == null) continue;
+      seen.add(instrument.id);
+      result.add(instrument);
+    }
+    return result;
+  }
+
+  List<Instrument> get trackedInstruments => _trackedInstrumentsFor(state.cards, state.lots);
+
   InstrumentPresentation presentation(WatchCard card) {
     final instrument = card.instrument ?? InstrumentCatalog.all.first;
     final converter = PriceConverter(
@@ -156,7 +175,7 @@ class AppCubit extends Cubit<AppState> {
   }
 
   Future<void> refreshAll({bool silent = false}) async {
-    final instruments = watchInstruments;
+    final instruments = trackedInstruments;
     if (!silent) emit(state.copyWith(phase: RefreshPhase.refreshing, clearError: true));
     try {
       final updated = await repository.refreshAll(instruments);
@@ -196,7 +215,7 @@ class AppCubit extends Cubit<AppState> {
         state.baseCurrency,
       };
       final fxHistory = await repository.backfillFXHistory(currencies.toList());
-      final updated = await repository.backfillInstruments(watchInstruments, fxHistory);
+      final updated = await repository.backfillInstruments(trackedInstruments, fxHistory);
       if (updated.isNotEmpty || fxHistory != state.fxHistory) {
         emit(state.copyWith(
           fxHistory: fxHistory,

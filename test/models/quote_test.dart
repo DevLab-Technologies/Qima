@@ -25,6 +25,76 @@ void main() {
     });
   });
 
+  group('QuoteSeries.appending daily collapse (long-history survival)', () {
+    test('minute-resolution samples older than 2 days collapse to one per day as new quotes arrive', () {
+      // Simulate 3 days of one-minute-resolution foreground refreshes.
+      var series = QuoteSeries.empty('metal.XAU');
+      final start = DateTime(2024, 1, 1, 0, 0, 0);
+      var t = start;
+      for (var i = 0; i < 3 * 24 * 60; i++) {
+        series = series.appending(Quote(instrumentID: 'metal.XAU', timestamp: t, canonicalUSD: 100 + i.toDouble()));
+        t = t.add(const Duration(minutes: 1));
+      }
+      // The most recent 2 days stay at one-minute resolution; everything
+      // before that collapses to (at most) one point per calendar day.
+      final now = series.quotes.last.timestamp;
+      final intradayCutoff = now.subtract(const Duration(days: 2));
+      final old = series.quotes.where((q) => q.timestamp.isBefore(intradayCutoff)).toList();
+      final recent = series.quotes.where((q) => !q.timestamp.isBefore(intradayCutoff)).toList();
+      expect(old.length, lessThanOrEqualTo(2)); // at most the leading partial + one full day.
+      expect(recent.length, greaterThan(60)); // still minute-resolution.
+    });
+
+    test('a 5Y-old quote survives many days of intermittent one-minute foreground refreshes', () {
+      // Simulates the actual failure mode the spec describes: the app is
+      // opened in the foreground for a while (60s refresh cadence) on each
+      // of many separate days, well within the 2000-sample cap for any one
+      // day, but enough elapsed real time that pre-fix behaviour (a flat
+      // recency cap with no collapsing) would have pushed 5-year-old daily
+      // history out entirely.
+      var series = QuoteSeries(
+        instrumentID: 'metal.XAU',
+        quotes: [Quote(instrumentID: 'metal.XAU', timestamp: DateTime(2019, 1, 1), canonicalUSD: 50)],
+      );
+      var day = DateTime(2024, 1, 1);
+      for (var d = 0; d < 200; d++) {
+        // 30 minutes of one-minute-resolution refreshes per day.
+        var t = day;
+        for (var m = 0; m < 30; m++) {
+          series = series.appending(Quote(instrumentID: 'metal.XAU', timestamp: t, canonicalUSD: 100 + m.toDouble()));
+          t = t.add(const Duration(minutes: 1));
+        }
+        day = day.add(const Duration(days: 1));
+      }
+      expect(series.quotes.length, lessThanOrEqualTo(2000));
+      expect(series.quotes.any((q) => q.timestamp.year == 2019), isTrue);
+    });
+
+    test('a same-day tie keeps the newer sample (greater timestamp wins)', () {
+      final now = DateTime(2024, 6, 10);
+      final day = DateTime(2024, 1, 1);
+      var series = QuoteSeries(
+        instrumentID: 'metal.XAU',
+        quotes: [Quote(instrumentID: 'metal.XAU', timestamp: day.add(const Duration(hours: 1)), canonicalUSD: 100)],
+      );
+      series = series.appending(
+        Quote(instrumentID: 'metal.XAU', timestamp: day.add(const Duration(hours: 20)), canonicalUSD: 110),
+        now: now,
+      );
+      final dayQuotes = series.quotes.where((q) => q.timestamp.year == 2024 && q.timestamp.month == 1 && q.timestamp.day == 1);
+      expect(dayQuotes.length, 1);
+      expect(dayQuotes.single.canonicalUSD, 110);
+    });
+
+    test('an empty series collapses to just the new quote', () {
+      final series = QuoteSeries.empty('metal.XAU').appending(
+        Quote(instrumentID: 'metal.XAU', timestamp: DateTime(2024, 1, 1), canonicalUSD: 42),
+      );
+      expect(series.quotes.length, 1);
+      expect(series.quotes.single.canonicalUSD, 42);
+    });
+  });
+
   group('QuoteSeries.merging backfill keying (spec §8.5 / TC-Q6)', () {
     test('samples within 2 days of now key per-minute; ties keep greatest timestamp', () {
       final now = DateTime(2024, 6, 1, 12, 0, 0);

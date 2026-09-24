@@ -27,6 +27,16 @@ class PriceChartView extends StatefulWidget {
   final bool isInteractive;
   final String? currencyCode;
 
+  /// Overrides the default DS.up/DS.down trend color for both the line and
+  /// its area gradient. Null (the default) keeps today's trend-colored
+  /// behaviour.
+  final Color? lineColor;
+
+  /// Hides axis value labels and the scrub callout's price text (for the
+  /// upcoming Hide balances feature). The callout date and the chart shape
+  /// itself are unaffected. Defaults to false, matching current behaviour.
+  final bool maskValues;
+
   const PriceChartView({
     super.key,
     required this.points,
@@ -36,6 +46,8 @@ class PriceChartView extends StatefulWidget {
     this.lineWidth = 2.5,
     this.isInteractive = false,
     this.currencyCode,
+    this.lineColor,
+    this.maskValues = false,
   });
 
   @override
@@ -111,8 +123,8 @@ class _PriceChartViewState extends State<PriceChartView> {
               drawnPoints: drawn,
               domainLo: domainLo,
               domainHi: domainHi,
-              color: widget.isTrendingUp ? DS.up : DS.down,
-              showsAxes: widget.showsAxes,
+              color: widget.lineColor ?? (widget.isTrendingUp ? DS.up : DS.down),
+              showsAxes: widget.showsAxes && !widget.maskValues,
               lineWidth: widget.lineWidth,
               granularity: granularity,
               scrubbed: _scrubbed,
@@ -135,9 +147,10 @@ class _PriceChartViewState extends State<PriceChartView> {
             child: IgnorePointer(
               child: _Callout(
                 point: _scrubbed!,
-                color: widget.isTrendingUp ? DS.up : DS.down,
+                color: widget.lineColor ?? (widget.isTrendingUp ? DS.up : DS.down),
                 granularity: granularity,
                 currencyCode: widget.currencyCode,
+                maskValue: widget.maskValues,
               ),
             ),
           ),
@@ -154,20 +167,24 @@ class _Callout extends StatelessWidget {
   final Color color;
   final AxisGranularity granularity;
   final String? currencyCode;
+  final bool maskValue;
 
   const _Callout({
     required this.point,
     required this.color,
     required this.granularity,
     required this.currencyCode,
+    this.maskValue = false,
   });
 
   @override
   Widget build(BuildContext context) {
     final dateText = calloutDateFormat(granularity).format(point.date);
-    final priceText = currencyCode != null
-        ? Money(point.value, currencyCode!).formatted()
-        : point.value.toStringAsFixed(2);
+    final priceText = maskValue
+        ? '••••'
+        : currencyCode != null
+            ? Money(point.value, currencyCode!).formatted()
+            : point.value.toStringAsFixed(2);
     return Align(
       alignment: Alignment.topLeft,
       child: Container(

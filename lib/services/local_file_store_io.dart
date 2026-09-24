@@ -36,9 +36,16 @@ Future<Map<String, dynamic>?> readJson(String relativePath) async {
   return jsonDecode(contents) as Map<String, dynamic>;
 }
 
+/// Writes [data] atomically: the encoded JSON lands in a sibling `path.tmp`
+/// file first, then that file is renamed over [relativePath]. A rename is a
+/// single filesystem operation, so a crash or a concurrent writer (a
+/// background isolate will also write these files later) can never observe
+/// a half-written target file.
 Future<bool> writeJson(String relativePath, Map<String, dynamic> data) async {
   final file = await _fileFor(relativePath);
-  await file.writeAsString(jsonEncode(data));
+  final tmp = File('${file.path}.tmp');
+  await tmp.writeAsString(jsonEncode(data));
+  await tmp.rename(file.path);
   return true;
 }
 

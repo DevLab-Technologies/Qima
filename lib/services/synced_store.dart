@@ -213,6 +213,51 @@ class SyncedStore<T extends Syncable> {
     return _liveSorted(await _readLocal());
   }
 
+  /// Raw records (including metadata and tombstones) for export/backup
+  /// purposes — the merged local+cloud state, unfiltered by [_liveSorted].
+  Future<List<Record<T>>> exportRecords() async {
+    final local = await _readLocal();
+    final cloudRecords = await _readCloud();
+    return prune(merge(local, cloudRecords));
+  }
+
+  /// Imports a previously-exported record set.
+  ///
+  /// Merge (`replace: false`): folds [records] into the existing
+  /// local+cloud state using the normal last-write-wins-per-item merge, so
+  /// whichever copy (existing or imported) has the newer `updatedAt` for
+  /// each id wins.
+  ///
+  /// Replace (`replace: true`): the import becomes the new state outright —
+  /// every existing live item is tombstoned (unless the import re-adds it),
+  /// and every imported item is written, all re-stamped with [now]
+  /// (defaulting to the current time) so this restore beats any older edit
+  /// already sitting on another device once sync catches up.
+  Future<List<T>> importRecords(List<Record<T>> records, {required bool replace, DateTime? now}) async {
+    final local = await _readLocal();
+    if (!replace) {
+      final updatedLocal = merge(local, records);
+      await _commit(updatedLocal);
+      return _liveSorted(await _readLocal());
+    }
+
+    final effectiveNow = now ?? DateTime.now();
+    final importedIds = records.map((r) => r.item.id).toSet();
+    // Every local LIVE item not present in the import is tombstoned (soft
+    // deleted) rather than dropped, so the deletion itself propagates on
+    // sync instead of silently reappearing from another device's copy.
+    // Already-deleted local records are left as-is: their tombstone TTL
+    // clock shouldn't reset just because a restore happened to run.
+    final tombstoned = [
+      for (final r in local)
+        if (r.deleted || importedIds.contains(r.item.id)) r else r.copyWith(deleted: true, updatedAt: effectiveNow),
+    ];
+    final restamped = [for (final r in records) r.copyWith(updatedAt: effectiveNow)];
+    final updatedLocal = [...tombstoned, ...restamped];
+    await _commit(updatedLocal);
+    return _liveSorted(await _readLocal());
+  }
+
   Future<void> startSync() => cloud.synchronize();
 
   /// Re-runs the merge+persist against fresh cloud data; returns null if the
