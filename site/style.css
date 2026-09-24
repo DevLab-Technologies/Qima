@@ -27,7 +27,7 @@ body {
 
 a { color: var(--gold); text-decoration: none; }
 a:hover { text-decoration: underline; }
-img { max-width: 100%; display: block; }
+img { max-width: 100%; height: auto; display: block; }
 
 .wrap { max-width: 64rem; margin: 0 auto; padding: 0 1.5rem; }
 .narrow { max-width: 42rem; }
@@ -47,10 +47,8 @@ header {
 }
 .brand:hover { text-decoration: none; }
 .brand-mark {
-  width: 24px; height: 24px; border-radius: 7px;
-  background: linear-gradient(155deg, #F5D98A, var(--gold) 55%, #A87F26);
-  display: grid; place-items: center;
-  color: #171200; font-weight: 800; font-size: .78rem;
+  width: 24px; height: 24px; border-radius: 6px;
+  box-shadow: 0 0 0 1px var(--hairline);
 }
 .nav-links { margin-left: auto; display: flex; gap: 1.6rem; font-size: .84rem; }
 .nav-links a { color: var(--text-2); }
