@@ -791,4 +791,282 @@ class AppLocalizationsEs extends AppLocalizations {
   String alertNotificationBodyRepeat(String price, String unit) {
     return 'Ahora $price por $unit. Te avisaremos de nuevo la próxima vez que ocurra.';
   }
+
+  @override
+  String get settingsBackup => 'Copia de seguridad y restauración';
+
+  @override
+  String get settingsBackupSubtitleNever =>
+      'Nunca se ha hecho una copia de seguridad';
+
+  @override
+  String settingsBackupSubtitle(String date, int instruments, int lots) {
+    return 'Última copia $date · $instruments instrumentos, $lots lotes';
+  }
+
+  @override
+  String get backupTitle => 'Copia de seguridad y restauración';
+
+  @override
+  String get backupStatusTitle => 'Guardado solo en este teléfono';
+
+  @override
+  String get backupStatusMessage =>
+      'Tus datos solo existen en este dispositivo. Haz una copia de seguridad para poder restaurarlos aquí o en otro dispositivo.';
+
+  @override
+  String backupLastBackup(String date) {
+    return 'Última copia $date';
+  }
+
+  @override
+  String get backupLastBackupNever =>
+      'Nunca se ha hecho una copia de seguridad';
+
+  @override
+  String get backupReminderCardTitle => 'Es hora de una copia de seguridad';
+
+  @override
+  String get backupReminderCardMessage =>
+      'Han pasado más de 30 días desde tu última copia de seguridad y tus datos han cambiado.';
+
+  @override
+  String get backupReminderCardAction => 'Hacer copia ahora';
+
+  @override
+  String get backupReminderNotificationTitle =>
+      'Es hora de una copia de seguridad';
+
+  @override
+  String get backupReminderNotificationBody =>
+      'Ha pasado un tiempo desde tu última copia de seguridad de Qima y tus datos han cambiado. Toca para hacerla ahora.';
+
+  @override
+  String get backupExportSection => 'Exportar';
+
+  @override
+  String get backupExportFullTitle => 'Copia de seguridad completa';
+
+  @override
+  String get backupExportFullSubtitle =>
+      'Lista de seguimiento, posiciones, tickers personalizados, alertas y ajustes (.json)';
+
+  @override
+  String get backupExportCsvTitle => 'Hoja de cálculo de posiciones';
+
+  @override
+  String get backupExportCsvSubtitle =>
+      'Tus lotes como hoja de cálculo, para tus registros (.csv)';
+
+  @override
+  String get backupRestoreSection => 'Restaurar';
+
+  @override
+  String get backupRestoreTitle => 'Importar una copia de seguridad';
+
+  @override
+  String get backupRestoreSubtitle =>
+      'Restaurar desde un archivo de copia completa (.json)';
+
+  @override
+  String get backupReminderSection => 'Recordatorio';
+
+  @override
+  String get backupReminderToggleTitle =>
+      'Recordarme hacer copias de seguridad';
+
+  @override
+  String get backupReminderToggleSubtitle =>
+      'Recibe un recordatorio mensual si no has hecho una copia recientemente y tus datos han cambiado.';
+
+  @override
+  String get backupExportSheetTitle => 'Exportar copia de seguridad';
+
+  @override
+  String get backupExportSheetFileName => 'Nombre del archivo';
+
+  @override
+  String get backupExportSheetFileSize => 'Tamaño';
+
+  @override
+  String get backupExportSheetFileContents => 'Contenido';
+
+  @override
+  String backupExportSheetContentsSummary(
+    int cards,
+    int lots,
+    int customTickers,
+  ) {
+    return '$cards tarjetas de seguimiento · $lots lotes · $customTickers tickers personalizados';
+  }
+
+  @override
+  String get backupExportSheetProtectTitle => 'Proteger con contraseña';
+
+  @override
+  String get backupExportSheetProtectSubtitle =>
+      'Cifra el archivo con AES-256. Si olvidas esta contraseña, la copia de seguridad no se podrá recuperar.';
+
+  @override
+  String get backupExportSheetPasswordLabel => 'Contraseña';
+
+  @override
+  String get backupExportSheetPasswordConfirmLabel => 'Confirmar contraseña';
+
+  @override
+  String get backupExportSheetPasswordTooShort => 'Usa al menos 8 caracteres.';
+
+  @override
+  String get backupExportSheetPasswordMismatch =>
+      'Las contraseñas no coinciden.';
+
+  @override
+  String get backupExportSheetUnprotectedWarning =>
+      'Cualquiera que tenga este archivo puede leer tus datos. Protégelo con una contraseña si planeas guardarlo o enviarlo a un lugar menos privado.';
+
+  @override
+  String get backupExportSheetAction => 'Guardar o compartir…';
+
+  @override
+  String get backupExportSheetWorking => 'Preparando tu copia de seguridad…';
+
+  @override
+  String get backupExportSheetFailed =>
+      'No se pudo crear la copia de seguridad. Inténtalo de nuevo.';
+
+  @override
+  String get backupImportPreviewTitle => 'Restaurar copia de seguridad';
+
+  @override
+  String backupImportFileCreated(String date) {
+    return 'Creada el $date';
+  }
+
+  @override
+  String backupImportFileAppVersion(String version) {
+    return 'Creada con Qima $version';
+  }
+
+  @override
+  String get backupImportCountCards => 'Tarjetas de seguimiento';
+
+  @override
+  String get backupImportCountLots => 'Lotes';
+
+  @override
+  String get backupImportCountCustomTickers => 'Tickers personalizados';
+
+  @override
+  String get backupImportCountSettings => 'Ajustes incluidos';
+
+  @override
+  String get backupImportPasswordPrompt =>
+      'Esta copia de seguridad está protegida. Introduce la contraseña para continuar.';
+
+  @override
+  String get backupImportPasswordLabel => 'Contraseña';
+
+  @override
+  String get backupImportPasswordIncorrect =>
+      'Esa contraseña no funcionó. Inténtalo de nuevo.';
+
+  @override
+  String get backupImportUnlock => 'Desbloquear';
+
+  @override
+  String get backupImportModeMerge => 'Combinar';
+
+  @override
+  String get backupImportModeReplace => 'Reemplazar';
+
+  @override
+  String get backupImportModeMergeFooter =>
+      'Mantiene lo que hay en este teléfono y añade lo nuevo o más reciente de la copia de seguridad.';
+
+  @override
+  String get backupImportModeReplaceFooter =>
+      'Reemplaza todo lo de este teléfono con el contenido de la copia de seguridad.';
+
+  @override
+  String backupImportDiff(int added, int updated, int removed) {
+    String _temp0 = intl.Intl.pluralLogic(
+      added,
+      locale: localeName,
+      other: '+$added añadidos',
+      one: '+1 añadido',
+      zero: '',
+    );
+    return '$_temp0 · $updated actualizados · $removed eliminados';
+  }
+
+  @override
+  String get backupImportRestoreButton => 'Restaurar';
+
+  @override
+  String get backupImportReplaceConfirmTitle =>
+      '¿Reemplazar todo en este teléfono?';
+
+  @override
+  String get backupImportReplaceConfirmMessage =>
+      'Tu lista de seguimiento, posiciones, tickers personalizados y alertas actuales se reemplazarán con el contenido de la copia de seguridad. Esto no se puede deshacer.';
+
+  @override
+  String get backupImportReplaceConfirmAction => 'Reemplazar';
+
+  @override
+  String get backupImportSuccessSnackbar => 'Copia de seguridad restaurada';
+
+  @override
+  String get backupImportFailedTitle =>
+      'No se pudo restaurar esta copia de seguridad';
+
+  @override
+  String get backupImportCsvErrorTitle =>
+      'Esto es una hoja de cálculo, no una copia de seguridad';
+
+  @override
+  String get backupImportCsvErrorMessage =>
+      'Una hoja de cálculo de posiciones (.csv) solo tiene tus lotes y no se puede restaurar. Elige un archivo de copia de seguridad completa (.json) en su lugar.';
+
+  @override
+  String get backupErrorNotQimaFile =>
+      'Esto no parece un archivo de copia de seguridad de Qima.';
+
+  @override
+  String get backupErrorNewerVersion =>
+      'Esta copia de seguridad se creó con una versión más reciente de Qima. Actualiza la app para restaurarla.';
+
+  @override
+  String get backupErrorWrongPassword => 'Esa contraseña no funcionó.';
+
+  @override
+  String get backupErrorCorrupted =>
+      'Este archivo de copia de seguridad está dañado y no se puede restaurar.';
+
+  @override
+  String get backupCsvHeaderInstrument => 'Instrumento';
+
+  @override
+  String get backupCsvHeaderSymbol => 'Símbolo';
+
+  @override
+  String get backupCsvHeaderQuantity => 'Cantidad';
+
+  @override
+  String get backupCsvHeaderUnit => 'Unidad';
+
+  @override
+  String get backupCsvHeaderUnitCost => 'Coste unitario';
+
+  @override
+  String get backupCsvHeaderCostCurrency => 'Moneda del coste';
+
+  @override
+  String get backupCsvHeaderTotalCost => 'Coste total';
+
+  @override
+  String get backupCsvHeaderDate => 'Fecha';
+
+  @override
+  String get commonContinue => 'Continuar';
 }

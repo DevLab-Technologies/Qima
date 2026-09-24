@@ -787,4 +787,274 @@ class AppLocalizationsAr extends AppLocalizations {
   String alertNotificationBodyRepeat(String price, String unit) {
     return 'الآن $price لكل $unit. سنُعلمك مرة أخرى في المرة القادمة.';
   }
+
+  @override
+  String get settingsBackup => 'النسخ الاحتياطي والاستعادة';
+
+  @override
+  String get settingsBackupSubtitleNever => 'لم يتم النسخ الاحتياطي مطلقًا';
+
+  @override
+  String settingsBackupSubtitle(String date, int instruments, int lots) {
+    return 'آخر نسخة احتياطية $date · $instruments أداة، $lots دفعة';
+  }
+
+  @override
+  String get backupTitle => 'النسخ الاحتياطي والاستعادة';
+
+  @override
+  String get backupStatusTitle => 'محفوظة على هذا الهاتف فقط';
+
+  @override
+  String get backupStatusMessage =>
+      'بياناتك موجودة على هذا الجهاز فقط. أنشئ نسخة احتياطية لتتمكن من استعادتها هنا أو على جهاز آخر.';
+
+  @override
+  String backupLastBackup(String date) {
+    return 'آخر نسخة احتياطية $date';
+  }
+
+  @override
+  String get backupLastBackupNever => 'لم يتم النسخ الاحتياطي مطلقًا';
+
+  @override
+  String get backupReminderCardTitle => 'حان وقت النسخ الاحتياطي';
+
+  @override
+  String get backupReminderCardMessage =>
+      'مرّ أكثر من 30 يومًا منذ آخر نسخة احتياطية وتغيّرت بياناتك.';
+
+  @override
+  String get backupReminderCardAction => 'انسخ احتياطيًا الآن';
+
+  @override
+  String get backupReminderNotificationTitle => 'حان وقت النسخ الاحتياطي';
+
+  @override
+  String get backupReminderNotificationBody =>
+      'مرّ وقت منذ آخر نسخة احتياطية لتطبيق قيمة وتغيّرت بياناتك. اضغط للنسخ الاحتياطي الآن.';
+
+  @override
+  String get backupExportSection => 'تصدير';
+
+  @override
+  String get backupExportFullTitle => 'نسخة احتياطية كاملة';
+
+  @override
+  String get backupExportFullSubtitle =>
+      'قائمة المتابعة، الممتلكات، الأدوات المخصصة، التنبيهات والإعدادات (.json)';
+
+  @override
+  String get backupExportCsvTitle => 'جدول بيانات الممتلكات';
+
+  @override
+  String get backupExportCsvSubtitle => 'دفعاتك كجدول بيانات، لسجلاتك (.csv)';
+
+  @override
+  String get backupRestoreSection => 'استعادة';
+
+  @override
+  String get backupRestoreTitle => 'استيراد نسخة احتياطية';
+
+  @override
+  String get backupRestoreSubtitle =>
+      'استعد من ملف نسخة احتياطية كاملة (.json)';
+
+  @override
+  String get backupReminderSection => 'تذكير';
+
+  @override
+  String get backupReminderToggleTitle => 'ذكّرني بالنسخ الاحتياطي';
+
+  @override
+  String get backupReminderToggleSubtitle =>
+      'احصل على تذكير شهري إذا لم تنسخ احتياطيًا مؤخرًا وتغيّرت بياناتك.';
+
+  @override
+  String get backupExportSheetTitle => 'تصدير النسخة الاحتياطية';
+
+  @override
+  String get backupExportSheetFileName => 'اسم الملف';
+
+  @override
+  String get backupExportSheetFileSize => 'الحجم';
+
+  @override
+  String get backupExportSheetFileContents => 'المحتويات';
+
+  @override
+  String backupExportSheetContentsSummary(
+    int cards,
+    int lots,
+    int customTickers,
+  ) {
+    return '$cards بطاقة متابعة · $lots دفعة · $customTickers أداة مخصصة';
+  }
+
+  @override
+  String get backupExportSheetProtectTitle => 'الحماية بكلمة مرور';
+
+  @override
+  String get backupExportSheetProtectSubtitle =>
+      'يشفّر الملف باستخدام AES-256. إذا نسيت كلمة المرور هذه، لا يمكن استعادة النسخة الاحتياطية.';
+
+  @override
+  String get backupExportSheetPasswordLabel => 'كلمة المرور';
+
+  @override
+  String get backupExportSheetPasswordConfirmLabel => 'تأكيد كلمة المرور';
+
+  @override
+  String get backupExportSheetPasswordTooShort => 'استخدم 8 أحرف على الأقل.';
+
+  @override
+  String get backupExportSheetPasswordMismatch => 'كلمتا المرور غير متطابقتين.';
+
+  @override
+  String get backupExportSheetUnprotectedWarning =>
+      'يمكن لأي شخص يملك هذا الملف قراءة بياناتك. احمِه بكلمة مرور إذا كنت تخطط لتخزينه أو إرساله في مكان أقل خصوصية.';
+
+  @override
+  String get backupExportSheetAction => 'حفظ أو مشاركة…';
+
+  @override
+  String get backupExportSheetWorking => 'جارٍ تجهيز نسختك الاحتياطية…';
+
+  @override
+  String get backupExportSheetFailed =>
+      'تعذّر إنشاء النسخة الاحتياطية. حاول مرة أخرى.';
+
+  @override
+  String get backupImportPreviewTitle => 'استعادة نسخة احتياطية';
+
+  @override
+  String backupImportFileCreated(String date) {
+    return 'أُنشئت في $date';
+  }
+
+  @override
+  String backupImportFileAppVersion(String version) {
+    return 'أُنشئت بواسطة قيمة $version';
+  }
+
+  @override
+  String get backupImportCountCards => 'بطاقات المتابعة';
+
+  @override
+  String get backupImportCountLots => 'الدفعات';
+
+  @override
+  String get backupImportCountCustomTickers => 'الأدوات المخصصة';
+
+  @override
+  String get backupImportCountSettings => 'الإعدادات المضمّنة';
+
+  @override
+  String get backupImportPasswordPrompt =>
+      'هذه النسخة الاحتياطية محمية. أدخل كلمة المرور للمتابعة.';
+
+  @override
+  String get backupImportPasswordLabel => 'كلمة المرور';
+
+  @override
+  String get backupImportPasswordIncorrect =>
+      'كلمة المرور هذه لم تنجح. حاول مرة أخرى.';
+
+  @override
+  String get backupImportUnlock => 'فتح';
+
+  @override
+  String get backupImportModeMerge => 'دمج';
+
+  @override
+  String get backupImportModeReplace => 'استبدال';
+
+  @override
+  String get backupImportModeMergeFooter =>
+      'يحتفظ بما هو موجود على هذا الهاتف ويضيف كل ما هو جديد أو أحدث من النسخة الاحتياطية.';
+
+  @override
+  String get backupImportModeReplaceFooter =>
+      'يستبدل كل شيء على هذا الهاتف بمحتويات النسخة الاحتياطية.';
+
+  @override
+  String backupImportDiff(int added, int updated, int removed) {
+    String _temp0 = intl.Intl.pluralLogic(
+      added,
+      locale: localeName,
+      other: '+$added مُضاف',
+      one: '+1 مُضاف',
+      zero: '',
+    );
+    return '$_temp0 · $updated محدّث · $removed محذوف';
+  }
+
+  @override
+  String get backupImportRestoreButton => 'استعادة';
+
+  @override
+  String get backupImportReplaceConfirmTitle =>
+      'استبدال كل شيء على هذا الهاتف؟';
+
+  @override
+  String get backupImportReplaceConfirmMessage =>
+      'سيتم استبدال قائمة المتابعة والممتلكات والأدوات المخصصة والتنبيهات الحالية بمحتويات النسخة الاحتياطية. لا يمكن التراجع عن هذا.';
+
+  @override
+  String get backupImportReplaceConfirmAction => 'استبدال';
+
+  @override
+  String get backupImportSuccessSnackbar => 'تمت استعادة النسخة الاحتياطية';
+
+  @override
+  String get backupImportFailedTitle => 'تعذّرت استعادة هذه النسخة الاحتياطية';
+
+  @override
+  String get backupImportCsvErrorTitle => 'هذا جدول بيانات، وليس نسخة احتياطية';
+
+  @override
+  String get backupImportCsvErrorMessage =>
+      'جدول بيانات الممتلكات (.csv) يحتوي على دفعاتك فقط، ولا يمكن استعادته. اختر ملف نسخة احتياطية كاملة (.json) بدلاً من ذلك.';
+
+  @override
+  String get backupErrorNotQimaFile =>
+      'هذا لا يبدو كملف نسخة احتياطية من قيمة.';
+
+  @override
+  String get backupErrorNewerVersion =>
+      'أُنشئت هذه النسخة الاحتياطية بإصدار أحدث من قيمة. حدّث التطبيق لاستعادتها.';
+
+  @override
+  String get backupErrorWrongPassword => 'كلمة المرور هذه لم تنجح.';
+
+  @override
+  String get backupErrorCorrupted =>
+      'ملف النسخة الاحتياطية تالف ولا يمكن استعادته.';
+
+  @override
+  String get backupCsvHeaderInstrument => 'الأداة';
+
+  @override
+  String get backupCsvHeaderSymbol => 'الرمز';
+
+  @override
+  String get backupCsvHeaderQuantity => 'الكمية';
+
+  @override
+  String get backupCsvHeaderUnit => 'الوحدة';
+
+  @override
+  String get backupCsvHeaderUnitCost => 'تكلفة الوحدة';
+
+  @override
+  String get backupCsvHeaderCostCurrency => 'عملة التكلفة';
+
+  @override
+  String get backupCsvHeaderTotalCost => 'التكلفة الإجمالية';
+
+  @override
+  String get backupCsvHeaderDate => 'التاريخ';
+
+  @override
+  String get commonContinue => 'متابعة';
 }

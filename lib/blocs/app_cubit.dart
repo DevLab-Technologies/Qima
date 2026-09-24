@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../models/alert_runtime_state.dart';
 import '../models/asset.dart';
+import '../models/backup.dart';
 import '../models/custom_instrument.dart';
 import '../models/fx_history.dart';
 import '../models/holding.dart';
@@ -20,6 +21,7 @@ import '../services/alert_runtime_store.dart';
 import '../services/alerts_store.dart';
 import '../services/app_lock_service.dart';
 import '../services/background_refresh.dart';
+import '../services/backup/backup_service.dart';
 import '../services/custom_instrument_store.dart';
 import '../services/holdings_store.dart';
 import '../services/notification_service.dart';
@@ -46,6 +48,7 @@ class AppCubit extends Cubit<AppState> {
   final AlertRuntimeStore alertRuntimeStore;
   final NotificationService notificationService;
   late Preferences preferences;
+  late BackupService backupService;
   RefreshPipeline? _pipeline;
 
   AppCubit({
@@ -73,6 +76,13 @@ class AppCubit extends Cubit<AppState> {
 
   Future<void> init() async {
     preferences = await Preferences.create();
+    backupService = BackupService(
+      watchlistStore: watchlistStore,
+      holdingsStore: holdingsStore,
+      customInstrumentStore: customInstrumentStore,
+      alertsStore: alertsStore,
+      preferences: preferences,
+    );
 
     final customs = await customInstrumentStore.load();
     InstrumentCatalog.reloadCustom(customs.map((c) => c.instrument).toList());
@@ -113,6 +123,7 @@ class AppCubit extends Cubit<AppState> {
       alertRuntimeStore: alertRuntimeStore,
       notificationService: notificationService,
       preferences: preferences,
+      backupService: backupService,
     );
 
     // Best-effort: registers the periodic background task on platforms that
@@ -139,9 +150,58 @@ class AppCubit extends Cubit<AppState> {
       hideBalances: hideBalances,
       appLockEnabled: appLockEnabled,
       lockGrace: lockGrace,
+      backupReminderDue: backupService.isReminderDue(),
     ));
 
     startSync();
+  }
+
+  /// Recomputes [AppState.backupReminderDue] from [BackupService] — called
+  /// after any user-collection mutation (which marks
+  /// `dataChangedSinceLastBackup`) and after a successful export/import, so
+  /// the Settings/Backup reminder card appears and disappears immediately
+  /// rather than waiting for the next unrelated rebuild.
+  ///
+  /// [backupService] is only assigned in [init] (it needs the async-created
+  /// [Preferences] first) — a handful of unit tests construct [AppCubit]
+  /// directly and call a mutator without ever calling [init] (they only
+  /// care about the watchlist/holdings mutation itself), so this and
+  /// [_markDataChanged] tolerate that by treating an un-initialized
+  /// [backupService] as "nothing to do yet" rather than throwing.
+  Future<void> _refreshBackupReminder() async {
+    if (!_backupServiceReady) return;
+    final due = backupService.isReminderDue();
+    if (due != state.backupReminderDue) {
+      emit(state.copyWith(backupReminderDue: due));
+    }
+  }
+
+  /// Marks that user data changed since the last backup — called by every
+  /// watchlist/holdings/custom-ticker/alert mutator so the Phase 6 backup
+  /// reminder only fires when there's actually something new to protect.
+  Future<void> _markDataChanged() async {
+    if (!_backupServiceReady) return;
+    await backupService.setDataChangedSinceLastBackup(true);
+    await _refreshBackupReminder();
+  }
+
+  bool get _backupServiceReady => backupServiceOrNull != null;
+
+  /// Null-safe access to [backupService] for callers that may run before
+  /// [init] has finished (or, in tests, before it's called at all) — [init]
+  /// assigns [backupService] only after constructing the async-created
+  /// [Preferences] it depends on, so it's genuinely unavailable for a brief
+  /// window rather than merely inconvenient to check. UI that wants to show
+  /// backup status (see `SettingsScreen`'s `_BackupSection`) reads through
+  /// this rather than the `late` field directly, so it degrades to an empty
+  /// state instead of crashing when rendered that early.
+  BackupService? get backupServiceOrNull {
+    try {
+      return backupService;
+    } on Error {
+      // `LateInitializationError` before `init()` has run.
+      return null;
+    }
   }
 
   /// [WatchlistStore]'s seed callback is synchronous, but seeding the
@@ -370,6 +430,7 @@ class AppCubit extends Cubit<AppState> {
     final isNewInstrument = card.instrument != null && !state.seriesByID.containsKey(card.instrumentID);
     final cards = await watchlistStore.upsert(card);
     emit(state.copyWith(cards: cards));
+    unawaited(_markDataChanged());
 
     if (isNewInstrument) {
       final instrument = card.instrument!;
@@ -399,11 +460,13 @@ class AppCubit extends Cubit<AppState> {
   Future<void> updateCard(WatchCard card) async {
     final cards = await watchlistStore.upsert(card);
     emit(state.copyWith(cards: cards));
+    unawaited(_markDataChanged());
   }
 
   Future<void> removeCard(String id) async {
     final cards = await watchlistStore.delete(id);
     emit(state.copyWith(cards: cards));
+    unawaited(_markDataChanged());
   }
 
   Future<void> removeAt(int index) async {
@@ -417,6 +480,7 @@ class AppCubit extends Cubit<AppState> {
     cards.insert(toIndex > fromIndex ? toIndex - 1 : toIndex, item);
     emit(state.copyWith(cards: cards));
     await watchlistStore.setOrder(cards.map((c) => c.id).toList());
+    unawaited(_markDataChanged());
   }
 
   // ---------------------------------------------------------------------
@@ -447,6 +511,7 @@ class AppCubit extends Cubit<AppState> {
     await customInstrumentStore.upsert(candidate);
     final customs = await customInstrumentStore.load();
     InstrumentCatalog.reloadCustom(customs.map((c) => c.instrument).toList());
+    unawaited(_markDataChanged());
     return candidate.instrument;
   }
 
@@ -461,6 +526,7 @@ class AppCubit extends Cubit<AppState> {
     }
     if (match != null) {
       await customInstrumentStore.delete(match.id);
+      unawaited(_markDataChanged());
       final reloaded = await customInstrumentStore.load();
       InstrumentCatalog.reloadCustom(reloaded.map((c) => c.instrument).toList());
     }
@@ -641,11 +707,13 @@ class AppCubit extends Cubit<AppState> {
   Future<void> saveLot(HoldingLot lot) async {
     final lots = await holdingsStore.upsert(lot);
     emit(state.copyWith(lots: lots));
+    unawaited(_markDataChanged());
   }
 
   Future<void> deleteLot(HoldingLot lot) async {
     final lots = await holdingsStore.delete(lot.id);
     emit(state.copyWith(lots: lots));
+    unawaited(_markDataChanged());
   }
 
   // ---------------------------------------------------------------------
@@ -657,11 +725,13 @@ class AppCubit extends Cubit<AppState> {
   Future<void> saveAlert(PriceAlert alert) async {
     final alerts = await alertsStore.upsert(alert);
     emit(state.copyWith(alerts: alerts));
+    unawaited(_markDataChanged());
   }
 
   Future<void> deleteAlert(PriceAlert alert) async {
     final alerts = await alertsStore.delete(alert.id);
     emit(state.copyWith(alerts: alerts));
+    unawaited(_markDataChanged());
   }
 
   Future<void> setAlertEnabled(PriceAlert alert, bool enabled) async {
@@ -698,6 +768,62 @@ class AppCubit extends Cubit<AppState> {
     if (enabled != state.notificationsEnabled) {
       emit(state.copyWith(notificationsEnabled: enabled));
     }
+  }
+
+  // ---------------------------------------------------------------------
+  // Backup & restore (spec Phase 6)
+  // ---------------------------------------------------------------------
+
+  /// Applies an already-decoded, already-decrypted [payload] to every store
+  /// in [mode] via [BackupService.import], then reloads every store and
+  /// preference back into [AppState] — so the app reflects the restored
+  /// data immediately rather than requiring a restart. Called only after
+  /// `ImportPreviewScreen` has a fully validated [BackupPayload] in hand
+  /// (see `BackupCodec.decodePayload`), so nothing here can partially apply
+  /// a corrupt/mistyped file.
+  Future<void> restoreFromBackup(BackupPayload payload, {required BackupImportMode mode}) async {
+    await backupService.import(payload, mode: mode);
+    await _reloadAllStores();
+    await _refreshBackupReminder();
+  }
+
+  /// Re-reads every synced collection and syncable preference from disk and
+  /// re-emits them into [AppState] — used after a restore (and safe to call
+  /// any time local storage might have changed out from under the in-memory
+  /// state).
+  Future<void> _reloadAllStores() async {
+    final customs = await customInstrumentStore.load();
+    InstrumentCatalog.reloadCustom(customs.map((c) => c.instrument).toList());
+
+    final cards = await watchlistStore.load();
+    final lots = await holdingsStore.load();
+    final alerts = await alertsStore.load();
+    final baseCurrency = await preferences.baseCurrency;
+    final appLanguage = await preferences.appLanguage;
+    final appearance = await preferences.appearance;
+    final preferredChartRange = preferences.preferredChartRange;
+    final widgetRefreshInterval = await preferences.widgetRefreshInterval;
+
+    final seriesByID = <String, QuoteSeries>{...state.seriesByID};
+    for (final instrument in _trackedInstrumentsFor(cards, lots)) {
+      if (seriesByID.containsKey(instrument.id)) continue;
+      seriesByID[instrument.id] = await repository.cachedSeries(instrument);
+    }
+
+    emit(state.copyWith(
+      cards: cards,
+      lots: lots,
+      alerts: alerts,
+      baseCurrency: baseCurrency,
+      appLanguage: appLanguage,
+      appearance: appearance,
+      preferredChartRange: preferredChartRange,
+      widgetRefreshInterval: widgetRefreshInterval,
+      seriesByID: seriesByID,
+    ));
+
+    unawaited(refreshAll());
+    unawaited(BackgroundRefresh.register(interval: widgetRefreshInterval.timeInterval));
   }
 
   // ---------------------------------------------------------------------

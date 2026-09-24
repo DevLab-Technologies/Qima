@@ -23,4 +23,12 @@ class HoldingsStore {
   Future<List<HoldingLot>> delete(String id) => _store.delete(id);
 
   Future<List<HoldingLot>?> adoptCloudChanges() => _store.adoptCloudChanges();
+
+  /// Raw records (metadata + tombstones), for backup export (spec Phase 6).
+  Future<List<Record<HoldingLot>>> exportRecords() => _store.exportRecords();
+
+  /// Restores a previously-exported record set — see
+  /// `SyncedStore.importRecords` for the merge/replace semantics.
+  Future<List<HoldingLot>> importRecords(List<Record<HoldingLot>> records, {required bool replace, DateTime? now}) =>
+      _store.importRecords(records, replace: replace, now: now);
 }

@@ -15,6 +15,8 @@ import '../theme/strings.dart';
 import 'alert_evaluator.dart';
 import 'alert_runtime_store.dart';
 import 'alerts_store.dart';
+import 'backup/backup_reminder_notifier.dart';
+import 'backup/backup_service.dart';
 import 'custom_instrument_store.dart';
 import 'holdings_store.dart';
 import 'home_widget_service.dart';
@@ -48,6 +50,7 @@ class RefreshPipeline {
   final NotificationService notificationService;
   final Preferences preferences;
   final AlertEvaluator evaluator;
+  final BackupService backupService;
 
   RefreshPipeline({
     required this.repository,
@@ -59,7 +62,16 @@ class RefreshPipeline {
     required this.notificationService,
     required this.preferences,
     AlertEvaluator? evaluator,
-  }) : evaluator = evaluator ?? const AlertEvaluator();
+    BackupService? backupService,
+  })  : evaluator = evaluator ?? const AlertEvaluator(),
+        backupService = backupService ??
+            BackupService(
+              watchlistStore: watchlistStore,
+              holdingsStore: holdingsStore,
+              customInstrumentStore: customInstrumentStore,
+              alertsStore: alertsStore,
+              preferences: preferences,
+            );
 
   /// A `run(isForeground: false)` background call skips alert evaluation
   /// entirely — no fetch, no evaluation — if a prior evaluation from EITHER
@@ -107,6 +119,14 @@ class RefreshPipeline {
     if (!isForeground && _withinOverlapGuard(effectiveNow)) {
       return;
     }
+
+    // Independent of price refresh/alert evaluation below (and of whether
+    // this run is foreground or background) — a stale backup with an empty
+    // watchlist is exactly the case an early `instruments.isEmpty` return
+    // would otherwise skip the reminder for entirely (spec Phase 6: "have
+    // the background task post one notification at most once per 30 days").
+    await BackupReminderNotifier(backupService: backupService, notificationService: notificationService)
+        .notifyIfDue(now: effectiveNow, l10n: l10n);
 
     final customs = await customInstrumentStore.load();
     InstrumentCatalog.reloadCustom(customs.map((c) => c.instrument).toList());

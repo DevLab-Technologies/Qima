@@ -1479,6 +1479,466 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Now {price} per {unit}. You\'ll be told again the next time this happens.'**
   String alertNotificationBodyRepeat(String price, String unit);
+
+  /// No description provided for @settingsBackup.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup & restore'**
+  String get settingsBackup;
+
+  /// No description provided for @settingsBackupSubtitleNever.
+  ///
+  /// In en, this message translates to:
+  /// **'Never backed up'**
+  String get settingsBackupSubtitleNever;
+
+  /// No description provided for @settingsBackupSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Last backup {date} · {instruments} instruments, {lots} lots'**
+  String settingsBackupSubtitle(String date, int instruments, int lots);
+
+  /// No description provided for @backupTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup & restore'**
+  String get backupTitle;
+
+  /// No description provided for @backupStatusTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Stored only on this phone'**
+  String get backupStatusTitle;
+
+  /// No description provided for @backupStatusMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your data lives on this device only. Back it up so you can restore it here or on another device.'**
+  String get backupStatusMessage;
+
+  /// No description provided for @backupLastBackup.
+  ///
+  /// In en, this message translates to:
+  /// **'Last backup {date}'**
+  String backupLastBackup(String date);
+
+  /// No description provided for @backupLastBackupNever.
+  ///
+  /// In en, this message translates to:
+  /// **'Never backed up'**
+  String get backupLastBackupNever;
+
+  /// No description provided for @backupReminderCardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Time for a backup'**
+  String get backupReminderCardTitle;
+
+  /// No description provided for @backupReminderCardMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'It\'s been over 30 days since your last backup and your data has changed.'**
+  String get backupReminderCardMessage;
+
+  /// No description provided for @backupReminderCardAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Back up now'**
+  String get backupReminderCardAction;
+
+  /// No description provided for @backupReminderNotificationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Time for a backup'**
+  String get backupReminderNotificationTitle;
+
+  /// No description provided for @backupReminderNotificationBody.
+  ///
+  /// In en, this message translates to:
+  /// **'It\'s been a while since your last Qima backup and your data has changed. Tap to back up now.'**
+  String get backupReminderNotificationBody;
+
+  /// No description provided for @backupExportSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Export'**
+  String get backupExportSection;
+
+  /// No description provided for @backupExportFullTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Full backup'**
+  String get backupExportFullTitle;
+
+  /// No description provided for @backupExportFullSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Watchlist, holdings, custom tickers, alerts and settings (.json)'**
+  String get backupExportFullSubtitle;
+
+  /// No description provided for @backupExportCsvTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Holdings spreadsheet'**
+  String get backupExportCsvTitle;
+
+  /// No description provided for @backupExportCsvSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your lots as a spreadsheet, for your records (.csv)'**
+  String get backupExportCsvSubtitle;
+
+  /// No description provided for @backupRestoreSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore'**
+  String get backupRestoreSection;
+
+  /// No description provided for @backupRestoreTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Import a backup'**
+  String get backupRestoreTitle;
+
+  /// No description provided for @backupRestoreSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore from a full backup file (.json)'**
+  String get backupRestoreSubtitle;
+
+  /// No description provided for @backupReminderSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder'**
+  String get backupReminderSection;
+
+  /// No description provided for @backupReminderToggleTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Remind me to back up'**
+  String get backupReminderToggleTitle;
+
+  /// No description provided for @backupReminderToggleSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Get a monthly reminder if you haven\'t backed up recently and your data has changed.'**
+  String get backupReminderToggleSubtitle;
+
+  /// No description provided for @backupExportSheetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Export backup'**
+  String get backupExportSheetTitle;
+
+  /// No description provided for @backupExportSheetFileName.
+  ///
+  /// In en, this message translates to:
+  /// **'File name'**
+  String get backupExportSheetFileName;
+
+  /// No description provided for @backupExportSheetFileSize.
+  ///
+  /// In en, this message translates to:
+  /// **'Size'**
+  String get backupExportSheetFileSize;
+
+  /// No description provided for @backupExportSheetFileContents.
+  ///
+  /// In en, this message translates to:
+  /// **'Contents'**
+  String get backupExportSheetFileContents;
+
+  /// No description provided for @backupExportSheetContentsSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'{cards} watchlist cards · {lots} lots · {customTickers} custom tickers'**
+  String backupExportSheetContentsSummary(
+    int cards,
+    int lots,
+    int customTickers,
+  );
+
+  /// No description provided for @backupExportSheetProtectTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Protect with a password'**
+  String get backupExportSheetProtectTitle;
+
+  /// No description provided for @backupExportSheetProtectSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Encrypts the file with AES-256. If you forget this password, the backup can\'t be recovered.'**
+  String get backupExportSheetProtectSubtitle;
+
+  /// No description provided for @backupExportSheetPasswordLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get backupExportSheetPasswordLabel;
+
+  /// No description provided for @backupExportSheetPasswordConfirmLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm password'**
+  String get backupExportSheetPasswordConfirmLabel;
+
+  /// No description provided for @backupExportSheetPasswordTooShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Use at least 8 characters.'**
+  String get backupExportSheetPasswordTooShort;
+
+  /// No description provided for @backupExportSheetPasswordMismatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Passwords don\'t match.'**
+  String get backupExportSheetPasswordMismatch;
+
+  /// No description provided for @backupExportSheetUnprotectedWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Anyone with this file can read your data. Protect it with a password if you plan to store or send it somewhere less private.'**
+  String get backupExportSheetUnprotectedWarning;
+
+  /// No description provided for @backupExportSheetAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Save or share…'**
+  String get backupExportSheetAction;
+
+  /// No description provided for @backupExportSheetWorking.
+  ///
+  /// In en, this message translates to:
+  /// **'Preparing your backup…'**
+  String get backupExportSheetWorking;
+
+  /// No description provided for @backupExportSheetFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t create the backup. Try again.'**
+  String get backupExportSheetFailed;
+
+  /// No description provided for @backupImportPreviewTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore backup'**
+  String get backupImportPreviewTitle;
+
+  /// No description provided for @backupImportFileCreated.
+  ///
+  /// In en, this message translates to:
+  /// **'Created {date}'**
+  String backupImportFileCreated(String date);
+
+  /// No description provided for @backupImportFileAppVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'Made with Qima {version}'**
+  String backupImportFileAppVersion(String version);
+
+  /// No description provided for @backupImportCountCards.
+  ///
+  /// In en, this message translates to:
+  /// **'Watchlist cards'**
+  String get backupImportCountCards;
+
+  /// No description provided for @backupImportCountLots.
+  ///
+  /// In en, this message translates to:
+  /// **'Lots'**
+  String get backupImportCountLots;
+
+  /// No description provided for @backupImportCountCustomTickers.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom tickers'**
+  String get backupImportCountCustomTickers;
+
+  /// No description provided for @backupImportCountSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings included'**
+  String get backupImportCountSettings;
+
+  /// No description provided for @backupImportPasswordPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'This backup is protected. Enter the password to continue.'**
+  String get backupImportPasswordPrompt;
+
+  /// No description provided for @backupImportPasswordLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get backupImportPasswordLabel;
+
+  /// No description provided for @backupImportPasswordIncorrect.
+  ///
+  /// In en, this message translates to:
+  /// **'That password didn\'t work. Try again.'**
+  String get backupImportPasswordIncorrect;
+
+  /// No description provided for @backupImportUnlock.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock'**
+  String get backupImportUnlock;
+
+  /// No description provided for @backupImportModeMerge.
+  ///
+  /// In en, this message translates to:
+  /// **'Merge'**
+  String get backupImportModeMerge;
+
+  /// No description provided for @backupImportModeReplace.
+  ///
+  /// In en, this message translates to:
+  /// **'Replace'**
+  String get backupImportModeReplace;
+
+  /// No description provided for @backupImportModeMergeFooter.
+  ///
+  /// In en, this message translates to:
+  /// **'Keeps what\'s on this phone and adds anything new or newer from the backup.'**
+  String get backupImportModeMergeFooter;
+
+  /// No description provided for @backupImportModeReplaceFooter.
+  ///
+  /// In en, this message translates to:
+  /// **'Replaces everything on this phone with the backup\'s contents.'**
+  String get backupImportModeReplaceFooter;
+
+  /// No description provided for @backupImportDiff.
+  ///
+  /// In en, this message translates to:
+  /// **'{added, plural, =0{} =1{+1 added} other{+{added} added}} · {updated} updated · {removed} removed'**
+  String backupImportDiff(int added, int updated, int removed);
+
+  /// No description provided for @backupImportRestoreButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore'**
+  String get backupImportRestoreButton;
+
+  /// No description provided for @backupImportReplaceConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Replace everything on this phone?'**
+  String get backupImportReplaceConfirmTitle;
+
+  /// No description provided for @backupImportReplaceConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your current watchlist, holdings, custom tickers and alerts will be replaced with the backup\'s contents. This can\'t be undone.'**
+  String get backupImportReplaceConfirmMessage;
+
+  /// No description provided for @backupImportReplaceConfirmAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Replace'**
+  String get backupImportReplaceConfirmAction;
+
+  /// No description provided for @backupImportSuccessSnackbar.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup restored'**
+  String get backupImportSuccessSnackbar;
+
+  /// No description provided for @backupImportFailedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t restore this backup'**
+  String get backupImportFailedTitle;
+
+  /// No description provided for @backupImportCsvErrorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'This is a spreadsheet, not a backup'**
+  String get backupImportCsvErrorTitle;
+
+  /// No description provided for @backupImportCsvErrorMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'A holdings spreadsheet (.csv) only has your lots, and can\'t be restored. Choose a full backup file (.json) instead.'**
+  String get backupImportCsvErrorMessage;
+
+  /// No description provided for @backupErrorNotQimaFile.
+  ///
+  /// In en, this message translates to:
+  /// **'This doesn\'t look like a Qima backup file.'**
+  String get backupErrorNotQimaFile;
+
+  /// No description provided for @backupErrorNewerVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'This backup was made with a newer version of Qima. Update the app to restore it.'**
+  String get backupErrorNewerVersion;
+
+  /// No description provided for @backupErrorWrongPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'That password didn\'t work.'**
+  String get backupErrorWrongPassword;
+
+  /// No description provided for @backupErrorCorrupted.
+  ///
+  /// In en, this message translates to:
+  /// **'This backup file is damaged and can\'t be restored.'**
+  String get backupErrorCorrupted;
+
+  /// No description provided for @backupCsvHeaderInstrument.
+  ///
+  /// In en, this message translates to:
+  /// **'Instrument'**
+  String get backupCsvHeaderInstrument;
+
+  /// No description provided for @backupCsvHeaderSymbol.
+  ///
+  /// In en, this message translates to:
+  /// **'Symbol'**
+  String get backupCsvHeaderSymbol;
+
+  /// No description provided for @backupCsvHeaderQuantity.
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity'**
+  String get backupCsvHeaderQuantity;
+
+  /// No description provided for @backupCsvHeaderUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'Unit'**
+  String get backupCsvHeaderUnit;
+
+  /// No description provided for @backupCsvHeaderUnitCost.
+  ///
+  /// In en, this message translates to:
+  /// **'Unit cost'**
+  String get backupCsvHeaderUnitCost;
+
+  /// No description provided for @backupCsvHeaderCostCurrency.
+  ///
+  /// In en, this message translates to:
+  /// **'Cost currency'**
+  String get backupCsvHeaderCostCurrency;
+
+  /// No description provided for @backupCsvHeaderTotalCost.
+  ///
+  /// In en, this message translates to:
+  /// **'Total cost'**
+  String get backupCsvHeaderTotalCost;
+
+  /// No description provided for @backupCsvHeaderDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get backupCsvHeaderDate;
+
+  /// No description provided for @commonContinue.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get commonContinue;
 }
 
 class _AppLocalizationsDelegate

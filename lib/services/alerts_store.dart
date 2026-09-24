@@ -23,4 +23,12 @@ class AlertsStore {
   Future<List<PriceAlert>> delete(String id) => _store.delete(id);
 
   Future<List<PriceAlert>?> adoptCloudChanges() => _store.adoptCloudChanges();
+
+  /// Raw records (metadata + tombstones), for backup export (spec Phase 6).
+  Future<List<Record<PriceAlert>>> exportRecords() => _store.exportRecords();
+
+  /// Restores a previously-exported record set — see
+  /// `SyncedStore.importRecords` for the merge/replace semantics.
+  Future<List<PriceAlert>> importRecords(List<Record<PriceAlert>> records, {required bool replace, DateTime? now}) =>
+      _store.importRecords(records, replace: replace, now: now);
 }

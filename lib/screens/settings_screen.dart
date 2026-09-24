@@ -12,6 +12,7 @@ import '../theme/design_system.dart';
 import '../theme/qima_colors.dart';
 import '../theme/strings.dart';
 import 'alerts_screen.dart';
+import 'backup_screen.dart';
 import 'currency_picker.dart';
 
 /// Single settings sheet: base currency, default chart range, widget refresh
@@ -55,6 +56,9 @@ class SettingsScreen extends StatelessWidget {
                 const SizedBox(height: DS.spaceLG),
                 _SectionHeader(l10n.settingsPrivacy),
                 const _PrivacySecuritySection(),
+                const SizedBox(height: DS.spaceLG),
+                _SectionHeader(l10n.settingsBackup),
+                const _BackupSection(),
                 const SizedBox(height: DS.spaceLG),
                 _SectionHeader(l10n.settingsBaseCurrency),
                 DSCard(
@@ -406,6 +410,45 @@ class _PrivacySecuritySectionState extends State<_PrivacySecuritySection> {
                 ),
               ],
             ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+/// "Backup & restore" settings row (spec Phase 6): opens [BackupScreen],
+/// subtitle shows the last backup's relative date and counts, or "Never
+/// backed up".
+class _BackupSection extends StatelessWidget {
+  const _BackupSection();
+
+  @override
+  Widget build(BuildContext context) {
+    final cubit = context.read<AppCubit>();
+    final l10n = AppLocalizations.of(context)!;
+    final colors = context.colors;
+
+    return BlocBuilder<AppCubit, AppState>(
+      bloc: cubit,
+      builder: (context, state) {
+        final lastBackupAt = cubit.backupServiceOrNull?.lastBackupAt;
+        final instrumentCount = cubit.heldInstruments.length;
+        final subtitle = lastBackupAt == null
+            ? l10n.settingsBackupSubtitleNever
+            : l10n.settingsBackupSubtitle(
+                MaterialLocalizations.of(context).formatMediumDate(lastBackupAt),
+                instrumentCount,
+                state.lots.length,
+              );
+        return DSCard(
+          padding: EdgeInsets.zero,
+          child: ListTile(
+            contentPadding: const EdgeInsets.symmetric(horizontal: DS.spaceMD, vertical: DS.spaceXS),
+            title: Text(l10n.settingsBackup, style: TextStyle(color: colors.textPrimary)),
+            subtitle: Text(subtitle, style: TextStyle(color: colors.textTertiary, fontSize: 12)),
+            trailing: Icon(Icons.chevron_right, color: colors.textTertiary),
+            onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const BackupScreen())),
           ),
         );
       },

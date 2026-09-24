@@ -397,5 +397,128 @@
       "price": { "type": "String" },
       "unit": { "type": "String" }
     }
-  }
+  },
+
+  "settingsBackup": "Backup & restore",
+  "settingsBackupSubtitleNever": "Never backed up",
+  "settingsBackupSubtitle": "Last backup {date} · {instruments} instruments, {lots} lots",
+  "@settingsBackupSubtitle": {
+    "placeholders": {
+      "date": { "type": "String" },
+      "instruments": { "type": "int" },
+      "lots": { "type": "int" }
+    }
+  },
+
+  "backupTitle": "Backup & restore",
+  "backupStatusTitle": "Stored only on this phone",
+  "backupStatusMessage": "Your data lives on this device only. Back it up so you can restore it here or on another device.",
+  "backupLastBackup": "Last backup {date}",
+  "@backupLastBackup": {
+    "placeholders": {
+      "date": { "type": "String" }
+    }
+  },
+  "backupLastBackupNever": "Never backed up",
+  "backupReminderCardTitle": "Time for a backup",
+  "backupReminderCardMessage": "It's been over 30 days since your last backup and your data has changed.",
+  "backupReminderCardAction": "Back up now",
+  "backupReminderNotificationTitle": "Time for a backup",
+  "backupReminderNotificationBody": "It's been a while since your last Qima backup and your data has changed. Tap to back up now.",
+
+  "backupExportSection": "Export",
+  "backupExportFullTitle": "Full backup",
+  "backupExportFullSubtitle": "Watchlist, holdings, custom tickers, alerts and settings (.json)",
+  "backupExportCsvTitle": "Holdings spreadsheet",
+  "backupExportCsvSubtitle": "Your lots as a spreadsheet, for your records (.csv)",
+
+  "backupRestoreSection": "Restore",
+  "backupRestoreTitle": "Import a backup",
+  "backupRestoreSubtitle": "Restore from a full backup file (.json)",
+
+  "backupReminderSection": "Reminder",
+  "backupReminderToggleTitle": "Remind me to back up",
+  "backupReminderToggleSubtitle": "Get a monthly reminder if you haven't backed up recently and your data has changed.",
+
+  "backupExportSheetTitle": "Export backup",
+  "backupExportSheetFileName": "File name",
+  "backupExportSheetFileSize": "Size",
+  "backupExportSheetFileContents": "Contents",
+  "backupExportSheetContentsSummary": "{cards} watchlist cards · {lots} lots · {customTickers} custom tickers",
+  "@backupExportSheetContentsSummary": {
+    "placeholders": {
+      "cards": { "type": "int" },
+      "lots": { "type": "int" },
+      "customTickers": { "type": "int" }
+    }
+  },
+  "backupExportSheetProtectTitle": "Protect with a password",
+  "backupExportSheetProtectSubtitle": "Encrypts the file with AES-256. If you forget this password, the backup can't be recovered.",
+  "backupExportSheetPasswordLabel": "Password",
+  "backupExportSheetPasswordConfirmLabel": "Confirm password",
+  "backupExportSheetPasswordTooShort": "Use at least 8 characters.",
+  "backupExportSheetPasswordMismatch": "Passwords don't match.",
+  "backupExportSheetUnprotectedWarning": "Anyone with this file can read your data. Protect it with a password if you plan to store or send it somewhere less private.",
+  "backupExportSheetAction": "Save or share…",
+  "backupExportSheetWorking": "Preparing your backup…",
+  "backupExportSheetFailed": "Couldn't create the backup. Try again.",
+
+  "backupImportPreviewTitle": "Restore backup",
+  "backupImportFileCreated": "Created {date}",
+  "@backupImportFileCreated": {
+    "placeholders": {
+      "date": { "type": "String" }
+    }
+  },
+  "backupImportFileAppVersion": "Made with Qima {version}",
+  "@backupImportFileAppVersion": {
+    "placeholders": {
+      "version": { "type": "String" }
+    }
+  },
+  "backupImportCountCards": "Watchlist cards",
+  "backupImportCountLots": "Lots",
+  "backupImportCountCustomTickers": "Custom tickers",
+  "backupImportCountSettings": "Settings included",
+  "backupImportPasswordPrompt": "This backup is protected. Enter the password to continue.",
+  "backupImportPasswordLabel": "Password",
+  "backupImportPasswordIncorrect": "That password didn't work. Try again.",
+  "backupImportUnlock": "Unlock",
+  "backupImportModeMerge": "Merge",
+  "backupImportModeReplace": "Replace",
+  "backupImportModeMergeFooter": "Keeps what's on this phone and adds anything new or newer from the backup.",
+  "backupImportModeReplaceFooter": "Replaces everything on this phone with the backup's contents.",
+  "backupImportDiff": "{added, plural, =0{} =1{+1 added} other{+{added} added}} · {updated} updated · {removed} removed",
+  "@backupImportDiff": {
+    "placeholders": {
+      "added": { "type": "int" },
+      "updated": { "type": "int" },
+      "removed": { "type": "int" }
+    }
+  },
+  "backupImportRestoreButton": "Restore",
+  "backupImportReplaceConfirmTitle": "Replace everything on this phone?",
+  "backupImportReplaceConfirmMessage": "Your current watchlist, holdings, custom tickers and alerts will be replaced with the backup's contents. This can't be undone.",
+  "backupImportReplaceConfirmAction": "Replace",
+  "backupImportSuccessSnackbar": "Backup restored",
+  "backupImportFailedTitle": "Couldn't restore this backup",
+
+  "backupImportCsvErrorTitle": "This is a spreadsheet, not a backup",
+  "backupImportCsvErrorMessage": "A holdings spreadsheet (.csv) only has your lots, and can't be restored. Choose a full backup file (.json) instead.",
+
+  "backupErrorNotQimaFile": "This doesn't look like a Qima backup file.",
+  "backupErrorNewerVersion": "This backup was made with a newer version of Qima. Update the app to restore it.",
+  "backupErrorWrongPassword": "That password didn't work.",
+  "backupErrorCorrupted": "This backup file is damaged and can't be restored.",
+
+  "backupCsvHeaderInstrument": "Instrument",
+  "backupCsvHeaderSymbol": "Symbol",
+  "backupCsvHeaderQuantity": "Quantity",
+  "backupCsvHeaderUnit": "Unit",
+  "backupCsvHeaderUnitCost": "Unit cost",
+  "backupCsvHeaderCostCurrency": "Cost currency",
+  "backupCsvHeaderTotalCost": "Total cost",
+  "backupCsvHeaderDate": "Date",
+
+  "commonContinue": "Continue"
 }

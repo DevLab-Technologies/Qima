@@ -9,9 +9,11 @@ import 'blocs/app_cubit.dart';
 import 'blocs/app_state.dart';
 import 'l10n/app_localizations.dart';
 import 'models/watch_card.dart';
+import 'screens/backup_screen.dart';
 import 'screens/instrument_detail_screen.dart';
 import 'screens/watch_watchlist_screen.dart';
 import 'screens/watchlist_screen.dart';
+import 'services/backup/backup_reminder_notifier.dart';
 import 'services/notification_service.dart';
 import 'services/preferences.dart';
 import 'theme/app_theme.dart';
@@ -28,6 +30,11 @@ bool isWatchFormFactor(BuildContext context) =>
     MediaQuery.of(context).size.shortestSide < _kWatchShortestSideThreshold;
 
 void main() {
+  // `cryptography_flutter`'s plugin auto-registers with `package:cryptography`
+  // (used by the Phase 6 backup encryption) as soon as it's a dependency —
+  // no explicit enable call needed — routing AES-GCM/PBKDF2 through native OS
+  // APIs on Android/iOS/macOS, which are dramatically faster than the
+  // pure-Dart fallback. See `BackupCrypto`/`backup_crypto.dart`.
   LicenseRegistry.addLicense(_bundledFontLicenses);
   runApp(const QimaApp());
 }
@@ -83,25 +90,34 @@ class _QimaAppState extends State<QimaApp> {
     if (payload != null) _handleNotificationTap(payload);
   }
 
-  /// [cardID] is a `WatchCard.id` (the notification payload set in
-  /// `RefreshPipeline._notify`). Waits for the cubit to finish initializing
+  /// [payload] is either a `WatchCard.id` (a price alert notification, set
+  /// in `RefreshPipeline._notify`) or [backupReminderNotificationPayload]
+  /// (the Phase 6 backup-reminder notification, set in
+  /// `BackupReminderNotifier`). Waits for the cubit to finish initializing
   /// (a cold start's tap can arrive before `init()` has loaded the
-  /// watchlist) and silently does nothing if the card was since removed.
-  void _handleNotificationTap(String cardID) {
+  /// watchlist) and silently does nothing if a referenced card was since
+  /// removed.
+  void _handleNotificationTap(String payload) {
     unawaited(() async {
       while (!_cubit.state.initialized) {
         await Future<void>.delayed(const Duration(milliseconds: 50));
       }
+      final navigator = _navigatorKey.currentState;
+      if (navigator == null) return;
+
+      if (payload == backupReminderNotificationPayload) {
+        navigator.push(MaterialPageRoute(builder: (_) => const BackupScreen()));
+        return;
+      }
+
       WatchCard? card;
       for (final c in _cubit.state.cards) {
-        if (c.id == cardID) {
+        if (c.id == payload) {
           card = c;
           break;
         }
       }
       if (card == null) return;
-      final navigator = _navigatorKey.currentState;
-      if (navigator == null) return;
       navigator.push(MaterialPageRoute(builder: (_) => InstrumentDetailScreen(card: card!)));
     }());
   }

@@ -793,4 +793,280 @@ class AppLocalizationsFr extends AppLocalizations {
   String alertNotificationBodyRepeat(String price, String unit) {
     return 'Actuellement $price par $unit. Vous serez averti à nouveau la prochaine fois.';
   }
+
+  @override
+  String get settingsBackup => 'Sauvegarde et restauration';
+
+  @override
+  String get settingsBackupSubtitleNever => 'Aucune sauvegarde effectuée';
+
+  @override
+  String settingsBackupSubtitle(String date, int instruments, int lots) {
+    return 'Dernière sauvegarde $date · $instruments instruments, $lots lots';
+  }
+
+  @override
+  String get backupTitle => 'Sauvegarde et restauration';
+
+  @override
+  String get backupStatusTitle => 'Stocké uniquement sur ce téléphone';
+
+  @override
+  String get backupStatusMessage =>
+      'Vos données existent uniquement sur cet appareil. Sauvegardez-les pour pouvoir les restaurer ici ou sur un autre appareil.';
+
+  @override
+  String backupLastBackup(String date) {
+    return 'Dernière sauvegarde $date';
+  }
+
+  @override
+  String get backupLastBackupNever => 'Aucune sauvegarde effectuée';
+
+  @override
+  String get backupReminderCardTitle => 'Il est temps de sauvegarder';
+
+  @override
+  String get backupReminderCardMessage =>
+      'Cela fait plus de 30 jours depuis votre dernière sauvegarde et vos données ont changé.';
+
+  @override
+  String get backupReminderCardAction => 'Sauvegarder maintenant';
+
+  @override
+  String get backupReminderNotificationTitle => 'Il est temps de sauvegarder';
+
+  @override
+  String get backupReminderNotificationBody =>
+      'Cela fait un moment depuis votre dernière sauvegarde Qima et vos données ont changé. Appuyez pour sauvegarder maintenant.';
+
+  @override
+  String get backupExportSection => 'Exporter';
+
+  @override
+  String get backupExportFullTitle => 'Sauvegarde complète';
+
+  @override
+  String get backupExportFullSubtitle =>
+      'Liste de suivi, positions, tickers personnalisés, alertes et paramètres (.json)';
+
+  @override
+  String get backupExportCsvTitle => 'Tableur des positions';
+
+  @override
+  String get backupExportCsvSubtitle =>
+      'Vos lots sous forme de tableur, pour vos archives (.csv)';
+
+  @override
+  String get backupRestoreSection => 'Restaurer';
+
+  @override
+  String get backupRestoreTitle => 'Importer une sauvegarde';
+
+  @override
+  String get backupRestoreSubtitle =>
+      'Restaurer depuis un fichier de sauvegarde complète (.json)';
+
+  @override
+  String get backupReminderSection => 'Rappel';
+
+  @override
+  String get backupReminderToggleTitle => 'Me rappeler de sauvegarder';
+
+  @override
+  String get backupReminderToggleSubtitle =>
+      'Recevez un rappel mensuel si vous n\'avez pas sauvegardé récemment et que vos données ont changé.';
+
+  @override
+  String get backupExportSheetTitle => 'Exporter la sauvegarde';
+
+  @override
+  String get backupExportSheetFileName => 'Nom du fichier';
+
+  @override
+  String get backupExportSheetFileSize => 'Taille';
+
+  @override
+  String get backupExportSheetFileContents => 'Contenu';
+
+  @override
+  String backupExportSheetContentsSummary(
+    int cards,
+    int lots,
+    int customTickers,
+  ) {
+    return '$cards cartes de suivi · $lots lots · $customTickers tickers personnalisés';
+  }
+
+  @override
+  String get backupExportSheetProtectTitle => 'Protéger par mot de passe';
+
+  @override
+  String get backupExportSheetProtectSubtitle =>
+      'Chiffre le fichier avec AES-256. Si vous oubliez ce mot de passe, la sauvegarde ne pourra pas être récupérée.';
+
+  @override
+  String get backupExportSheetPasswordLabel => 'Mot de passe';
+
+  @override
+  String get backupExportSheetPasswordConfirmLabel =>
+      'Confirmer le mot de passe';
+
+  @override
+  String get backupExportSheetPasswordTooShort =>
+      'Utilisez au moins 8 caractères.';
+
+  @override
+  String get backupExportSheetPasswordMismatch =>
+      'Les mots de passe ne correspondent pas.';
+
+  @override
+  String get backupExportSheetUnprotectedWarning =>
+      'Toute personne possédant ce fichier peut lire vos données. Protégez-le par un mot de passe si vous comptez le stocker ou l\'envoyer dans un endroit moins privé.';
+
+  @override
+  String get backupExportSheetAction => 'Enregistrer ou partager…';
+
+  @override
+  String get backupExportSheetWorking => 'Préparation de votre sauvegarde…';
+
+  @override
+  String get backupExportSheetFailed =>
+      'Impossible de créer la sauvegarde. Réessayez.';
+
+  @override
+  String get backupImportPreviewTitle => 'Restaurer la sauvegarde';
+
+  @override
+  String backupImportFileCreated(String date) {
+    return 'Créée le $date';
+  }
+
+  @override
+  String backupImportFileAppVersion(String version) {
+    return 'Créée avec Qima $version';
+  }
+
+  @override
+  String get backupImportCountCards => 'Cartes de suivi';
+
+  @override
+  String get backupImportCountLots => 'Lots';
+
+  @override
+  String get backupImportCountCustomTickers => 'Tickers personnalisés';
+
+  @override
+  String get backupImportCountSettings => 'Paramètres inclus';
+
+  @override
+  String get backupImportPasswordPrompt =>
+      'Cette sauvegarde est protégée. Entrez le mot de passe pour continuer.';
+
+  @override
+  String get backupImportPasswordLabel => 'Mot de passe';
+
+  @override
+  String get backupImportPasswordIncorrect =>
+      'Ce mot de passe n\'a pas fonctionné. Réessayez.';
+
+  @override
+  String get backupImportUnlock => 'Déverrouiller';
+
+  @override
+  String get backupImportModeMerge => 'Fusionner';
+
+  @override
+  String get backupImportModeReplace => 'Remplacer';
+
+  @override
+  String get backupImportModeMergeFooter =>
+      'Conserve ce qui est sur ce téléphone et ajoute ce qui est nouveau ou plus récent dans la sauvegarde.';
+
+  @override
+  String get backupImportModeReplaceFooter =>
+      'Remplace tout sur ce téléphone par le contenu de la sauvegarde.';
+
+  @override
+  String backupImportDiff(int added, int updated, int removed) {
+    String _temp0 = intl.Intl.pluralLogic(
+      added,
+      locale: localeName,
+      other: '+$added ajoutés',
+      one: '+1 ajouté',
+      zero: '',
+    );
+    return '$_temp0 · $updated mis à jour · $removed supprimés';
+  }
+
+  @override
+  String get backupImportRestoreButton => 'Restaurer';
+
+  @override
+  String get backupImportReplaceConfirmTitle =>
+      'Tout remplacer sur ce téléphone ?';
+
+  @override
+  String get backupImportReplaceConfirmMessage =>
+      'Votre liste de suivi, vos positions, vos tickers personnalisés et vos alertes actuels seront remplacés par le contenu de la sauvegarde. Cette action est irréversible.';
+
+  @override
+  String get backupImportReplaceConfirmAction => 'Remplacer';
+
+  @override
+  String get backupImportSuccessSnackbar => 'Sauvegarde restaurée';
+
+  @override
+  String get backupImportFailedTitle =>
+      'Impossible de restaurer cette sauvegarde';
+
+  @override
+  String get backupImportCsvErrorTitle =>
+      'Ceci est un tableur, pas une sauvegarde';
+
+  @override
+  String get backupImportCsvErrorMessage =>
+      'Un tableur de positions (.csv) ne contient que vos lots et ne peut pas être restauré. Choisissez plutôt un fichier de sauvegarde complète (.json).';
+
+  @override
+  String get backupErrorNotQimaFile =>
+      'Ce fichier ne ressemble pas à une sauvegarde Qima.';
+
+  @override
+  String get backupErrorNewerVersion =>
+      'Cette sauvegarde a été créée avec une version plus récente de Qima. Mettez à jour l\'application pour la restaurer.';
+
+  @override
+  String get backupErrorWrongPassword => 'Ce mot de passe n\'a pas fonctionné.';
+
+  @override
+  String get backupErrorCorrupted =>
+      'Ce fichier de sauvegarde est endommagé et ne peut pas être restauré.';
+
+  @override
+  String get backupCsvHeaderInstrument => 'Instrument';
+
+  @override
+  String get backupCsvHeaderSymbol => 'Symbole';
+
+  @override
+  String get backupCsvHeaderQuantity => 'Quantité';
+
+  @override
+  String get backupCsvHeaderUnit => 'Unité';
+
+  @override
+  String get backupCsvHeaderUnitCost => 'Coût unitaire';
+
+  @override
+  String get backupCsvHeaderCostCurrency => 'Devise du coût';
+
+  @override
+  String get backupCsvHeaderTotalCost => 'Coût total';
+
+  @override
+  String get backupCsvHeaderDate => 'Date';
+
+  @override
+  String get commonContinue => 'Continuer';
 }

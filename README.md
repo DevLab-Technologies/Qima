@@ -56,6 +56,12 @@ layout for Arabic and an in-app language override.
 **Private by design** — no accounts, no analytics, no tracking. All data is
 stored locally on-device. See [Privacy](#privacy).
 
+**Backup & restore** — export your watchlist, holdings, custom tickers,
+alerts and settings to a single file, optionally password-protected with
+AES-256; restore it on this device or another with a Merge (last-write-wins)
+or Replace choice and a live before/after diff. Holdings can also be
+exported as a spreadsheet for your own records.
+
 ---
 
 ## Requirements

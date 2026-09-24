@@ -52,6 +52,13 @@ class AppState extends Equatable {
   /// the banner doesn't flash on before settling.
   final bool notificationsEnabled;
 
+  /// Whether the Settings/Backup "Time for a backup" reminder card should
+  /// show right now (spec Phase 6): reminder enabled, data changed since the
+  /// last backup, and more than 30 days since the last backup (or never
+  /// backed up). Recomputed from `BackupService.isReminderDue` — see
+  /// `AppCubit._refreshBackupReminder`.
+  final bool backupReminderDue;
+
   AppState({
     this.initialized = false,
     Map<String, QuoteSeries>? seriesByID,
@@ -76,6 +83,7 @@ class AppState extends Equatable {
     this.alerts = const [],
     this.deliverAlertsOnThisDevice = true,
     this.notificationsEnabled = true,
+    this.backupReminderDue = false,
   })  : seriesByID = seriesByID ?? const {},
         rates = rates ?? FXRates.usdIdentity;
 
@@ -104,6 +112,7 @@ class AppState extends Equatable {
     List<PriceAlert>? alerts,
     bool? deliverAlertsOnThisDevice,
     bool? notificationsEnabled,
+    bool? backupReminderDue,
   }) {
     return AppState(
       initialized: initialized ?? this.initialized,
@@ -129,6 +138,7 @@ class AppState extends Equatable {
       alerts: alerts ?? this.alerts,
       deliverAlertsOnThisDevice: deliverAlertsOnThisDevice ?? this.deliverAlertsOnThisDevice,
       notificationsEnabled: notificationsEnabled ?? this.notificationsEnabled,
+      backupReminderDue: backupReminderDue ?? this.backupReminderDue,
     );
   }
 
@@ -157,5 +167,6 @@ class AppState extends Equatable {
         alerts,
         deliverAlertsOnThisDevice,
         notificationsEnabled,
+        backupReminderDue,
       ];
 }
