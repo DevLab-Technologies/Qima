@@ -7,6 +7,9 @@ default_platform(:ios)
 
 APP_IDENTIFIER = "com.devlabtechnologies.qima"
 APPLE_TEAM_ID = "ZS3A435WC2"
+# fastlane's working directory is not guaranteed to be the repo root, so
+# anchor every path to it explicitly. __dir__ here is ios/fastlane.
+REPO_ROOT = File.expand_path("../..", __dir__)
 
 # Loads the App Store Connect API key from ASC_KEY_ID / ASC_ISSUER_ID /
 # ASC_KEY_CONTENT (base64-encoded .p8 contents). This is the only supported
@@ -143,16 +146,16 @@ platform :ios do
     setup_signing
     export_options_path = write_export_options!(Actions.lane_context[:QIMA_PROFILE_NAME])
 
-    Dir.chdir("..") do
+    Dir.chdir(REPO_ROOT) do
       sh(
         "flutter", "build", "ipa",
         "--release",
         "--build-number=#{build_number}",
-        "--export-options-plist=ios/ExportOptions.plist"
+        "--export-options-plist=#{export_options_path}"
       )
     end
 
-    ipa_path = Dir.glob(File.expand_path("../build/ios/ipa/*.ipa", Dir.pwd)).first
+    ipa_path = Dir.glob(File.join(REPO_ROOT, "build/ios/ipa/*.ipa")).first
     UI.user_error!("No .ipa found under build/ios/ipa after flutter build ipa.") unless ipa_path
 
     upload_to_testflight(
@@ -171,12 +174,12 @@ platform :ios do
     setup_signing
     export_options_path = write_export_options!(Actions.lane_context[:QIMA_PROFILE_NAME])
 
-    Dir.chdir("..") do
+    Dir.chdir(REPO_ROOT) do
       sh(
         "flutter", "build", "ipa",
         "--release",
         "--build-number=#{build_number}",
-        "--export-options-plist=ios/ExportOptions.plist"
+        "--export-options-plist=#{export_options_path}"
       )
     end
 
