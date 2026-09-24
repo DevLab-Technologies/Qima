@@ -27,6 +27,7 @@ class AppState extends Equatable {
   final AppLanguage appLanguage;
   final Appearance appearance;
   final ChartRange preferredChartRange;
+  final ChartRange preferredPortfolioRange;
   final DateTime? lastRefresh;
   final bool isBackfilling;
   final bool isLoadingHistory;
@@ -45,6 +46,7 @@ class AppState extends Equatable {
     this.appLanguage = AppLanguage.system,
     this.appearance = Appearance.system,
     this.preferredChartRange = ChartRange.fallbackDefault,
+    this.preferredPortfolioRange = ChartRange.portfolioDefault,
     this.lastRefresh,
     this.isBackfilling = false,
     this.isLoadingHistory = false,
@@ -66,6 +68,7 @@ class AppState extends Equatable {
     AppLanguage? appLanguage,
     Appearance? appearance,
     ChartRange? preferredChartRange,
+    ChartRange? preferredPortfolioRange,
     DateTime? lastRefresh,
     bool? isBackfilling,
     bool? isLoadingHistory,
@@ -84,6 +87,7 @@ class AppState extends Equatable {
       appLanguage: appLanguage ?? this.appLanguage,
       appearance: appearance ?? this.appearance,
       preferredChartRange: preferredChartRange ?? this.preferredChartRange,
+      preferredPortfolioRange: preferredPortfolioRange ?? this.preferredPortfolioRange,
       lastRefresh: lastRefresh ?? this.lastRefresh,
       isBackfilling: isBackfilling ?? this.isBackfilling,
       isLoadingHistory: isLoadingHistory ?? this.isLoadingHistory,
@@ -105,6 +109,7 @@ class AppState extends Equatable {
         appLanguage,
         appearance,
         preferredChartRange,
+        preferredPortfolioRange,
         lastRefresh,
         isBackfilling,
         isLoadingHistory,

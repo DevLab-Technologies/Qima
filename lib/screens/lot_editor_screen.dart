@@ -12,7 +12,7 @@ import '../theme/qima_colors.dart';
 import '../theme/strings.dart';
 import '../widgets/confirm_delete_dialog.dart';
 import 'currency_picker.dart';
-import 'holdings_card.dart';
+import 'holdings_screen.dart';
 
 enum _CostMode { perUnit, total }
 

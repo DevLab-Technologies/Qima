@@ -6,19 +6,24 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../blocs/app_cubit.dart';
 import '../blocs/app_state.dart';
 import '../l10n/app_localizations.dart';
+import '../models/asset.dart';
+import '../models/watch_card.dart';
 import '../theme/design_system.dart';
 import '../theme/qima_colors.dart';
 import '../theme/strings.dart';
+import '../widgets/asset_class_filter.dart';
 import '../widgets/confirm_delete_dialog.dart';
 import '../widgets/instrument_row.dart';
+import '../widgets/portfolio_hero.dart';
 import 'add_instrument_screen.dart';
 import 'instrument_detail_screen.dart';
 import 'portfolio_detail_screen.dart';
 import 'settings_screen.dart';
 
 /// Root watchlist screen. Mirrors `ContentView.swift`: auto-refresh loop
-/// keyed to app lifecycle, empty state, portfolio banner, reorderable /
-/// dismissible instrument list.
+/// keyed to app lifecycle, empty state, portfolio hero chart, an
+/// asset-class filter, and a reorderable/dismissible instrument list (v2-A
+/// "Chart-first" layout).
 class WatchlistScreen extends StatefulWidget {
   const WatchlistScreen({super.key});
 
@@ -28,6 +33,7 @@ class WatchlistScreen extends StatefulWidget {
 
 class _WatchlistScreenState extends State<WatchlistScreen> with WidgetsBindingObserver {
   Timer? _timer;
+  AssetClass? _filter;
 
   @override
   void initState() {
@@ -140,94 +146,123 @@ class _WatchlistScreenState extends State<WatchlistScreen> with WidgetsBindingOb
 
             final valuation = cubit.portfolioValuation;
 
-            return ReorderableListView.builder(
+            // Only classes actually present in the watchlist get a filter
+            // chip; a class with zero cards never shows an empty chip.
+            final availableClasses = <AssetClass>{
+              for (final card in state.cards)
+                if (card.instrument != null) card.instrument!.assetClass,
+            };
+            if (_filter != null && !availableClasses.contains(_filter)) {
+              // The only tracked instrument of the selected class was
+              // removed from underneath the filter (e.g. via swipe-delete):
+              // fall back to "All" next frame rather than showing an empty
+              // list with no way to tell why (can't call setState mid-build).
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (mounted) setState(() => _filter = null);
+              });
+            }
+
+            final filteredCards = _filter == null
+                ? state.cards
+                : state.cards.where((c) => c.instrument?.assetClass == _filter).toList();
+
+            // Reordering only makes sense (and only mutates the real
+            // underlying order) when every card is visible, i.e. filter is
+            // "All" — otherwise a drag would silently reorder within a
+            // filtered subset while writing indices back into the full list.
+            final canReorder = _filter == null;
+
+            return ListView(
               padding: const EdgeInsets.all(DS.spaceMD),
-              // The default desktop drag handle (a small `Icons.drag_handle`
-              // icon Flutter stacks over the trailing edge of every row) has
-              // no room reserved for it in `InstrumentRow`'s layout, so it
-              // paints directly on top of the price text on macOS/Windows/
-              // Linux. We disable it and fall back to the same long-press-
-              // anywhere-on-the-row gesture Flutter uses by default on
-              // mobile, which needs no dedicated on-row affordance.
-              buildDefaultDragHandles: false,
-              itemCount: state.cards.length + (valuation != null ? 1 : 0),
-              onReorder: (oldIndex, newIndex) {
-                if (valuation != null) {
-                  if (oldIndex == 0 || newIndex == 0) return;
-                  oldIndex -= 1;
-                  newIndex -= 1;
-                }
-                cubit.move(oldIndex, newIndex);
-              },
-              itemBuilder: (context, index) {
-                if (valuation != null && index == 0) {
-                  return Padding(
-                    key: const ValueKey('portfolio-summary'),
-                    padding: const EdgeInsets.only(bottom: DS.spaceMD),
-                    child: InkWell(
-                      onTap: () => Navigator.of(context).push(
-                        MaterialPageRoute(builder: (_) => const PortfolioDetailScreen()),
-                      ),
-                      child: DSHeroCard(
-                        accent: colors.brand,
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(l10n.portfolioTitle, style: TextStyle(color: colors.textTertiary, fontSize: 12)),
-                                  Text(
-                                    valuation.value.formatted(),
-                                    style: TextStyle(color: colors.textPrimary, fontSize: 26, fontWeight: FontWeight.w800),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Text(
-                              signedFigure('${(valuation.gainFraction * 100).toStringAsFixed(2)}%', isUp: valuation.isUp),
-                              style: TextStyle(color: QimaColors.trendColor(valuation.isUp, colors), fontWeight: FontWeight.w700),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  );
-                }
-
-                final cardIndex = valuation != null ? index - 1 : index;
-                final card = state.cards[cardIndex];
-                final presentation = cubit.presentation(card);
-
-                return ReorderableDelayedDragStartListener(
-                  key: ValueKey(card.id),
-                  index: index,
-                  child: Dismissible(
-                    key: ValueKey('dismissible-${card.id}'),
-                    direction: DismissDirection.endToStart,
-                    confirmDismiss: (_) => confirmDelete(
-                      context,
-                      title: l10n.confirmRemoveCardTitle(displayLabel(context, presentation.instrument.nameKey)),
-                      message: l10n.confirmRemoveCardMessage,
-                      confirmLabel: l10n.commonRemove,
-                    ),
-                    onDismissed: (_) => cubit.removeCard(card.id),
-                    background: Container(
-                      alignment: Alignment.centerRight,
-                      padding: const EdgeInsets.only(right: DS.spaceMD),
-                      child: Icon(Icons.delete, color: colors.down),
-                    ),
-                    child: InstrumentRow(
-                      presentation: presentation,
-                      onTap: () => Navigator.of(context).push(
-                        MaterialPageRoute(builder: (_) => InstrumentDetailScreen(card: card)),
-                      ),
+              children: [
+                if (valuation != null) ...[
+                  PortfolioHero(
+                    valuation: valuation,
+                    history: cubit.portfolioHistory(state.preferredPortfolioRange),
+                    change: cubit.portfolioChange(state.preferredPortfolioRange),
+                    selectedRange: state.preferredPortfolioRange,
+                    onSelectRange: cubit.setPreferredPortfolioRange,
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => const PortfolioDetailScreen()),
                     ),
                   ),
-                );
-              },
+                  const SizedBox(height: DS.spaceMD),
+                ],
+                if (availableClasses.length > 1) ...[
+                  AssetClassFilter(
+                    availableClasses: availableClasses,
+                    selected: _filter,
+                    onSelected: (value) => setState(() => _filter = value),
+                  ),
+                  const SizedBox(height: DS.spaceMD),
+                ],
+                if (filteredCards.isEmpty)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: DS.spaceLG),
+                    child: Center(
+                      child: Text(l10n.watchlistEmptyMessage, style: TextStyle(color: colors.textTertiary)),
+                    ),
+                  )
+                else
+                  DSCard(
+                    padding: const EdgeInsets.symmetric(horizontal: DS.spaceXS, vertical: DS.spaceXS),
+                    child: canReorder
+                        ? ReorderableListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            // See buildDefaultDragHandles note on the
+                            // instrument-detail-screen sibling usage above:
+                            // the default drag-handle icon overlaps trailing
+                            // row content on desktop, so it's disabled in
+                            // favor of the long-press-anywhere gesture.
+                            buildDefaultDragHandles: false,
+                            itemCount: filteredCards.length,
+                            onReorder: cubit.move,
+                            itemBuilder: (context, index) => ReorderableDelayedDragStartListener(
+                              key: ValueKey(filteredCards[index].id),
+                              index: index,
+                              child: _row(context, cubit, l10n, colors, filteredCards[index]),
+                            ),
+                          )
+                        : Column(
+                            children: [
+                              for (final card in filteredCards)
+                                KeyedSubtree(
+                                  key: ValueKey(card.id),
+                                  child: _row(context, cubit, l10n, colors, card),
+                                ),
+                            ],
+                          ),
+                  ),
+              ],
             );
           },
+        ),
+      ),
+    );
+  }
+
+  Widget _row(BuildContext context, AppCubit cubit, AppLocalizations l10n, QimaColors colors, WatchCard card) {
+    final presentation = cubit.presentation(card);
+    return Dismissible(
+      key: ValueKey('dismissible-${card.id}'),
+      direction: DismissDirection.endToStart,
+      confirmDismiss: (_) => confirmDelete(
+        context,
+        title: l10n.confirmRemoveCardTitle(displayLabel(context, presentation.instrument.nameKey)),
+        message: l10n.confirmRemoveCardMessage,
+        confirmLabel: l10n.commonRemove,
+      ),
+      onDismissed: (_) => cubit.removeCard(card.id),
+      background: Container(
+        alignment: Alignment.centerRight,
+        padding: const EdgeInsets.only(right: DS.spaceMD),
+        child: Icon(Icons.delete, color: colors.down),
+      ),
+      child: InstrumentRow(
+        presentation: presentation,
+        onTap: () => Navigator.of(context).push(
+          MaterialPageRoute(builder: (_) => InstrumentDetailScreen(card: card)),
         ),
       ),
     );

@@ -126,6 +126,12 @@ abstract class AppLocalizations {
   /// **'Add metals, crypto, stocks, or currencies to start tracking prices.'**
   String get watchlistEmptyMessage;
 
+  /// No description provided for @watchlistFilterAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get watchlistFilterAll;
+
   /// No description provided for @addTitle.
   ///
   /// In en, this message translates to:
@@ -221,6 +227,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Load history to see the full price chart.'**
   String get detailNoHistoryMessage;
+
+  /// No description provided for @detailKeyStats.
+  ///
+  /// In en, this message translates to:
+  /// **'Key stats'**
+  String get detailKeyStats;
+
+  /// No description provided for @detailPricePerUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'Price per unit'**
+  String get detailPricePerUnit;
+
+  /// No description provided for @detailUpdatedAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Updated {time}'**
+  String detailUpdatedAt(String time);
 
   /// No description provided for @errorRefreshFailed.
   ///
@@ -353,6 +377,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No portfolio value yet — add a holding lot to get started.'**
   String get portfolioEmpty;
+
+  /// No description provided for @portfolioNoChange.
+  ///
+  /// In en, this message translates to:
+  /// **'Not enough history for this range yet'**
+  String get portfolioNoChange;
+
+  /// No description provided for @portfolioNoHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a holding lot to see your portfolio chart'**
+  String get portfolioNoHistory;
 
   /// No description provided for @portfolioLotCount.
   ///
@@ -785,6 +821,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'7D'**
   String get range7D;
+
+  /// No description provided for @range1W.
+  ///
+  /// In en, this message translates to:
+  /// **'1W'**
+  String get range1W;
 
   /// No description provided for @range1M.
   ///

@@ -101,6 +101,7 @@ class Preferences {
   static const String _appLanguageKey = 'appLanguage';
   static const String _appearanceKey = 'appearance';
   static const String _preferredChartRangeKey = 'preferredChartRange';
+  static const String _preferredPortfolioRangeKey = 'preferredPortfolioRange';
   static const String _legacyWatchcardsKey = 'pref.watchcards';
   static const String _legacyWatchlistKey = 'pref.watchlist';
 
@@ -190,6 +191,22 @@ class Preferences {
   Future<void> setPreferredChartRange(ChartRange value) async {
     final coerced = value.isExtended ? ChartRange.fallbackDefault : value;
     await local.setString(_preferredChartRangeKey, coerced.name);
+  }
+
+  /// Local-only, like [preferredChartRange]. Restricted to
+  /// [ChartRange.portfolioSelectable] — anything else read back (a stale
+  /// value from a future app version, say) falls back to
+  /// [ChartRange.portfolioDefault] rather than being trusted blindly.
+  ChartRange get preferredPortfolioRange {
+    final raw = local.getString(_preferredPortfolioRangeKey);
+    if (raw == null) return ChartRange.portfolioDefault;
+    final range = ChartRange.values.firstWhere((r) => r.name == raw, orElse: () => ChartRange.portfolioDefault);
+    return ChartRange.portfolioSelectable.contains(range) ? range : ChartRange.portfolioDefault;
+  }
+
+  Future<void> setPreferredPortfolioRange(ChartRange value) async {
+    if (!ChartRange.portfolioSelectable.contains(value)) return;
+    await local.setString(_preferredPortfolioRangeKey, value.name);
   }
 
   /// Migration chain, simplified for a from-scratch app: (1) pre-sync

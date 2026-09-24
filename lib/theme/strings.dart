@@ -137,6 +137,8 @@ String? _resolve(AppLocalizations loc, String key) {
       return loc.range3D;
     case 'range.7D':
       return loc.range7D;
+    case 'range.1W':
+      return loc.range1W;
     case 'range.1M':
       return loc.range1M;
     case 'range.3M':

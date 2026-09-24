@@ -22,6 +22,9 @@ class AppLocalizationsFr extends AppLocalizations {
       'Ajoutez des métaux, cryptomonnaies, actions ou devises pour suivre leurs prix.';
 
   @override
+  String get watchlistFilterAll => 'Tous';
+
+  @override
   String get addTitle => 'Ajouter un instrument';
 
   @override
@@ -70,6 +73,17 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get detailNoHistoryMessage =>
       'Chargez l\'historique pour voir le graphique de prix complet.';
+
+  @override
+  String get detailKeyStats => 'Statistiques clés';
+
+  @override
+  String get detailPricePerUnit => 'Prix par unité';
+
+  @override
+  String detailUpdatedAt(String time) {
+    return 'Mis à jour à $time';
+  }
 
   @override
   String get errorRefreshFailed =>
@@ -145,6 +159,14 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get portfolioEmpty =>
       'Aucune valeur de portefeuille pour l\'instant — ajoutez un lot pour commencer.';
+
+  @override
+  String get portfolioNoChange =>
+      'Pas encore assez d\'historique pour cette période';
+
+  @override
+  String get portfolioNoHistory =>
+      'Ajoutez une position pour voir le graphique de votre portefeuille';
 
   @override
   String portfolioLotCount(num count) {
@@ -373,6 +395,9 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get range7D => '7J';
+
+  @override
+  String get range1W => '1S';
 
   @override
   String get range1M => '1M';

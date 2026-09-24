@@ -7,6 +7,7 @@
   "watchlistAdd": "Add instrument",
   "watchlistEmptyTitle": "Your watchlist is empty",
   "watchlistEmptyMessage": "Add metals, crypto, stocks, or currencies to start tracking prices.",
+  "watchlistFilterAll": "All",
   "addTitle": "Add instrument",
   "addCustomTickerTitle": "Add custom ticker",
   "addCustomTickerSymbol": "Ticker symbol",
@@ -23,6 +24,16 @@
   "detailLoadHistory": "Load history",
   "detailNoHistoryTitle": "No history yet",
   "detailNoHistoryMessage": "Load history to see the full price chart.",
+  "detailKeyStats": "Key stats",
+  "detailPricePerUnit": "Price per unit",
+  "detailUpdatedAt": "Updated {time}",
+  "@detailUpdatedAt": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
   "errorRefreshFailed": "Couldn't refresh prices. Check your connection and try again.",
   "detailChangeCurrency": "Change currency",
   "detailShowPerUnit": "Show per {unit}",
@@ -66,6 +77,8 @@
   "portfolioTitle": "Portfolio",
   "portfolioValue": "Total value",
   "portfolioEmpty": "No portfolio value yet — add a holding lot to get started.",
+  "portfolioNoChange": "Not enough history for this range yet",
+  "portfolioNoHistory": "Add a holding lot to see your portfolio chart",
   "portfolioLotCount": "{count, plural, =1{1 lot} other{{count} lots}}",
   "@portfolioLotCount": {
     "placeholders": {
@@ -145,6 +158,7 @@
   "range1D": "1D",
   "range3D": "3D",
   "range7D": "7D",
+  "range1W": "1W",
   "range1M": "1M",
   "range3M": "3M",
   "range6M": "6M",

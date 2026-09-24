@@ -5,9 +5,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../models/asset.dart';
 import '../models/custom_instrument.dart';
+import '../models/fx_history.dart';
 import '../models/holding.dart';
 import '../models/instrument_catalog.dart';
 import '../models/instrument_presentation.dart';
+import '../models/portfolio_history.dart';
 import '../models/quote.dart';
 import '../models/watch_card.dart';
 import '../models/chart_range.dart';
@@ -58,6 +60,7 @@ class AppCubit extends Cubit<AppState> {
     final appLanguage = await preferences.appLanguage;
     final appearance = await preferences.appearance;
     final preferredChartRange = preferences.preferredChartRange;
+    final preferredPortfolioRange = preferences.preferredPortfolioRange;
 
     final seedCards = await preferences.seedWatchcards();
     final cards = await _loadCardsSeeding(watchlistStore, seedCards);
@@ -78,6 +81,7 @@ class AppCubit extends Cubit<AppState> {
       appLanguage: appLanguage,
       appearance: appearance,
       preferredChartRange: preferredChartRange,
+      preferredPortfolioRange: preferredPortfolioRange,
       cards: cards,
       lots: lots,
       rates: rates,
@@ -385,6 +389,12 @@ class AppCubit extends Cubit<AppState> {
     emit(state.copyWith(preferredChartRange: value));
   }
 
+  Future<void> setPreferredPortfolioRange(ChartRange value) async {
+    if (!ChartRange.portfolioSelectable.contains(value) || value == state.preferredPortfolioRange) return;
+    await preferences.setPreferredPortfolioRange(value);
+    emit(state.copyWith(preferredPortfolioRange: value));
+  }
+
   Future<void> setWidgetRefreshInterval(WidgetRefreshInterval value) async {
     if (value == state.widgetRefreshInterval) return;
     await preferences.setWidgetRefreshInterval(value);
@@ -481,6 +491,86 @@ class AppCubit extends Cubit<AppState> {
   Future<void> deleteLot(HoldingLot lot) async {
     final lots = await holdingsStore.delete(lot.id);
     emit(state.copyWith(lots: lots));
+  }
+
+  // ---------------------------------------------------------------------
+  // Portfolio history (watchlist hero chart)
+  // ---------------------------------------------------------------------
+
+  /// Memoization cache for [portfolioHistory], keyed on the exact set of
+  /// inputs that can change its output. [PortfolioHistory.build] walks every
+  /// tracked lot's full quote/FX series, which is too expensive to redo on
+  /// every `build()` (e.g. every scrub-driven rebuild of the hero chart) —
+  /// so this cubit computes it once per distinct (range, lots, seriesByID,
+  /// fxHistory, baseCurrency) tuple and reuses the result until one of those
+  /// actually changes. [AppState] fields are immutable/structurally-equal
+  /// (`Equatable`/unmodifiable lists), so identity/equality checks here are
+  /// cheap and correct.
+  ChartRange? _historyCacheRange;
+  List<HoldingLot>? _historyCacheLots;
+  Map<String, QuoteSeries>? _historyCacheSeries;
+  FXHistory? _historyCacheFxHistory;
+  String? _historyCacheBaseCurrency;
+  DateTime? _historyCacheDay;
+  List<PortfolioHistoryPoint>? _historyCacheResult;
+
+  /// Day-by-day portfolio value/cost for [range], computed fresh from lots
+  /// and quote/FX history (never snapshotted — see `portfolio_history.dart`).
+  /// Cheap to call repeatedly: results are memoized until lots, prices, FX
+  /// history or the base currency actually change, or a new calendar day
+  /// starts (so "All"/"1Y" etc. extend to include today).
+  List<PortfolioHistoryPoint> portfolioHistory(ChartRange range) {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    if (_historyCacheRange == range &&
+        identical(_historyCacheLots, state.lots) &&
+        identical(_historyCacheSeries, state.seriesByID) &&
+        identical(_historyCacheFxHistory, state.fxHistory) &&
+        _historyCacheBaseCurrency == state.baseCurrency &&
+        _historyCacheDay == today) {
+      return _historyCacheResult!;
+    }
+
+    final result = PortfolioHistory.build(
+      lots: state.lots,
+      seriesByID: state.seriesByID,
+      rates: state.rates,
+      fxHistory: state.fxHistory,
+      baseCurrency: state.baseCurrency,
+      range: range,
+      now: now,
+    );
+
+    _historyCacheRange = range;
+    _historyCacheLots = state.lots;
+    _historyCacheSeries = state.seriesByID;
+    _historyCacheFxHistory = state.fxHistory;
+    _historyCacheBaseCurrency = state.baseCurrency;
+    _historyCacheDay = today;
+    _historyCacheResult = result;
+    return result;
+  }
+
+  /// Change in GAIN (value − cost), not value, over [range] — so adding a
+  /// new lot mid-range is never shown as if it were profit. Null when there
+  /// isn't at least one point on or before the range's start (e.g. the
+  /// range predates every lot, or the portfolio is empty).
+  PortfolioRangeChange? portfolioChange(ChartRange range) {
+    final points = portfolioHistory(range);
+    if (points.isEmpty) return null;
+    final first = points.first;
+    final last = points.last;
+    final gainDelta = last.gain - first.gain;
+    final valueDelta = last.value - first.value;
+    final denominator = first.cost != 0 ? first.cost : first.value;
+    final fraction = denominator != 0 ? gainDelta / denominator : 0.0;
+    return PortfolioRangeChange(
+      gainDelta: gainDelta,
+      valueDelta: valueDelta,
+      percentValue: fraction,
+      isUp: gainDelta >= 0,
+      latestValue: last.value,
+    );
   }
 
   // ---------------------------------------------------------------------

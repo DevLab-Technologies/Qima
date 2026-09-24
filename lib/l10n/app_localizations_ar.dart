@@ -22,6 +22,9 @@ class AppLocalizationsAr extends AppLocalizations {
       'أضف معادن أو عملات رقمية أو أسهمًا أو عملات لبدء تتبع الأسعار.';
 
   @override
+  String get watchlistFilterAll => 'الكل';
+
+  @override
   String get addTitle => 'إضافة أداة';
 
   @override
@@ -70,6 +73,17 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get detailNoHistoryMessage =>
       'حمّل السجل لعرض الرسم البياني الكامل للسعر.';
+
+  @override
+  String get detailKeyStats => 'أهم الإحصاءات';
+
+  @override
+  String get detailPricePerUnit => 'السعر لكل وحدة';
+
+  @override
+  String detailUpdatedAt(String time) {
+    return 'آخر تحديث $time';
+  }
 
   @override
   String get errorRefreshFailed =>
@@ -144,6 +158,13 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get portfolioEmpty =>
       'لا توجد قيمة للمحفظة بعد — أضف دفعة مقتنيات للبدء.';
+
+  @override
+  String get portfolioNoChange => 'لا يوجد سجل كافٍ لهذه الفترة بعد';
+
+  @override
+  String get portfolioNoHistory =>
+      'أضف دفعة مقتنيات لعرض الرسم البياني لمحفظتك';
 
   @override
   String portfolioLotCount(num count) {
@@ -373,6 +394,9 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get range7D => '٧ أيام';
+
+  @override
+  String get range1W => 'أسبوع';
 
   @override
   String get range1M => 'شهر';
