@@ -1,6 +1,12 @@
 source "https://rubygems.org"
 
 gem "fastlane"
+# `flutter build ipa` shells out to a bare `pod`. fastlane runs under
+# `bundle exec`, which constrains the gem environment for everything it
+# spawns, so CocoaPods has to be in this bundle rather than merely
+# installed on the machine - otherwise Flutter reports it as "installed
+# but broken" and skips pod install.
+gem "cocoapods"
 
 # No Gemfile.lock is committed yet: this was written in a sandbox with no
 # network access to rubygems.org, so `bundle lock` could not be run here.

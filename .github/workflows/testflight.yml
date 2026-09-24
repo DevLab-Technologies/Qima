@@ -76,17 +76,12 @@ jobs:
           bundler-cache: true
           working-directory: ios
 
-      # setup-ruby puts a toolcache Ruby on PATH, but the runner's preinstalled
-      # CocoaPods belongs to a different Ruby. `flutter build ipa` shells out to
-      # a bare `pod`, sees the mismatch, and bails with "CocoaPods is installed
-      # but broken". Installing it into the Ruby actually on PATH fixes both
-      # this step and Flutter's own invocation.
-      - name: Install CocoaPods
-        run: gem install cocoapods --no-document
-
+      # CocoaPods comes from the ios/ bundle, not the machine: fastlane runs
+      # under `bundle exec` and constrains the gem environment for everything it
+      # spawns, so a globally installed pod is invisible to `flutter build ipa`.
       - name: Install CocoaPods dependencies
         working-directory: ios
-        run: pod install --repo-update
+        run: bundle exec pod install --repo-update
 
       # Build numbers must strictly increase per TestFlight upload. The CI run
       # number is monotonically increasing for this workflow and needs no API
