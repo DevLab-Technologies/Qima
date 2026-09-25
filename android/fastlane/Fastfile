@@ -51,6 +51,7 @@ def build_release_aab!(build_number)
   UI.user_error!("No App Bundle at #{AAB_PATH} after flutter build appbundle.") unless File.exist?(AAB_PATH)
   verify_release_signature!
   verify_release_permissions!
+  verify_release_resources!
 end
 
 # Flutter adds INTERNET only to debug/profile manifests, so a release build
@@ -63,6 +64,18 @@ def verify_release_permissions!
   missing = REQUIRED_PERMISSIONS.reject { |permission| manifest.include?(permission) }
   UI.user_error!("App Bundle manifest is missing: #{missing.join(', ')}.") unless missing.empty?
   UI.success("App Bundle declares #{REQUIRED_PERMISSIONS.join(', ')}.")
+end
+
+# Resources looked up by name at runtime, which resource shrinking can't see
+# (kept via res/raw/keep.xml). Without the notification icon, notification
+# setup fails on every launch.
+REQUIRED_RESOURCES = %w[base/res/drawable/ic_notification.xml].freeze
+
+def verify_release_resources!
+  entries = sh("unzip -Z1 #{AAB_PATH.shellescape}", log: false).lines.map(&:strip)
+  missing = REQUIRED_RESOURCES - entries
+  UI.user_error!("App Bundle is missing resources: #{missing.join(', ')}.") unless missing.empty?
+  UI.success("App Bundle keeps #{REQUIRED_RESOURCES.join(', ')}.")
 end
 
 # build.gradle.kts falls back to the debug key when signing material is

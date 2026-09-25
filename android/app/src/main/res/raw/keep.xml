@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Release builds shrink away resources nothing references at compile time.
+     flutter_local_notifications looks the small icon up by name at runtime
+     (NotificationService: 'ic_notification'), so keep it explicitly. -->
+<resources xmlns:tools="http://schemas.android.com/tools"
+    tools:keep="@drawable/ic_notification" />

@@ -49,17 +49,25 @@ class NotificationService {
       iOS: darwinSettings,
       macOS: darwinSettings,
     );
-    await _plugin.initialize(
-      settings: settings,
-      onDidReceiveNotificationResponse: (response) {
-        final payload = response.payload;
-        if (payload != null && payload.isNotEmpty) {
-          notificationTapPayloads.add(payload);
-        }
-      },
-      onDidReceiveBackgroundNotificationResponse: _onBackgroundNotificationResponse,
-    );
-    _initialized = true;
+    // Like every other method here, never throws: app startup and the
+    // background refresh both await this, and a notification setup failure
+    // (e.g. a missing small icon) must only cost notifications, not leave
+    // the app stuck on its loading screen.
+    try {
+      await _plugin.initialize(
+        settings: settings,
+        onDidReceiveNotificationResponse: (response) {
+          final payload = response.payload;
+          if (payload != null && payload.isNotEmpty) {
+            notificationTapPayloads.add(payload);
+          }
+        },
+        onDidReceiveBackgroundNotificationResponse: _onBackgroundNotificationResponse,
+      );
+      _initialized = true;
+    } catch (e, st) {
+      debugPrint('NotificationService: initialize failed: $e\n$st');
+    }
   }
 
   /// The payload (a `WatchCard.id`) of the notification that cold-launched
