@@ -89,13 +89,13 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "com.devlabtechnologies" "\0"
-            VALUE "FileDescription", "qima" "\0"
+            VALUE "CompanyName", "DevLab Technologies" "\0"
+            VALUE "FileDescription", "Qima" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
             VALUE "InternalName", "qima" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2026 com.devlabtechnologies. All rights reserved." "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2026 DevLab Technologies. All rights reserved." "\0"
             VALUE "OriginalFilename", "qima.exe" "\0"
-            VALUE "ProductName", "qima" "\0"
+            VALUE "ProductName", "Qima" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

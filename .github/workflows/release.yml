@@ -213,8 +213,21 @@ jobs:
       - name: Build Windows (release)
         run: flutter build windows --release
 
+      # Inno Setup ships on GitHub's Windows images; install it if an image
+      # update ever drops it.
+      - name: Install Inno Setup
+        shell: pwsh
+        run: |
+          if (-not (Get-Command iscc -ErrorAction SilentlyContinue)) {
+            $default = "${env:ProgramFiles(x86)}\Inno Setup 6"
+            if (-not (Test-Path "$default\ISCC.exe")) { choco install innosetup -y --no-progress }
+            Add-Content $env:GITHUB_PATH $default
+          }
+
       # Not code-signed: Windows SmartScreen will warn on first launch since
       # there is no Authenticode certificate to sign the executable with.
+      # Two assets: a per-user installer (Start menu entry, uninstaller,
+      # upgrades in place) and a portable zip of the same build.
       - name: Prepare release assets
         shell: bash
         run: |
@@ -222,8 +235,10 @@ jobs:
           mkdir -p dist
           release_dir="build/windows/x64/runner/Release"
           (cd "$release_dir" && 7z a -tzip "$OLDPWD/dist/qima-${version}-windows.zip" .)
+          iscc "//DAppVersion=${version}" windows/installer/qima.iss
           cd dist
           sha256sum "qima-${version}-windows.zip" > "qima-${version}-windows.zip.sha256"
+          sha256sum "qima-${version}-windows-setup.exe" > "qima-${version}-windows-setup.exe.sha256"
           ls -lh
 
       - uses: actions/upload-artifact@v4
