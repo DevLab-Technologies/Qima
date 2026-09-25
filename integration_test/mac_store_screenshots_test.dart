@@ -1,5 +1,5 @@
 // Renders the Mac App Store screenshots from the real app with a seeded demo
-// portfolio. Run it through tool/mac_store_screenshots.sh, which builds under
+// portfolio. Run it through `tool/mac_store_media.sh screenshots`, which builds under
 // a separate bundle ID so the seed never touches a real Qima install, then
 // copies the PNGs out of that build's sandbox container.
 //
