@@ -21,6 +21,8 @@ class StatPill extends StatelessWidget {
         children: [
           Text(
             title.toUpperCase(),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
             style: TextStyle(
               color: colors.textTertiary,
               fontSize: 10,
@@ -29,12 +31,19 @@ class StatPill extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 4),
-          Text(
-            value,
-            style: TextStyle(
-              color: tint ?? colors.textPrimary,
-              fontSize: 15,
-              fontWeight: FontWeight.w700,
+          // One line, shrunk to fit: a long amount (or a currency symbol
+          // like "ج.م") must never wrap inside a narrow tile.
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: AlignmentDirectional.centerStart,
+            child: Text(
+              value,
+              maxLines: 1,
+              style: TextStyle(
+                color: tint ?? colors.textPrimary,
+                fontSize: 15,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
         ],

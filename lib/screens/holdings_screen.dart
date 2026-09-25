@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 
 import '../blocs/app_cubit.dart';
 import '../blocs/app_state.dart';
@@ -283,11 +284,8 @@ class _LotTile extends StatelessWidget {
 /// quantity isn't a money amount. Unlike [quantityWithUnitKaratLabel] this
 /// always shows the LOT's own stored karat, never a reference karat — a
 /// lot tile must reflect what the lot actually is.
-String lotQuantityLabel(BuildContext context, HoldingLot lot) {
-  final unitSuffix = lot.unit.abbreviationKey != null ? ' ${displayLabel(context, lot.unit.abbreviationKey!)}' : '';
-  final karatSuffix = lot.karat != null ? ' · ${displayLabel(context, lot.karat!.shortLabelKey)}' : '';
-  return '${_formatQty(lot.quantity)}$unitSuffix$karatSuffix';
-}
+String lotQuantityLabel(BuildContext context, HoldingLot lot) =>
+    quantityWithUnitKaratLabel(context, lot.quantity, lot.unit, lot.karat);
 
 /// "150 g · 21K" — a quantity already expressed at [unit]/[karat] (e.g. a
 /// totals figure from [HoldingTotals]), formatted the same way
@@ -306,11 +304,6 @@ String lotDetailLabel(HoldingLot lot, {bool hidden = false}) =>
     '${Masking.amount(Money(lot.unitCost, lot.costCurrency), hidden: hidden)} · '
     '${lot.date.year}-${lot.date.month.toString().padLeft(2, '0')}-${lot.date.day.toString().padLeft(2, '0')}';
 
-String _formatQty(double value) {
-  var text = value.toStringAsFixed(4);
-  while (text.endsWith('0')) {
-    text = text.substring(0, text.length - 1);
-  }
-  if (text.endsWith('.')) text = text.substring(0, text.length - 1);
-  return text;
-}
+/// "117,000", "2.5", "0.1234": grouped like the app's money amounts, up to
+/// four decimals with trailing zeros dropped.
+String _formatQty(double value) => (NumberFormat.decimalPattern()..maximumFractionDigits = 4).format(value);

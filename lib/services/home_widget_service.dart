@@ -60,6 +60,11 @@ class HomeWidgetService {
   /// support home_widget) must never surface as an app-visible error, since
   /// this is a background side effect of an otherwise-successful refresh.
   static Future<void> publish(AppState state) async {
+    // home_widget only implements iOS and Android; elsewhere every call
+    // would just throw MissingPluginException.
+    if (kIsWeb || (defaultTargetPlatform != TargetPlatform.iOS && defaultTargetPlatform != TargetPlatform.android)) {
+      return;
+    }
     try {
       // Idempotent; set on every publish because background refreshes run
       // in a fresh isolate that never went through app start-up.

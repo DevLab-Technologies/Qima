@@ -11,6 +11,7 @@ import '../theme/design_system.dart';
 import '../theme/masking.dart';
 import '../theme/qima_colors.dart';
 import '../theme/strings.dart';
+import '../widgets/stat_pill.dart';
 import 'holdings_screen.dart';
 
 /// Compact holdings summary card on the instrument detail screen: "N lots ›"
@@ -109,22 +110,20 @@ class HoldingsCard extends StatelessWidget {
                   const SizedBox(height: DS.spaceSM),
                   Row(
                     children: [
-                      Expanded(child: _metric(colors, l10n.holdingsValue, Masking.amount(valuation.value, hidden: hidden))),
+                      Expanded(child: StatPill(title: l10n.holdingsValue, value: Masking.amount(valuation.value, hidden: hidden))),
                       const SizedBox(width: DS.spaceXS),
                       Expanded(
-                        child: _metric(
-                          colors,
-                          l10n.holdingsGain,
-                          Masking.signedAmount(valuation.gain, hidden: hidden, isUp: valuation.isUp),
+                        child: StatPill(
+                          title: l10n.holdingsGain,
+                          value: Masking.signedAmount(valuation.gain, hidden: hidden, isUp: valuation.isUp),
                           tint: QimaColors.trendColor(valuation.isUp, colors),
                         ),
                       ),
                       const SizedBox(width: DS.spaceXS),
                       Expanded(
-                        child: _metric(
-                          colors,
-                          l10n.holdingsGainPercent,
-                          signedFigure('${(valuation.gainFraction * 100).toStringAsFixed(2)}%', isUp: valuation.isUp),
+                        child: StatPill(
+                          title: l10n.holdingsGainPercent,
+                          value: signedFigure('${(valuation.gainFraction * 100).toStringAsFixed(2)}%', isUp: valuation.isUp),
                           tint: QimaColors.trendColor(valuation.isUp, colors),
                         ),
                       ),
@@ -136,20 +135,6 @@ class HoldingsCard extends StatelessWidget {
           ),
         );
       },
-    );
-  }
-
-  Widget _metric(QimaColors colors, String label, String value, {Color? tint}) {
-    return DSTile(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(label.toUpperCase(), style: TextStyle(color: colors.textTertiary, fontSize: 10)),
-          const SizedBox(height: 2),
-          Text(value, style: TextStyle(color: tint ?? colors.textPrimary, fontSize: 14, fontWeight: FontWeight.w700)),
-        ],
-      ),
     );
   }
 }
