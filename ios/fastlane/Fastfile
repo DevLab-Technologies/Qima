@@ -68,7 +68,7 @@ end
 # the Mac App Store; returns the .pkg path. Flutter has no `build pkg`, so
 # this is `flutter build macos --config-only` (version, build number, pods)
 # followed by a plain Xcode archive and export.
-def build_mac_pkg!(build_number, profile_name)
+def build_mac_pkg!(build_number, profile_name, widget_profile_name)
   archive_path = File.join(REPO_ROOT, "build/macos/Qima.xcarchive")
   export_path = File.join(REPO_ROOT, "build/macos/pkg")
   options_path = File.join(REPO_ROOT, "build/macos/ExportOptions.plist")
@@ -92,6 +92,8 @@ def build_mac_pkg!(build_number, profile_name)
       <dict>
         <key>#{APP_IDENTIFIER}</key>
         <string>#{profile_name}</string>
+        <key>#{WIDGET_IDENTIFIER}</key>
+        <string>#{widget_profile_name}</string>
       </dict>
       <key>uploadSymbols</key>
       <true/>
@@ -309,7 +311,7 @@ platform :ios do
 end
 
 platform :mac do
-  desc "Import the distribution and Mac installer certificates and the Mac App Store profile into a throwaway CI keychain, then switch the macOS Runner to manual signing."
+  desc "Import the distribution and Mac installer certificates and the Mac App Store profiles (app and widget) into a throwaway CI keychain, then switch the macOS Runner and widget extension to manual signing."
   lane :setup_signing do
     keychain = ci_keychain
     # "Apple Distribution" signs Mac apps as well as iOS ones.
@@ -317,17 +319,20 @@ platform :mac do
     import_p12(keychain: keychain, base64: ENV.fetch("MAC_INSTALLER_CERT_BASE64"), password: ENV.fetch("MAC_INSTALLER_CERT_PASSWORD", ""))
 
     profile_name = install_profile!(ENV.fetch("MACOS_PROVISION_PROFILE_BASE64"), extension: "provisionprofile")
-    update_code_signing_settings(
-      use_automatic_signing: false,
-      path: MAC_PROJECT,
-      team_id: APPLE_TEAM_ID,
-      code_sign_identity: "Apple Distribution",
-      profile_name: profile_name,
-      targets: ["Runner"]
-    )
-    # iCloud sync needs the key-value store entitlement, which only a build
+    widget_profile_name = install_profile!(ENV.fetch("MACOS_WIDGET_PROVISION_PROFILE_BASE64"), extension: "provisionprofile")
+    { "Runner" => profile_name, WIDGET_TARGET => widget_profile_name }.each do |target, profile|
+      update_code_signing_settings(
+        use_automatic_signing: false,
+        path: MAC_PROJECT,
+        team_id: APPLE_TEAM_ID,
+        code_sign_identity: "Apple Distribution",
+        profile_name: profile,
+        targets: [target]
+      )
+    end
+    # iCloud sync and the widgets' App Group need entitlements only a build
     # signed with the Mac App Store profile may carry; the direct-download
-    # zip (release.yml) keeps Release.entitlements without it.
+    # zip (release.yml) keeps Release.entitlements without them.
     project = Xcodeproj::Project.open(File.join(REPO_ROOT, "macos/Runner.xcodeproj"))
     runner = project.targets.find { |target| target.name == "Runner" }
     runner.build_configurations.find { |config| config.name == "Release" }
@@ -335,6 +340,7 @@ platform :mac do
     project.save
 
     Actions.lane_context[:QIMA_MAC_PROFILE_NAME] = profile_name
+    Actions.lane_context[:QIMA_MAC_WIDGET_PROFILE_NAME] = widget_profile_name
   end
 
   desc "Build the signed Mac App Store installer package and upload it to TestFlight. Requires QIMA_BUILD_NUMBER."
@@ -344,7 +350,11 @@ platform :mac do
 
     api_key = require_asc_api_key!
     setup_signing
-    pkg_path = build_mac_pkg!(build_number, Actions.lane_context[:QIMA_MAC_PROFILE_NAME])
+    pkg_path = build_mac_pkg!(
+      build_number,
+      Actions.lane_context[:QIMA_MAC_PROFILE_NAME],
+      Actions.lane_context[:QIMA_MAC_WIDGET_PROFILE_NAME]
+    )
 
     upload_to_testflight(
       api_key: api_key,
@@ -360,7 +370,11 @@ platform :mac do
   desc "Build and sign the Mac App Store installer package WITHOUT uploading, for workflow_dispatch validation runs."
   lane :build_only do
     setup_signing
-    build_mac_pkg!(ENV["QIMA_BUILD_NUMBER"] || "0", Actions.lane_context[:QIMA_MAC_PROFILE_NAME])
+    build_mac_pkg!(
+      ENV["QIMA_BUILD_NUMBER"] || "0",
+      Actions.lane_context[:QIMA_MAC_PROFILE_NAME],
+      Actions.lane_context[:QIMA_MAC_WIDGET_PROFILE_NAME]
+    )
     UI.success("Built and signed the macOS installer package without uploading (build_only lane).")
   end
 end

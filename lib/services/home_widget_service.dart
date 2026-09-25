@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:home_widget/home_widget.dart';
 
 import '../blocs/app_state.dart';
@@ -19,9 +20,10 @@ import 'widget_snapshot.dart';
 ///
 /// ## Data contract
 ///
-/// - **iOS (WidgetKit)** reads one [WidgetSnapshot] under
-///   [WidgetSnapshot.storageKey] in the shared App Group
-///   ([appGroupID]). Every placed widget is configured on its own (asset,
+/// - **iOS and macOS (WidgetKit)** read one [WidgetSnapshot] under
+///   [WidgetSnapshot.storageKey] in the shared App Group ([appGroupID] on
+///   iOS via `home_widget`; the Mac runner's `WidgetBridgePlugin` writes its
+///   team-prefixed group). Every placed widget is configured on its own (asset,
 ///   unit, karat, currency, chart range) with an App Intent, so the
 ///   snapshot carries raw canonical-USD series and FX data and the
 ///   extension prices each configuration itself — see [WidgetSnapshot].
@@ -60,10 +62,25 @@ class HomeWidgetService {
   /// support home_widget) must never surface as an app-visible error, since
   /// this is a background side effect of an otherwise-successful refresh.
   static Future<void> publish(AppState state) async {
-    // home_widget only implements iOS and Android; elsewhere every call
-    // would just throw MissingPluginException.
-    if (kIsWeb || (defaultTargetPlatform != TargetPlatform.iOS && defaultTargetPlatform != TargetPlatform.android)) {
-      return;
+    if (kIsWeb) return;
+    switch (defaultTargetPlatform) {
+      case TargetPlatform.macOS:
+        // home_widget has no macOS implementation; the Mac runner's own
+        // bridge writes the snapshot for the macOS widget extension.
+        try {
+          await _macBridge.invokeMethod<void>('saveSnapshot', {
+            'key': WidgetSnapshot.storageKey,
+            'json': jsonEncode(WidgetSnapshot.build(state, now: DateTime.now())),
+          });
+        } catch (e, st) {
+          debugPrint('HomeWidgetService: macOS widget snapshot publish failed: $e\n$st');
+        }
+        return;
+      case TargetPlatform.iOS:
+      case TargetPlatform.android:
+        break;
+      default:
+        return; // No widgets on this platform.
     }
     try {
       // Idempotent; set on every publish because background refreshes run
@@ -84,6 +101,9 @@ class HomeWidgetService {
       debugPrint('HomeWidgetService: portfolio widget publish failed: $e\n$st');
     }
   }
+
+  /// `WidgetBridgePlugin` in the macOS runner.
+  static const _macBridge = MethodChannel('com.devlabtechnologies.qima/widgets');
 
   /// iOS kinds, matching `kind` in the widget extension.
   static const iOSPriceKind = 'PriceWidget';

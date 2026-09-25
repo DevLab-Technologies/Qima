@@ -186,8 +186,8 @@ Flutter codebase. A few things are intentionally incomplete rather than faked:
   browser. Metals/crypto spot prices and live FX rates work fine there —
   `gold-api.com` and `open.er-api.com` both send `Access-Control-Allow-Origin:
   *`. This isn't fixable without introducing a backend, which is out of scope.
-- **macOS widgets**: iOS has configurable price and portfolio widgets; macOS
-  doesn't yet. See `WIDGETS_IOS_SETUP.md`.
+- **Widgets**: iOS and macOS have configurable price and portfolio widgets;
+  Android's have no per-widget settings yet. See `WIDGETS_IOS_SETUP.md`.
 - **watchOS**: a true Apple Watch app needs native Swift (Flutter has no
   watchOS target). See `WATCHOS_SETUP.md` for how to point the original app's
   watch companion at this project's data contract.

@@ -1,0 +1,6 @@
+// Shares the Flutter build name/number with the app: App Store Connect
+// rejects an extension whose version differs from its host app's.
+#include "../Flutter/ephemeral/Flutter-Generated.xcconfig"
+
+MARKETING_VERSION = $(FLUTTER_BUILD_NAME)
+CURRENT_PROJECT_VERSION = $(FLUTTER_BUILD_NUMBER)

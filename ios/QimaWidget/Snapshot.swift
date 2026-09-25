@@ -6,7 +6,13 @@ import Foundation
 /// `PriceConverter` / `PortfolioHistory` rules so a widget and the app never
 /// disagree on a number.
 struct Snapshot: Decodable {
+    /// Shared with the app (its entitlements). macOS uses a team-prefixed
+    /// group, which every macOS version accepts without a consent prompt.
+    #if os(macOS)
+    static let appGroup = "ZS3A435WC2.com.devlabtechnologies.qima"
+    #else
     static let appGroup = "group.com.devlabtechnologies.qima"
+    #endif
     static let storageKey = "widget_snapshot"
     static let supportedVersion = 1
 

@@ -34,6 +34,7 @@ tag must match it, or the workflow fails before building.
 5. **macOS**: the Apple Distribution certificate above also signs the Mac app.
    - `MAC_INSTALLER_CERT_BASE64` / `MAC_INSTALLER_CERT_PASSWORD`: a *Mac Installer Distribution* certificate exported with its private key as `.p12` (it signs the `.pkg`).
    - `MACOS_PROVISION_PROFILE_BASE64`: a *Mac App Store Connect* profile for `com.devlabtechnologies.qima`: `base64 -i Qima_Mac_App_Store.provisionprofile | pbcopy`
+   - `MACOS_WIDGET_PROVISION_PROFILE_BASE64`: the same for the widget extension, `com.devlabtechnologies.qima.widget`: `base64 -i Qima_Widget_Mac_App_Store.provisionprofile | pbcopy`
    - Upload with a `macos-v<version>` tag (`.github/workflows/testflight-macos.yml`).
 
 Check the key without uploading: `cd ios && ASC_KEY_ID=… ASC_ISSUER_ID=… ASC_KEY_CONTENT=… bundle exec fastlane ios preflight`.

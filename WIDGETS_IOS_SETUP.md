@@ -53,5 +53,11 @@ They have no per-widget settings yet.
 
 ## macOS
 
-Not built yet: it waits on the macOS deployment target and signing decisions
-(the widgets need macOS 14, and the app currently targets 10.15).
+`QimaWidgetExtension` in `macos/Runner.xcodeproj` (macOS 14+) compiles the
+same Swift sources, strings and fonts as iOS (the `Shared` group points at
+`ios/QimaWidget`), with the small, medium and large families. `home_widget`
+has no macOS implementation, so the Mac runner's `WidgetBridgePlugin`
+writes the snapshot to the team-prefixed App Group
+`ZS3A435WC2.com.devlabtechnologies.qima` and reloads the timelines. The App
+Group (like iCloud) is only in `AppStore.entitlements`, so Mac widgets work
+in App Store / TestFlight builds, not in the direct-download zip.

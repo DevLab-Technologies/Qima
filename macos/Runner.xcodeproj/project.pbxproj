@@ -22,19 +22,43 @@
 
 /* Begin PBXBuildFile section */
 		079C631F0A74DB317257436F /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A8B58E73EB47DDB2CA3D1836 /* Pods_Runner.framework */; };
+		0BBF9A49FC8FED1C1FA1427A /* Style.swift in Sources */ = {isa = PBXBuildFile; fileRef = E802E9E263C0C0E7631C1A9C /* Style.swift */; };
 		12423B8C9AA7C93786C2B0D2 /* Pods_RunnerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4A34A460662992593804D5C2 /* Pods_RunnerTests.framework */; };
+		1F7DFAEAEF3BBFE66F00AAF4 /* QimaWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = AA96A37F3667AD3DD801899B /* QimaWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		27681779DE28C68EE8095C27 /* WidgetBridgePlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6273FFFE9222B2958CE83900 /* WidgetBridgePlugin.swift */; };
+		2F18E948F4A028DE49B1C681 /* QimaWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = E48EDE64828CF58699314969 /* QimaWidgetBundle.swift */; };
 		331C80D8294CF71000263BE5 /* RunnerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 331C80D7294CF71000263BE5 /* RunnerTests.swift */; };
 		335BBD1B22A9A15E00E9071D /* GeneratedPluginRegistrant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 335BBD1A22A9A15E00E9071D /* GeneratedPluginRegistrant.swift */; };
 		33CC10F12044A3C60003C045 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33CC10F02044A3C60003C045 /* AppDelegate.swift */; };
 		33CC10F32044A3C60003C045 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 33CC10F22044A3C60003C045 /* Assets.xcassets */; };
 		33CC10F62044A3C60003C045 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 33CC10F42044A3C60003C045 /* MainMenu.xib */; };
 		33CC11132044BFA00003C045 /* MainFlutterWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33CC11122044BFA00003C045 /* MainFlutterWindow.swift */; };
+		5460139A4143DBBE2C2AB506 /* Almarai-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 408B831A0A2757B5D4BD1CED /* Almarai-Bold.ttf */; };
+		5A547C59AF5085D0AB57EB2F /* Almarai-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6059BC6DDE9EBC40764BCE82 /* Almarai-Regular.ttf */; };
+		73AAC079839DB44852708F4D /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 69EC81A8A640E308BE210739 /* Cocoa.framework */; };
+		76606324EE9FD9552E639006 /* Intents.swift in Sources */ = {isa = PBXBuildFile; fileRef = E496DADE24854F1EEFBAD378 /* Intents.swift */; };
 		78A318202AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 78A3181F2AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage */; };
+		81E83E7996F84E4B438CDC3E /* PriceWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4E34D6C2CC8DC9B6B4B047C /* PriceWidget.swift */; };
+		A03B1AD84FFC830BCA99FC7C /* Riyal-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 916725D8519EAC892D158D82 /* Riyal-Bold.ttf */; };
+		A3689DCCB749963A5A0B7DDF /* Riyal-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E9F1F8F2A2BD6B3A9ED80B36 /* Riyal-Medium.ttf */; };
+		A96507D57EEB7BEC821C4109 /* Snapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 137760BC25B862D4328A3861 /* Snapshot.swift */; };
+		C6ABA7E1A94B0B6E857A2C4D /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8522850E59815F03567CB939 /* Localizable.strings */; };
+		CDE6EF2B93810E47CF62FE1A /* Riyal-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9D420D68A7F3DA4038F10904 /* Riyal-Regular.ttf */; };
+		CE138C6FEEA510323C0A3CAC /* Almarai-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1C2EE2BB869BEE7FA12BD49D /* Almarai-ExtraBold.ttf */; };
+		D0449DDDF2C648BB9599AF06 /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B1A6D24877E5AD35F0271A4 /* Components.swift */; };
+		D530618D525AABA83D45332E /* PortfolioWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAB6E5380877E84A0DAF4100 /* PortfolioWidget.swift */; };
 		E147DD45B9F3719AE3ABA33C /* CloudKVPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08A3123DA6056FA14123F29F /* CloudKVPlugin.swift */; };
 		FCFA6FD55E45018E2A26DCBE /* SystemSettingsPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC5554DCB91DEE7EA62D855B /* SystemSettingsPlugin.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		13C9EEDEBBA34EE68D79F2BD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 33CC10E52044A3C60003C045 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7E205673086E4CA45AF8288A;
+			remoteInfo = QimaWidgetExtension;
+		};
 		331C80D9294CF71000263BE5 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 33CC10E52044A3C60003C045 /* Project object */;
@@ -52,6 +76,17 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		041320E2FE21C896F5CDBED8 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				1F7DFAEAEF3BBFE66F00AAF4 /* QimaWidgetExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		33CC110E2044A8840003C045 /* Bundle Framework */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -65,10 +100,13 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0607C715929B29FD6B93BF83 /* en */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		08A3123DA6056FA14123F29F /* CloudKVPlugin.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CloudKVPlugin.swift; sourceTree = "<group>"; };
 		0E1F3C77F39972EAD2658424 /* Pods-RunnerTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.debug.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.debug.xcconfig"; sourceTree = "<group>"; };
+		137760BC25B862D4328A3861 /* Snapshot.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Snapshot.swift; sourceTree = "<group>"; };
 		19941C28A270177D72298BD7 /* Pods-Runner.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig"; sourceTree = "<group>"; };
 		1AF39467BDDD45F0D72D5F17 /* Pods-Runner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"; sourceTree = "<group>"; };
+		1C2EE2BB869BEE7FA12BD49D /* Almarai-ExtraBold.ttf */ = {isa = PBXFileReference; includeInIndex = 1; name = "Almarai-ExtraBold.ttf"; path = "almarai/Almarai-ExtraBold.ttf"; sourceTree = "<group>"; };
 		331C80D5294CF71000263BE5 /* RunnerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RunnerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		331C80D7294CF71000263BE5 /* RunnerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunnerTests.swift; sourceTree = "<group>"; };
 		333000ED22D3DE5D00554162 /* Warnings.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Warnings.xcconfig; sourceTree = "<group>"; };
@@ -85,16 +123,36 @@
 		33E51913231747F40026EE4D /* DebugProfile.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = DebugProfile.entitlements; sourceTree = "<group>"; };
 		33E51914231749380026EE4D /* Release.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; path = Release.entitlements; sourceTree = "<group>"; };
 		33E5194F232828860026EE4D /* AppInfo.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = AppInfo.xcconfig; sourceTree = "<group>"; };
+		408B831A0A2757B5D4BD1CED /* Almarai-Bold.ttf */ = {isa = PBXFileReference; includeInIndex = 1; name = "Almarai-Bold.ttf"; path = "almarai/Almarai-Bold.ttf"; sourceTree = "<group>"; };
 		4A072E42D76CB59C63B3B8E2 /* Pods-Runner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"; sourceTree = "<group>"; };
 		4A34A460662992593804D5C2 /* Pods_RunnerTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RunnerTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		5458FDAAFCA87C4688869198 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		5B1A6D24877E5AD35F0271A4 /* Components.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Components.swift; sourceTree = "<group>"; };
+		5B7B6CC1F37F4F36744EDE50 /* QimaWidget.entitlements */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.entitlements; path = QimaWidget.entitlements; sourceTree = "<group>"; };
+		6059BC6DDE9EBC40764BCE82 /* Almarai-Regular.ttf */ = {isa = PBXFileReference; includeInIndex = 1; name = "Almarai-Regular.ttf"; path = "almarai/Almarai-Regular.ttf"; sourceTree = "<group>"; };
+		6273FFFE9222B2958CE83900 /* WidgetBridgePlugin.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WidgetBridgePlugin.swift; sourceTree = "<group>"; };
+		69EC81A8A640E308BE210739 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk/System/Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
 		78E0A7A72DC9AD7400C4905E /* FlutterGeneratedPluginSwiftPackage */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = FlutterGeneratedPluginSwiftPackage; path = ephemeral/Packages/FlutterGeneratedPluginSwiftPackage; sourceTree = "<group>"; };
 		7AFA3C8E1D35360C0083082E /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
 		800EC5F4E63077FA5158C963 /* Pods-RunnerTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.release.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.release.xcconfig"; sourceTree = "<group>"; };
+		916725D8519EAC892D158D82 /* Riyal-Bold.ttf */ = {isa = PBXFileReference; includeInIndex = 1; name = "Riyal-Bold.ttf"; path = "riyal/Riyal-Bold.ttf"; sourceTree = "<group>"; };
 		939F245B8D59915241B3936C /* AppStore.entitlements */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.entitlements; path = AppStore.entitlements; sourceTree = "<group>"; };
 		9740EEB21CF90195004384FC /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
+		9D420D68A7F3DA4038F10904 /* Riyal-Regular.ttf */ = {isa = PBXFileReference; includeInIndex = 1; name = "Riyal-Regular.ttf"; path = "riyal/Riyal-Regular.ttf"; sourceTree = "<group>"; };
+		A25FA46395F42F2F856B8E29 /* ar */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.strings; name = ar; path = ar.lproj/Localizable.strings; sourceTree = "<group>"; };
 		A8B58E73EB47DDB2CA3D1836 /* Pods_Runner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Runner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		AA96A37F3667AD3DD801899B /* QimaWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; name = QimaWidgetExtension.appex; path = QimaWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		AC5554DCB91DEE7EA62D855B /* SystemSettingsPlugin.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SystemSettingsPlugin.swift; sourceTree = "<group>"; };
+		B8A4249D5BE098E9FF1A3852 /* fr */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/Localizable.strings; sourceTree = "<group>"; };
+		BAB6E5380877E84A0DAF4100 /* PortfolioWidget.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PortfolioWidget.swift; sourceTree = "<group>"; };
+		BE7AE4049736E3E6086DD26A /* es */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Localizable.strings; sourceTree = "<group>"; };
 		D757B2F8DCB169212367E719 /* Pods-RunnerTests.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.profile.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.profile.xcconfig"; sourceTree = "<group>"; };
+		DD3C6DD8B98FAE8259459B1F /* QimaWidget.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = QimaWidget.xcconfig; sourceTree = "<group>"; };
+		E48EDE64828CF58699314969 /* QimaWidgetBundle.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = QimaWidgetBundle.swift; sourceTree = "<group>"; };
+		E496DADE24854F1EEFBAD378 /* Intents.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Intents.swift; sourceTree = "<group>"; };
+		E4E34D6C2CC8DC9B6B4B047C /* PriceWidget.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PriceWidget.swift; sourceTree = "<group>"; };
+		E802E9E263C0C0E7631C1A9C /* Style.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Style.swift; sourceTree = "<group>"; };
+		E9F1F8F2A2BD6B3A9ED80B36 /* Riyal-Medium.ttf */ = {isa = PBXFileReference; includeInIndex = 1; name = "Riyal-Medium.ttf"; path = "riyal/Riyal-Medium.ttf"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -112,6 +170,14 @@
 			files = (
 				78A318202AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage in Frameworks */,
 				079C631F0A74DB317257436F /* Pods_Runner.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C57E3A676942C0CF77E009C3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				73AAC079839DB44852708F4D /* Cocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -160,6 +226,7 @@
 				33CC10EE2044A3C60003C045 /* Products */,
 				D73912EC22F37F3D000D13A0 /* Frameworks */,
 				1F19B5E9C4BC32AA00C810C1 /* Pods */,
+				4F3A89BA094E004C3CF85E56 /* QimaWidget */,
 			);
 			sourceTree = "<group>";
 		};
@@ -168,6 +235,7 @@
 			children = (
 				33CC10ED2044A3C60003C045 /* Qima.app */,
 				331C80D5294CF71000263BE5 /* RunnerTests.xctest */,
+				AA96A37F3667AD3DD801899B /* QimaWidgetExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -207,8 +275,36 @@
 				08A3123DA6056FA14123F29F /* CloudKVPlugin.swift */,
 				AC5554DCB91DEE7EA62D855B /* SystemSettingsPlugin.swift */,
 				939F245B8D59915241B3936C /* AppStore.entitlements */,
+				6273FFFE9222B2958CE83900 /* WidgetBridgePlugin.swift */,
 			);
 			path = Runner;
+			sourceTree = "<group>";
+		};
+		4F3A89BA094E004C3CF85E56 /* QimaWidget */ = {
+			isa = PBXGroup;
+			children = (
+				5458FDAAFCA87C4688869198 /* Info.plist */,
+				5B7B6CC1F37F4F36744EDE50 /* QimaWidget.entitlements */,
+				DD3C6DD8B98FAE8259459B1F /* QimaWidget.xcconfig */,
+				EE6D1784F65D429A41720A56 /* Shared */,
+				811BB78C26570F9D62E886ED /* Fonts */,
+			);
+			name = QimaWidget;
+			path = QimaWidget;
+			sourceTree = "<group>";
+		};
+		811BB78C26570F9D62E886ED /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				6059BC6DDE9EBC40764BCE82 /* Almarai-Regular.ttf */,
+				408B831A0A2757B5D4BD1CED /* Almarai-Bold.ttf */,
+				1C2EE2BB869BEE7FA12BD49D /* Almarai-ExtraBold.ttf */,
+				9D420D68A7F3DA4038F10904 /* Riyal-Regular.ttf */,
+				E9F1F8F2A2BD6B3A9ED80B36 /* Riyal-Medium.ttf */,
+				916725D8519EAC892D158D82 /* Riyal-Bold.ttf */,
+			);
+			name = Fonts;
+			path = ../../assets/fonts;
 			sourceTree = "<group>";
 		};
 		D73912EC22F37F3D000D13A0 /* Frameworks */ = {
@@ -216,8 +312,33 @@
 			children = (
 				A8B58E73EB47DDB2CA3D1836 /* Pods_Runner.framework */,
 				4A34A460662992593804D5C2 /* Pods_RunnerTests.framework */,
+				E40D39CFB26614CC4A41BFBE /* OS X */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		E40D39CFB26614CC4A41BFBE /* OS X */ = {
+			isa = PBXGroup;
+			children = (
+				69EC81A8A640E308BE210739 /* Cocoa.framework */,
+			);
+			name = "OS X";
+			sourceTree = "<group>";
+		};
+		EE6D1784F65D429A41720A56 /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				E48EDE64828CF58699314969 /* QimaWidgetBundle.swift */,
+				137760BC25B862D4328A3861 /* Snapshot.swift */,
+				E802E9E263C0C0E7631C1A9C /* Style.swift */,
+				E496DADE24854F1EEFBAD378 /* Intents.swift */,
+				5B1A6D24877E5AD35F0271A4 /* Components.swift */,
+				E4E34D6C2CC8DC9B6B4B047C /* PriceWidget.swift */,
+				BAB6E5380877E84A0DAF4100 /* PortfolioWidget.swift */,
+				8522850E59815F03567CB939 /* Localizable.strings */,
+			);
+			name = Shared;
+			path = ../../ios/QimaWidget;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -252,11 +373,13 @@
 				33CC10EB2044A3C60003C045 /* Resources */,
 				33CC110E2044A8840003C045 /* Bundle Framework */,
 				3399D490228B24CF009A79C7 /* ShellScript */,
+				041320E2FE21C896F5CDBED8 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 				33CC11202044C79F0003C045 /* PBXTargetDependency */,
+				CBE54BEE380CDF563043D457 /* PBXTargetDependency */,
 			);
 			name = Runner;
 			packageProductDependencies = (
@@ -265,6 +388,23 @@
 			productName = Runner;
 			productReference = 33CC10ED2044A3C60003C045 /* Qima.app */;
 			productType = "com.apple.product-type.application";
+		};
+		7E205673086E4CA45AF8288A /* QimaWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CBAD9A40B44445990B2A44C8 /* Build configuration list for PBXNativeTarget "QimaWidgetExtension" */;
+			buildPhases = (
+				B97A0CBB455638BF2063A647 /* Sources */,
+				C57E3A676942C0CF77E009C3 /* Frameworks */,
+				3610F2F58FD1B4ECC54A1761 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = QimaWidgetExtension;
+			productName = QimaWidgetExtension;
+			productReference = AA96A37F3667AD3DD801899B /* QimaWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -295,6 +435,9 @@
 						CreatedOnToolsVersion = 9.2;
 						ProvisioningStyle = Manual;
 					};
+					7E205673086E4CA45AF8288A = {
+						CreatedOnToolsVersion = 16.0;
+					};
 				};
 			};
 			buildConfigurationList = 33CC10E82044A3C60003C045 /* Build configuration list for PBXProject "Runner" */;
@@ -304,6 +447,9 @@
 			knownRegions = (
 				en,
 				Base,
+				ar,
+				es,
+				fr,
 			);
 			mainGroup = 33CC10E42044A3C60003C045;
 			packageReferences = (
@@ -316,6 +462,7 @@
 				33CC10EC2044A3C60003C045 /* Runner */,
 				331C80D4294CF70F00263BE5 /* RunnerTests */,
 				33CC111A2044C6BA0003C045 /* Flutter Assemble */,
+				7E205673086E4CA45AF8288A /* QimaWidgetExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -334,6 +481,20 @@
 			files = (
 				33CC10F32044A3C60003C045 /* Assets.xcassets in Resources */,
 				33CC10F62044A3C60003C045 /* MainMenu.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3610F2F58FD1B4ECC54A1761 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C6ABA7E1A94B0B6E857A2C4D /* Localizable.strings in Resources */,
+				5A547C59AF5085D0AB57EB2F /* Almarai-Regular.ttf in Resources */,
+				5460139A4143DBBE2C2AB506 /* Almarai-Bold.ttf in Resources */,
+				CE138C6FEEA510323C0A3CAC /* Almarai-ExtraBold.ttf in Resources */,
+				CDE6EF2B93810E47CF62FE1A /* Riyal-Regular.ttf in Resources */,
+				A3689DCCB749963A5A0B7DDF /* Riyal-Medium.ttf in Resources */,
+				A03B1AD84FFC830BCA99FC7C /* Riyal-Bold.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -442,6 +603,21 @@
 				335BBD1B22A9A15E00E9071D /* GeneratedPluginRegistrant.swift in Sources */,
 				E147DD45B9F3719AE3ABA33C /* CloudKVPlugin.swift in Sources */,
 				FCFA6FD55E45018E2A26DCBE /* SystemSettingsPlugin.swift in Sources */,
+				27681779DE28C68EE8095C27 /* WidgetBridgePlugin.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B97A0CBB455638BF2063A647 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2F18E948F4A028DE49B1C681 /* QimaWidgetBundle.swift in Sources */,
+				A96507D57EEB7BEC821C4109 /* Snapshot.swift in Sources */,
+				0BBF9A49FC8FED1C1FA1427A /* Style.swift in Sources */,
+				76606324EE9FD9552E639006 /* Intents.swift in Sources */,
+				D0449DDDF2C648BB9599AF06 /* Components.swift in Sources */,
+				81E83E7996F84E4B438CDC3E /* PriceWidget.swift in Sources */,
+				D530618D525AABA83D45332E /* PortfolioWidget.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -458,6 +634,12 @@
 			target = 33CC111A2044C6BA0003C045 /* Flutter Assemble */;
 			targetProxy = 33CC111F2044C79F0003C045 /* PBXContainerItemProxy */;
 		};
+		CBE54BEE380CDF563043D457 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = QimaWidgetExtension;
+			target = 7E205673086E4CA45AF8288A /* QimaWidgetExtension */;
+			targetProxy = 13C9EEDEBBA34EE68D79F2BD /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
@@ -468,6 +650,17 @@
 			);
 			name = MainMenu.xib;
 			path = Runner;
+			sourceTree = "<group>";
+		};
+		8522850E59815F03567CB939 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				0607C715929B29FD6B93BF83 /* en */,
+				A25FA46395F42F2F856B8E29 /* ar */,
+				BE7AE4049736E3E6086DD26A /* es */,
+				B8A4249D5BE098E9FF1A3852 /* fr */,
+			);
+			name = Localizable.strings;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -754,6 +947,81 @@
 			};
 			name = Release;
 		};
+		941EC6850309AA6855584385 /* Profile */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = DD3C6DD8B98FAE8259459B1F /* QimaWidget.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = QimaWidget/QimaWidget.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = ZS3A435WC2;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = QimaWidget/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.devlabtechnologies.qima.widget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Profile;
+		};
+		E5512796E74146D0F8BE493C /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = DD3C6DD8B98FAE8259459B1F /* QimaWidget.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = QimaWidget/QimaWidget.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = ZS3A435WC2;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = QimaWidget/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.devlabtechnologies.qima.widget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		FD22FC8F6268AE5DFE8DE8C5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = DD3C6DD8B98FAE8259459B1F /* QimaWidget.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = QimaWidget/QimaWidget.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = ZS3A435WC2;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = QimaWidget/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.devlabtechnologies.qima.widget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -793,6 +1061,16 @@
 				33CC111C2044C6BA0003C045 /* Debug */,
 				33CC111D2044C6BA0003C045 /* Release */,
 				338D0CEB231458BD00FA5F75 /* Profile */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CBAD9A40B44445990B2A44C8 /* Build configuration list for PBXNativeTarget "QimaWidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E5512796E74146D0F8BE493C /* Release */,
+				FD22FC8F6268AE5DFE8DE8C5 /* Debug */,
+				941EC6850309AA6855584385 /* Profile */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
