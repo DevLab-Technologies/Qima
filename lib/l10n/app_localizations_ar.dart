@@ -15,7 +15,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get navWatchlist => 'قائمة المتابعة';
 
   @override
-  String get watchlistAdd => 'إضافة أداة';
+  String get watchlistAdd => 'إضافة أصل';
 
   @override
   String get watchlistEmptyTitle => 'قائمة المتابعة فارغة';
@@ -28,10 +28,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get watchlistFilterAll => 'الكل';
 
   @override
-  String get addTitle => 'إضافة أداة';
+  String get addTitle => 'إضافة أصل';
 
   @override
-  String get addSearchHint => 'ابحث عن أداة';
+  String get addSearchHint => 'ابحث عن أصل';
 
   @override
   String addSearchCustomTickerTitle(String query) {
@@ -297,7 +297,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get settingsDefaultRange => 'النطاق الزمني الافتراضي';
 
   @override
-  String get settingsDefaultRangeFooter => 'يُستخدم عند فتح أداة لأول مرة.';
+  String get settingsDefaultRangeFooter => 'يُستخدم عند فتح أصل لأول مرة.';
 
   @override
   String get settingsWidgetRefresh => 'فاصل تحديث الودجة';
@@ -602,7 +602,7 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get confirmRemoveCardMessage => 'ستبقى مقتنياتك من هذه الأداة محفوظة.';
+  String get confirmRemoveCardMessage => 'ستبقى مقتنياتك من هذا الأصل محفوظة.';
 
   @override
   String get confirmDeleteLotTitle => 'حذف هذه الدفعة؟';
@@ -658,7 +658,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get alertsCardTitle => 'التنبيهات';
 
   @override
-  String get alertsCardEmpty => 'لا توجد تنبيهات بعد لهذه الأداة.';
+  String get alertsCardEmpty => 'لا توجد تنبيهات بعد لهذا الأصل.';
 
   @override
   String get alertsCardAdd => 'إضافة تنبيه';
@@ -746,7 +746,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get alertsScreenEmptyMessage =>
-      'افتح أداة ما واضغط على الجرس لضبط تنبيه سعر.';
+      'افتح أصلًا ما واضغط على الجرس لضبط تنبيه سعر.';
 
   @override
   String alertsScreenFiredToday(String time) {
@@ -843,7 +843,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String settingsBackupSubtitle(String date, int instruments, int lots) {
-    return 'آخر نسخة احتياطية $date · $instruments أداة، $lots دفعة';
+    return 'آخر نسخة احتياطية $date · $instruments أصل، $lots دفعة';
   }
 
   @override
@@ -915,7 +915,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get backupExportFullSubtitle =>
-      'قائمة المتابعة، الممتلكات، الأدوات المخصصة، التنبيهات والإعدادات (.json)';
+      'قائمة المتابعة، الممتلكات، الرموز المخصصة، التنبيهات والإعدادات (.json)';
 
   @override
   String get backupExportCsvTitle => 'جدول بيانات الممتلكات';
@@ -961,7 +961,7 @@ class AppLocalizationsAr extends AppLocalizations {
     int lots,
     int customTickers,
   ) {
-    return '$cards بطاقة متابعة · $lots دفعة · $customTickers أداة مخصصة';
+    return '$cards بطاقة متابعة · $lots دفعة · $customTickers رمز مخصص';
   }
 
   @override
@@ -1017,7 +1017,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get backupImportCountLots => 'الدفعات';
 
   @override
-  String get backupImportCountCustomTickers => 'الأدوات المخصصة';
+  String get backupImportCountCustomTickers => 'الرموز المخصصة';
 
   @override
   String get backupImportCountSettings => 'الإعدادات المضمّنة';
@@ -1071,7 +1071,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get backupImportReplaceConfirmMessage =>
-      'سيتم استبدال قائمة المتابعة والممتلكات والأدوات المخصصة والتنبيهات الحالية بمحتويات النسخة الاحتياطية. لا يمكن التراجع عن هذا.';
+      'سيتم استبدال قائمة المتابعة والممتلكات والرموز المخصصة والتنبيهات الحالية بمحتويات النسخة الاحتياطية. لا يمكن التراجع عن هذا.';
 
   @override
   String get backupImportReplaceConfirmAction => 'استبدال';
@@ -1105,7 +1105,7 @@ class AppLocalizationsAr extends AppLocalizations {
       'ملف النسخة الاحتياطية تالف ولا يمكن استعادته.';
 
   @override
-  String get backupCsvHeaderInstrument => 'الأداة';
+  String get backupCsvHeaderInstrument => 'الأصل';
 
   @override
   String get backupCsvHeaderSymbol => 'الرمز';

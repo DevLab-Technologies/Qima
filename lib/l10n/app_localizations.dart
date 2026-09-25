@@ -117,7 +117,7 @@ abstract class AppLocalizations {
   /// No description provided for @watchlistAdd.
   ///
   /// In en, this message translates to:
-  /// **'Add instrument'**
+  /// **'Add asset'**
   String get watchlistAdd;
 
   /// No description provided for @watchlistEmptyTitle.
@@ -141,13 +141,13 @@ abstract class AppLocalizations {
   /// No description provided for @addTitle.
   ///
   /// In en, this message translates to:
-  /// **'Add instrument'**
+  /// **'Add asset'**
   String get addTitle;
 
   /// No description provided for @addSearchHint.
   ///
   /// In en, this message translates to:
-  /// **'Search instruments'**
+  /// **'Search assets'**
   String get addSearchHint;
 
   /// No description provided for @addSearchCustomTickerTitle.
@@ -577,7 +577,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsDefaultRangeFooter.
   ///
   /// In en, this message translates to:
-  /// **'Used when opening an instrument for the first time.'**
+  /// **'Used when opening an asset for the first time.'**
   String get settingsDefaultRangeFooter;
 
   /// No description provided for @settingsWidgetRefresh.
@@ -1171,7 +1171,7 @@ abstract class AppLocalizations {
   /// No description provided for @confirmRemoveCardMessage.
   ///
   /// In en, this message translates to:
-  /// **'Your holdings for this instrument are kept.'**
+  /// **'Your holdings for this asset are kept.'**
   String get confirmRemoveCardMessage;
 
   /// No description provided for @confirmDeleteLotTitle.
@@ -1273,7 +1273,7 @@ abstract class AppLocalizations {
   /// No description provided for @alertsCardEmpty.
   ///
   /// In en, this message translates to:
-  /// **'No alerts yet for this instrument.'**
+  /// **'No alerts yet for this asset.'**
   String get alertsCardEmpty;
 
   /// No description provided for @alertsCardAdd.
@@ -1423,7 +1423,7 @@ abstract class AppLocalizations {
   /// No description provided for @alertsScreenEmptyMessage.
   ///
   /// In en, this message translates to:
-  /// **'Open an instrument and tap the bell to set a price alert.'**
+  /// **'Open an asset and tap the bell to set a price alert.'**
   String get alertsScreenEmptyMessage;
 
   /// No description provided for @alertsScreenFiredToday.
@@ -1559,7 +1559,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsBackupSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Last backup {date} · {instruments} instruments, {lots} lots'**
+  /// **'Last backup {date} · {instruments} assets, {lots} lots'**
   String settingsBackupSubtitle(String date, int instruments, int lots);
 
   /// No description provided for @settingsICloudSync.
@@ -1995,7 +1995,7 @@ abstract class AppLocalizations {
   /// No description provided for @backupCsvHeaderInstrument.
   ///
   /// In en, this message translates to:
-  /// **'Instrument'**
+  /// **'Asset'**
   String get backupCsvHeaderInstrument;
 
   /// No description provided for @backupCsvHeaderSymbol.

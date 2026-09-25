@@ -74,10 +74,34 @@ class _OnboardingTourScreenState extends State<OnboardingTourScreen> {
                   controller: _pageController,
                   onPageChanged: (index) => setState(() => _page = index),
                   children: const [
-                    _TourPage(child: _Step1()),
-                    _TourPage(child: _Step2()),
-                    _TourPage(child: _Step3()),
-                    _TourPage(child: _Step4()),
+                    _TourPage(
+                      child: _IllustratedStep(
+                        illustration: WelcomeIllustration(),
+                        title: _step1Title,
+                        body: _step1Body,
+                      ),
+                    ),
+                    _TourPage(
+                      child: _IllustratedStep(
+                        illustration: WatchlistIllustration(),
+                        title: _step2Title,
+                        body: _step2Body,
+                      ),
+                    ),
+                    _TourPage(
+                      child: _IllustratedStep(
+                        illustration: HoldingsIllustration(),
+                        title: _step3Title,
+                        body: _step3Body,
+                      ),
+                    ),
+                    _TourPage(
+                      child: _IllustratedStep(
+                        illustration: AlertsWidgetsIllustration(),
+                        title: _step4Title,
+                        body: _step4Body,
+                      ),
+                    ),
                     _TourPage(child: _PrivacyIllustrationAndCurrency()),
                   ],
                 ),
@@ -123,10 +147,7 @@ class _OnboardingTourScreenState extends State<OnboardingTourScreen> {
                       opacity: isLastPage ? 0 : 1,
                       child: IgnorePointer(
                         ignoring: isLastPage,
-                        child: TextButton(
-                          onPressed: _finish,
-                          child: Text(l10n.onboardingSkip),
-                        ),
+                        child: TextButton(onPressed: _finish, child: Text(l10n.onboardingSkip)),
                       ),
                     ),
                   ],
@@ -139,6 +160,16 @@ class _OnboardingTourScreenState extends State<OnboardingTourScreen> {
     );
   }
 }
+
+// Tear-off-able (and so `const`-usable) accessors for the steps' strings.
+String _step1Title(AppLocalizations l10n) => l10n.onboardingStep1Title;
+String _step1Body(AppLocalizations l10n) => l10n.onboardingStep1Body;
+String _step2Title(AppLocalizations l10n) => l10n.onboardingStep2Title;
+String _step2Body(AppLocalizations l10n) => l10n.onboardingStep2Body;
+String _step3Title(AppLocalizations l10n) => l10n.onboardingStep3Title;
+String _step3Body(AppLocalizations l10n) => l10n.onboardingStep3Body;
+String _step4Title(AppLocalizations l10n) => l10n.onboardingStep4Title;
+String _step4Body(AppLocalizations l10n) => l10n.onboardingStep4Body;
 
 class _TourPage extends StatelessWidget {
   final Widget child;
@@ -184,64 +215,39 @@ class _StepText extends StatelessWidget {
   }
 }
 
-/// Step content is built by four small `_Step*` widgets below rather than
-/// inline in the `PageView` so each can read `AppLocalizations` for its own
-/// title/body without threading them through `_TourPage`.
-class _Step1 extends StatelessWidget {
-  const _Step1();
+/// Steps 1-4: an illustration with the step's title and body underneath.
+///
+/// The illustration may take at most [_illustrationShare] of the screen
+/// height and scales down to fit it, so on short phones the title and body
+/// still show without scrolling (the illustrations are drawn for a ~850pt
+/// tall screen and would otherwise push the text below the fold).
+class _IllustratedStep extends StatelessWidget {
+  final Widget illustration;
+  final String Function(AppLocalizations) title;
+  final String Function(AppLocalizations) body;
+
+  const _IllustratedStep({required this.illustration, required this.title, required this.body});
+
+  static const double _illustrationShare = 0.36;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return Column(
       children: [
-        const WelcomeIllustration(),
-        _StepText(title: l10n.onboardingStep1Title, body: l10n.onboardingStep1Body),
-      ],
-    );
-  }
-}
-
-class _Step2 extends StatelessWidget {
-  const _Step2();
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    return Column(
-      children: [
-        const WatchlistIllustration(),
-        _StepText(title: l10n.onboardingStep2Title, body: l10n.onboardingStep2Body),
-      ],
-    );
-  }
-}
-
-class _Step3 extends StatelessWidget {
-  const _Step3();
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    return Column(
-      children: [
-        const HoldingsIllustration(),
-        _StepText(title: l10n.onboardingStep3Title, body: l10n.onboardingStep3Body),
-      ],
-    );
-  }
-}
-
-class _Step4 extends StatelessWidget {
-  const _Step4();
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    return Column(
-      children: [
-        const AlertsWidgetsIllustration(),
-        _StepText(title: l10n.onboardingStep4Title, body: l10n.onboardingStep4Body),
+        LayoutBuilder(
+          // FittedBox lays its child out unconstrained, and the
+          // illustrations stretch to the available width, so pin that
+          // width first; FittedBox then only scales the result down.
+          builder: (context, constraints) => ConstrainedBox(
+            constraints: BoxConstraints(maxHeight: MediaQuery.sizeOf(context).height * _illustrationShare),
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: SizedBox(width: constraints.maxWidth, child: illustration),
+            ),
+          ),
+        ),
+        _StepText(title: title(l10n), body: body(l10n)),
       ],
     );
   }
@@ -306,8 +312,8 @@ class _PrivacyIllustrationAndCurrencyState extends State<_PrivacyIllustrationAnd
                         subtitle: isMac
                             ? l10n.onboardingStep5AppLockSubtitleMac
                             : isIOS
-                                ? l10n.onboardingStep5AppLockSubtitleApple
-                                : l10n.onboardingStep5AppLockSubtitleGeneric,
+                            ? l10n.onboardingStep5AppLockSubtitleApple
+                            : l10n.onboardingStep5AppLockSubtitleGeneric,
                         value: true,
                       ),
                       Divider(color: colors.hairline, height: DS.spaceLG),
@@ -327,8 +333,8 @@ class _PrivacyIllustrationAndCurrencyState extends State<_PrivacyIllustrationAnd
               body: isMac
                   ? l10n.onboardingStep5BodyMac
                   : showICloudRow
-                      ? l10n.onboardingStep5Body
-                      : l10n.onboardingStep5BodyAndroid,
+                  ? l10n.onboardingStep5Body
+                  : l10n.onboardingStep5BodyAndroid,
             ),
             const SizedBox(height: DS.spaceLG),
             DSCard(
@@ -344,7 +350,10 @@ class _PrivacyIllustrationAndCurrencyState extends State<_PrivacyIllustrationAnd
                 trailing: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(state.baseCurrency, style: TextStyle(color: colors.textSecondary, fontWeight: FontWeight.w600)),
+                    Text(
+                      state.baseCurrency,
+                      style: TextStyle(color: colors.textSecondary, fontWeight: FontWeight.w600),
+                    ),
                     Icon(Icons.chevron_right, color: colors.textTertiary),
                   ],
                 ),
@@ -383,7 +392,10 @@ class _Pill extends StatelessWidget {
         children: [
           Icon(icon, color: colors.textSecondary, size: 14),
           const SizedBox(width: 4),
-          Text(label, style: TextStyle(color: colors.textSecondary, fontSize: 12, fontWeight: FontWeight.w600)),
+          Text(
+            label,
+            style: TextStyle(color: colors.textSecondary, fontSize: 12, fontWeight: FontWeight.w600),
+          ),
         ],
       ),
     );
@@ -409,7 +421,10 @@ class _PrivacyRow extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(title, style: TextStyle(color: colors.textPrimary, fontSize: 14, fontWeight: FontWeight.w600)),
+              Text(
+                title,
+                style: TextStyle(color: colors.textPrimary, fontSize: 14, fontWeight: FontWeight.w600),
+              ),
               Text(subtitle, style: TextStyle(color: colors.textTertiary, fontSize: 12)),
             ],
           ),

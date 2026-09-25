@@ -15,7 +15,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get navWatchlist => 'Seguimiento';
 
   @override
-  String get watchlistAdd => 'Añadir instrumento';
+  String get watchlistAdd => 'Añadir activo';
 
   @override
   String get watchlistEmptyTitle => 'Tu lista de seguimiento está vacía';
@@ -28,10 +28,10 @@ class AppLocalizationsEs extends AppLocalizations {
   String get watchlistFilterAll => 'Todos';
 
   @override
-  String get addTitle => 'Añadir instrumento';
+  String get addTitle => 'Añadir activo';
 
   @override
-  String get addSearchHint => 'Buscar instrumentos';
+  String get addSearchHint => 'Buscar activos';
 
   @override
   String addSearchCustomTickerTitle(String query) {
@@ -298,7 +298,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get settingsDefaultRangeFooter =>
-      'Se usa al abrir un instrumento por primera vez.';
+      'Se usa al abrir un activo por primera vez.';
 
   @override
   String get settingsWidgetRefresh => 'Intervalo de actualización del widget';
@@ -605,7 +605,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get confirmRemoveCardMessage =>
-      'Tus posiciones de este instrumento se conservan.';
+      'Tus posiciones de este activo se conservan.';
 
   @override
   String get confirmDeleteLotTitle => '¿Eliminar este lote?';
@@ -661,7 +661,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get alertsCardTitle => 'Alertas';
 
   @override
-  String get alertsCardEmpty => 'Aún no hay alertas para este instrumento.';
+  String get alertsCardEmpty => 'Aún no hay alertas para este activo.';
 
   @override
   String get alertsCardAdd => 'Añadir alerta';
@@ -750,7 +750,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get alertsScreenEmptyMessage =>
-      'Abre un instrumento y toca la campana para configurar una alerta de precio.';
+      'Abre un activo y toca la campana para configurar una alerta de precio.';
 
   @override
   String alertsScreenFiredToday(String time) {
@@ -848,7 +848,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String settingsBackupSubtitle(String date, int instruments, int lots) {
-    return 'Última copia $date · $instruments instrumentos, $lots lotes';
+    return 'Última copia $date · $instruments activos, $lots lotes';
   }
 
   @override
@@ -1117,7 +1117,7 @@ class AppLocalizationsEs extends AppLocalizations {
       'Este archivo de copia de seguridad está dañado y no se puede restaurar.';
 
   @override
-  String get backupCsvHeaderInstrument => 'Instrumento';
+  String get backupCsvHeaderInstrument => 'Activo';
 
   @override
   String get backupCsvHeaderSymbol => 'Símbolo';

@@ -15,7 +15,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get navWatchlist => 'Suivi';
 
   @override
-  String get watchlistAdd => 'Ajouter un instrument';
+  String get watchlistAdd => 'Ajouter un actif';
 
   @override
   String get watchlistEmptyTitle => 'Votre liste de suivi est vide';
@@ -28,10 +28,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get watchlistFilterAll => 'Tous';
 
   @override
-  String get addTitle => 'Ajouter un instrument';
+  String get addTitle => 'Ajouter un actif';
 
   @override
-  String get addSearchHint => 'Rechercher un instrument';
+  String get addSearchHint => 'Rechercher un actif';
 
   @override
   String addSearchCustomTickerTitle(String query) {
@@ -298,7 +298,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get settingsDefaultRangeFooter =>
-      'Utilisée à la première ouverture d\'un instrument.';
+      'Utilisée à la première ouverture d\'un actif.';
 
   @override
   String get settingsWidgetRefresh => 'Intervalle d\'actualisation du widget';
@@ -606,7 +606,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get confirmRemoveCardMessage =>
-      'Vos positions pour cet instrument sont conservées.';
+      'Vos positions pour cet actif sont conservées.';
 
   @override
   String get confirmDeleteLotTitle => 'Supprimer ce lot ?';
@@ -662,8 +662,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get alertsCardTitle => 'Alertes';
 
   @override
-  String get alertsCardEmpty =>
-      'Aucune alerte pour cet instrument pour l\'instant.';
+  String get alertsCardEmpty => 'Aucune alerte pour cet actif pour l\'instant.';
 
   @override
   String get alertsCardAdd => 'Ajouter une alerte';
@@ -752,7 +751,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get alertsScreenEmptyMessage =>
-      'Ouvrez un instrument et touchez la cloche pour définir une alerte de prix.';
+      'Ouvrez un actif et touchez la cloche pour définir une alerte de prix.';
 
   @override
   String alertsScreenFiredToday(String time) {
@@ -849,7 +848,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String settingsBackupSubtitle(String date, int instruments, int lots) {
-    return 'Dernière sauvegarde $date · $instruments instruments, $lots lots';
+    return 'Dernière sauvegarde $date · $instruments actifs, $lots lots';
   }
 
   @override
@@ -1116,7 +1115,7 @@ class AppLocalizationsFr extends AppLocalizations {
       'Ce fichier de sauvegarde est endommagé et ne peut pas être restauré.';
 
   @override
-  String get backupCsvHeaderInstrument => 'Instrument';
+  String get backupCsvHeaderInstrument => 'Actif';
 
   @override
   String get backupCsvHeaderSymbol => 'Symbole';

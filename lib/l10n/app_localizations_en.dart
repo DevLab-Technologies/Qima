@@ -15,7 +15,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get navWatchlist => 'Watchlist';
 
   @override
-  String get watchlistAdd => 'Add instrument';
+  String get watchlistAdd => 'Add asset';
 
   @override
   String get watchlistEmptyTitle => 'Your watchlist is empty';
@@ -28,10 +28,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get watchlistFilterAll => 'All';
 
   @override
-  String get addTitle => 'Add instrument';
+  String get addTitle => 'Add asset';
 
   @override
-  String get addSearchHint => 'Search instruments';
+  String get addSearchHint => 'Search assets';
 
   @override
   String addSearchCustomTickerTitle(String query) {
@@ -296,7 +296,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsDefaultRangeFooter =>
-      'Used when opening an instrument for the first time.';
+      'Used when opening an asset for the first time.';
 
   @override
   String get settingsWidgetRefresh => 'Widget refresh interval';
@@ -603,7 +603,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get confirmRemoveCardMessage =>
-      'Your holdings for this instrument are kept.';
+      'Your holdings for this asset are kept.';
 
   @override
   String get confirmDeleteLotTitle => 'Delete this lot?';
@@ -659,7 +659,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get alertsCardTitle => 'Alerts';
 
   @override
-  String get alertsCardEmpty => 'No alerts yet for this instrument.';
+  String get alertsCardEmpty => 'No alerts yet for this asset.';
 
   @override
   String get alertsCardAdd => 'Add alert';
@@ -747,7 +747,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get alertsScreenEmptyMessage =>
-      'Open an instrument and tap the bell to set a price alert.';
+      'Open an asset and tap the bell to set a price alert.';
 
   @override
   String alertsScreenFiredToday(String time) {
@@ -842,7 +842,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String settingsBackupSubtitle(String date, int instruments, int lots) {
-    return 'Last backup $date · $instruments instruments, $lots lots';
+    return 'Last backup $date · $instruments assets, $lots lots';
   }
 
   @override
@@ -1103,7 +1103,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'This backup file is damaged and can\'t be restored.';
 
   @override
-  String get backupCsvHeaderInstrument => 'Instrument';
+  String get backupCsvHeaderInstrument => 'Asset';
 
   @override
   String get backupCsvHeaderSymbol => 'Symbol';

@@ -8,12 +8,12 @@
   "@navWatchlist": {
     "description": "Bottom navigation / navigation rail label for the watchlist tab."
   },
-  "watchlistAdd": "Add instrument",
+  "watchlistAdd": "Add asset",
   "watchlistEmptyTitle": "Your watchlist is empty",
   "watchlistEmptyMessage": "Add metals, crypto, stocks, or currencies to start tracking prices.",
   "watchlistFilterAll": "All",
-  "addTitle": "Add instrument",
-  "addSearchHint": "Search instruments",
+  "addTitle": "Add asset",
+  "addSearchHint": "Search assets",
   "addSearchCustomTickerTitle": "Add “{query}” as a custom ticker",
   "@addSearchCustomTickerTitle": {
     "placeholders": {
@@ -211,7 +211,7 @@
   "settingsKarat": "Karat",
   "settingsBaseCurrencyFooter": "Used to total your portfolio value.",
   "settingsDefaultRange": "Default chart range",
-  "settingsDefaultRangeFooter": "Used when opening an instrument for the first time.",
+  "settingsDefaultRangeFooter": "Used when opening an asset for the first time.",
   "settingsWidgetRefresh": "Widget refresh interval",
   "settingsWidgetRefreshFooter": "How often background widgets fetch new prices.",
   "settingsAbout": "About",
@@ -317,7 +317,7 @@
       }
     }
   },
-  "confirmRemoveCardMessage": "Your holdings for this instrument are kept.",
+  "confirmRemoveCardMessage": "Your holdings for this asset are kept.",
   "confirmDeleteLotTitle": "Delete this lot?",
   "confirmDeleteLotMessage": "{details}. This can't be undone.",
   "@confirmDeleteLotMessage": {
@@ -348,7 +348,7 @@
   "alertWindow7d": "7 days",
   "alertBellTooltip": "Price alerts",
   "alertsCardTitle": "Alerts",
-  "alertsCardEmpty": "No alerts yet for this instrument.",
+  "alertsCardEmpty": "No alerts yet for this asset.",
   "alertsCardAdd": "Add alert",
   "alertEditorNewTitle": "New alert",
   "alertEditorEditTitle": "Edit alert",
@@ -417,7 +417,7 @@
   "alertsScreenTitle": "Alerts",
   "alertsScreenInfo": "Alerts are checked roughly every 15 minutes in the background, and live while Qima is open.",
   "alertsScreenEmptyTitle": "No alerts yet",
-  "alertsScreenEmptyMessage": "Open an instrument and tap the bell to set a price alert.",
+  "alertsScreenEmptyMessage": "Open an asset and tap the bell to set a price alert.",
   "alertsScreenFiredToday": "Fired today {time} · switched off",
   "@alertsScreenFiredToday": {
     "placeholders": {
@@ -506,7 +506,7 @@
   },
   "settingsBackup": "Backup & restore",
   "settingsBackupSubtitleNever": "Never backed up",
-  "settingsBackupSubtitle": "Last backup {date} · {instruments} instruments, {lots} lots",
+  "settingsBackupSubtitle": "Last backup {date} · {instruments} assets, {lots} lots",
   "@settingsBackupSubtitle": {
     "placeholders": {
       "date": {
@@ -645,7 +645,7 @@
   "backupErrorNewerVersion": "This backup was made with a newer version of Qima. Update the app to restore it.",
   "backupErrorWrongPassword": "That password didn't work.",
   "backupErrorCorrupted": "This backup file is damaged and can't be restored.",
-  "backupCsvHeaderInstrument": "Instrument",
+  "backupCsvHeaderInstrument": "Asset",
   "backupCsvHeaderSymbol": "Symbol",
   "backupCsvHeaderQuantity": "Quantity",
   "backupCsvHeaderUnit": "Unit",
