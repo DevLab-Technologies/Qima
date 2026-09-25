@@ -4,6 +4,11 @@
     "es": "Precio",
     "fr": "Prix"
   },
+  "Save": {
+    "ar": "حفظ",
+    "es": "Guardar",
+    "fr": "Enregistrer"
+  },
   "Portfolio": {
     "ar": "المحفظة",
     "es": "Cartera",

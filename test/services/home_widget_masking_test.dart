@@ -10,31 +10,42 @@ import 'package:qima/models/instrument_catalog.dart';
 import 'package:qima/models/money.dart';
 import 'package:qima/models/quote.dart';
 import 'package:qima/services/home_widget_service.dart';
-import 'package:qima/theme/masking.dart';
+import 'package:qima/services/widget_snapshot.dart';
 
-/// Phase 4 "Hide balances": [HomeWidgetService] publishes masked portfolio
-/// strings (plus a `hidden` flag) whenever [AppState.hideBalances] is on, so
-/// the Android Glance portfolio widget never renders a real amount while
-/// hidden — spec explicitly calls this out since it's a surface outside
-/// Flutter's own widget tree that's easy to forget.
+/// Phase 4 "Hide balances": [HomeWidgetService] publishes the ONE widget
+/// snapshot (iOS, macOS and Android all read it — see the class doc), and
+/// it always carries [AppState.hideBalances] verbatim (`widget_snapshot_test.dart`
+/// covers that in detail). Each native widget masks the amount itself from
+/// that flag; there's no Dart-side masked payload left to test here, so
+/// this file only guards that publishing still writes the snapshot with the
+/// flag intact and reloads every widget kind.
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   const channel = MethodChannel('home_widget');
   final gold = InstrumentCatalog.instrument('metal.XAU')!;
 
-  Map<String, dynamic>? lastPortfolioPayload;
+  Map<String, dynamic>? lastSnapshotPayload;
+  final updatedWidgetNames = <String?>[];
 
   setUp(() {
-    lastPortfolioPayload = null;
+    lastSnapshotPayload = null;
+    updatedWidgetNames.clear();
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(channel, (call) async {
-      if (call.method == 'saveWidgetData') {
-        final args = Map<String, dynamic>.from(call.arguments as Map);
-        if (args['id'] == HomeWidgetService.portfolioWidgetDataKey) {
-          lastPortfolioPayload = jsonDecode(args['data'] as String) as Map<String, dynamic>;
-        }
+      switch (call.method) {
+        case 'saveWidgetData':
+          final args = Map<String, dynamic>.from(call.arguments as Map);
+          if (args['id'] == WidgetSnapshot.storageKey) {
+            lastSnapshotPayload = jsonDecode(args['data'] as String) as Map<String, dynamic>;
+          }
+          return true;
+        case 'updateWidget':
+          final args = Map<String, dynamic>.from(call.arguments as Map);
+          updatedWidgetNames.add(args['qualifiedAndroidName'] as String? ?? args['ios'] as String?);
+          return null;
+        default:
+          return null;
       }
-      return null;
     });
   });
 
@@ -71,41 +82,28 @@ void main() {
     );
   }
 
-  test('publishes the real formatted amounts when hideBalances is off', () async {
-    final state = stateWithLot(hideBalances: false);
-    await HomeWidgetService.publish(state);
+  test('publishes the snapshot with hideBalances off', () async {
+    await HomeWidgetService.publish(stateWithLot(hideBalances: false));
 
-    final valuation = HoldingValuation.aggregate(
-      lots: state.lots,
-      rates: state.rates,
-      displayCurrency: state.baseCurrency,
-      latestUSD: (id) => state.seriesByID[id]?.latest?.canonicalUSD,
-    )!;
-
-    expect(lastPortfolioPayload, isNotNull);
-    expect(lastPortfolioPayload!['hidden'], isFalse);
-    expect(lastPortfolioPayload!['value'], valuation.value.formatted(useFallbackSymbol: true));
-    expect(lastPortfolioPayload!['gain'], valuation.gain.formatted(useFallbackSymbol: true));
-    expect(lastPortfolioPayload!['cost'], valuation.cost.formatted(useFallbackSymbol: true));
+    expect(lastSnapshotPayload, isNotNull);
+    expect(lastSnapshotPayload!['hideBalances'], isFalse);
+    expect(lastSnapshotPayload!['portfolio']['available'], isTrue);
   });
 
-  test('publishes masked amounts (but a real percent) when hideBalances is on', () async {
-    final state = stateWithLot(hideBalances: true);
-    await HomeWidgetService.publish(state);
+  test('publishes the snapshot with hideBalances on, and reloads every Android widget kind', () async {
+    // The test host's default `defaultTargetPlatform` is `android`, so this
+    // also exercises the platform switch in `publish` (the iOS-only
+    // Watchlist reload is skipped, same as on a real Android device).
+    await HomeWidgetService.publish(stateWithLot(hideBalances: true));
 
-    final valuation = HoldingValuation.aggregate(
-      lots: state.lots,
-      rates: state.rates,
-      displayCurrency: state.baseCurrency,
-      latestUSD: (id) => state.seriesByID[id]?.latest?.canonicalUSD,
-    )!;
-
-    expect(lastPortfolioPayload, isNotNull);
-    expect(lastPortfolioPayload!['hidden'], isTrue);
-    expect(lastPortfolioPayload!['value'], Masking.mask);
-    expect(lastPortfolioPayload!['gain'], Masking.mask);
-    expect(lastPortfolioPayload!['cost'], Masking.mask);
-    // Percent stays real even while amounts are masked.
-    expect(lastPortfolioPayload!['percent'], closeTo(valuation.gainFraction * 100, 0.0001));
+    expect(lastSnapshotPayload, isNotNull);
+    expect(lastSnapshotPayload!['hideBalances'], isTrue);
+    expect(
+      updatedWidgetNames,
+      containsAll(<String>[
+        'com.devlabtechnologies.qima.widget.PriceGlanceReceiver',
+        'com.devlabtechnologies.qima.widget.PortfolioGlanceReceiver',
+      ]),
+    );
   });
 }

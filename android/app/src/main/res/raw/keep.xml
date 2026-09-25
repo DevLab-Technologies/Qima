@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Release builds shrink away resources nothing references at compile time.
      flutter_local_notifications looks the small icon up by name at runtime
-     (NotificationService: 'ic_notification'), so keep it explicitly. -->
+     (NotificationService: 'ic_notification'), so keep it explicitly.
+
+     The widget configuration Activities (PriceConfigActivity,
+     PortfolioConfigActivity) also resolve strings by name at runtime:
+     an instrument's `nameKey` / unit / karat / range come from the widget
+     snapshot JSON, not a compile-time R id (WidgetStrings), so every
+     string tool/generate_widget_strings.py emits, plus the ARB-keyed
+     model names it draws from, must be kept too. -->
 <resources xmlns:tools="http://schemas.android.com/tools"
-    tools:keep="@drawable/ic_notification" />
+    tools:keep="@drawable/ic_notification,@string/asset*,@string/unit*,@string/karatShort*,@string/range*,@string/portfolioTitle,@string/widget*" />

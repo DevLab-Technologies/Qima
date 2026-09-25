@@ -39,7 +39,9 @@
         </activity>
         <!-- Home-screen widgets (Jetpack Glance). Data is written by
              lib/services/home_widget_service.dart via the `home_widget`
-             plugin; these receivers only render it. -->
+             plugin; these receivers only render it. Each widget is
+             per-instance configurable (android:configure below), same as
+             iOS's App Intent pickers; see widget/WidgetConfigStore.kt. -->
         <receiver android:name=".widget.PriceGlanceReceiver"
             android:exported="true"
             android:label="@string/price_widget_description">
@@ -51,6 +53,14 @@
                 android:resource="@xml/price_glance_widget_info" />
         </receiver>
 
+        <activity android:name=".widget.PriceConfigActivity"
+            android:exported="true"
+            android:theme="@style/NormalTheme">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+            </intent-filter>
+        </activity>
+
         <receiver android:name=".widget.PortfolioGlanceReceiver"
             android:exported="true"
             android:label="@string/portfolio_widget_description">
@@ -61,6 +71,14 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/portfolio_glance_widget_info" />
         </receiver>
+
+        <activity android:name=".widget.PortfolioConfigActivity"
+            android:exported="true"
+            android:theme="@style/NormalTheme">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+            </intent-filter>
+        </activity>
 
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->

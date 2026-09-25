@@ -1,5 +1,6 @@
 package com.devlabtechnologies.qima.widget
 
+import android.content.Context
 import es.antonborri.home_widget.HomeWidgetGlanceWidgetReceiver
 
 /**
@@ -8,4 +9,10 @@ import es.antonborri.home_widget.HomeWidgetGlanceWidgetReceiver
  */
 class PortfolioGlanceReceiver : HomeWidgetGlanceWidgetReceiver<PortfolioGlanceWidget>() {
     override val glanceAppWidget = PortfolioGlanceWidget()
+
+    /** See [PriceGlanceReceiver.onDeleted]. */
+    override fun onDeleted(context: Context, appWidgetIds: IntArray) {
+        super.onDeleted(context, appWidgetIds)
+        appWidgetIds.forEach { WidgetConfigStore.clear(context, it) }
+    }
 }

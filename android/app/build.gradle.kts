@@ -107,7 +107,17 @@ dependencies {
     // transitive dependency) so the app module's Compose classpath is
     // predictable regardless of what the plugin bundles in a future update.
     implementation("androidx.glance:glance-appwidget:1.1.1")
+    // Compose Material 3 for the widgets' native configuration Activities
+    // (android/app/src/main/kotlin/.../widget/*ConfigActivity.kt).
+    implementation("androidx.activity:activity-compose:1.9.3")
+    implementation(platform("androidx.compose:compose-bom:2024.10.01"))
+    implementation("androidx.compose.material3:material3")
+    implementation("androidx.compose.ui:ui")
+    implementation("androidx.compose.ui:ui-tooling-preview")
     // flutter_local_notifications' core-library desugaring requirement (see
     // compileOptions above).
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
+
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("org.json:json:20240303")
 }
