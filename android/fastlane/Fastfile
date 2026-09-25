@@ -50,6 +50,19 @@ def build_release_aab!(build_number)
   end
   UI.user_error!("No App Bundle at #{AAB_PATH} after flutter build appbundle.") unless File.exist?(AAB_PATH)
   verify_release_signature!
+  verify_release_permissions!
+end
+
+# Flutter adds INTERNET only to debug/profile manifests, so a release build
+# that loses the declaration still runs fine in development but can't load a
+# single price. Checks the merged manifest inside the bundle itself.
+REQUIRED_PERMISSIONS = %w[android.permission.INTERNET].freeze
+
+def verify_release_permissions!
+  manifest = sh("unzip -p #{AAB_PATH.shellescape} base/manifest/AndroidManifest.xml", log: false)
+  missing = REQUIRED_PERMISSIONS.reject { |permission| manifest.include?(permission) }
+  UI.user_error!("App Bundle manifest is missing: #{missing.join(', ')}.") unless missing.empty?
+  UI.success("App Bundle declares #{REQUIRED_PERMISSIONS.join(', ')}.")
 end
 
 # build.gradle.kts falls back to the debug key when signing material is
