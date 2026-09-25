@@ -31,6 +31,10 @@ tag must match it, or the workflow fails before building.
 4. **Provisioning profiles**: developer.apple.com → Profiles → **+** → *App Store Connect*, one per bundle ID, both with the certificate above. Both App IDs need the App Group `group.com.devlabtechnologies.qima`; the app's also needs iCloud (key-value storage).
    - `IOS_PROVISION_PROFILE_BASE64`: the app, `com.devlabtechnologies.qima`: `base64 -i Qima_App_Store.mobileprovision | pbcopy`
    - `IOS_WIDGET_PROVISION_PROFILE_BASE64`: the widget extension, `com.devlabtechnologies.qima.widget`: `base64 -i Qima_Widget_App_Store.mobileprovision | pbcopy`
+5. **macOS**: the Apple Distribution certificate above also signs the Mac app.
+   - `MAC_INSTALLER_CERT_BASE64` / `MAC_INSTALLER_CERT_PASSWORD`: a *Mac Installer Distribution* certificate exported with its private key as `.p12` (it signs the `.pkg`).
+   - `MACOS_PROVISION_PROFILE_BASE64`: a *Mac App Store Connect* profile for `com.devlabtechnologies.qima`: `base64 -i Qima_Mac_App_Store.provisionprofile | pbcopy`
+   - Upload with a `macos-v<version>` tag (`.github/workflows/testflight-macos.yml`).
 
 Check the key without uploading: `cd ios && ASC_KEY_ID=… ASC_ISSUER_ID=… ASC_KEY_CONTENT=… bundle exec fastlane ios preflight`.
 

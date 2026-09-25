@@ -8,6 +8,8 @@ default_platform(:ios)
 APP_IDENTIFIER = "com.devlabtechnologies.qima"
 WIDGET_IDENTIFIER = "com.devlabtechnologies.qima.widget"
 WIDGET_TARGET = "QimaWidgetExtension"
+MAC_PROJECT = "../macos/Runner.xcodeproj"
+MAC_INSTALLER_IDENTITY = "3rd Party Mac Developer Installer"
 APPLE_TEAM_ID = "ZS3A435WC2"
 # fastlane's working directory is not guaranteed to be the repo root, so
 # anchor every path to it explicitly. __dir__ here is ios/fastlane.
@@ -38,10 +40,12 @@ def require_asc_api_key!
   )
 end
 
-# Installs a base64-encoded .mobileprovision where Xcode looks for profiles
-# and returns its Name, which the signing settings and export options use.
-def install_profile!(base64_content)
-  profile_path = File.expand_path("profile.mobileprovision", Dir.pwd)
+# Installs a base64-encoded provisioning profile where Xcode looks for
+# profiles (both the legacy and the Xcode 16+ folder) and returns its Name,
+# which the signing settings and export options use. iOS profiles end in
+# .mobileprovision, macOS ones in .provisionprofile.
+def install_profile!(base64_content, extension: "mobileprovision")
+  profile_path = File.expand_path("profile.#{extension}", Dir.pwd)
   File.binwrite(profile_path, Base64.decode64(base64_content))
   begin
     plist_xml = Actions.sh("security cms -D -i #{profile_path.shellescape}", log: false)
@@ -49,13 +53,68 @@ def install_profile!(base64_content)
     profile_name = plist_xml[/<key>Name<\/key>\s*<string>(.*?)<\/string>/m, 1]
     UI.user_error!("Could not read UUID/Name from the provisioning profile.") unless uuid && profile_name
 
-    profiles_dir = File.expand_path("~/Library/MobileDevice/Provisioning Profiles")
-    FileUtils.mkdir_p(profiles_dir)
-    FileUtils.cp(profile_path, File.join(profiles_dir, "#{uuid}.mobileprovision"))
+    ["~/Library/MobileDevice/Provisioning Profiles", "~/Library/Developer/Xcode/UserData/Provisioning Profiles"].each do |dir|
+      profiles_dir = File.expand_path(dir)
+      FileUtils.mkdir_p(profiles_dir)
+      FileUtils.cp(profile_path, File.join(profiles_dir, "#{uuid}.#{extension}"))
+    end
   ensure
     File.delete(profile_path) if File.exist?(profile_path)
   end
   profile_name
+end
+
+# Archives the macOS app and exports it as an installer package signed for
+# the Mac App Store; returns the .pkg path. Flutter has no `build pkg`, so
+# this is `flutter build macos --config-only` (version, build number, pods)
+# followed by a plain Xcode archive and export.
+def build_mac_pkg!(build_number, profile_name)
+  archive_path = File.join(REPO_ROOT, "build/macos/Qima.xcarchive")
+  export_path = File.join(REPO_ROOT, "build/macos/pkg")
+  options_path = File.join(REPO_ROOT, "build/macos/ExportOptions.plist")
+  FileUtils.mkdir_p(File.dirname(options_path))
+  File.write(options_path, <<~PLIST)
+    <?xml version="1.0" encoding="UTF-8"?>
+    <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+    <plist version="1.0">
+    <dict>
+      <key>method</key>
+      <string>app-store-connect</string>
+      <key>teamID</key>
+      <string>#{APPLE_TEAM_ID}</string>
+      <key>signingStyle</key>
+      <string>manual</string>
+      <key>signingCertificate</key>
+      <string>Apple Distribution</string>
+      <key>installerSigningCertificate</key>
+      <string>#{MAC_INSTALLER_IDENTITY}</string>
+      <key>provisioningProfiles</key>
+      <dict>
+        <key>#{APP_IDENTIFIER}</key>
+        <string>#{profile_name}</string>
+      </dict>
+      <key>uploadSymbols</key>
+      <true/>
+    </dict>
+    </plist>
+  PLIST
+
+  Dir.chdir(REPO_ROOT) do
+    Actions.sh("flutter", "build", "macos", "--config-only", "--release", "--build-number=#{build_number}")
+    Actions.sh(
+      "xcodebuild", "-workspace", "macos/Runner.xcworkspace", "-scheme", "Runner",
+      "-configuration", "Release", "-archivePath", archive_path, "archive"
+    )
+    FileUtils.rm_rf(export_path)
+    Actions.sh(
+      "xcodebuild", "-exportArchive", "-archivePath", archive_path,
+      "-exportPath", export_path, "-exportOptionsPlist", options_path
+    )
+  end
+
+  pkg_path = Dir.glob(File.join(export_path, "*.pkg")).first
+  UI.user_error!("No .pkg found under #{export_path} after the export.") unless pkg_path
+  pkg_path
 end
 
 # Writes an ExportOptions.plist for a manual-signing app-store export. Not
@@ -92,6 +151,36 @@ def write_export_options!(profile_name, widget_profile_name)
   path
 end
 
+desc "Create a throwaway, unlocked CI keychain on the search list. Returns its name and password."
+private_lane :ci_keychain do
+  keychain = { name: "qima-ci.keychain-db", password: SecureRandom.hex(16) }
+  create_keychain(
+    name: keychain[:name],
+    password: keychain[:password],
+    default_keychain: false,
+    unlock: true,
+    timeout: 3600
+  )
+  keychain
+end
+
+desc "Import a base64-encoded .p12 into the CI keychain."
+private_lane :import_p12 do |options|
+  keychain = options[:keychain]
+  cert_path = File.expand_path("cert.p12", Dir.pwd)
+  File.binwrite(cert_path, Base64.decode64(options[:base64]))
+  begin
+    import_certificate(
+      certificate_path: cert_path,
+      certificate_password: options[:password] || "",
+      keychain_name: keychain[:name],
+      keychain_password: keychain[:password]
+    )
+  ensure
+    File.delete(cert_path) if File.exist?(cert_path)
+  end
+end
+
 platform :ios do
   desc "Read-only: confirm the App Store Connect API key authenticates and report whether the app record already exists."
   lane :preflight do
@@ -112,29 +201,8 @@ platform :ios do
 
   desc "Import a distribution certificate (.p12) and the app and widget provisioning profiles (.mobileprovision) from base64 secrets into a throwaway CI keychain, then switch Runner and the widget extension to manual signing."
   lane :setup_signing do
-    keychain_name = "qima-ci.keychain-db"
-    keychain_password = SecureRandom.hex(16)
-
-    create_keychain(
-      name: keychain_name,
-      password: keychain_password,
-      default_keychain: false,
-      unlock: true,
-      timeout: 3600
-    )
-
-    cert_path = File.expand_path("dist_cert.p12", Dir.pwd)
-    File.binwrite(cert_path, Base64.decode64(ENV.fetch("IOS_DIST_CERT_BASE64")))
-    begin
-      import_certificate(
-        certificate_path: cert_path,
-        certificate_password: ENV.fetch("IOS_DIST_CERT_PASSWORD", ""),
-        keychain_name: keychain_name,
-        keychain_password: keychain_password
-      )
-    ensure
-      File.delete(cert_path) if File.exist?(cert_path)
-    end
+    keychain = ci_keychain
+    import_p12(keychain: keychain, base64: ENV.fetch("IOS_DIST_CERT_BASE64"), password: ENV.fetch("IOS_DIST_CERT_PASSWORD", ""))
 
     profile_name = install_profile!(ENV.fetch("IOS_PROVISION_PROFILE_BASE64"))
     widget_profile_name = install_profile!(ENV.fetch("IOS_WIDGET_PROVISION_PROFILE_BASE64"))
@@ -237,5 +305,53 @@ platform :ios do
     )
 
     UI.success("Uploaded the App Store listing for #{app_version}. Submit for review in App Store Connect.")
+  end
+end
+
+platform :mac do
+  desc "Import the distribution and Mac installer certificates and the Mac App Store profile into a throwaway CI keychain, then switch the macOS Runner to manual signing."
+  lane :setup_signing do
+    keychain = ci_keychain
+    # "Apple Distribution" signs Mac apps as well as iOS ones.
+    import_p12(keychain: keychain, base64: ENV.fetch("IOS_DIST_CERT_BASE64"), password: ENV.fetch("IOS_DIST_CERT_PASSWORD", ""))
+    import_p12(keychain: keychain, base64: ENV.fetch("MAC_INSTALLER_CERT_BASE64"), password: ENV.fetch("MAC_INSTALLER_CERT_PASSWORD", ""))
+
+    profile_name = install_profile!(ENV.fetch("MACOS_PROVISION_PROFILE_BASE64"), extension: "provisionprofile")
+    update_code_signing_settings(
+      use_automatic_signing: false,
+      path: MAC_PROJECT,
+      team_id: APPLE_TEAM_ID,
+      code_sign_identity: "Apple Distribution",
+      profile_name: profile_name,
+      targets: ["Runner"]
+    )
+    Actions.lane_context[:QIMA_MAC_PROFILE_NAME] = profile_name
+  end
+
+  desc "Build the signed Mac App Store installer package and upload it to TestFlight. Requires QIMA_BUILD_NUMBER."
+  lane :beta do
+    build_number = ENV["QIMA_BUILD_NUMBER"]
+    UI.user_error!("QIMA_BUILD_NUMBER must be set - build numbers must strictly increase per TestFlight upload.") unless build_number
+
+    api_key = require_asc_api_key!
+    setup_signing
+    pkg_path = build_mac_pkg!(build_number, Actions.lane_context[:QIMA_MAC_PROFILE_NAME])
+
+    upload_to_testflight(
+      api_key: api_key,
+      pkg: pkg_path,
+      app_platform: "osx",
+      skip_waiting_for_build_processing: true,
+      distribute_external: false
+    )
+
+    UI.success("Uploaded macOS build #{build_number} to TestFlight.")
+  end
+
+  desc "Build and sign the Mac App Store installer package WITHOUT uploading, for workflow_dispatch validation runs."
+  lane :build_only do
+    setup_signing
+    build_mac_pkg!(ENV["QIMA_BUILD_NUMBER"] || "0", Actions.lane_context[:QIMA_MAC_PROFILE_NAME])
+    UI.success("Built and signed the macOS installer package without uploading (build_only lane).")
   end
 end
