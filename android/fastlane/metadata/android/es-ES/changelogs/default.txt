@@ -1,1 +1,10 @@
-Primera versión en la tienda: precios en directo de metales, cripto, acciones, índices y divisas; posiciones y valor de la cartera; gráficos; árabe, español y francés.
+Qima 2.1.1
+• Nuevo diseño: pestañas Seguimiento, Cartera y Ajustes, con el gráfico de tu cartera en directo
+• Filtra tu lista por metales, cripto, acciones, índices o divisas
+• Alertas de precio con notificaciones
+• Widgets configurables: elige activo, unidad, quilates, divisa y periodo
+• Bloqueo con huella o rostro, y opción para ocultar saldos
+• Tema claro
+• Copia de seguridad cifrada y restauración
+• Recorrido inicial y ayuda en cada pantalla
+• Corregido: los precios no se cargaban

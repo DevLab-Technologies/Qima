@@ -1,1 +1,10 @@
-First store release: live prices for metals, crypto, stocks, indices and currencies; holdings and portfolio value; price charts; Arabic, Spanish and French.
+Qima 2.1.1
+• New layout: Watchlist, Portfolio and Settings tabs, with a live portfolio chart up front
+• Filter your watchlist by metals, crypto, stocks, indices or currencies
+• Price alerts with notifications
+• Home-screen widgets you can set up: pick the asset, unit, karat, currency and range
+• App lock with fingerprint or face, and a hide-balances switch
+• Light theme
+• Encrypted backup and restore
+• A first-run tour, and a help button on every screen
+• Fixed: prices not loading

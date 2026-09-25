@@ -73,6 +73,12 @@ Ship workflow then:
 3. builds the Android APK, macOS, Windows (installer and zip) and Linux apps
    and publishes them as a GitHub **pre-release** under that tag.
 
+Before bumping to a new version, update the Play release notes in
+`android/fastlane/metadata/android/<locale>/changelogs/default.txt` (at most
+500 characters each). Each file opens with the version, e.g. `Qima 2.1.1`,
+and the Android upload refuses to run while any locale still names an older
+version. Play then creates the internal-testing release with those notes.
+
 For another build of the same version, bump only the build (`2.1.1+2`) and
 merge again. Other ways to run it:
 

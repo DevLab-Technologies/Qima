@@ -46,6 +46,21 @@ def version_code_for(version, build)
   major * 1_000_000 + minor * 10_000 + patch * 100 + build
 end
 
+# Each locale's release notes open with the version they describe ("Qima
+# 2.1.1" / "قيمة 2.1.1"), so a new version can't ship with the last one's
+# notes by accident: check before spending a build on it.
+def ensure_release_notes_for!(version)
+  notes = Dir.glob(File.expand_path("metadata/android/*/changelogs/default.txt", __dir__))
+  UI.user_error!("No release notes under metadata/android/*/changelogs/default.txt.") if notes.empty?
+  stale = notes.reject { |path| File.foreach(path).first.to_s.include?(version) }
+  return if stale.empty?
+
+  UI.user_error!(
+    "Release notes don't mention #{version} yet - update these for this version:\n" +
+    stale.map { |path| "  #{path.delete_prefix(REPO_ROOT + '/')}" }.join("\n")
+  )
+end
+
 # The highest versionCode already on any Play track. Asking Play is robust
 # against manual Console uploads, which nothing in CI can see.
 def highest_version_code(json_key_data)
@@ -125,6 +140,7 @@ platform :android do
     # errors, so a bad key must not be mistaken for "no releases yet".
     validate_play_store_json_key(json_key_data: json_key_data)
     version, build = pubspec_version!
+    ensure_release_notes_for!(version)
     version_code = version_code_for(version, build)
     highest = highest_version_code(json_key_data)
     if version_code <= highest
@@ -148,8 +164,12 @@ platform :android do
       # CI passes an unset repository variable as "", so treat blank as unset.
       release_status: ENV["PLAY_RELEASE_STATUS"].to_s.strip.empty? ? "draft" : ENV["PLAY_RELEASE_STATUS"],
       skip_upload_apk: true,
+      # The release carries its "What's new" text from
+      # metadata/android/<locale>/changelogs/default.txt (update it with each
+      # version); the store listing itself only changes via the metadata lane.
+      metadata_path: File.expand_path("metadata/android", __dir__),
       skip_upload_metadata: true,
-      skip_upload_changelogs: true,
+      skip_upload_changelogs: false,
       skip_upload_images: true,
       skip_upload_screenshots: true
     )
