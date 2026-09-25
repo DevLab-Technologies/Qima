@@ -12,44 +12,34 @@ import '../services/price_converter.dart';
 import '../theme/instrument_theme.dart';
 import '../theme/masking.dart';
 import '../theme/qima_colors.dart';
+import 'widget_snapshot.dart';
 
 /// Bridges [AppState] to the native home-screen widgets via the
 /// `home_widget` plugin.
 ///
 /// ## Data contract
 ///
-/// This app does not yet have OS-level per-widget-instance configuration
-/// wired up (that requires an Android "Configuration Activity" and an iOS
-/// `AppIntentConfiguration`, both of which are native-only surfaces a
-/// Flutter app cannot define without a platform extension — see
-/// `WIDGETS_IOS_SETUP.md` at the project root). Until that lands, every
-/// placed widget shows the SAME snapshot:
-///
-/// - **Price widget** mirrors the FIRST card in the user's watchlist
-///   (`AppState.cards.first`), in that card's own configured
-///   currency/unit/karat. There is no per-widget instrument picker yet.
-/// - **Portfolio widget** mirrors the user's base currency
-///   (`AppState.baseCurrency`).
-///
-/// Both are written as a single JSON blob per widget kind under one string
-/// key each (`price_widget_data` / `portfolio_widget_data`), because
-/// `home_widget`'s underlying storage (`SharedPreferences` on Android,
-/// `UserDefaults`/app-group container on iOS/macOS) is a flat string/number
-/// key-value store — a small JSON envelope keeps the two platforms'
-/// widget code reading one shape instead of several ad hoc keys that could
-/// drift out of sync with each other.
-///
-/// Precomputing everything to plain strings/numbers here (rather than
-/// letting native code recompute money formatting, trend arrows, etc.)
-/// keeps ALL business logic — magnitude-band formatting, RangeChange
-/// guard rules, sparkline windowing — inside the already-tested Dart
-/// layer. Native widget code is a pure renderer.
+/// - **iOS (WidgetKit)** reads one [WidgetSnapshot] under
+///   [WidgetSnapshot.storageKey] in the shared App Group
+///   ([appGroupID]). Every placed widget is configured on its own (asset,
+///   unit, karat, currency, chart range) with an App Intent, so the
+///   snapshot carries raw canonical-USD series and FX data and the
+///   extension prices each configuration itself — see [WidgetSnapshot].
+/// - **Android (Glance)** has no per-widget configuration yet and reads two
+///   precomputed JSON blobs: the price widget mirrors the FIRST watchlist
+///   card in its own currency/unit/karat (`price_widget_data`), the
+///   portfolio widget mirrors the base currency (`portfolio_widget_data`).
+///   Everything is formatted here so Glance code stays a pure renderer.
 ///
 /// Money strings use each currency's fallback symbol: native widgets render
 /// with system fonts, which on older OS versions have no glyph for the
 /// Saudi Riyal sign the app itself draws from a bundled font.
 class HomeWidgetService {
   HomeWidgetService._();
+
+  /// Must match the App Group on the Runner and widget extension
+  /// entitlements.
+  static const appGroupID = 'group.com.devlabtechnologies.qima';
 
   static const priceWidgetDataKey = 'price_widget_data';
   static const portfolioWidgetDataKey = 'portfolio_widget_data';
@@ -71,6 +61,14 @@ class HomeWidgetService {
   /// this is a background side effect of an otherwise-successful refresh.
   static Future<void> publish(AppState state) async {
     try {
+      // Idempotent; set on every publish because background refreshes run
+      // in a fresh isolate that never went through app start-up.
+      await HomeWidget.setAppGroupId(appGroupID);
+      await _publishSnapshot(state);
+    } catch (e, st) {
+      debugPrint('HomeWidgetService: widget snapshot publish failed: $e\n$st');
+    }
+    try {
       await _publishPrice(state);
     } catch (e, st) {
       debugPrint('HomeWidgetService: price widget publish failed: $e\n$st');
@@ -80,6 +78,16 @@ class HomeWidgetService {
     } catch (e, st) {
       debugPrint('HomeWidgetService: portfolio widget publish failed: $e\n$st');
     }
+  }
+
+  /// iOS kinds, matching `kind` in the widget extension.
+  static const iOSPriceKind = 'PriceWidget';
+  static const iOSPortfolioKind = 'PortfolioWidget';
+
+  static Future<void> _publishSnapshot(AppState state) async {
+    if (defaultTargetPlatform != TargetPlatform.iOS) return;
+    final snapshot = WidgetSnapshot.build(state, now: DateTime.now());
+    await HomeWidget.saveWidgetData<String>(WidgetSnapshot.storageKey, jsonEncode(snapshot));
   }
 
   static Future<void> _publishPrice(AppState state) async {
@@ -94,7 +102,7 @@ class HomeWidgetService {
       name: 'PriceGlanceReceiver',
       androidName: _priceReceiverClass,
       qualifiedAndroidName: _priceReceiverClass,
-      iOSName: 'PriceWidget',
+      iOSName: iOSPriceKind,
     );
   }
 
@@ -127,7 +135,7 @@ class HomeWidgetService {
       name: 'PortfolioGlanceReceiver',
       androidName: _portfolioReceiverClass,
       qualifiedAndroidName: _portfolioReceiverClass,
-      iOSName: 'PortfolioWidget',
+      iOSName: iOSPortfolioKind,
     );
   }
 

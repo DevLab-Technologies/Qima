@@ -28,8 +28,9 @@ tag must match it, or the workflow fails before building.
 3. **Distribution certificate**: Keychain Access → export the *Apple Distribution* certificate with its private key as `.p12`.
    - `IOS_DIST_CERT_BASE64`: `base64 -i dist.p12 | pbcopy`
    - `IOS_DIST_CERT_PASSWORD`: the export password
-4. **Provisioning profile**: developer.apple.com → Profiles → **+** → *App Store Connect*, for the bundle ID and certificate above.
-   - `IOS_PROVISION_PROFILE_BASE64`: `base64 -i Qima_AppStore.mobileprovision | pbcopy`
+4. **Provisioning profiles**: developer.apple.com → Profiles → **+** → *App Store Connect*, one per bundle ID, both with the certificate above. Both App IDs need the App Group `group.com.devlabtechnologies.qima`; the app's also needs iCloud (key-value storage).
+   - `IOS_PROVISION_PROFILE_BASE64`: the app, `com.devlabtechnologies.qima`: `base64 -i Qima_App_Store.mobileprovision | pbcopy`
+   - `IOS_WIDGET_PROVISION_PROFILE_BASE64`: the widget extension, `com.devlabtechnologies.qima.widget`: `base64 -i Qima_Widget_App_Store.mobileprovision | pbcopy`
 
 Check the key without uploading: `cd ios && ASC_KEY_ID=… ASC_ISSUER_ID=… ASC_KEY_CONTENT=… bundle exec fastlane ios preflight`.
 

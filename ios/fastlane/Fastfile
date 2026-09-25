@@ -6,6 +6,8 @@ require "shellwords"
 default_platform(:ios)
 
 APP_IDENTIFIER = "com.devlabtechnologies.qima"
+WIDGET_IDENTIFIER = "com.devlabtechnologies.qima.widget"
+WIDGET_TARGET = "QimaWidgetExtension"
 APPLE_TEAM_ID = "ZS3A435WC2"
 # fastlane's working directory is not guaranteed to be the repo root, so
 # anchor every path to it explicitly. __dir__ here is ios/fastlane.
@@ -36,9 +38,29 @@ def require_asc_api_key!
   )
 end
 
+# Installs a base64-encoded .mobileprovision where Xcode looks for profiles
+# and returns its Name, which the signing settings and export options use.
+def install_profile!(base64_content)
+  profile_path = File.expand_path("profile.mobileprovision", Dir.pwd)
+  File.binwrite(profile_path, Base64.decode64(base64_content))
+  begin
+    plist_xml = Actions.sh("security cms -D -i #{profile_path.shellescape}", log: false)
+    uuid = plist_xml[/<key>UUID<\/key>\s*<string>(.*?)<\/string>/m, 1]
+    profile_name = plist_xml[/<key>Name<\/key>\s*<string>(.*?)<\/string>/m, 1]
+    UI.user_error!("Could not read UUID/Name from the provisioning profile.") unless uuid && profile_name
+
+    profiles_dir = File.expand_path("~/Library/MobileDevice/Provisioning Profiles")
+    FileUtils.mkdir_p(profiles_dir)
+    FileUtils.cp(profile_path, File.join(profiles_dir, "#{uuid}.mobileprovision"))
+  ensure
+    File.delete(profile_path) if File.exist?(profile_path)
+  end
+  profile_name
+end
+
 # Writes an ExportOptions.plist for a manual-signing app-store export. Not
-# checked into git because the profile name comes from a secret at build time.
-def write_export_options!(profile_name)
+# checked into git because the profile names come from secrets at build time.
+def write_export_options!(profile_name, widget_profile_name)
   path = File.expand_path("../ExportOptions.plist", __dir__)
   File.write(path, <<~PLIST)
     <?xml version="1.0" encoding="UTF-8"?>
@@ -57,6 +79,8 @@ def write_export_options!(profile_name)
       <dict>
         <key>#{APP_IDENTIFIER}</key>
         <string>#{profile_name}</string>
+        <key>#{WIDGET_IDENTIFIER}</key>
+        <string>#{widget_profile_name}</string>
       </dict>
       <key>uploadBitcode</key>
       <false/>
@@ -86,7 +110,7 @@ platform :ios do
     end
   end
 
-  desc "Import a distribution certificate (.p12) and provisioning profile (.mobileprovision) from base64 secrets into a throwaway CI keychain, then switch Runner to manual signing."
+  desc "Import a distribution certificate (.p12) and the app and widget provisioning profiles (.mobileprovision) from base64 secrets into a throwaway CI keychain, then switch Runner and the widget extension to manual signing."
   lane :setup_signing do
     keychain_name = "qima-ci.keychain-db"
     keychain_password = SecureRandom.hex(16)
@@ -112,18 +136,8 @@ platform :ios do
       File.delete(cert_path) if File.exist?(cert_path)
     end
 
-    profile_path = File.expand_path("profile.mobileprovision", Dir.pwd)
-    File.binwrite(profile_path, Base64.decode64(ENV.fetch("IOS_PROVISION_PROFILE_BASE64")))
-
-    plist_xml = sh("security cms -D -i #{profile_path.shellescape}", log: false)
-    uuid = plist_xml[/<key>UUID<\/key>\s*<string>(.*?)<\/string>/m, 1]
-    profile_name = plist_xml[/<key>Name<\/key>\s*<string>(.*?)<\/string>/m, 1]
-    UI.user_error!("Could not read UUID/Name from the provisioning profile.") unless uuid && profile_name
-
-    profiles_dir = File.expand_path("~/Library/MobileDevice/Provisioning Profiles")
-    FileUtils.mkdir_p(profiles_dir)
-    FileUtils.cp(profile_path, File.join(profiles_dir, "#{uuid}.mobileprovision"))
-    File.delete(profile_path)
+    profile_name = install_profile!(ENV.fetch("IOS_PROVISION_PROFILE_BASE64"))
+    widget_profile_name = install_profile!(ENV.fetch("IOS_WIDGET_PROVISION_PROFILE_BASE64"))
 
     update_code_signing_settings(
       use_automatic_signing: false,
@@ -133,8 +147,17 @@ platform :ios do
       profile_name: profile_name,
       targets: ["Runner"]
     )
+    update_code_signing_settings(
+      use_automatic_signing: false,
+      path: "Runner.xcodeproj",
+      team_id: APPLE_TEAM_ID,
+      code_sign_identity: "Apple Distribution",
+      profile_name: widget_profile_name,
+      targets: [WIDGET_TARGET]
+    )
 
     Actions.lane_context[:QIMA_PROFILE_NAME] = profile_name
+    Actions.lane_context[:QIMA_WIDGET_PROFILE_NAME] = widget_profile_name
   end
 
   desc "Build the release IPA and upload it to TestFlight. Requires QIMA_BUILD_NUMBER (CI passes github.run_number, or latest_testflight_build_number + 1)."
@@ -144,7 +167,10 @@ platform :ios do
 
     api_key = require_asc_api_key!
     setup_signing
-    export_options_path = write_export_options!(Actions.lane_context[:QIMA_PROFILE_NAME])
+    export_options_path = write_export_options!(
+      Actions.lane_context[:QIMA_PROFILE_NAME],
+      Actions.lane_context[:QIMA_WIDGET_PROFILE_NAME]
+    )
 
     Dir.chdir(REPO_ROOT) do
       sh(
@@ -172,7 +198,10 @@ platform :ios do
   lane :build_only do
     build_number = ENV["QIMA_BUILD_NUMBER"] || "0"
     setup_signing
-    export_options_path = write_export_options!(Actions.lane_context[:QIMA_PROFILE_NAME])
+    export_options_path = write_export_options!(
+      Actions.lane_context[:QIMA_PROFILE_NAME],
+      Actions.lane_context[:QIMA_WIDGET_PROFILE_NAME]
+    )
 
     Dir.chdir(REPO_ROOT) do
       sh(

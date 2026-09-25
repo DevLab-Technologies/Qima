@@ -7,21 +7,41 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0F7349CF2DC86E7FEFAE7E34 /* PortfolioWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07624C0012DECBE889434CFA /* PortfolioWidget.swift */; };
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
 		331C808B294A63AB00263BE5 /* RunnerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 331C807B294A618700263BE5 /* RunnerTests.swift */; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
+		3E9DD0E261620C3558BC4233 /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75DD25601108DAD5152C600B /* Components.swift */; };
 		44D7345EA79FD186FACF0BF3 /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0543E7527BB75E3921F637E0 /* Pods_Runner.framework */; };
+		4DF3F8BD19290C3978CB3CBF /* Style.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFFB65C63B793F955A51C719 /* Style.swift */; };
+		5837FB7023AA69A61801EF7A /* AppIntents.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B75AD0EDDBE1390F319BFF7B /* AppIntents.framework */; };
+		61D21369D21F5848843B9A62 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01B2128AD33F3E9FBFBD9C27 /* Foundation.framework */; };
 		74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74858FAE1ED2DC5600515810 /* AppDelegate.swift */; };
+		78728EE0FFF6868E22D5BFCB /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D182F74BEE65A17C3768E4EE /* WidgetKit.framework */; };
 		7884E8682EC3CC0700C636F2 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7884E8672EC3CC0400C636F2 /* SceneDelegate.swift */; };
 		78A318202AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 78A3181F2AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage */; };
+		78FEB5371876CC3CC21541C6 /* Snapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45982C19AB91A2BE84668221 /* Snapshot.swift */; };
+		96337F53EA67D635F6AE883B /* Intents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85BC897468A93912BFFD90DD /* Intents.swift */; };
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
 		A131E80A7AA06ED4A9F20647 /* CloudKVPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C17207816BE6A8A148BE81D /* CloudKVPlugin.swift */; };
+		A9E90784C671485521F9FC10 /* QimaWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 1AB69C3516654ACD919EC695 /* QimaWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		C30B5E44FD61F79F38D07BAB /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C568E3D1924E43B5B314D32 /* SwiftUI.framework */; };
+		E264BF0CD571C8346C1EEF60 /* QimaWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 049F19D0C32724E78A5E2DE8 /* QimaWidgetBundle.swift */; };
+		F213BFF32CC6D97925090ED2 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 606679B5F3386110AF3C55EB /* Localizable.strings */; };
 		F96F99A3CC75BBE75FFB8F73 /* Pods_RunnerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 19923066CD80366CC12F0610 /* Pods_RunnerTests.framework */; };
+		FAFBC619DC50C0E43D04EE42 /* PriceWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC6F4E4FEB967333F0DD9ED7 /* PriceWidget.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		2F08599221018D01AF3FC225 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 97C146E61CF9000F007C117D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E23EEB0DBB62173AA93D1474;
+			remoteInfo = QimaWidgetExtension;
+		};
 		331C8085294A63A400263BE5 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 97C146E61CF9000F007C117D /* Project object */;
@@ -42,24 +62,48 @@
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		AD810CC598734F1CC9182836 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				A9E90784C671485521F9FC10 /* QimaWidgetExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		01B2128AD33F3E9FBFBD9C27 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		049F19D0C32724E78A5E2DE8 /* QimaWidgetBundle.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = QimaWidgetBundle.swift; sourceTree = "<group>"; };
 		0543E7527BB75E3921F637E0 /* Pods_Runner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Runner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		07624C0012DECBE889434CFA /* PortfolioWidget.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PortfolioWidget.swift; sourceTree = "<group>"; };
 		1129048ADFDFE8178B56D6DD /* Pods-RunnerTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.release.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.release.xcconfig"; sourceTree = "<group>"; };
 		1498D2321E8E86230040F4C2 /* GeneratedPluginRegistrant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GeneratedPluginRegistrant.h; sourceTree = "<group>"; };
 		1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneratedPluginRegistrant.m; sourceTree = "<group>"; };
 		19923066CD80366CC12F0610 /* Pods_RunnerTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RunnerTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		1AB69C3516654ACD919EC695 /* QimaWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; name = QimaWidgetExtension.appex; path = QimaWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		28164801DADAD4AAA5130696 /* fr */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/Localizable.strings; sourceTree = "<group>"; };
+		2BFDCFD8791FD46B2C975F2E /* QimaWidget.entitlements */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.entitlements; path = QimaWidget.entitlements; sourceTree = "<group>"; };
 		2C17207816BE6A8A148BE81D /* CloudKVPlugin.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CloudKVPlugin.swift; sourceTree = "<group>"; };
 		331C807B294A618700263BE5 /* RunnerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunnerTests.swift; sourceTree = "<group>"; };
 		331C8081294A63A400263BE5 /* RunnerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RunnerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = AppFrameworkInfo.plist; path = Flutter/AppFrameworkInfo.plist; sourceTree = "<group>"; };
+		45982C19AB91A2BE84668221 /* Snapshot.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Snapshot.swift; sourceTree = "<group>"; };
 		6DDF1C9B8D9D7476FC8A321F /* Pods-Runner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"; sourceTree = "<group>"; };
+		6E54821E7E3CD29F0B8B958A /* ar */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.strings; name = ar; path = ar.lproj/Localizable.strings; sourceTree = "<group>"; };
 		74858FAD1ED2DC5600515810 /* Runner-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Runner-Bridging-Header.h"; sourceTree = "<group>"; };
 		74858FAE1ED2DC5600515810 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		75DD25601108DAD5152C600B /* Components.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Components.swift; sourceTree = "<group>"; };
 		7884E8672EC3CC0400C636F2 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		78A9E71DEA755E510FC55048 /* en */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		78E0A7A72DC9AD7400C4905E /* FlutterGeneratedPluginSwiftPackage */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = FlutterGeneratedPluginSwiftPackage; path = Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage; sourceTree = "<group>"; };
 		7AFA3C8E1D35360C0083082E /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Release.xcconfig; path = Flutter/Release.xcconfig; sourceTree = "<group>"; };
+		7C568E3D1924E43B5B314D32 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		85BC897468A93912BFFD90DD /* Intents.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Intents.swift; sourceTree = "<group>"; };
+		89303B6A20E7730FE37F7356 /* QimaWidget.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = QimaWidget.xcconfig; sourceTree = "<group>"; };
 		8FC8DB27897060618A7308B6 /* Runner.entitlements */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.entitlements; path = Runner.entitlements; sourceTree = "<group>"; };
 		913B2B9380962DDFB163E85D /* Pods-RunnerTests.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.profile.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.profile.xcconfig"; sourceTree = "<group>"; };
 		9740EEB21CF90195004384FC /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Debug.xcconfig; path = Flutter/Debug.xcconfig; sourceTree = "<group>"; };
@@ -69,12 +113,29 @@
 		97C146FD1CF9000F007C117D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		97C147001CF9000F007C117D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		97C147021CF9000F007C117D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B75AD0EDDBE1390F319BFF7B /* AppIntents.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppIntents.framework; path = System/Library/Frameworks/AppIntents.framework; sourceTree = SDKROOT; };
+		BDD496E82EFA8E007B85E83B /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		BFD37CB6F239777D2EEC2734 /* es */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Localizable.strings; sourceTree = "<group>"; };
 		C5B31F6407E07BC04B701770 /* Pods-Runner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"; sourceTree = "<group>"; };
+		CC6F4E4FEB967333F0DD9ED7 /* PriceWidget.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PriceWidget.swift; sourceTree = "<group>"; };
+		D182F74BEE65A17C3768E4EE /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		DFFB65C63B793F955A51C719 /* Style.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Style.swift; sourceTree = "<group>"; };
 		E14A81BE438B9AE25D58F359 /* Pods-Runner.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig"; sourceTree = "<group>"; };
 		ED1CC9AB57161341EDE78586 /* Pods-RunnerTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.debug.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		2C3F92B3BE3413789AD44837 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				61D21369D21F5848843B9A62 /* Foundation.framework in Frameworks */,
+				78728EE0FFF6868E22D5BFCB /* WidgetKit.framework in Frameworks */,
+				C30B5E44FD61F79F38D07BAB /* SwiftUI.framework in Frameworks */,
+				5837FB7023AA69A61801EF7A /* AppIntents.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		95D8F0E4D6F8F138A8EAA939 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -100,6 +161,10 @@
 			children = (
 				0543E7527BB75E3921F637E0 /* Pods_Runner.framework */,
 				19923066CD80366CC12F0610 /* Pods_RunnerTests.framework */,
+				91D30CE1C29C1784F5A225D5 /* iOS */,
+				D182F74BEE65A17C3768E4EE /* WidgetKit.framework */,
+				7C568E3D1924E43B5B314D32 /* SwiftUI.framework */,
+				B75AD0EDDBE1390F319BFF7B /* AppIntents.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -125,6 +190,33 @@
 			path = RunnerTests;
 			sourceTree = "<group>";
 		};
+		3E3B8E77136C17C052ED743B /* QimaWidget */ = {
+			isa = PBXGroup;
+			children = (
+				049F19D0C32724E78A5E2DE8 /* QimaWidgetBundle.swift */,
+				45982C19AB91A2BE84668221 /* Snapshot.swift */,
+				DFFB65C63B793F955A51C719 /* Style.swift */,
+				85BC897468A93912BFFD90DD /* Intents.swift */,
+				75DD25601108DAD5152C600B /* Components.swift */,
+				CC6F4E4FEB967333F0DD9ED7 /* PriceWidget.swift */,
+				07624C0012DECBE889434CFA /* PortfolioWidget.swift */,
+				BDD496E82EFA8E007B85E83B /* Info.plist */,
+				2BFDCFD8791FD46B2C975F2E /* QimaWidget.entitlements */,
+				89303B6A20E7730FE37F7356 /* QimaWidget.xcconfig */,
+				606679B5F3386110AF3C55EB /* Localizable.strings */,
+			);
+			name = QimaWidget;
+			path = QimaWidget;
+			sourceTree = "<group>";
+		};
+		91D30CE1C29C1784F5A225D5 /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				01B2128AD33F3E9FBFBD9C27 /* Foundation.framework */,
+			);
+			name = iOS;
+			sourceTree = "<group>";
+		};
 		9740EEB11CF90186004384FC /* Flutter */ = {
 			isa = PBXGroup;
 			children = (
@@ -146,6 +238,7 @@
 				331C8082294A63A400263BE5 /* RunnerTests */,
 				2DA24FDA9B9EA93DA613293C /* Pods */,
 				0345EDEA884BB14AB4F233DF /* Frameworks */,
+				3E3B8E77136C17C052ED743B /* QimaWidget */,
 			);
 			sourceTree = "<group>";
 		};
@@ -154,6 +247,7 @@
 			children = (
 				97C146EE1CF9000F007C117D /* Runner.app */,
 				331C8081294A63A400263BE5 /* RunnerTests.xctest */,
+				1AB69C3516654ACD919EC695 /* QimaWidgetExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -208,11 +302,13 @@
 				97C146EB1CF9000F007C117D /* Frameworks */,
 				97C146EC1CF9000F007C117D /* Resources */,
 				9705A1C41CF9048500538489 /* Embed Frameworks */,
+				AD810CC598734F1CC9182836 /* Embed Foundation Extensions */,
 				3B06AD1E1E4923F5004D2608 /* Thin Binary */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				715BAEDAE2A97512573007FD /* PBXTargetDependency */,
 			);
 			name = Runner;
 			packageProductDependencies = (
@@ -221,6 +317,23 @@
 			productName = Runner;
 			productReference = 97C146EE1CF9000F007C117D /* Runner.app */;
 			productType = "com.apple.product-type.application";
+		};
+		E23EEB0DBB62173AA93D1474 /* QimaWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 34793075A3D23EAB2E279C24 /* Build configuration list for PBXNativeTarget "QimaWidgetExtension" */;
+			buildPhases = (
+				6D54E3686E17E6CDD1EBFD90 /* Sources */,
+				2C3F92B3BE3413789AD44837 /* Frameworks */,
+				6CAC9C90799121E1F3BE4187 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = QimaWidgetExtension;
+			productName = QimaWidgetExtension;
+			productReference = 1AB69C3516654ACD919EC695 /* QimaWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -240,6 +353,9 @@
 						CreatedOnToolsVersion = 7.3.1;
 						LastSwiftMigration = 1100;
 					};
+					E23EEB0DBB62173AA93D1474 = {
+						CreatedOnToolsVersion = 16.0;
+					};
 				};
 			};
 			buildConfigurationList = 97C146E91CF9000F007C117D /* Build configuration list for PBXProject "Runner" */;
@@ -249,6 +365,9 @@
 			knownRegions = (
 				en,
 				Base,
+				ar,
+				es,
+				fr,
 			);
 			mainGroup = 97C146E51CF9000F007C117D;
 			packageReferences = (
@@ -260,6 +379,7 @@
 			targets = (
 				97C146ED1CF9000F007C117D /* Runner */,
 				331C8080294A63A400263BE5 /* RunnerTests */,
+				E23EEB0DBB62173AA93D1474 /* QimaWidgetExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -269,6 +389,14 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6CAC9C90799121E1F3BE4187 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F213BFF32CC6D97925090ED2 /* Localizable.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -372,6 +500,20 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		6D54E3686E17E6CDD1EBFD90 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E264BF0CD571C8346C1EEF60 /* QimaWidgetBundle.swift in Sources */,
+				78FEB5371876CC3CC21541C6 /* Snapshot.swift in Sources */,
+				4DF3F8BD19290C3978CB3CBF /* Style.swift in Sources */,
+				96337F53EA67D635F6AE883B /* Intents.swift in Sources */,
+				3E9DD0E261620C3558BC4233 /* Components.swift in Sources */,
+				FAFBC619DC50C0E43D04EE42 /* PriceWidget.swift in Sources */,
+				0F7349CF2DC86E7FEFAE7E34 /* PortfolioWidget.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		97C146EA1CF9000F007C117D /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -391,9 +533,26 @@
 			target = 97C146ED1CF9000F007C117D /* Runner */;
 			targetProxy = 331C8085294A63A400263BE5 /* PBXContainerItemProxy */;
 		};
+		715BAEDAE2A97512573007FD /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = QimaWidgetExtension;
+			target = E23EEB0DBB62173AA93D1474 /* QimaWidgetExtension */;
+			targetProxy = 2F08599221018D01AF3FC225 /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		606679B5F3386110AF3C55EB /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				78A9E71DEA755E510FC55048 /* en */,
+				6E54821E7E3CD29F0B8B958A /* ar */,
+				BFD37CB6F239777D2EEC2734 /* es */,
+				28164801DADAD4AAA5130696 /* fr */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
 		97C146FA1CF9000F007C117D /* Main.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -413,6 +572,34 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		0F18DF4942CEC123AFF793BD /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 89303B6A20E7730FE37F7356 /* QimaWidget.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = "";
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_ENTITLEMENTS = QimaWidget/QimaWidget.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = ZS3A435WC2;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = QimaWidget/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.devlabtechnologies.qima.widget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 		249021D3217E4FDB00AE95B9 /* Profile */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -535,6 +722,34 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Runner.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Runner";
+			};
+			name = Profile;
+		};
+		4461799C79D1BA8C560BAB17 /* Profile */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 89303B6A20E7730FE37F7356 /* QimaWidget.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = "";
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_ENTITLEMENTS = QimaWidget/QimaWidget.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = ZS3A435WC2;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = QimaWidget/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.devlabtechnologies.qima.widget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
 			};
 			name = Profile;
 		};
@@ -696,6 +911,33 @@
 			};
 			name = Release;
 		};
+		E16F00BDAEC352028D5C607A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 89303B6A20E7730FE37F7356 /* QimaWidget.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = "";
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_ENTITLEMENTS = QimaWidget/QimaWidget.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = ZS3A435WC2;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = QimaWidget/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.devlabtechnologies.qima.widget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -705,6 +947,16 @@
 				331C8088294A63A400263BE5 /* Debug */,
 				331C8089294A63A400263BE5 /* Release */,
 				331C808A294A63A400263BE5 /* Profile */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		34793075A3D23EAB2E279C24 /* Build configuration list for PBXNativeTarget "QimaWidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0F18DF4942CEC123AFF793BD /* Release */,
+				E16F00BDAEC352028D5C607A /* Debug */,
+				4461799C79D1BA8C560BAB17 /* Profile */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
