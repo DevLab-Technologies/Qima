@@ -1,11 +1,20 @@
-name: Release
+name: GitHub Release
 
-# Tag-driven: `git tag v1.0.0 && git push origin v1.0.0` builds a signed APK and
-# publishes it as a GitHub Release. Manual runs build and verify the same
-# artifact without publishing, which is the safe way to test changes here.
+# Builds the downloadable apps - signed Android APK, macOS, Windows (installer
+# and zip) and Linux - and, when publishing, attaches them to a GitHub
+# Release for the given tag. Called by ship.yml, which decides when to
+# publish; manual runs only build, which is the safe way to test changes here.
 on:
-  push:
-    tags: ["v*"]
+  workflow_call:
+    inputs:
+      publish:
+        description: Attach the builds to a GitHub Release for `tag`.
+        type: boolean
+        required: true
+      tag:
+        description: The release tag, e.g. v2.1.1+1. Required when publishing.
+        type: string
+        default: ""
   workflow_dispatch:
 
 # Keep in step with ci.yml.
@@ -35,16 +44,6 @@ jobs:
       # pubspec.yaml is the single source of truth for the version. A tag that
       # disagrees with it would publish an asset whose in-app version differs
       # from its release name, so fail loudly instead.
-      - name: Verify tag matches pubspec version
-        if: startsWith(github.ref, 'refs/tags/')
-        run: |
-          pubspec_version="$(grep -E '^version:' pubspec.yaml | awk '{print $2}' | cut -d+ -f1)"
-          tag_version="${GITHUB_REF_NAME#v}"
-          if [ "$pubspec_version" != "$tag_version" ]; then
-            echo "::error::Tag $GITHUB_REF_NAME does not match pubspec version $pubspec_version."
-            echo 'Bump the version: line in pubspec.yaml (both the name and the +buildNumber) and retag.'
-            exit 1
-          fi
 
       # Fail before building rather than silently shipping a debug-signed APK:
       # build.gradle.kts falls back to the debug key when signing material is
@@ -110,17 +109,6 @@ jobs:
           name: qima-android-apk
           path: dist/
 
-      - name: Publish GitHub Release
-        if: startsWith(github.ref, 'refs/tags/')
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          gh release create "$GITHUB_REF_NAME" dist/* \
-            --title "Qima $GITHUB_REF_NAME" \
-            --generate-notes \
-            --verify-tag \
-            || gh release upload "$GITHUB_REF_NAME" dist/* --clobber
-
   macos:
     name: macOS app
     runs-on: macos-15
@@ -131,17 +119,6 @@ jobs:
         with:
           channel: stable
           flutter-version: ${{ env.FLUTTER_VERSION }}
-
-      - name: Verify tag matches pubspec version
-        if: startsWith(github.ref, 'refs/tags/')
-        run: |
-          pubspec_version="$(grep -E '^version:' pubspec.yaml | awk '{print $2}' | cut -d+ -f1)"
-          tag_version="${GITHUB_REF_NAME#v}"
-          if [ "$pubspec_version" != "$tag_version" ]; then
-            echo "::error::Tag $GITHUB_REF_NAME does not match pubspec version $pubspec_version."
-            echo 'Bump the version: line in pubspec.yaml (both the name and the +buildNumber) and retag.'
-            exit 1
-          fi
 
       # Plugins resolve through Swift Package Manager (app_settings ships no
       # podspec), matching the committed Xcode project.
@@ -173,17 +150,6 @@ jobs:
           name: qima-macos-app
           path: dist/
 
-      - name: Publish GitHub Release
-        if: startsWith(github.ref, 'refs/tags/')
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          gh release create "$GITHUB_REF_NAME" dist/* \
-            --title "Qima $GITHUB_REF_NAME" \
-            --generate-notes \
-            --verify-tag \
-            || gh release upload "$GITHUB_REF_NAME" dist/* --clobber
-
   windows:
     name: Windows app
     runs-on: windows-latest
@@ -194,18 +160,6 @@ jobs:
         with:
           channel: stable
           flutter-version: ${{ env.FLUTTER_VERSION }}
-
-      - name: Verify tag matches pubspec version
-        if: startsWith(github.ref, 'refs/tags/')
-        shell: bash
-        run: |
-          pubspec_version="$(grep -E '^version:' pubspec.yaml | awk '{print $2}' | cut -d+ -f1)"
-          tag_version="${GITHUB_REF_NAME#v}"
-          if [ "$pubspec_version" != "$tag_version" ]; then
-            echo "::error::Tag $GITHUB_REF_NAME does not match pubspec version $pubspec_version."
-            echo 'Bump the version: line in pubspec.yaml (both the name and the +buildNumber) and retag.'
-            exit 1
-          fi
 
       - name: Install dependencies
         run: flutter pub get
@@ -246,18 +200,6 @@ jobs:
           name: qima-windows-app
           path: dist/
 
-      - name: Publish GitHub Release
-        if: startsWith(github.ref, 'refs/tags/')
-        shell: bash
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          gh release create "$GITHUB_REF_NAME" dist/* \
-            --title "Qima $GITHUB_REF_NAME" \
-            --generate-notes \
-            --verify-tag \
-            || gh release upload "$GITHUB_REF_NAME" dist/* --clobber
-
   linux:
     name: Linux app
     runs-on: ubuntu-latest
@@ -268,17 +210,6 @@ jobs:
         with:
           channel: stable
           flutter-version: ${{ env.FLUTTER_VERSION }}
-
-      - name: Verify tag matches pubspec version
-        if: startsWith(github.ref, 'refs/tags/')
-        run: |
-          pubspec_version="$(grep -E '^version:' pubspec.yaml | awk '{print $2}' | cut -d+ -f1)"
-          tag_version="${GITHUB_REF_NAME#v}"
-          if [ "$pubspec_version" != "$tag_version" ]; then
-            echo "::error::Tag $GITHUB_REF_NAME does not match pubspec version $pubspec_version."
-            echo 'Bump the version: line in pubspec.yaml (both the name and the +buildNumber) and retag.'
-            exit 1
-          fi
 
       - name: Install Linux build dependencies
         run: |
@@ -306,13 +237,30 @@ jobs:
           name: qima-linux-bundle
           path: dist/
 
-      - name: Publish GitHub Release
-        if: startsWith(github.ref, 'refs/tags/')
+  # One release, created once every build has succeeded, so a half-built
+  # release is never public. Pre-release: store builds are still in testing
+  # when this runs; untick "pre-release" on GitHub once the version ships.
+  publish:
+    name: Publish GitHub Release
+    if: inputs.publish
+    needs: [android, macos, windows, linux]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+
+      - name: Create the release
         env:
           GH_TOKEN: ${{ github.token }}
+          TAG: ${{ inputs.tag }}
         run: |
-          gh release create "$GITHUB_REF_NAME" dist/* \
-            --title "Qima $GITHUB_REF_NAME" \
+          [ -n "$TAG" ] || { echo "::error::No tag given to publish."; exit 1; }
+          ls -lh dist
+          gh release create "$TAG" dist/* \
+            --repo "$GITHUB_REPOSITORY" \
+            --title "Qima ${TAG#v}" \
             --generate-notes \
-            --verify-tag \
-            || gh release upload "$GITHUB_REF_NAME" dist/* --clobber
+            --prerelease \
+            --verify-tag

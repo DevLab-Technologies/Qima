@@ -1,0 +1,145 @@
+name: Ship
+
+# One release, every platform. Bumping `version:` in pubspec.yaml and merging
+# to main ships that version+build everywhere:
+#
+#   iOS      -> TestFlight                     (testflight.yml)
+#   macOS    -> TestFlight                     (testflight-macos.yml)
+#   Android  -> Play internal testing          (play-store.yml)
+#   Android APK, macOS, Windows, Linux
+#            -> GitHub pre-release             (release.yml)
+#
+# The run tags the commit v<version>+<build> (e.g. v2.1.1+1) first, so a
+# version+build ships once: a later push to main that leaves the version
+# alone finds the tag and does nothing. Pushing a v* tag by hand ships that
+# tag instead (it must match pubspec.yaml). A manual run builds every
+# platform without uploading, unless "publish" is ticked.
+#
+# Making a build public stays manual: App Store / Play review, and unticking
+# "pre-release" on the GitHub Release. Each platform's workflow can still be
+# run alone with its own tag (ios-v…, macos-v…, android-v…).
+on:
+  push:
+    branches: [main]
+    paths: [pubspec.yaml]
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: Upload to the stores and publish the GitHub Release
+        type: boolean
+        default: false
+
+# Never ship the same ref twice at once; queue instead of cancelling, since
+# a cancelled upload can leave a store half-updated.
+concurrency:
+  group: ship-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  prepare:
+    name: Decide what to ship
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      publish: ${{ steps.decide.outputs.publish }}
+      tag: ${{ steps.decide.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Read the version and tag the commit
+        id: decide
+        env:
+          EVENT: ${{ github.event_name }}
+          PUBLISH_INPUT: ${{ inputs.publish }}
+        run: |
+          version="$(grep -E '^version:' pubspec.yaml | awk '{print $2}')"
+          if ! [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+\+[0-9]+$ ]]; then
+            echo "::error::pubspec.yaml's version must look like 2.1.1+1 (got '$version')."
+            exit 1
+          fi
+          tag="v$version"
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+
+          tag_exists() { git ls-remote --exit-code --tags origin "refs/tags/$tag" >/dev/null; }
+          # Tags pushed with the workflow token never start other workflow
+          # runs, so tagging here can't trigger this workflow a second time.
+          create_tag() {
+            git tag "$tag" "$GITHUB_SHA"
+            git push origin "refs/tags/$tag"
+          }
+
+          publish=false
+          case "$EVENT" in
+            push)
+              if [[ "$GITHUB_REF" == refs/tags/* ]]; then
+                if [ "$GITHUB_REF_NAME" != "$tag" ]; then
+                  echo "::error::Tag $GITHUB_REF_NAME does not match pubspec version $version (expected $tag)."
+                  exit 1
+                fi
+                publish=true
+              elif tag_exists; then
+                echo "::notice::$tag is already tagged, so it has shipped. Bump the version in pubspec.yaml to ship again."
+              else
+                create_tag
+                publish=true
+              fi
+              ;;
+            workflow_dispatch)
+              if [ "$PUBLISH_INPUT" = "true" ]; then
+                if tag_exists; then
+                  echo "::error::$tag already exists. Bump the version in pubspec.yaml, or re-run a single platform's workflow."
+                  exit 1
+                fi
+                create_tag
+                publish=true
+              fi
+              ;;
+          esac
+          echo "publish=$publish" >> "$GITHUB_OUTPUT"
+          echo "Shipping $tag: publish=$publish"
+
+  ios:
+    name: iOS
+    needs: prepare
+    # A push that found the version already shipped does nothing at all;
+    # manual runs always build (uploading only when publish was ticked).
+    if: needs.prepare.outputs.publish == 'true' || github.event_name == 'workflow_dispatch'
+    uses: ./.github/workflows/testflight.yml
+    with:
+      publish: ${{ needs.prepare.outputs.publish == 'true' }}
+    secrets: inherit
+
+  macos:
+    name: macOS
+    needs: prepare
+    if: needs.prepare.outputs.publish == 'true' || github.event_name == 'workflow_dispatch'
+    uses: ./.github/workflows/testflight-macos.yml
+    with:
+      publish: ${{ needs.prepare.outputs.publish == 'true' }}
+    secrets: inherit
+
+  android:
+    name: Android
+    needs: prepare
+    if: needs.prepare.outputs.publish == 'true' || github.event_name == 'workflow_dispatch'
+    uses: ./.github/workflows/play-store.yml
+    with:
+      publish: ${{ needs.prepare.outputs.publish == 'true' }}
+    secrets: inherit
+
+  downloads:
+    name: GitHub Release
+    needs: prepare
+    if: needs.prepare.outputs.publish == 'true' || github.event_name == 'workflow_dispatch'
+    permissions:
+      contents: write
+    uses: ./.github/workflows/release.yml
+    with:
+      publish: ${{ needs.prepare.outputs.publish == 'true' }}
+      tag: ${{ needs.prepare.outputs.tag }}
+    secrets: inherit

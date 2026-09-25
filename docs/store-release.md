@@ -6,7 +6,7 @@ and upload. Making a build public is a manual step in each store console.
 | | iOS | Android |
 |---|---|---|
 | Workflow | `.github/workflows/testflight.yml` | `.github/workflows/play-store.yml` |
-| Trigger | push tag `ios-v<version>+<build>` | push tag `android-v<version>+<build>` |
+| Trigger | version bump merged to `main` (Ship), or tag `ios-v<version>+<build>` | version bump merged to `main` (Ship), or tag `android-v<version>+<build>` |
 | Destination | TestFlight (internal testers) | Play **internal testing** track, as a draft |
 | Build number | the `+build` in `pubspec.yaml` | versionCode derived from it: `2.1.1+1` → `2010101` |
 | Manual dry run | Actions → TestFlight → Run workflow (builds and signs, no upload) | Actions → Play Store → Run workflow (builds and verifies, no upload) |
@@ -63,19 +63,28 @@ Add all secrets under GitHub → Settings → Secrets and variables → Actions.
 
 ## 2. Ship a version
 
-```sh
-git checkout main && git pull
-V=$(grep -E '^version:' pubspec.yaml | awk '{print $2}')   # e.g. 2.1.1+1
-git tag "ios-v$V" && git tag "macos-v$V" && git tag "android-v$V"
-git push origin "ios-v$V" "macos-v$V" "android-v$V"
-```
+Releasing is automatic (`.github/workflows/ship.yml`). Bump the version in
+`pubspec.yaml`, for example `version: 2.1.1+1`, and merge it to `main`. The
+Ship workflow then:
 
-For another build of the same version, bump only the build (`2.1.1+1` →
-`2.1.1+2`), commit, and tag again.
+1. tags the commit `v2.1.1+1` (a version+build ships once; later pushes that
+   leave the version alone do nothing);
+2. uploads iOS and macOS to TestFlight and Android to Play internal testing;
+3. builds the Android APK, macOS, Windows (installer and zip) and Linux apps
+   and publishes them as a GitHub **pre-release** under that tag.
+
+For another build of the same version, bump only the build (`2.1.1+2`) and
+merge again. Other ways to run it:
+
+- **Dry run:** Actions → Ship → Run workflow builds every platform without
+  uploading. Tick *publish* to ship the current version from that branch.
+- **One platform only:** push its own tag, e.g. `ios-v2.1.1+1`,
+  `macos-v2.1.1+1` or `android-v2.1.1+1`.
 
 Then promote:
 
 - **Listing**: run the *Store listing* workflow once per release (see §3).
+- **GitHub Release**: once the version is live in the stores, open the release and untick *Set as a pre-release*.
 - **iOS**: TestFlight → add internal testers → test. Then App Store → the version → select the build → *Add for Review*.
 - **Android**: Play Console → Testing → Internal testing → review the draft release → *Start rollout*. Then promote it to Production (or Closed testing first) → *Send for review*.
   - A new personal developer account must run a closed test with at least 12 testers for 14 days before production access unlocks.
