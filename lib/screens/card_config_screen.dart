@@ -8,9 +8,11 @@ import '../models/asset.dart';
 import '../models/metal_breakdown.dart';
 import '../models/watch_card.dart';
 import '../theme/design_system.dart';
+import '../theme/help_topics.dart';
 import '../theme/instrument_theme.dart';
 import '../theme/qima_colors.dart';
 import '../theme/strings.dart';
+import '../widgets/help_button.dart';
 import 'add_flow_navigation.dart';
 import 'currency_picker.dart';
 
@@ -50,7 +52,11 @@ class _CardConfigScreenState extends State<CardConfigScreen> {
     return ScreenBackground(
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        appBar: AppBar(backgroundColor: Colors.transparent, title: Text(displayLabel(context, instrument.nameKey))),
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          title: Text(displayLabel(context, instrument.nameKey)),
+          actions: const [HelpButton(topic: HelpTopicId.cardConfig)],
+        ),
         body: ListView(
           padding: const EdgeInsets.all(DS.spaceMD),
           children: [

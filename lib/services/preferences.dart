@@ -144,6 +144,7 @@ class Preferences {
   static const String _deliverAlertsOnThisDeviceKey = 'deliverAlertsOnThisDevice';
   static const String _lastAlertEvaluationAtKey = 'lastAlertEvaluationAt';
   static const String _iCloudSyncEnabledKey = 'iCloudSyncEnabled';
+  static const String _onboardingCompletedKey = 'onboardingCompleted';
   static const String _legacyWatchcardsKey = 'pref.watchcards';
   static const String _legacyWatchlistKey = 'pref.watchlist';
 
@@ -171,6 +172,15 @@ class Preferences {
     await cloud.setString(_baseCurrencyKey, value);
     await cloud.synchronize();
   }
+
+  /// Whether the user (or a previous device's sync) has ever actually set a
+  /// base currency, as opposed to [baseCurrency] simply falling back to
+  /// `'USD'`. Used only to decide whether the onboarding tour's step 5 may
+  /// prefill from the device region (spec "prefilled from the device region
+  /// ... otherwise the current base currency") — a fresh install with
+  /// nothing stored yet is fair game; a currency the user (or a synced
+  /// device) already chose is never silently overridden.
+  bool get baseCurrencyExplicitlySet => local.containsKey(_baseCurrencyKey);
 
   Future<WidgetRefreshInterval> get widgetRefreshInterval async {
     final cloudValue = await cloud.getString(_widgetRefreshIntervalKey);
@@ -339,6 +349,17 @@ class Preferences {
 
   Future<void> setICloudSyncEnabled(bool value) async {
     await local.setBool(_iCloudSyncEnabledKey, value);
+  }
+
+  /// Local-only, NOT synced — whether the first-launch onboarding tour has
+  /// been shown (finished or skipped) on THIS device. Like
+  /// [hideBalances]/[appLockEnabled], there's no reason a second device
+  /// should silently skip its own first-run tour just because another
+  /// device already saw it.
+  bool get onboardingCompleted => local.getBool(_onboardingCompletedKey) ?? false;
+
+  Future<void> setOnboardingCompleted(bool value) async {
+    await local.setBool(_onboardingCompletedKey, value);
   }
 
   /// Migration chain, simplified for a from-scratch app: (1) pre-sync

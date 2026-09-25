@@ -11,10 +11,12 @@ import '../models/holding_totals.dart';
 import '../models/metal_breakdown.dart';
 import '../models/money.dart';
 import '../theme/design_system.dart';
+import '../theme/help_topics.dart';
 import '../theme/masking.dart';
 import '../theme/qima_colors.dart';
 import '../theme/strings.dart';
 import '../widgets/confirm_delete_dialog.dart';
+import '../widgets/help_button.dart';
 import 'lot_editor_screen.dart';
 
 /// Full lot list for one instrument, opened from the instrument detail
@@ -55,6 +57,7 @@ class HoldingsScreen extends StatelessWidget {
           backgroundColor: Colors.transparent,
           title: Text(l10n.detailHoldings),
           actions: [
+            const HelpButton(topic: HelpTopicId.holdings),
             IconButton(
               icon: Icon(Icons.add_circle_outline, color: colors.textPrimary),
               onPressed: () => Navigator.of(context).push(

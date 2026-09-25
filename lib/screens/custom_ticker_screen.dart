@@ -8,8 +8,10 @@ import '../models/asset.dart';
 import '../models/custom_instrument.dart';
 import '../models/watch_card.dart';
 import '../theme/design_system.dart';
+import '../theme/help_topics.dart';
 import '../theme/qima_colors.dart';
 import '../theme/strings.dart';
+import '../widgets/help_button.dart';
 import 'add_flow_navigation.dart';
 import 'currency_picker.dart';
 
@@ -109,7 +111,11 @@ class _CustomTickerScreenState extends State<CustomTickerScreen> {
     return ScreenBackground(
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        appBar: AppBar(backgroundColor: Colors.transparent, title: Text(l10n.addCustomTickerTitle)),
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          title: Text(l10n.addCustomTickerTitle),
+          actions: const [HelpButton(topic: HelpTopicId.customTicker)],
+        ),
         body: ListView(
           padding: const EdgeInsets.all(DS.spaceMD),
           children: [

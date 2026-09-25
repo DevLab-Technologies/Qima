@@ -6,10 +6,12 @@ import '../blocs/app_state.dart';
 import '../l10n/app_localizations.dart';
 import '../models/holding.dart';
 import '../theme/design_system.dart';
+import '../theme/help_topics.dart';
 import '../theme/masking.dart';
 import '../theme/qima_colors.dart';
 import '../theme/strings.dart';
 import '../widgets/allocation_donut.dart';
+import '../widgets/help_button.dart';
 import '../widgets/instrument_icon.dart';
 import 'instrument_detail_screen.dart';
 
@@ -44,6 +46,7 @@ class PortfolioDetailScreen extends StatelessWidget {
           titleSpacing: asTab ? 16 : null,
           title: Text(l10n.portfolioTitle),
           actions: [
+            const HelpButton(topic: HelpTopicId.portfolio),
             BlocBuilder<AppCubit, AppState>(
               buildWhen: (previous, current) => previous.hideBalances != current.hideBalances,
               builder: (context, state) {

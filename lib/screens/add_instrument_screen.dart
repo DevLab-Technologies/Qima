@@ -7,9 +7,11 @@ import '../models/asset.dart';
 import '../models/instrument_catalog.dart';
 import '../models/instrument_search.dart';
 import '../theme/design_system.dart';
+import '../theme/help_topics.dart';
 import '../theme/qima_colors.dart';
 import '../theme/strings.dart';
 import '../widgets/confirm_delete_dialog.dart';
+import '../widgets/help_button.dart';
 import '../widgets/instrument_icon.dart';
 import 'card_config_screen.dart';
 import 'custom_ticker_screen.dart';
@@ -46,7 +48,11 @@ class _AddInstrumentScreenState extends State<AddInstrumentScreen> {
     return ScreenBackground(
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        appBar: AppBar(backgroundColor: Colors.transparent, title: Text(l10n.addTitle)),
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          title: Text(l10n.addTitle),
+          actions: const [HelpButton(topic: HelpTopicId.addAsset)],
+        ),
         body: Column(
           children: [
             Padding(

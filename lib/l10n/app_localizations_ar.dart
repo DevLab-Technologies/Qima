@@ -1133,4 +1133,674 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get commonContinue => 'متابعة';
+
+  @override
+  String get onboardingNext => 'التالي';
+
+  @override
+  String get onboardingSkip => 'تخطي';
+
+  @override
+  String get onboardingGetStarted => 'ابدأ الآن';
+
+  @override
+  String get onboardingStep1Title => 'كل ما تملكه في رقم واحد';
+
+  @override
+  String get onboardingStep1Body =>
+      'الذهب والفضة والعملات الرقمية والأسهم والمؤشرات والعملات، مجموعةً بعملتك.';
+
+  @override
+  String get onboardingStep2Title => 'الأسعار بالطريقة التي تشتري بها';
+
+  @override
+  String get onboardingStep2Body =>
+      'أسعار مباشرة بالجرام أو الأونصة أو الكيلوغرام، من عيار 24 إلى 18، بأي عملة. اضغط + للإضافة، واضغط على بطاقة لعرض مخططها.';
+
+  @override
+  String get onboardingStep3Title => 'اعرف ما تملكه';
+
+  @override
+  String get onboardingStep3Body =>
+      'سجّل كل عملية شراء: الكمية والوحدة والعيار والتكلفة والتاريخ. اطّلع على ما تملكه ومتوسط تكلفتك وقيمتك وأرباحك.';
+
+  @override
+  String get onboardingStep4Title => 'لا تفوّت أي تحرك';
+
+  @override
+  String get onboardingStep4Body =>
+      'احصل على إشعار عند تجاوز السعر لمستوى معيّن أو تحرّكه بنسبة مئوية. أضف الأسعار إلى الشاشة الرئيسية وشاشة القفل.';
+
+  @override
+  String get onboardingStep5Title => 'خاص بتصميمه';
+
+  @override
+  String get onboardingStep5Body =>
+      'بلا حساب. تبقى بياناتك على هذا الجهاز، مع مزامنة اختيارية عبر iCloud، وقفل بمعرّف الوجه، ونسخ احتياطية كملفات.';
+
+  @override
+  String get onboardingStep5BodyAndroid =>
+      'بلا حساب. تبقى بياناتك على هذا الجهاز، مع فتح ببصمة الإصبع أو الوجه، ونسخ احتياطية كملفات.';
+
+  @override
+  String get onboardingStep5BodyMac =>
+      'بلا حساب. تبقى بياناتك على هذا الـMac، مع مزامنة اختيارية عبر iCloud، وقفل بـTouch ID، ونسخ احتياطية كملفات.';
+
+  @override
+  String get onboardingStep5PillNoAccount => 'بلا حساب';
+
+  @override
+  String get onboardingStep5PillOnDevice => 'على هذا الجهاز';
+
+  @override
+  String get onboardingStep5ICloudTitle => 'مزامنة iCloud';
+
+  @override
+  String get onboardingStep5ICloudSubtitle => 'اختياري · يبقي أجهزتك متزامنة';
+
+  @override
+  String get onboardingStep5AppLockTitle => 'قفل التطبيق';
+
+  @override
+  String get onboardingStep5AppLockSubtitleApple =>
+      'معرّف الوجه أو بصمة الإصبع';
+
+  @override
+  String get onboardingStep5AppLockSubtitleGeneric =>
+      'بصمة الإصبع أو فتح بالوجه';
+
+  @override
+  String get onboardingStep5AppLockSubtitleMac => 'Touch ID أو كلمة سر الـMac';
+
+  @override
+  String get onboardingStep5HideBalancesTitle => 'إخفاء الأرصدة';
+
+  @override
+  String get onboardingStep5HideBalancesSubtitle => 'عرض •••• بدلاً من المبالغ';
+
+  @override
+  String get onboardingBaseCurrencyTitle => 'العملة الأساسية';
+
+  @override
+  String get onboardingBaseCurrencySubtitle =>
+      'حسب منطقتك · غيّرها من الإعدادات';
+
+  @override
+  String onboardingSemanticStepOf(int step, int total) {
+    return 'الخطوة $step من $total';
+  }
+
+  @override
+  String get onboardingReplayTour => 'إعادة عرض الجولة';
+
+  @override
+  String get helpButtonTooltip => 'مساعدة';
+
+  @override
+  String get helpSheetAboutHeader => 'حول هذه الصفحة';
+
+  @override
+  String get helpSheetHowToHeader => 'كيفية الاستخدام';
+
+  @override
+  String get helpSheetIndexHeader => 'مساعدة';
+
+  @override
+  String get helpSheetWidgetsHeader => 'مساعدة · الإعدادات';
+
+  @override
+  String get helpSheetCloseTooltip => 'إغلاق';
+
+  @override
+  String get helpIndexIntro => 'اختر صفحة لمعرفة وظيفتها وكيفية استخدامها.';
+
+  @override
+  String get helpWatchlistTitle => 'قائمة المتابعة';
+
+  @override
+  String get helpWatchlistSummary =>
+      'أسعار مباشرة لكل ما تتابعه، مع إجمالي محفظتك في الأعلى.';
+
+  @override
+  String get helpWatchlistStep1Title => 'افتح بطاقة';
+
+  @override
+  String get helpWatchlistStep1Body =>
+      'اضغط على أي بطاقة لعرض مخططها وأهم إحصاءاتها وممتلكاتك منها.';
+
+  @override
+  String get helpWatchlistStep2Title => 'أضف أصلًا';
+
+  @override
+  String get helpWatchlistStep2Body => 'اضغط على + وابحث بالاسم أو الرمز.';
+
+  @override
+  String get helpWatchlistStep3Title => 'صفِّ القائمة';
+
+  @override
+  String get helpWatchlistStep3Body =>
+      'اعرض المعادن أو العملات الرقمية أو الأسهم أو المؤشرات أو العملات فقط.';
+
+  @override
+  String get helpWatchlistStep4Title => 'غيّر مدى المخطط';
+
+  @override
+  String get helpWatchlistStep4Body =>
+      'اختر من أسبوع إلى الكل أسفل مخطط المحفظة.';
+
+  @override
+  String get helpWatchlistStep5Title => 'حدّث الأسعار';
+
+  @override
+  String get helpWatchlistStep5Body =>
+      'اضغط على التحديث لجلب أحدث الأسعار الآن.';
+
+  @override
+  String get helpAssetDetailTitle => 'تفاصيل الأصل';
+
+  @override
+  String get helpAssetDetailSummary =>
+      'سعر أصل واحد ومخططه وإحصاءاته، بالإضافة إلى ما تملكه منه.';
+
+  @override
+  String get helpAssetDetailStep1Title => 'اختر مدى';
+
+  @override
+  String get helpAssetDetailStep1Body => 'بدّل بين يوم واحد والكل أسفل المخطط.';
+
+  @override
+  String get helpAssetDetailStep2Title => 'غيّر الوحدة أو العيار أو العملة';
+
+  @override
+  String get helpAssetDetailStep2Body => 'اضغط على أيقونة الضبط أعلى الصفحة.';
+
+  @override
+  String get helpAssetDetailStep3Title => 'قارن الوحدات';
+
+  @override
+  String get helpAssetDetailStep3Body =>
+      'يعرض السعر لكل وحدة الأونصة والكيلوغرام وكل عيار جنبًا إلى جنب.';
+
+  @override
+  String get helpAssetDetailStep4Title => 'اضبط تنبيهًا';
+
+  @override
+  String get helpAssetDetailStep4Body =>
+      'اضغط على الجرس لتصلك إشعارات عند تجاوز السعر لمستوى أو تحرّكه بنسبة مئوية.';
+
+  @override
+  String get helpAssetDetailStep5Title => 'تابع ما تملكه';
+
+  @override
+  String get helpAssetDetailStep5Body =>
+      'اضغط على الممتلكات لعرض دفعاتك أو إضافة عملية شراء.';
+
+  @override
+  String get helpPortfolioTitle => 'المحفظة';
+
+  @override
+  String get helpPortfolioSummary =>
+      'كل ما تملكه، مجموعًا بعملتك الأساسية، مع حصة كل أصل وأرباحه.';
+
+  @override
+  String get helpPortfolioStep1Title => 'اقرأ الرسم الدائري';
+
+  @override
+  String get helpPortfolioStep1Body =>
+      'كل قطاع يمثل حصة أصل واحد من قيمتك الإجمالية.';
+
+  @override
+  String get helpPortfolioStep2Title => 'افتح أصلًا';
+
+  @override
+  String get helpPortfolioStep2Body =>
+      'اضغط على صف لعرض دفعاته ومتوسط تكلفته وأرباحه.';
+
+  @override
+  String get helpPortfolioStep3Title => 'أضف عملية شراء';
+
+  @override
+  String get helpPortfolioStep3Body => 'افتح أصلًا، ثم اضغط على +.';
+
+  @override
+  String get helpPortfolioStep4Title => 'غيّر العملة';
+
+  @override
+  String get helpPortfolioStep4Body =>
+      'تُحسب الإجماليات بعملتك الأساسية، المحددة في الإعدادات.';
+
+  @override
+  String get helpPortfolioStep5Title => 'أخفِ المبالغ';
+
+  @override
+  String get helpPortfolioStep5Body =>
+      'فعّل إخفاء الأرصدة في الإعدادات لإخفاء كل القيم.';
+
+  @override
+  String get helpLotEditorTitle => 'محرر الدفعة';
+
+  @override
+  String get helpLotEditorSummary =>
+      'سجّل عملية شراء واحدة ليتمكن Qima من حساب ما تملكه ومتوسط تكلفتك وأرباحك.';
+
+  @override
+  String get helpLotEditorStep1Title => 'الكمية والوحدة';
+
+  @override
+  String get helpLotEditorStep1Body =>
+      'أدخل الكمية التي اشتريتها، بالأونصة التروي أو الجرام أو الكيلوغرام.';
+
+  @override
+  String get helpLotEditorStep2Title => 'العيار';
+
+  @override
+  String get helpLotEditorStep2Body =>
+      'للذهب بالجرام أو الكيلوغرام، اختر عيار 24 أو 22 أو 21 أو 18. يبدأ عند عيار البطاقة.';
+
+  @override
+  String get helpLotEditorStep3Title => 'ما دفعته';
+
+  @override
+  String get helpLotEditorStep3Body =>
+      'أدخل التكلفة لكل وحدة أو التكلفة الإجمالية، بالعملة التي دفعت بها.';
+
+  @override
+  String get helpLotEditorStep4Title => 'التاريخ';
+
+  @override
+  String get helpLotEditorStep4Body => 'يوم الشراء.';
+
+  @override
+  String get helpLotEditorStep5Title => 'احفظ';
+
+  @override
+  String get helpLotEditorStep5Body =>
+      'يمكنك تعديل الدفعة أو حذفها في أي وقت من الممتلكات.';
+
+  @override
+  String get helpAddAssetTitle => 'إضافة أصل';
+
+  @override
+  String get helpAddAssetSummary =>
+      'ابحث عن شيء لمتابعته وأضفه إلى قائمة متابعتك.';
+
+  @override
+  String get helpAddAssetStep1Title => 'ابحث';
+
+  @override
+  String get helpAddAssetStep1Body =>
+      'اكتب اسمًا أو رمزًا، مثل الذهب أو BTC أو AAPL.';
+
+  @override
+  String get helpAddAssetStep2Title => 'اختر نتيجة';
+
+  @override
+  String get helpAddAssetStep2Body =>
+      'تتم إضافته إلى قائمة متابعتك وتُفتح صفحته.';
+
+  @override
+  String get helpAddAssetStep3Title => 'غير موجود في القائمة؟';
+
+  @override
+  String get helpAddAssetStep3Body =>
+      'أضف الرمز كتيكر مخصص. يتحقق Qima منه أولاً مع مزود الأسعار.';
+
+  @override
+  String get helpAddAssetStep4Title => 'غيّرت رأيك؟';
+
+  @override
+  String get helpAddAssetStep4Body =>
+      'اضغط على تراجع في رسالة التأكيد أسفل الشاشة.';
+
+  @override
+  String get helpPriceAlertsTitle => 'تنبيهات الأسعار';
+
+  @override
+  String get helpPriceAlertsSummary => 'كل تنبيه ضبطته، مصنّف حسب الأصل.';
+
+  @override
+  String get helpPriceAlertsStep1Title => 'تنبيه جديد';
+
+  @override
+  String get helpPriceAlertsStep1Body =>
+      'اضغط على +، أو افتح أصلًا واضغط على الجرس.';
+
+  @override
+  String get helpPriceAlertsStep2Title => 'إيقاف مؤقت أو استئناف';
+
+  @override
+  String get helpPriceAlertsStep2Body =>
+      'استخدم المفتاح. تُطفئ التنبيهات لمرة واحدة نفسها بعد تفعيلها.';
+
+  @override
+  String get helpPriceAlertsStep3Title => 'تغيير أو حذف';
+
+  @override
+  String get helpPriceAlertsStep3Body => 'اضغط على تنبيه لتعديله أو حذفه.';
+
+  @override
+  String get helpPriceAlertsStep4Title => 'وقت وصول التنبيهات';
+
+  @override
+  String get helpPriceAlertsStep4Body =>
+      'تُفحص الأسعار كل 15 دقيقة تقريبًا في الخلفية، لذا قد يصل التنبيه متأخرًا بضع دقائق.';
+
+  @override
+  String get helpPriceAlertsStep5Title => 'لا تصلك إشعارات؟';
+
+  @override
+  String get helpPriceAlertsStep5Body =>
+      'اسمح بالإشعارات لتطبيق Qima من إعدادات النظام، وإلا فلن تصلك التنبيهات.';
+
+  @override
+  String get helpAlertEditorTitle => 'محرر التنبيه';
+
+  @override
+  String get helpAlertEditorSummary =>
+      'اختر متى يجب أن يُعلمك Qima بشأن هذا الأصل.';
+
+  @override
+  String get helpAlertEditorStep1Title => 'السعر';
+
+  @override
+  String get helpAlertEditorStep1Body =>
+      'أعلمني عندما يتجاوز السعر هدفك أو ينخفض عنه.';
+
+  @override
+  String get helpAlertEditorStep2Title => 'نسبة التحرك';
+
+  @override
+  String get helpAlertEditorStep2Body =>
+      'أعلمني عند تحركه صعودًا أو هبوطًا أو بأي اتجاه بنسبة 1-10% خلال 24 ساعة أو 7 أيام.';
+
+  @override
+  String get helpAlertEditorStep3Title => 'تحقق من المُشغّل';
+
+  @override
+  String get helpAlertEditorStep3Body =>
+      'يعرض السطر أسفل اختيارك الأسعار التي ستُفعّل التنبيه بالضبط.';
+
+  @override
+  String get helpAlertEditorStep4Title => 'التكرار';
+
+  @override
+  String get helpAlertEditorStep4Body =>
+      'إيقاف: يُفعّل التنبيه مرة واحدة ثم يُطفأ. تشغيل: يُفعّل في كل مرة.';
+
+  @override
+  String get helpSettingsTitle => 'الإعدادات';
+
+  @override
+  String get helpSettingsSummary => 'خيارات تنطبق على التطبيق بأكمله.';
+
+  @override
+  String get helpSettingsStep1Title => 'المظهر';
+
+  @override
+  String get helpSettingsStep1Body => 'النظام أو الفاتح أو الداكن.';
+
+  @override
+  String get helpSettingsStep2Title => 'الخصوصية والأمان';
+
+  @override
+  String get helpSettingsStep2Body =>
+      'إخفِ الأرصدة، واقفل Qima بمعرّف الوجه أو بصمة الإصبع.';
+
+  @override
+  String get helpSettingsStep3Title => 'التنبيهات';
+
+  @override
+  String get helpSettingsStep3Body =>
+      'اطّلع على كل تنبيهات الأسعار وتحقق من السماح بالإشعارات.';
+
+  @override
+  String get helpSettingsStep4Title => 'النسخ الاحتياطي';
+
+  @override
+  String get helpSettingsStep4Body => 'احفظ كل شيء في ملف واستعده لاحقًا.';
+
+  @override
+  String get helpSettingsStep5Title => 'الإعدادات الافتراضية';
+
+  @override
+  String get helpSettingsStep5Body =>
+      'العملة الأساسية ومدى المخطط وتحديث الودجت واللغة.';
+
+  @override
+  String get helpBackupTitle => 'النسخ الاحتياطي والاستعادة';
+
+  @override
+  String get helpBackupSummary =>
+      'لا يملك Qima حسابًا، لذا ملف النسخ الاحتياطي هو طريقتك للحفاظ على بياناتك إذا فُقد هذا الهاتف أو أُعيد ضبطه.';
+
+  @override
+  String get helpBackupStep1Title => 'نسخة احتياطية كاملة';
+
+  @override
+  String get helpBackupStep1Body =>
+      'يحفظ قائمة متابعتك وممتلكاتك والتيكرات المخصصة وإعداداتك كملف ‎.json.';
+
+  @override
+  String get helpBackupStep2Title => 'أضف كلمة مرور';
+
+  @override
+  String get helpBackupStep2Body =>
+      'اختياري. ستحتاجه للاستعادة، ولا يمكن استرجاعه.';
+
+  @override
+  String get helpBackupStep3Title => 'احفظ أو شارك';
+
+  @override
+  String get helpBackupStep3Body =>
+      'احتفظ بالملف في تطبيق الملفات أو iCloud Drive، أو أرسله لنفسك.';
+
+  @override
+  String get helpBackupStep4Title => 'استعادة';
+
+  @override
+  String get helpBackupStep4Body =>
+      'استورد نسخة احتياطية بصيغة ‎.json. يضيف الدمج ما ينقص ولا يحذف شيئًا؛ ويستبدل الاستبدال كل شيء بمحتوى الملف.';
+
+  @override
+  String get helpBackupStep5Title => 'جدول بيانات الممتلكات';
+
+  @override
+  String get helpBackupStep5Body => 'ملف ‎.csv للمحاسبة. لا يمكن استعادته.';
+
+  @override
+  String get helpWidgetsTitle => 'الودجت';
+
+  @override
+  String get helpWidgetsSummary =>
+      'أضف الأسعار المباشرة ومحفظتك إلى الشاشة الرئيسية وشاشة القفل.';
+
+  @override
+  String get helpWidgetsStep1Title => 'المس مع الاستمرار على الشاشة الرئيسية';
+
+  @override
+  String get helpWidgetsStep1Body =>
+      'عندما تهتز التطبيقات، اضغط على تعديل، ثم أضف ودجت.';
+
+  @override
+  String get helpWidgetsStep2Title => 'ابحث عن Qima';
+
+  @override
+  String get helpWidgetsStep2Body =>
+      'ابحث عن Qima، واختر السعر أو المحفظة، وحدد حجمًا، ثم اضغط على أضف ودجت.';
+
+  @override
+  String get helpWidgetsStep3Title => 'اختر ما يعرضه';
+
+  @override
+  String get helpWidgetsStep3Body =>
+      'المس مع الاستمرار على الودجت، واضغط على تعديل الودجت، ثم اختر الأصل والوحدة والعيار والعملة ومدى المخطط.';
+
+  @override
+  String get helpWidgetsStep4Title => 'شاشة القفل';
+
+  @override
+  String get helpWidgetsStep4Body =>
+      'المس مع الاستمرار على شاشة القفل، واضغط على تخصيص، ثم أضف ودجت Qima.';
+
+  @override
+  String get helpWidgetsNote =>
+      'تتحدث الودجت كل 15 دقيقة افتراضيًا. غيّر ذلك من الإعدادات ضمن فاصل تحديث الودجت.';
+
+  @override
+  String get helpHoldingsTitle => 'الممتلكات';
+
+  @override
+  String get helpHoldingsSummary => 'كل دفعة اشتريتها من هذا الأصل، ومجموعها.';
+
+  @override
+  String get helpHoldingsStep1Title => 'اقرأ الإجماليات';
+
+  @override
+  String get helpHoldingsStep1Body =>
+      'الكمية ومتوسط التكلفة والقيمة الحالية والأرباح عبر كل الدفعات.';
+
+  @override
+  String get helpHoldingsStep2Title => 'أضف دفعة';
+
+  @override
+  String get helpHoldingsStep2Body => 'اضغط على + لتسجيل عملية شراء أخرى.';
+
+  @override
+  String get helpHoldingsStep3Title => 'عدّل دفعة أو احذفها';
+
+  @override
+  String get helpHoldingsStep3Body => 'اضغط على دفعة لتعديلها، أو مرر لحذفها.';
+
+  @override
+  String get helpCardConfigTitle => 'إعدادات الأصل';
+
+  @override
+  String get helpCardConfigSummary =>
+      'اختر العملة والوحدة والعيار التي ستعرضها هذه البطاقة قبل إضافتها.';
+
+  @override
+  String get helpCardConfigStep1Title => 'العملة';
+
+  @override
+  String get helpCardConfigStep1Body =>
+      'تُعرض الأسعار بهذه العملة على البطاقة ومخططها.';
+
+  @override
+  String get helpCardConfigStep2Title => 'الوحدة';
+
+  @override
+  String get helpCardConfigStep2Body =>
+      'بالنسبة للمعادن، اختر الأونصة التروي أو الجرام أو الكيلوغرام.';
+
+  @override
+  String get helpCardConfigStep3Title => 'العيار';
+
+  @override
+  String get helpCardConfigStep3Body =>
+      'بالنسبة للذهب بالوزن، اختر النقاء الذي تريد تسعيره.';
+
+  @override
+  String get helpCardConfigStep4Title => 'أضفه';
+
+  @override
+  String get helpCardConfigStep4Body =>
+      'يمكنك تغيير أي من هذه الخيارات لاحقًا من شاشة تفاصيل الأصل.';
+
+  @override
+  String get helpCustomTickerTitle => 'تيكر مخصص';
+
+  @override
+  String get helpCustomTickerSummary =>
+      'تابع سهمًا أو صندوق مؤشرات أو مؤشرًا غير موجود في كتالوج Qima عبر رمزه.';
+
+  @override
+  String get helpCustomTickerStep1Title => 'أدخل الرمز';
+
+  @override
+  String get helpCustomTickerStep1Body =>
+      'اكتب رمز التيكر بالضبط، مثل TSLA أو VOO.';
+
+  @override
+  String get helpCustomTickerStep2Title => 'يتحقق منه Qima';
+
+  @override
+  String get helpCustomTickerStep2Body =>
+      'يُتحقق منه أولاً مع مزود الأسعار، فيُكتشف أي خطأ إملائي قبل إضافته.';
+
+  @override
+  String get helpCustomTickerStep3Title => 'أضفه';
+
+  @override
+  String get helpCustomTickerStep3Body =>
+      'يُضاف إلى قائمة متابعتك باسمه وسعره الحقيقيين.';
+
+  @override
+  String get helpCurrencyPickerTitle => 'منتقي العملة';
+
+  @override
+  String get helpCurrencyPickerSummary =>
+      'اختر العملة التي ستُعرض بها الأسعار والإجماليات.';
+
+  @override
+  String get helpCurrencyPickerStep1Title => 'ابحث';
+
+  @override
+  String get helpCurrencyPickerStep1Body =>
+      'اكتب رمز ISO أو اسم العملة، مثل EUR أو درهم.';
+
+  @override
+  String get helpCurrencyPickerStep2Title => 'اختر واحدة';
+
+  @override
+  String get helpCurrencyPickerStep2Body => 'اضغط على عملة لاستخدامها فورًا.';
+
+  @override
+  String get helpImportPreviewTitle => 'معاينة الاستعادة';
+
+  @override
+  String get helpImportPreviewSummary =>
+      'اطّلع على محتوى ملف النسخة الاحتياطية قبل أن يغيّر أي شيء على هذا الهاتف.';
+
+  @override
+  String get helpImportPreviewStep1Title => 'تحقق من المحتوى';
+
+  @override
+  String get helpImportPreviewStep1Body =>
+      'اطّلع على عدد البطاقات والدفعات والتنبيهات في الملف قبل الاستعادة.';
+
+  @override
+  String get helpImportPreviewStep2Title => 'دمج أو استبدال';
+
+  @override
+  String get helpImportPreviewStep2Body =>
+      'يضيف الدمج ما ينقص ولا يحذف شيئًا. يستبدل الاستبدال كل شيء بمحتوى الملف.';
+
+  @override
+  String get helpImportPreviewStep3Title => 'تأكيد';
+
+  @override
+  String get helpImportPreviewStep3Body =>
+      'يطلب الملف المحمي بكلمة مرور كلمة المرور أولاً.';
+
+  @override
+  String get settingsHelpGroup => 'المساعدة';
+
+  @override
+  String get settingsHelpReplayTour => 'إعادة عرض الجولة';
+
+  @override
+  String get settingsHelpReplayTourSubtitle =>
+      'شاهد المقدمة المكونة من خمس خطوات مرة أخرى';
+
+  @override
+  String get settingsHelpHowQimaWorks => 'كيف يعمل Qima';
+
+  @override
+  String get settingsHelpHowQimaWorksSubtitle => 'دليل مختصر لكل صفحة';
+
+  @override
+  String get settingsHelpAddWidget => 'أضف ودجت';
+
+  @override
+  String get settingsHelpAddWidgetSubtitle => 'الشاشة الرئيسية وشاشة القفل';
 }

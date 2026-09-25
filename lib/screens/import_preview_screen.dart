@@ -8,8 +8,10 @@ import '../models/backup.dart';
 import '../services/backup/backup_codec.dart';
 import '../services/backup/backup_service.dart';
 import '../theme/design_system.dart';
+import '../theme/help_topics.dart';
 import '../theme/qima_colors.dart';
 import '../widgets/confirm_delete_dialog.dart';
+import '../widgets/help_button.dart';
 
 /// Import preview (spec Phase 6): shows the picked file's summary, prompts
 /// for a password if it's encrypted, lets the user choose Merge vs Replace
@@ -142,7 +144,11 @@ class _ImportPreviewScreenState extends State<ImportPreviewScreen> {
     return ScreenBackground(
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        appBar: AppBar(backgroundColor: Colors.transparent, title: Text(l10n.backupImportPreviewTitle)),
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          title: Text(l10n.backupImportPreviewTitle),
+          actions: const [HelpButton(topic: HelpTopicId.importPreview)],
+        ),
         body: SafeArea(child: _body(context, l10n, colors)),
       ),
     );

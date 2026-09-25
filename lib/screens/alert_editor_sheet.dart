@@ -9,9 +9,11 @@ import '../models/price_alert.dart';
 import '../models/watch_card.dart';
 import '../services/price_converter.dart';
 import '../theme/design_system.dart';
+import '../theme/help_topics.dart';
 import '../theme/qima_colors.dart';
 import '../theme/strings.dart';
 import '../widgets/confirm_delete_dialog.dart';
+import '../widgets/help_button.dart';
 
 enum _AlertType { price, percent }
 
@@ -122,6 +124,7 @@ class _AlertEditorSheetState extends State<AlertEditorSheet> {
                       icon: Icon(Icons.delete_outline, color: colors.down),
                       onPressed: () => _delete(context, cubit, l10n),
                     ),
+                  const HelpButton(topic: HelpTopicId.alertEditor),
                 ],
               ),
               const SizedBox(height: DS.spaceSM),

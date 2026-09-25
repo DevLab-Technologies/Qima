@@ -11,11 +11,16 @@ import '../services/app_lock_service.dart';
 import '../services/cloud_kv_store.dart';
 import '../services/preferences.dart';
 import '../theme/design_system.dart';
+import '../theme/help_topics.dart';
 import '../theme/qima_colors.dart';
 import '../theme/strings.dart';
+import '../widgets/help_button.dart';
 import 'alerts_screen.dart';
 import 'backup_screen.dart';
 import 'currency_picker.dart';
+import 'help_index_sheet.dart';
+import 'help_sheet.dart';
+import 'onboarding_tour_screen.dart';
 
 /// Single settings sheet: base currency, default chart range, widget refresh
 /// interval, language, and a static data-sources footer. Mirrors
@@ -44,6 +49,7 @@ class SettingsScreen extends StatelessWidget {
           automaticallyImplyLeading: !asTab,
           titleSpacing: asTab ? 16 : null,
           title: Text(l10n.settingsTitle),
+          actions: const [HelpButton(topic: HelpTopicId.settings)],
         ),
         body: BlocBuilder<AppCubit, AppState>(
           builder: (context, _) {
@@ -192,6 +198,9 @@ class SettingsScreen extends StatelessWidget {
                     ],
                   ),
                 ),
+                const SizedBox(height: DS.spaceLG),
+                _SectionHeader(l10n.settingsHelpGroup),
+                const _HelpSection(),
               ],
             );
           },
@@ -541,6 +550,63 @@ class _BackupSection extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+}
+
+/// "Help" settings card (last group, spec "Settings gets a Help group"):
+/// "Replay the tour", "How Qima works" (opens the topic index sheet), and,
+/// iOS only, "Add a widget" (opens the Widgets topic). Rows have no leading
+/// icon, matching the About/Data source card above it.
+class _HelpSection extends StatelessWidget {
+  const _HelpSection();
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final colors = context.colors;
+    final showAddWidgetRow = widgetsSupportedOnThisPlatform;
+
+    return DSCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          ListTile(
+            contentPadding: EdgeInsets.zero,
+            title: Text(l10n.settingsHelpReplayTour, style: TextStyle(color: colors.textPrimary)),
+            subtitle: Text(
+              l10n.settingsHelpReplayTourSubtitle,
+              style: TextStyle(color: colors.textTertiary, fontSize: 12),
+            ),
+            trailing: Icon(Icons.chevron_right, color: colors.textTertiary),
+            onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const OnboardingTourScreen())),
+          ),
+          Divider(color: colors.hairline, height: DS.spaceLG),
+          ListTile(
+            contentPadding: EdgeInsets.zero,
+            title: Text(l10n.settingsHelpHowQimaWorks, style: TextStyle(color: colors.textPrimary)),
+            subtitle: Text(
+              l10n.settingsHelpHowQimaWorksSubtitle,
+              style: TextStyle(color: colors.textTertiary, fontSize: 12),
+            ),
+            trailing: Icon(Icons.chevron_right, color: colors.textTertiary),
+            onTap: () => HelpIndexSheet.show(context),
+          ),
+          if (showAddWidgetRow) ...[
+            Divider(color: colors.hairline, height: DS.spaceLG),
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              title: Text(l10n.settingsHelpAddWidget, style: TextStyle(color: colors.textPrimary)),
+              subtitle: Text(
+                l10n.settingsHelpAddWidgetSubtitle,
+                style: TextStyle(color: colors.textTertiary, fontSize: 12),
+              ),
+              trailing: Icon(Icons.chevron_right, color: colors.textTertiary),
+              onTap: () => HelpSheet.show(context, topic: HelpTopicId.widgets),
+            ),
+          ],
+        ],
+      ),
     );
   }
 }

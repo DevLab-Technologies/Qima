@@ -12,6 +12,7 @@ import 'models/watch_card.dart';
 import 'screens/backup_screen.dart';
 import 'screens/home_shell.dart';
 import 'screens/instrument_detail_screen.dart';
+import 'screens/onboarding_tour_screen.dart';
 import 'screens/watch_watchlist_screen.dart';
 import 'services/backup/backup_reminder_notifier.dart';
 import 'services/notification_service.dart';
@@ -155,12 +156,53 @@ class _QimaAppState extends State<QimaApp> {
               // triggered right after unlocking still surface normally.
               return LockGate(child: content);
             },
-            home: Builder(
-              builder: (context) => isWatchFormFactor(context) ? const WatchWatchlistScreen() : const HomeShell(),
-            ),
+            home: const _AppHome(),
           );
         },
       ),
     );
+  }
+}
+
+/// Decides what the app's first screen is once [AppCubit.init] resolves
+/// (spec "Onboarding tour": "Shown once, on first launch, before the home
+/// shell"): the onboarding tour when [AppState.shouldShowOnboarding] is
+/// true, the home shell otherwise. Stays on a blank loading surface (same
+/// as every screen's own `!state.initialized` guard) until init resolves,
+/// so this never flashes the shell before deciding.
+class _AppHome extends StatelessWidget {
+  const _AppHome();
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<AppCubit, AppState>(
+      buildWhen: (previous, current) =>
+          previous.initialized != current.initialized || previous.shouldShowOnboarding != current.shouldShowOnboarding,
+      builder: (context, state) {
+        if (!state.initialized) {
+          return const Scaffold(body: Center(child: CircularProgressIndicator()));
+        }
+        if (state.shouldShowOnboarding) {
+          return OnboardingTourScreen(
+            onFinished: () {
+              Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => const _Home()));
+            },
+          );
+        }
+        return const _Home();
+      },
+    );
+  }
+}
+
+/// The actual home destination once onboarding is out of the way — watch
+/// form factors get their own minimal screen, everything else gets
+/// [HomeShell].
+class _Home extends StatelessWidget {
+  const _Home();
+
+  @override
+  Widget build(BuildContext context) {
+    return isWatchFormFactor(context) ? const WatchWatchlistScreen() : const HomeShell();
   }
 }

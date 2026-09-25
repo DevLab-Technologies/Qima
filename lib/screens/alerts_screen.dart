@@ -8,10 +8,12 @@ import '../models/price_alert.dart';
 import '../models/watch_card.dart';
 import '../services/system_settings.dart';
 import '../theme/design_system.dart';
+import '../theme/help_topics.dart';
 import '../theme/instrument_theme.dart';
 import '../theme/qima_colors.dart';
 import '../theme/strings.dart';
 import '../widgets/confirm_delete_dialog.dart';
+import '../widgets/help_button.dart';
 import '../widgets/instrument_icon.dart';
 import 'alert_editor_sheet.dart';
 import 'instrument_detail_screen.dart';
@@ -62,7 +64,11 @@ class _AlertsScreenState extends State<AlertsScreen> with WidgetsBindingObserver
     return ScreenBackground(
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        appBar: AppBar(backgroundColor: Colors.transparent, title: Text(l10n.alertsScreenTitle)),
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          title: Text(l10n.alertsScreenTitle),
+          actions: const [HelpButton(topic: HelpTopicId.priceAlerts)],
+        ),
         body: BlocBuilder<AppCubit, AppState>(
           builder: (context, state) {
             final alerts = state.alerts;

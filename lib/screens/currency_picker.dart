@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import '../l10n/app_localizations.dart';
 import '../l10n/currency_names.dart';
 import '../theme/design_system.dart';
+import '../theme/help_topics.dart';
 import '../theme/qima_colors.dart';
+import '../widgets/help_button.dart';
 
 /// Searchable currency list — matches ISO code or the localized currency
 /// name, case-insensitive substring. Mirrors `CurrencyPicker.swift`.
@@ -41,7 +43,11 @@ class _CurrencyPickerState extends State<CurrencyPicker> {
     return ScreenBackground(
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        appBar: AppBar(backgroundColor: Colors.transparent, title: Text(l10n.commonCurrency)),
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          title: Text(l10n.commonCurrency),
+          actions: const [HelpButton(topic: HelpTopicId.currencyPicker)],
+        ),
         body: Column(
           children: [
             Padding(

@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:ui' show Locale, PlatformDispatcher;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart' show NumberFormat;
 
 import '../models/alert_runtime_state.dart';
 import '../models/asset.dart';
@@ -66,6 +68,12 @@ class AppCubit extends Cubit<AppState> {
   final SwitchableCloudKVStore cloudStore;
   StreamSubscription<CloudKVChangeEvent>? _cloudChangesSubscription;
 
+  /// The device locale consulted for onboarding step 5's base-currency
+  /// prefill (see [_deviceRegionCurrency]). Defaults to the real OS locale;
+  /// overridable so tests can pin a deterministic region instead of
+  /// depending on the test runner's own locale.
+  final Locale? _deviceLocale;
+
   /// Maps a `SyncedStore.cloudKey` to the reload+re-emit routine for that
   /// store, so an external-change event naming that key reloads only the
   /// affected store instead of everything (spec Phase 7 "external-change
@@ -83,6 +91,7 @@ class AppCubit extends Cubit<AppState> {
     AlertRuntimeStore? alertRuntimeStore,
     NotificationService? notificationService,
     SwitchableCloudKVStore? cloudStore,
+    Locale? deviceLocale,
   }) {
     // Built once up front so every default-constructed store below shares
     // the exact same backend — see [cloudStore]'s doc comment.
@@ -97,6 +106,7 @@ class AppCubit extends Cubit<AppState> {
       alertRuntimeStore: alertRuntimeStore ?? AlertRuntimeStore(),
       notificationService: notificationService ?? NotificationService(),
       cloudStore: resolvedCloudStore,
+      deviceLocale: deviceLocale,
     );
   }
 
@@ -110,7 +120,9 @@ class AppCubit extends Cubit<AppState> {
     required this.alertRuntimeStore,
     required this.notificationService,
     required this.cloudStore,
-  }) : super(AppState());
+    Locale? deviceLocale,
+  })  : _deviceLocale = deviceLocale,
+        super(AppState());
 
   // ---------------------------------------------------------------------
   // Init
@@ -147,7 +159,8 @@ class AppCubit extends Cubit<AppState> {
     final customs = await customInstrumentStore.load();
     InstrumentCatalog.reloadCustom(customs.map((c) => c.instrument).toList());
 
-    final baseCurrency = await preferences.baseCurrency;
+    var baseCurrency = await preferences.baseCurrency;
+    final baseCurrencyExplicitlySet = preferences.baseCurrencyExplicitlySet;
     final widgetRefreshInterval = await preferences.widgetRefreshInterval;
     final appLanguage = await preferences.appLanguage;
     final appearance = await preferences.appearance;
@@ -173,6 +186,30 @@ class AppCubit extends Cubit<AppState> {
 
     await notificationService.init();
     final notificationsEnabled = await notificationService.isEnabled();
+
+    // Never show the tour again once it's been completed/skipped on this
+    // device, and never show it AUTOMATICALLY to an existing (pre-onboarding)
+    // install that already has real user data — an upgrade from 1.x with a
+    // customized watchlist, holdings, or alerts shouldn't be interrupted by
+    // a first-run tour it never asked for (spec "Onboarding tour"). A
+    // from-scratch install only ever has the seeded default watchlist (spec
+    // Phase 1 seeding, `InstrumentCatalog.defaultWatchlist`) and no
+    // lots/alerts yet, so that combination is what "no data" means here.
+    final shouldShowOnboarding = !preferences.onboardingCompleted && !_hasExistingUserData(cards, lots, alerts);
+
+    // Onboarding step 5's "Base currency" row prefills from the device
+    // region (spec "prefilled from the device region if it maps to a
+    // supported currency, otherwise the current base currency") — only for
+    // a fresh install about to see the tour, and only when nothing has ever
+    // explicitly set a base currency yet (never overrides a real choice,
+    // including one that arrived via sync before this device's first run).
+    if (shouldShowOnboarding && !baseCurrencyExplicitlySet) {
+      final regionCurrency = _deviceRegionCurrency(rates.availableCurrencies);
+      if (regionCurrency != null && regionCurrency != baseCurrency) {
+        baseCurrency = regionCurrency;
+        await preferences.setBaseCurrency(baseCurrency);
+      }
+    }
 
     _pipeline = RefreshPipeline(
       repository: repository,
@@ -219,9 +256,44 @@ class AppCubit extends Cubit<AppState> {
         platformSupported: platformSupportsICloud,
       ),
       lastCloudSyncAt: cloudEnabledAtStartup ? DateTime.now() : null,
+      shouldShowOnboarding: shouldShowOnboarding,
     ));
 
     startSync();
+  }
+
+  /// The device region's default currency (via `intl`'s per-locale currency
+  /// table), kept only if it's one the price feed actually quotes.
+  /// `PlatformDispatcher.instance.locale` mirrors how the rest of the app
+  /// resolves the device's own locale for background/system work (see
+  /// `RefreshPipeline`/`BackupReminderNotifier`).
+  String? _deviceRegionCurrency(List<String> available) {
+    final locale = _deviceLocale ?? PlatformDispatcher.instance.locale;
+    final code = NumberFormat.simpleCurrency(locale: locale.toString()).currencyName;
+    if (code == null || !available.contains(code)) return null;
+    return code;
+  }
+
+  /// "Already onboarded" for an existing (pre-onboarding-tour) install: any
+  /// watchlist card beyond the seeded defaults, any holding lot, or any
+  /// price alert. A brand-new install only ever has
+  /// [InstrumentCatalog.defaultWatchlist]'s seeded cards and nothing else at
+  /// this point in [init], so it reads as "no data" and the tour shows.
+  bool _hasExistingUserData(List<WatchCard> cards, List<HoldingLot> lots, List<PriceAlert> alerts) {
+    if (lots.isNotEmpty || alerts.isNotEmpty) return true;
+    final defaultIDs = InstrumentCatalog.defaultWatchlist.toSet();
+    if (cards.length != defaultIDs.length) return true;
+    return cards.any((card) => !defaultIDs.contains(card.instrumentID));
+  }
+
+  /// Marks the first-launch tour as finished (either completed or skipped)
+  /// so it never shows automatically again on this device (spec "Onboarding
+  /// tour"). Replaying it from Settings/a help sheet pushes
+  /// `OnboardingTourScreen` directly instead of going through this flag.
+  Future<void> completeOnboarding() async {
+    await preferences.setOnboardingCompleted(true);
+    if (!state.shouldShowOnboarding) return;
+    emit(state.copyWith(shouldShowOnboarding: false));
   }
 
   CloudSyncStatus _statusFor({

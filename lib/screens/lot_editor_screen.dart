@@ -8,10 +8,12 @@ import '../models/asset.dart';
 import '../models/holding.dart';
 import '../models/metal_breakdown.dart';
 import '../theme/design_system.dart';
+import '../theme/help_topics.dart';
 import '../theme/instrument_theme.dart';
 import '../theme/qima_colors.dart';
 import '../theme/strings.dart';
 import '../widgets/confirm_delete_dialog.dart';
+import '../widgets/help_button.dart';
 import 'currency_picker.dart';
 import 'holdings_screen.dart';
 
@@ -139,6 +141,7 @@ class _LotEditorScreenState extends State<LotEditorScreen> {
           backgroundColor: Colors.transparent,
           title: Text(isEditing ? l10n.holdingsEdit : l10n.holdingsNew),
           actions: [
+            const HelpButton(topic: HelpTopicId.lotEditor),
             if (isEditing)
               IconButton(
                 icon: const Icon(Icons.delete_outline),

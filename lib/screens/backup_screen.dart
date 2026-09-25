@@ -7,7 +7,9 @@ import '../blocs/app_state.dart';
 import '../l10n/app_localizations.dart';
 import '../services/backup/backup_service.dart';
 import '../theme/design_system.dart';
+import '../theme/help_topics.dart';
 import '../theme/qima_colors.dart';
+import '../widgets/help_button.dart';
 import 'export_backup_sheet.dart';
 import 'import_preview_screen.dart';
 
@@ -27,7 +29,11 @@ class BackupScreen extends StatelessWidget {
     return ScreenBackground(
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        appBar: AppBar(backgroundColor: Colors.transparent, title: Text(l10n.backupTitle)),
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          title: Text(l10n.backupTitle),
+          actions: const [HelpButton(topic: HelpTopicId.backup)],
+        ),
         body: BlocBuilder<AppCubit, AppState>(
           builder: (context, state) {
             return ListView(

@@ -99,6 +99,15 @@ class AppState extends Equatable {
   /// successfully, for the "Up to date · 14:32" status line.
   final DateTime? lastCloudSyncAt;
 
+  /// Whether the first-launch onboarding tour should be presented before
+  /// the home shell (spec "Onboarding tour"). Decided once in
+  /// [AppCubit.init]: false once [Preferences.onboardingCompleted] is set,
+  /// and also false for an existing (pre-onboarding) install that already
+  /// has real user data — see [AppCubit.completeOnboarding] and
+  /// `_hasExistingUserData`. Stays false until [initialized] to avoid
+  /// flashing the tour on for a frame before init resolves.
+  final bool shouldShowOnboarding;
+
   AppState({
     this.initialized = false,
     Map<String, QuoteSeries>? seriesByID,
@@ -128,6 +137,7 @@ class AppState extends Equatable {
     this.iCloudAccountAvailable = true,
     this.cloudSyncStatus = CloudSyncStatus.disabled,
     this.lastCloudSyncAt,
+    this.shouldShowOnboarding = false,
   })  : seriesByID = seriesByID ?? const {},
         rates = rates ?? FXRates.usdIdentity;
 
@@ -162,6 +172,7 @@ class AppState extends Equatable {
     CloudSyncStatus? cloudSyncStatus,
     DateTime? lastCloudSyncAt,
     bool clearLastCloudSyncAt = false,
+    bool? shouldShowOnboarding,
   }) {
     return AppState(
       initialized: initialized ?? this.initialized,
@@ -192,6 +203,7 @@ class AppState extends Equatable {
       iCloudAccountAvailable: iCloudAccountAvailable ?? this.iCloudAccountAvailable,
       cloudSyncStatus: cloudSyncStatus ?? this.cloudSyncStatus,
       lastCloudSyncAt: clearLastCloudSyncAt ? null : (lastCloudSyncAt ?? this.lastCloudSyncAt),
+      shouldShowOnboarding: shouldShowOnboarding ?? this.shouldShowOnboarding,
     );
   }
 
@@ -225,5 +237,6 @@ class AppState extends Equatable {
         iCloudAccountAvailable,
         cloudSyncStatus,
         lastCloudSyncAt,
+        shouldShowOnboarding,
       ];
 }

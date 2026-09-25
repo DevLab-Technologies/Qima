@@ -1131,4 +1131,685 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get commonContinue => 'Continue';
+
+  @override
+  String get onboardingNext => 'Next';
+
+  @override
+  String get onboardingSkip => 'Skip';
+
+  @override
+  String get onboardingGetStarted => 'Get started';
+
+  @override
+  String get onboardingStep1Title => 'Everything you own, in one number';
+
+  @override
+  String get onboardingStep1Body =>
+      'Gold, silver, crypto, stocks, indices and currencies, added up in your currency.';
+
+  @override
+  String get onboardingStep2Title => 'Prices the way you buy';
+
+  @override
+  String get onboardingStep2Body =>
+      'Live prices by gram, ounce or kilogram, 24K to 18K, in any currency. Tap + to add, tap a card for its chart.';
+
+  @override
+  String get onboardingStep3Title => 'Know what you hold';
+
+  @override
+  String get onboardingStep3Body =>
+      'Record each purchase: quantity, unit, karat, cost and date. See what you hold, your average cost, value and gain.';
+
+  @override
+  String get onboardingStep4Title => 'Never miss a move';
+
+  @override
+  String get onboardingStep4Body =>
+      'Get notified when a price crosses a level or moves by a percent. Put prices on your Home and Lock Screen.';
+
+  @override
+  String get onboardingStep5Title => 'Private by design';
+
+  @override
+  String get onboardingStep5Body =>
+      'No account. Your data stays on this device, with optional iCloud sync, Face ID lock and file backups.';
+
+  @override
+  String get onboardingStep5BodyAndroid =>
+      'No account. Your data stays on this device, with fingerprint or face unlock and file backups.';
+
+  @override
+  String get onboardingStep5BodyMac =>
+      'No account. Your data stays on this Mac, with optional iCloud sync, Touch ID lock and file backups.';
+
+  @override
+  String get onboardingStep5PillNoAccount => 'No account';
+
+  @override
+  String get onboardingStep5PillOnDevice => 'On this device';
+
+  @override
+  String get onboardingStep5ICloudTitle => 'iCloud sync';
+
+  @override
+  String get onboardingStep5ICloudSubtitle =>
+      'Optional · keeps devices in step';
+
+  @override
+  String get onboardingStep5AppLockTitle => 'App lock';
+
+  @override
+  String get onboardingStep5AppLockSubtitleApple => 'Face ID or fingerprint';
+
+  @override
+  String get onboardingStep5AppLockSubtitleGeneric =>
+      'Fingerprint or face unlock';
+
+  @override
+  String get onboardingStep5AppLockSubtitleMac =>
+      'Touch ID or your Mac password';
+
+  @override
+  String get onboardingStep5HideBalancesTitle => 'Hide balances';
+
+  @override
+  String get onboardingStep5HideBalancesSubtitle =>
+      'Show •••• instead of amounts';
+
+  @override
+  String get onboardingBaseCurrencyTitle => 'Base currency';
+
+  @override
+  String get onboardingBaseCurrencySubtitle =>
+      'From your region · change in Settings';
+
+  @override
+  String onboardingSemanticStepOf(int step, int total) {
+    return 'Step $step of $total';
+  }
+
+  @override
+  String get onboardingReplayTour => 'Replay the tour';
+
+  @override
+  String get helpButtonTooltip => 'Help';
+
+  @override
+  String get helpSheetAboutHeader => 'ABOUT THIS PAGE';
+
+  @override
+  String get helpSheetHowToHeader => 'HOW TO USE IT';
+
+  @override
+  String get helpSheetIndexHeader => 'HELP';
+
+  @override
+  String get helpSheetWidgetsHeader => 'HELP · SETTINGS';
+
+  @override
+  String get helpSheetCloseTooltip => 'Close';
+
+  @override
+  String get helpIndexIntro =>
+      'Pick a page to see what it does and how to use it.';
+
+  @override
+  String get helpWatchlistTitle => 'Watchlist';
+
+  @override
+  String get helpWatchlistSummary =>
+      'Live prices for everything you follow, with your portfolio total on top.';
+
+  @override
+  String get helpWatchlistStep1Title => 'Open a card';
+
+  @override
+  String get helpWatchlistStep1Body =>
+      'Tap any card for its chart, key stats and your holdings.';
+
+  @override
+  String get helpWatchlistStep2Title => 'Add an asset';
+
+  @override
+  String get helpWatchlistStep2Body => 'Tap + and search by name or symbol.';
+
+  @override
+  String get helpWatchlistStep3Title => 'Filter the list';
+
+  @override
+  String get helpWatchlistStep3Body =>
+      'Show only Metals, Crypto, Stocks, Indices or Currencies.';
+
+  @override
+  String get helpWatchlistStep4Title => 'Change the chart range';
+
+  @override
+  String get helpWatchlistStep4Body =>
+      'Pick 1W to All under the portfolio chart.';
+
+  @override
+  String get helpWatchlistStep5Title => 'Refresh prices';
+
+  @override
+  String get helpWatchlistStep5Body =>
+      'Tap refresh to fetch the latest prices now.';
+
+  @override
+  String get helpAssetDetailTitle => 'Asset detail';
+
+  @override
+  String get helpAssetDetailSummary =>
+      'One asset\'s price, chart and stats, plus what you hold of it.';
+
+  @override
+  String get helpAssetDetailStep1Title => 'Pick a range';
+
+  @override
+  String get helpAssetDetailStep1Body =>
+      'Switch between 1D and All under the chart.';
+
+  @override
+  String get helpAssetDetailStep2Title => 'Change unit, karat or currency';
+
+  @override
+  String get helpAssetDetailStep2Body =>
+      'Tap the sliders at the top of the page.';
+
+  @override
+  String get helpAssetDetailStep3Title => 'Compare units';
+
+  @override
+  String get helpAssetDetailStep3Body =>
+      'Price per unit shows ounce, kilogram and each karat side by side.';
+
+  @override
+  String get helpAssetDetailStep4Title => 'Set an alert';
+
+  @override
+  String get helpAssetDetailStep4Body =>
+      'Tap the bell to hear when the price crosses a level or moves by a percent.';
+
+  @override
+  String get helpAssetDetailStep5Title => 'Track what you own';
+
+  @override
+  String get helpAssetDetailStep5Body =>
+      'Tap Holdings to see your lots or add a purchase.';
+
+  @override
+  String get helpPortfolioTitle => 'Portfolio';
+
+  @override
+  String get helpPortfolioSummary =>
+      'Everything you hold, added up in your base currency, with each asset\'s share and gain.';
+
+  @override
+  String get helpPortfolioStep1Title => 'Read the donut';
+
+  @override
+  String get helpPortfolioStep1Body =>
+      'Each slice is one asset\'s share of your total value.';
+
+  @override
+  String get helpPortfolioStep2Title => 'Open an asset';
+
+  @override
+  String get helpPortfolioStep2Body =>
+      'Tap a row to see its lots, average cost and gain.';
+
+  @override
+  String get helpPortfolioStep3Title => 'Add a purchase';
+
+  @override
+  String get helpPortfolioStep3Body => 'Open an asset, then tap +.';
+
+  @override
+  String get helpPortfolioStep4Title => 'Change the currency';
+
+  @override
+  String get helpPortfolioStep4Body =>
+      'Totals use your base currency, set in Settings.';
+
+  @override
+  String get helpPortfolioStep5Title => 'Hide amounts';
+
+  @override
+  String get helpPortfolioStep5Body =>
+      'Turn on Hide balances in Settings to mask every value.';
+
+  @override
+  String get helpLotEditorTitle => 'Lot editor';
+
+  @override
+  String get helpLotEditorSummary =>
+      'Record one purchase so Qima can work out what you hold, your average cost and your gain.';
+
+  @override
+  String get helpLotEditorStep1Title => 'Quantity and unit';
+
+  @override
+  String get helpLotEditorStep1Body =>
+      'Enter how much you bought, in troy ounces, grams or kilograms.';
+
+  @override
+  String get helpLotEditorStep2Title => 'Karat';
+
+  @override
+  String get helpLotEditorStep2Body =>
+      'For gold by gram or kilogram, pick 24K, 22K, 21K or 18K. It starts at the card\'s karat.';
+
+  @override
+  String get helpLotEditorStep3Title => 'What you paid';
+
+  @override
+  String get helpLotEditorStep3Body =>
+      'Enter the cost per unit or the total, in the currency you paid in.';
+
+  @override
+  String get helpLotEditorStep4Title => 'Date';
+
+  @override
+  String get helpLotEditorStep4Body => 'The day you bought it.';
+
+  @override
+  String get helpLotEditorStep5Title => 'Save';
+
+  @override
+  String get helpLotEditorStep5Body =>
+      'Edit or delete a lot any time from Holdings.';
+
+  @override
+  String get helpAddAssetTitle => 'Add asset';
+
+  @override
+  String get helpAddAssetSummary =>
+      'Find something to follow and add it to your watchlist.';
+
+  @override
+  String get helpAddAssetStep1Title => 'Search';
+
+  @override
+  String get helpAddAssetStep1Body =>
+      'Type a name or symbol, like gold, BTC or AAPL.';
+
+  @override
+  String get helpAddAssetStep2Title => 'Pick a result';
+
+  @override
+  String get helpAddAssetStep2Body =>
+      'It\'s added to your watchlist and its page opens.';
+
+  @override
+  String get helpAddAssetStep3Title => 'Not in the list?';
+
+  @override
+  String get helpAddAssetStep3Body =>
+      'Add the symbol as a custom ticker. Qima checks it with the price provider first.';
+
+  @override
+  String get helpAddAssetStep4Title => 'Changed your mind?';
+
+  @override
+  String get helpAddAssetStep4Body =>
+      'Tap Undo on the confirmation at the bottom.';
+
+  @override
+  String get helpPriceAlertsTitle => 'Price alerts';
+
+  @override
+  String get helpPriceAlertsSummary =>
+      'Every alert you\'ve set, grouped by asset.';
+
+  @override
+  String get helpPriceAlertsStep1Title => 'New alert';
+
+  @override
+  String get helpPriceAlertsStep1Body =>
+      'Tap +, or open an asset and tap the bell.';
+
+  @override
+  String get helpPriceAlertsStep2Title => 'Pause or resume';
+
+  @override
+  String get helpPriceAlertsStep2Body =>
+      'Use the switch. One-off alerts switch themselves off after they fire.';
+
+  @override
+  String get helpPriceAlertsStep3Title => 'Change or delete';
+
+  @override
+  String get helpPriceAlertsStep3Body => 'Tap an alert to edit or remove it.';
+
+  @override
+  String get helpPriceAlertsStep4Title => 'When alerts arrive';
+
+  @override
+  String get helpPriceAlertsStep4Body =>
+      'Prices are checked about every 15 minutes in the background, so an alert can arrive a few minutes late.';
+
+  @override
+  String get helpPriceAlertsStep5Title => 'No notifications?';
+
+  @override
+  String get helpPriceAlertsStep5Body =>
+      'Allow notifications for Qima in system settings, or alerts can\'t reach you.';
+
+  @override
+  String get helpAlertEditorTitle => 'Alert editor';
+
+  @override
+  String get helpAlertEditorSummary =>
+      'Choose when Qima should notify you about this asset.';
+
+  @override
+  String get helpAlertEditorStep1Title => 'Price';
+
+  @override
+  String get helpAlertEditorStep1Body =>
+      'Notify when the price goes above or below your target.';
+
+  @override
+  String get helpAlertEditorStep2Title => '% move';
+
+  @override
+  String get helpAlertEditorStep2Body =>
+      'Notify when it moves up, down or either way by 1-10% within 24 hours or 7 days.';
+
+  @override
+  String get helpAlertEditorStep3Title => 'Check the trigger';
+
+  @override
+  String get helpAlertEditorStep3Body =>
+      'The line under your choice shows exactly which prices will fire it.';
+
+  @override
+  String get helpAlertEditorStep4Title => 'Repeat';
+
+  @override
+  String get helpAlertEditorStep4Body =>
+      'Off: the alert fires once, then switches off. On: it fires every time.';
+
+  @override
+  String get helpSettingsTitle => 'Settings';
+
+  @override
+  String get helpSettingsSummary => 'Choices that apply across the whole app.';
+
+  @override
+  String get helpSettingsStep1Title => 'Appearance';
+
+  @override
+  String get helpSettingsStep1Body => 'System, Light or Dark.';
+
+  @override
+  String get helpSettingsStep2Title => 'Privacy & security';
+
+  @override
+  String get helpSettingsStep2Body =>
+      'Hide balances, and lock Qima with Face ID or fingerprint.';
+
+  @override
+  String get helpSettingsStep3Title => 'Alerts';
+
+  @override
+  String get helpSettingsStep3Body =>
+      'See every price alert and check that notifications are allowed.';
+
+  @override
+  String get helpSettingsStep4Title => 'Backup';
+
+  @override
+  String get helpSettingsStep4Body =>
+      'Save everything to a file and restore it later.';
+
+  @override
+  String get helpSettingsStep5Title => 'Defaults';
+
+  @override
+  String get helpSettingsStep5Body =>
+      'Base currency, chart range, widget refresh and language.';
+
+  @override
+  String get helpBackupTitle => 'Backup & restore';
+
+  @override
+  String get helpBackupSummary =>
+      'Qima has no account, so a backup file is how you keep your data if this phone is lost or reset.';
+
+  @override
+  String get helpBackupStep1Title => 'Full backup';
+
+  @override
+  String get helpBackupStep1Body =>
+      'Saves your watchlist, holdings, custom tickers and settings as a .json file.';
+
+  @override
+  String get helpBackupStep2Title => 'Add a password';
+
+  @override
+  String get helpBackupStep2Body =>
+      'Optional. You\'ll need it to restore, and it can\'t be recovered.';
+
+  @override
+  String get helpBackupStep3Title => 'Save or share';
+
+  @override
+  String get helpBackupStep3Body =>
+      'Keep the file in Files or iCloud Drive, or send it to yourself.';
+
+  @override
+  String get helpBackupStep4Title => 'Restore';
+
+  @override
+  String get helpBackupStep4Body =>
+      'Import a .json backup. Merge adds what\'s missing and deletes nothing; Replace swaps everything for the file.';
+
+  @override
+  String get helpBackupStep5Title => 'Holdings spreadsheet';
+
+  @override
+  String get helpBackupStep5Body =>
+      'A .csv for accounting. It can\'t be restored.';
+
+  @override
+  String get helpWidgetsTitle => 'Widgets';
+
+  @override
+  String get helpWidgetsSummary =>
+      'Put live prices and your portfolio on the Home Screen and Lock Screen.';
+
+  @override
+  String get helpWidgetsStep1Title => 'Touch and hold the Home Screen';
+
+  @override
+  String get helpWidgetsStep1Body =>
+      'When the apps jiggle, tap Edit, then Add Widget.';
+
+  @override
+  String get helpWidgetsStep2Title => 'Find Qima';
+
+  @override
+  String get helpWidgetsStep2Body =>
+      'Search for Qima, choose Price or Portfolio, pick a size and tap Add Widget.';
+
+  @override
+  String get helpWidgetsStep3Title => 'Choose what it shows';
+
+  @override
+  String get helpWidgetsStep3Body =>
+      'Touch and hold the widget, tap Edit Widget, then pick asset, unit, karat, currency and chart range.';
+
+  @override
+  String get helpWidgetsStep4Title => 'Lock Screen';
+
+  @override
+  String get helpWidgetsStep4Body =>
+      'Touch and hold the Lock Screen, tap Customize, then add a Qima widget.';
+
+  @override
+  String get helpWidgetsNote =>
+      'Widgets refresh every 15 minutes by default. Change it in Settings under Widget refresh interval.';
+
+  @override
+  String get helpHoldingsTitle => 'Holdings';
+
+  @override
+  String get helpHoldingsSummary =>
+      'Every lot you bought of this asset, and what they add up to.';
+
+  @override
+  String get helpHoldingsStep1Title => 'Read the totals';
+
+  @override
+  String get helpHoldingsStep1Body =>
+      'Quantity, average cost, current value and gain across every lot.';
+
+  @override
+  String get helpHoldingsStep2Title => 'Add a lot';
+
+  @override
+  String get helpHoldingsStep2Body => 'Tap + to record another purchase.';
+
+  @override
+  String get helpHoldingsStep3Title => 'Edit or delete a lot';
+
+  @override
+  String get helpHoldingsStep3Body =>
+      'Tap a lot to change it, or swipe to delete.';
+
+  @override
+  String get helpCardConfigTitle => 'Asset settings';
+
+  @override
+  String get helpCardConfigSummary =>
+      'Choose the currency, unit and karat this card shows before adding it.';
+
+  @override
+  String get helpCardConfigStep1Title => 'Currency';
+
+  @override
+  String get helpCardConfigStep1Body =>
+      'Prices show in this currency on the card and its chart.';
+
+  @override
+  String get helpCardConfigStep2Title => 'Unit';
+
+  @override
+  String get helpCardConfigStep2Body =>
+      'For metals, pick troy ounce, gram or kilogram.';
+
+  @override
+  String get helpCardConfigStep3Title => 'Karat';
+
+  @override
+  String get helpCardConfigStep3Body =>
+      'For gold by weight, pick the purity you want priced.';
+
+  @override
+  String get helpCardConfigStep4Title => 'Add it';
+
+  @override
+  String get helpCardConfigStep4Body =>
+      'You can change any of these later from the asset detail screen.';
+
+  @override
+  String get helpCustomTickerTitle => 'Custom ticker';
+
+  @override
+  String get helpCustomTickerSummary =>
+      'Track a stock, ETF or index that isn\'t in Qima\'s catalog by its symbol.';
+
+  @override
+  String get helpCustomTickerStep1Title => 'Enter the symbol';
+
+  @override
+  String get helpCustomTickerStep1Body =>
+      'Type the exact ticker symbol, like TSLA or VOO.';
+
+  @override
+  String get helpCustomTickerStep2Title => 'Qima checks it';
+
+  @override
+  String get helpCustomTickerStep2Body =>
+      'It\'s looked up with the price provider first, so a typo is caught before it\'s added.';
+
+  @override
+  String get helpCustomTickerStep3Title => 'Add it';
+
+  @override
+  String get helpCustomTickerStep3Body =>
+      'It\'s added to your watchlist with its real name and price.';
+
+  @override
+  String get helpCurrencyPickerTitle => 'Currency picker';
+
+  @override
+  String get helpCurrencyPickerSummary =>
+      'Pick the currency prices and totals should show in.';
+
+  @override
+  String get helpCurrencyPickerStep1Title => 'Search';
+
+  @override
+  String get helpCurrencyPickerStep1Body =>
+      'Type an ISO code or a currency name, like EUR or dirham.';
+
+  @override
+  String get helpCurrencyPickerStep2Title => 'Pick one';
+
+  @override
+  String get helpCurrencyPickerStep2Body =>
+      'Tap a currency to use it immediately.';
+
+  @override
+  String get helpImportPreviewTitle => 'Restore preview';
+
+  @override
+  String get helpImportPreviewSummary =>
+      'See what\'s in a backup file before it changes anything on this phone.';
+
+  @override
+  String get helpImportPreviewStep1Title => 'Check the contents';
+
+  @override
+  String get helpImportPreviewStep1Body =>
+      'See how many cards, lots and alerts the file contains before restoring.';
+
+  @override
+  String get helpImportPreviewStep2Title => 'Merge or Replace';
+
+  @override
+  String get helpImportPreviewStep2Body =>
+      'Merge adds what\'s missing and deletes nothing. Replace swaps everything for the file.';
+
+  @override
+  String get helpImportPreviewStep3Title => 'Confirm';
+
+  @override
+  String get helpImportPreviewStep3Body =>
+      'A password-protected file asks for its password first.';
+
+  @override
+  String get settingsHelpGroup => 'Help';
+
+  @override
+  String get settingsHelpReplayTour => 'Replay the tour';
+
+  @override
+  String get settingsHelpReplayTourSubtitle =>
+      'See the five-step introduction again';
+
+  @override
+  String get settingsHelpHowQimaWorks => 'How Qima works';
+
+  @override
+  String get settingsHelpHowQimaWorksSubtitle => 'A short guide to every page';
+
+  @override
+  String get settingsHelpAddWidget => 'Add a widget';
+
+  @override
+  String get settingsHelpAddWidgetSubtitle => 'Home Screen and Lock Screen';
 }

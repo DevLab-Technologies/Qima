@@ -9,11 +9,13 @@ import '../models/chart_range.dart';
 import '../models/instrument_presentation.dart';
 import '../models/watch_card.dart';
 import '../theme/design_system.dart';
+import '../theme/help_topics.dart';
 import '../theme/instrument_theme.dart';
 import '../theme/price_chart.dart';
 import '../theme/qima_colors.dart';
 import '../theme/strings.dart';
 import '../widgets/alerts_card.dart';
+import '../widgets/help_button.dart';
 import '../widgets/instrument_icon.dart';
 import '../widgets/key_stats_grid.dart';
 import '../widgets/unit_price_carousel.dart';
@@ -119,6 +121,7 @@ class _InstrumentDetailScreenState extends State<InstrumentDetailScreen> {
               backgroundColor: Colors.transparent,
               title: Text(displayLabel(context, instrument.nameKey)),
               actions: [
+                const HelpButton(topic: HelpTopicId.assetDetail),
                 PopupMenuButton<String>(
                   icon: const Icon(Icons.tune),
                   onSelected: (value) async {

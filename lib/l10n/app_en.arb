@@ -336,7 +336,6 @@
     }
   },
   "confirmRemoveTickerMessage": "Any watchlist cards for it are removed too.",
-
   "alertKindAbove": "Goes above",
   "alertKindBelow": "Goes below",
   "alertKindPercentMove": "% move",
@@ -347,12 +346,10 @@
   "alertWindowWithin7d": "Within 7 days",
   "alertWindow24h": "24 hours",
   "alertWindow7d": "7 days",
-
   "alertBellTooltip": "Price alerts",
   "alertsCardTitle": "Alerts",
   "alertsCardEmpty": "No alerts yet for this instrument.",
   "alertsCardAdd": "Add alert",
-
   "alertEditorNewTitle": "New alert",
   "alertEditorEditTitle": "Edit alert",
   "alertEditorTypePrice": "Price",
@@ -364,15 +361,23 @@
   "alertEditorHelperAbove": "+{delta} · {percent}% above the current price",
   "@alertEditorHelperAbove": {
     "placeholders": {
-      "delta": { "type": "String" },
-      "percent": { "type": "String" }
+      "delta": {
+        "type": "String"
+      },
+      "percent": {
+        "type": "String"
+      }
     }
   },
   "alertEditorHelperBelow": "−{delta} · {percent}% below the current price",
   "@alertEditorHelperBelow": {
     "placeholders": {
-      "delta": { "type": "String" },
-      "percent": { "type": "String" }
+      "delta": {
+        "type": "String"
+      },
+      "percent": {
+        "type": "String"
+      }
     }
   },
   "alertEditorDirection": "Direction",
@@ -380,20 +385,28 @@
   "alertEditorPercentSummary": "Fires below {low} or above {high}",
   "@alertEditorPercentSummary": {
     "placeholders": {
-      "low": { "type": "String" },
-      "high": { "type": "String" }
+      "low": {
+        "type": "String"
+      },
+      "high": {
+        "type": "String"
+      }
     }
   },
   "alertEditorPercentSummaryUp": "Fires above {high}",
   "@alertEditorPercentSummaryUp": {
     "placeholders": {
-      "high": { "type": "String" }
+      "high": {
+        "type": "String"
+      }
     }
   },
   "alertEditorPercentSummaryDown": "Fires below {low}",
   "@alertEditorPercentSummaryDown": {
     "placeholders": {
-      "low": { "type": "String" }
+      "low": {
+        "type": "String"
+      }
     }
   },
   "alertEditorRepeat": "Repeat",
@@ -401,7 +414,6 @@
   "alertEditorCreate": "Create alert",
   "alertEditorSave": "Save",
   "alertEditorDelete": "Delete",
-
   "alertsScreenTitle": "Alerts",
   "alertsScreenInfo": "Alerts are checked roughly every 15 minutes in the background, and live while Qima is open.",
   "alertsScreenEmptyTitle": "No alerts yet",
@@ -409,7 +421,9 @@
   "alertsScreenFiredToday": "Fired today {time} · switched off",
   "@alertsScreenFiredToday": {
     "placeholders": {
-      "time": { "type": "String" }
+      "time": {
+        "type": "String"
+      }
     }
   },
   "alertsScreenNotificationsOff": "Notifications are off",
@@ -417,13 +431,14 @@
   "alertsScreenOpenSettings": "Open settings",
   "confirmDeleteAlertTitle": "Delete this alert?",
   "confirmDeleteAlertMessage": "You won't be notified for it again.",
-
   "settingsAlerts": "Alerts",
   "settingsAlertsPriceAlerts": "Price alerts",
   "settingsAlertsCount": "{count, plural, =0{No alerts} =1{1 alert} other{{count} alerts}}",
   "@settingsAlertsCount": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "settingsAlertsNotifications": "Notifications",
@@ -431,75 +446,103 @@
   "settingsAlertsNotificationsOff": "Off",
   "settingsAlertsDeliverOnDevice": "Deliver alerts on this device",
   "settingsAlertsDeliverOnDeviceFooter": "Turn off if you don't want this device to notify you when an alert fires.",
-
   "alertNotificationTitleAbove": "{name} is above {target}",
   "@alertNotificationTitleAbove": {
     "placeholders": {
-      "name": { "type": "String" },
-      "target": { "type": "String" }
+      "name": {
+        "type": "String"
+      },
+      "target": {
+        "type": "String"
+      }
     }
   },
   "alertNotificationTitleBelow": "{name} is below {target}",
   "@alertNotificationTitleBelow": {
     "placeholders": {
-      "name": { "type": "String" },
-      "target": { "type": "String" }
+      "name": {
+        "type": "String"
+      },
+      "target": {
+        "type": "String"
+      }
     }
   },
   "alertNotificationTitlePercent": "{name} moved {percent}% in {window}",
   "@alertNotificationTitlePercent": {
     "placeholders": {
-      "name": { "type": "String" },
-      "percent": { "type": "String" },
-      "window": { "type": "String" }
+      "name": {
+        "type": "String"
+      },
+      "percent": {
+        "type": "String"
+      },
+      "window": {
+        "type": "String"
+      }
     }
   },
   "alertNotificationBodyOneOff": "Now {price} per {unit}. This alert is now off.",
   "@alertNotificationBodyOneOff": {
     "placeholders": {
-      "price": { "type": "String" },
-      "unit": { "type": "String" }
+      "price": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      }
     }
   },
   "alertNotificationBodyRepeat": "Now {price} per {unit}. You'll be told again the next time this happens.",
   "@alertNotificationBodyRepeat": {
     "placeholders": {
-      "price": { "type": "String" },
-      "unit": { "type": "String" }
+      "price": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      }
     }
   },
-
   "settingsBackup": "Backup & restore",
   "settingsBackupSubtitleNever": "Never backed up",
   "settingsBackupSubtitle": "Last backup {date} · {instruments} instruments, {lots} lots",
   "@settingsBackupSubtitle": {
     "placeholders": {
-      "date": { "type": "String" },
-      "instruments": { "type": "int" },
-      "lots": { "type": "int" }
+      "date": {
+        "type": "String"
+      },
+      "instruments": {
+        "type": "int"
+      },
+      "lots": {
+        "type": "int"
+      }
     }
   },
-
   "settingsICloudSync": "iCloud sync",
   "settingsICloudSyncSwitch": "Sync with iCloud",
   "settingsICloudSyncFooter": "Keeps your watchlist, holdings, custom tickers and price alerts up to date across your devices.",
   "settingsICloudSyncStatusUpToDate": "Up to date · {time}",
   "@settingsICloudSyncStatusUpToDate": {
     "placeholders": {
-      "time": { "type": "String" }
+      "time": {
+        "type": "String"
+      }
     }
   },
   "settingsICloudSyncStatusSyncing": "Syncing…",
   "settingsICloudSyncStatusNotSignedIn": "Not signed in to iCloud",
   "settingsICloudSyncStatusStorageFull": "iCloud storage for Qima is full",
-
   "backupTitle": "Backup & restore",
   "backupStatusTitle": "Stored only on this phone",
   "backupStatusMessage": "Your data lives on this device only. Back it up so you can restore it here or on another device.",
   "backupLastBackup": "Last backup {date}",
   "@backupLastBackup": {
     "placeholders": {
-      "date": { "type": "String" }
+      "date": {
+        "type": "String"
+      }
     }
   },
   "backupLastBackupNever": "Never backed up",
@@ -508,21 +551,17 @@
   "backupReminderCardAction": "Back up now",
   "backupReminderNotificationTitle": "Time for a backup",
   "backupReminderNotificationBody": "It's been a while since your last Qima backup and your data has changed. Tap to back up now.",
-
   "backupExportSection": "Export",
   "backupExportFullTitle": "Full backup",
   "backupExportFullSubtitle": "Watchlist, holdings, custom tickers, alerts and settings (.json)",
   "backupExportCsvTitle": "Holdings spreadsheet",
   "backupExportCsvSubtitle": "Your lots as a spreadsheet, for your records (.csv)",
-
   "backupRestoreSection": "Restore",
   "backupRestoreTitle": "Import a backup",
   "backupRestoreSubtitle": "Restore from a full backup file (.json)",
-
   "backupReminderSection": "Reminder",
   "backupReminderToggleTitle": "Remind me to back up",
   "backupReminderToggleSubtitle": "Get a monthly reminder if you haven't backed up recently and your data has changed.",
-
   "backupExportSheetTitle": "Export backup",
   "backupExportSheetFileName": "File name",
   "backupExportSheetFileSize": "Size",
@@ -530,9 +569,15 @@
   "backupExportSheetContentsSummary": "{cards} watchlist cards · {lots} lots · {customTickers} custom tickers",
   "@backupExportSheetContentsSummary": {
     "placeholders": {
-      "cards": { "type": "int" },
-      "lots": { "type": "int" },
-      "customTickers": { "type": "int" }
+      "cards": {
+        "type": "int"
+      },
+      "lots": {
+        "type": "int"
+      },
+      "customTickers": {
+        "type": "int"
+      }
     }
   },
   "backupExportSheetProtectTitle": "Protect with a password",
@@ -545,18 +590,21 @@
   "backupExportSheetAction": "Save or share…",
   "backupExportSheetWorking": "Preparing your backup…",
   "backupExportSheetFailed": "Couldn't create the backup. Try again.",
-
   "backupImportPreviewTitle": "Restore backup",
   "backupImportFileCreated": "Created {date}",
   "@backupImportFileCreated": {
     "placeholders": {
-      "date": { "type": "String" }
+      "date": {
+        "type": "String"
+      }
     }
   },
   "backupImportFileAppVersion": "Made with Qima {version}",
   "@backupImportFileAppVersion": {
     "placeholders": {
-      "version": { "type": "String" }
+      "version": {
+        "type": "String"
+      }
     }
   },
   "backupImportCountCards": "Watchlist cards",
@@ -574,9 +622,15 @@
   "backupImportDiff": "{added, plural, =0{} =1{+1 added} other{+{added} added}} · {updated} updated · {removed} removed",
   "@backupImportDiff": {
     "placeholders": {
-      "added": { "type": "int" },
-      "updated": { "type": "int" },
-      "removed": { "type": "int" }
+      "added": {
+        "type": "int"
+      },
+      "updated": {
+        "type": "int"
+      },
+      "removed": {
+        "type": "int"
+      }
     }
   },
   "backupImportRestoreButton": "Restore",
@@ -585,15 +639,12 @@
   "backupImportReplaceConfirmAction": "Replace",
   "backupImportSuccessSnackbar": "Backup restored",
   "backupImportFailedTitle": "Couldn't restore this backup",
-
   "backupImportCsvErrorTitle": "This is a spreadsheet, not a backup",
   "backupImportCsvErrorMessage": "A holdings spreadsheet (.csv) only has your lots, and can't be restored. Choose a full backup file (.json) instead.",
-
   "backupErrorNotQimaFile": "This doesn't look like a Qima backup file.",
   "backupErrorNewerVersion": "This backup was made with a newer version of Qima. Update the app to restore it.",
   "backupErrorWrongPassword": "That password didn't work.",
   "backupErrorCorrupted": "This backup file is damaged and can't be restored.",
-
   "backupCsvHeaderInstrument": "Instrument",
   "backupCsvHeaderSymbol": "Symbol",
   "backupCsvHeaderQuantity": "Quantity",
@@ -603,6 +654,805 @@
   "backupCsvHeaderCostCurrency": "Cost currency",
   "backupCsvHeaderTotalCost": "Total cost",
   "backupCsvHeaderDate": "Date",
-
-  "commonContinue": "Continue"
+  "commonContinue": "Continue",
+  "onboardingNext": "Next",
+  "@onboardingNext": {
+    "description": "Onboarding tour primary button, steps 1-4."
+  },
+  "onboardingSkip": "Skip",
+  "@onboardingSkip": {
+    "description": "Onboarding tour text button under Next, steps 1-4."
+  },
+  "onboardingGetStarted": "Get started",
+  "@onboardingGetStarted": {
+    "description": "Onboarding tour primary button, step 5 (final step)."
+  },
+  "onboardingStep1Title": "Everything you own, in one number",
+  "@onboardingStep1Title": {
+    "description": "Onboarding step 1 (Welcome) title."
+  },
+  "onboardingStep1Body": "Gold, silver, crypto, stocks, indices and currencies, added up in your currency.",
+  "@onboardingStep1Body": {
+    "description": "Onboarding step 1 (Welcome) body."
+  },
+  "onboardingStep2Title": "Prices the way you buy",
+  "@onboardingStep2Title": {
+    "description": "Onboarding step 2 (Watchlist) title."
+  },
+  "onboardingStep2Body": "Live prices by gram, ounce or kilogram, 24K to 18K, in any currency. Tap + to add, tap a card for its chart.",
+  "@onboardingStep2Body": {
+    "description": "Onboarding step 2 (Watchlist) body."
+  },
+  "onboardingStep3Title": "Know what you hold",
+  "@onboardingStep3Title": {
+    "description": "Onboarding step 3 (Holdings) title."
+  },
+  "onboardingStep3Body": "Record each purchase: quantity, unit, karat, cost and date. See what you hold, your average cost, value and gain.",
+  "@onboardingStep3Body": {
+    "description": "Onboarding step 3 (Holdings) body."
+  },
+  "onboardingStep4Title": "Never miss a move",
+  "@onboardingStep4Title": {
+    "description": "Onboarding step 4 (Alerts & widgets) title."
+  },
+  "onboardingStep4Body": "Get notified when a price crosses a level or moves by a percent. Put prices on your Home and Lock Screen.",
+  "@onboardingStep4Body": {
+    "description": "Onboarding step 4 (Alerts & widgets) title."
+  },
+  "onboardingStep5Title": "Private by design",
+  "@onboardingStep5Title": {
+    "description": "Onboarding step 5 (Private by design) title."
+  },
+  "onboardingStep5Body": "No account. Your data stays on this device, with optional iCloud sync, Face ID lock and file backups.",
+  "@onboardingStep5Body": {
+    "description": "Onboarding step 5 (Private by design) title."
+  },
+  "onboardingStep5BodyAndroid": "No account. Your data stays on this device, with fingerprint or face unlock and file backups.",
+  "@onboardingStep5BodyAndroid": {
+    "description": "Onboarding step 5 body, Android wording (no iCloud, fingerprint/face unlock instead of Face ID)."
+  },
+  "onboardingStep5BodyMac": "No account. Your data stays on this Mac, with optional iCloud sync, Touch ID lock and file backups.",
+  "@onboardingStep5BodyMac": {
+    "description": "Onboarding step 5 body on macOS (Touch ID instead of Face ID)."
+  },
+  "onboardingStep5PillNoAccount": "No account",
+  "@onboardingStep5PillNoAccount": {
+    "description": "Onboarding step 5 pill."
+  },
+  "onboardingStep5PillOnDevice": "On this device",
+  "@onboardingStep5PillOnDevice": {
+    "description": "Onboarding step 5 pill."
+  },
+  "onboardingStep5ICloudTitle": "iCloud sync",
+  "@onboardingStep5ICloudTitle": {
+    "description": "Onboarding step 5 illustration row title (iOS only)."
+  },
+  "onboardingStep5ICloudSubtitle": "Optional · keeps devices in step",
+  "@onboardingStep5ICloudSubtitle": {
+    "description": "Onboarding step 5 illustration row subtitle (iOS only)."
+  },
+  "onboardingStep5AppLockTitle": "App lock",
+  "@onboardingStep5AppLockTitle": {
+    "description": "Onboarding step 5 illustration row title."
+  },
+  "onboardingStep5AppLockSubtitleApple": "Face ID or fingerprint",
+  "@onboardingStep5AppLockSubtitleApple": {
+    "description": "Onboarding step 5 App lock row subtitle, Apple platforms."
+  },
+  "onboardingStep5AppLockSubtitleGeneric": "Fingerprint or face unlock",
+  "@onboardingStep5AppLockSubtitleGeneric": {
+    "description": "Onboarding step 5 App lock row subtitle, non-Apple platforms."
+  },
+  "onboardingStep5AppLockSubtitleMac": "Touch ID or your Mac password",
+  "@onboardingStep5AppLockSubtitleMac": {
+    "description": "Onboarding step 5 app lock row subtitle on macOS."
+  },
+  "onboardingStep5HideBalancesTitle": "Hide balances",
+  "@onboardingStep5HideBalancesTitle": {
+    "description": "Onboarding step 5 illustration row title."
+  },
+  "onboardingStep5HideBalancesSubtitle": "Show •••• instead of amounts",
+  "@onboardingStep5HideBalancesSubtitle": {
+    "description": "Onboarding step 5 illustration row subtitle."
+  },
+  "onboardingBaseCurrencyTitle": "Base currency",
+  "@onboardingBaseCurrencyTitle": {
+    "description": "Onboarding step 5 base-currency row title."
+  },
+  "onboardingBaseCurrencySubtitle": "From your region · change in Settings",
+  "@onboardingBaseCurrencySubtitle": {
+    "description": "Onboarding step 5 base-currency row subtitle."
+  },
+  "onboardingSemanticStepOf": "Step {step} of {total}",
+  "@onboardingSemanticStepOf": {
+    "description": "Accessibility label for the onboarding page dots / progress.",
+    "placeholders": {
+      "step": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "onboardingReplayTour": "Replay the tour",
+  "@onboardingReplayTour": {
+    "description": "Footer link on every help sheet, and a Settings row, that reopens the onboarding tour."
+  },
+  "helpButtonTooltip": "Help",
+  "@helpButtonTooltip": {
+    "description": "Tooltip/semantic label for the help (question mark) button in every app bar."
+  },
+  "helpSheetAboutHeader": "ABOUT THIS PAGE",
+  "@helpSheetAboutHeader": {
+    "description": "Small-caps header above the page name in the help sheet."
+  },
+  "helpSheetHowToHeader": "HOW TO USE IT",
+  "@helpSheetHowToHeader": {
+    "description": "Small-caps header above the numbered steps in the help sheet."
+  },
+  "helpSheetIndexHeader": "HELP",
+  "@helpSheetIndexHeader": {
+    "description": "Small-caps header for the \"How Qima works\" index sheet."
+  },
+  "helpSheetWidgetsHeader": "HELP · SETTINGS",
+  "@helpSheetWidgetsHeader": {
+    "description": "Small-caps header for the Widgets help topic (opened from Settings)."
+  },
+  "helpSheetCloseTooltip": "Close",
+  "@helpSheetCloseTooltip": {
+    "description": "Close button semantic label in the help sheet header."
+  },
+  "helpIndexIntro": "Pick a page to see what it does and how to use it.",
+  "@helpIndexIntro": {
+    "description": "\"How Qima works\" index sheet intro line."
+  },
+  "helpWatchlistTitle": "Watchlist",
+  "@helpWatchlistTitle": {
+    "description": "Watchlist help topic title (matches the page name)."
+  },
+  "helpWatchlistSummary": "Live prices for everything you follow, with your portfolio total on top.",
+  "@helpWatchlistSummary": {
+    "description": "Watchlist help topic summary line."
+  },
+  "helpWatchlistStep1Title": "Open a card",
+  "@helpWatchlistStep1Title": {
+    "description": "Watchlist help step 1 title."
+  },
+  "helpWatchlistStep1Body": "Tap any card for its chart, key stats and your holdings.",
+  "@helpWatchlistStep1Body": {
+    "description": "Watchlist help step 1 body."
+  },
+  "helpWatchlistStep2Title": "Add an asset",
+  "@helpWatchlistStep2Title": {
+    "description": "Watchlist help step 2 title."
+  },
+  "helpWatchlistStep2Body": "Tap + and search by name or symbol.",
+  "@helpWatchlistStep2Body": {
+    "description": "Watchlist help step 2 body."
+  },
+  "helpWatchlistStep3Title": "Filter the list",
+  "@helpWatchlistStep3Title": {
+    "description": "Watchlist help step 3 title."
+  },
+  "helpWatchlistStep3Body": "Show only Metals, Crypto, Stocks, Indices or Currencies.",
+  "@helpWatchlistStep3Body": {
+    "description": "Watchlist help step 3 body."
+  },
+  "helpWatchlistStep4Title": "Change the chart range",
+  "@helpWatchlistStep4Title": {
+    "description": "Watchlist help step 4 title."
+  },
+  "helpWatchlistStep4Body": "Pick 1W to All under the portfolio chart.",
+  "@helpWatchlistStep4Body": {
+    "description": "Watchlist help step 4 body."
+  },
+  "helpWatchlistStep5Title": "Refresh prices",
+  "@helpWatchlistStep5Title": {
+    "description": "Watchlist help step 5 title."
+  },
+  "helpWatchlistStep5Body": "Tap refresh to fetch the latest prices now.",
+  "@helpWatchlistStep5Body": {
+    "description": "Watchlist help step 5 body."
+  },
+  "helpAssetDetailTitle": "Asset detail",
+  "@helpAssetDetailTitle": {
+    "description": "Asset detail help topic title."
+  },
+  "helpAssetDetailSummary": "One asset's price, chart and stats, plus what you hold of it.",
+  "@helpAssetDetailSummary": {
+    "description": "Asset detail help topic summary line."
+  },
+  "helpAssetDetailStep1Title": "Pick a range",
+  "@helpAssetDetailStep1Title": {
+    "description": "Asset detail help step 1 title."
+  },
+  "helpAssetDetailStep1Body": "Switch between 1D and All under the chart.",
+  "@helpAssetDetailStep1Body": {
+    "description": "Asset detail help step 1 body."
+  },
+  "helpAssetDetailStep2Title": "Change unit, karat or currency",
+  "@helpAssetDetailStep2Title": {
+    "description": "Asset detail help step 2 title."
+  },
+  "helpAssetDetailStep2Body": "Tap the sliders at the top of the page.",
+  "@helpAssetDetailStep2Body": {
+    "description": "Asset detail help step 2 body."
+  },
+  "helpAssetDetailStep3Title": "Compare units",
+  "@helpAssetDetailStep3Title": {
+    "description": "Asset detail help step 3 title."
+  },
+  "helpAssetDetailStep3Body": "Price per unit shows ounce, kilogram and each karat side by side.",
+  "@helpAssetDetailStep3Body": {
+    "description": "Asset detail help step 3 body."
+  },
+  "helpAssetDetailStep4Title": "Set an alert",
+  "@helpAssetDetailStep4Title": {
+    "description": "Asset detail help step 4 title."
+  },
+  "helpAssetDetailStep4Body": "Tap the bell to hear when the price crosses a level or moves by a percent.",
+  "@helpAssetDetailStep4Body": {
+    "description": "Asset detail help step 4 body."
+  },
+  "helpAssetDetailStep5Title": "Track what you own",
+  "@helpAssetDetailStep5Title": {
+    "description": "Asset detail help step 5 title."
+  },
+  "helpAssetDetailStep5Body": "Tap Holdings to see your lots or add a purchase.",
+  "@helpAssetDetailStep5Body": {
+    "description": "Asset detail help step 5 body."
+  },
+  "helpPortfolioTitle": "Portfolio",
+  "@helpPortfolioTitle": {
+    "description": "Portfolio help topic title."
+  },
+  "helpPortfolioSummary": "Everything you hold, added up in your base currency, with each asset's share and gain.",
+  "@helpPortfolioSummary": {
+    "description": "Portfolio help topic summary line."
+  },
+  "helpPortfolioStep1Title": "Read the donut",
+  "@helpPortfolioStep1Title": {
+    "description": "Portfolio help step 1 title."
+  },
+  "helpPortfolioStep1Body": "Each slice is one asset's share of your total value.",
+  "@helpPortfolioStep1Body": {
+    "description": "Portfolio help step 1 body."
+  },
+  "helpPortfolioStep2Title": "Open an asset",
+  "@helpPortfolioStep2Title": {
+    "description": "Portfolio help step 2 title."
+  },
+  "helpPortfolioStep2Body": "Tap a row to see its lots, average cost and gain.",
+  "@helpPortfolioStep2Body": {
+    "description": "Portfolio help step 2 body."
+  },
+  "helpPortfolioStep3Title": "Add a purchase",
+  "@helpPortfolioStep3Title": {
+    "description": "Portfolio help step 3 title."
+  },
+  "helpPortfolioStep3Body": "Open an asset, then tap +.",
+  "@helpPortfolioStep3Body": {
+    "description": "Portfolio help step 3 body."
+  },
+  "helpPortfolioStep4Title": "Change the currency",
+  "@helpPortfolioStep4Title": {
+    "description": "Portfolio help step 4 title."
+  },
+  "helpPortfolioStep4Body": "Totals use your base currency, set in Settings.",
+  "@helpPortfolioStep4Body": {
+    "description": "Portfolio help step 4 body."
+  },
+  "helpPortfolioStep5Title": "Hide amounts",
+  "@helpPortfolioStep5Title": {
+    "description": "Portfolio help step 5 title."
+  },
+  "helpPortfolioStep5Body": "Turn on Hide balances in Settings to mask every value.",
+  "@helpPortfolioStep5Body": {
+    "description": "Portfolio help step 5 body."
+  },
+  "helpLotEditorTitle": "Lot editor",
+  "@helpLotEditorTitle": {
+    "description": "Lot editor help topic title."
+  },
+  "helpLotEditorSummary": "Record one purchase so Qima can work out what you hold, your average cost and your gain.",
+  "@helpLotEditorSummary": {
+    "description": "Lot editor help topic summary line."
+  },
+  "helpLotEditorStep1Title": "Quantity and unit",
+  "@helpLotEditorStep1Title": {
+    "description": "Lot editor help step 1 title."
+  },
+  "helpLotEditorStep1Body": "Enter how much you bought, in troy ounces, grams or kilograms.",
+  "@helpLotEditorStep1Body": {
+    "description": "Lot editor help step 1 body."
+  },
+  "helpLotEditorStep2Title": "Karat",
+  "@helpLotEditorStep2Title": {
+    "description": "Lot editor help step 2 title."
+  },
+  "helpLotEditorStep2Body": "For gold by gram or kilogram, pick 24K, 22K, 21K or 18K. It starts at the card's karat.",
+  "@helpLotEditorStep2Body": {
+    "description": "Lot editor help step 2 body."
+  },
+  "helpLotEditorStep3Title": "What you paid",
+  "@helpLotEditorStep3Title": {
+    "description": "Lot editor help step 3 title."
+  },
+  "helpLotEditorStep3Body": "Enter the cost per unit or the total, in the currency you paid in.",
+  "@helpLotEditorStep3Body": {
+    "description": "Lot editor help step 3 body."
+  },
+  "helpLotEditorStep4Title": "Date",
+  "@helpLotEditorStep4Title": {
+    "description": "Lot editor help step 4 title."
+  },
+  "helpLotEditorStep4Body": "The day you bought it.",
+  "@helpLotEditorStep4Body": {
+    "description": "Lot editor help step 4 body."
+  },
+  "helpLotEditorStep5Title": "Save",
+  "@helpLotEditorStep5Title": {
+    "description": "Lot editor help step 5 title."
+  },
+  "helpLotEditorStep5Body": "Edit or delete a lot any time from Holdings.",
+  "@helpLotEditorStep5Body": {
+    "description": "Lot editor help step 5 body."
+  },
+  "helpAddAssetTitle": "Add asset",
+  "@helpAddAssetTitle": {
+    "description": "Add asset help topic title."
+  },
+  "helpAddAssetSummary": "Find something to follow and add it to your watchlist.",
+  "@helpAddAssetSummary": {
+    "description": "Add asset help topic summary line."
+  },
+  "helpAddAssetStep1Title": "Search",
+  "@helpAddAssetStep1Title": {
+    "description": "Add asset help step 1 title."
+  },
+  "helpAddAssetStep1Body": "Type a name or symbol, like gold, BTC or AAPL.",
+  "@helpAddAssetStep1Body": {
+    "description": "Add asset help step 1 body."
+  },
+  "helpAddAssetStep2Title": "Pick a result",
+  "@helpAddAssetStep2Title": {
+    "description": "Add asset help step 2 title."
+  },
+  "helpAddAssetStep2Body": "It's added to your watchlist and its page opens.",
+  "@helpAddAssetStep2Body": {
+    "description": "Add asset help step 2 body."
+  },
+  "helpAddAssetStep3Title": "Not in the list?",
+  "@helpAddAssetStep3Title": {
+    "description": "Add asset help step 3 title."
+  },
+  "helpAddAssetStep3Body": "Add the symbol as a custom ticker. Qima checks it with the price provider first.",
+  "@helpAddAssetStep3Body": {
+    "description": "Add asset help step 3 body."
+  },
+  "helpAddAssetStep4Title": "Changed your mind?",
+  "@helpAddAssetStep4Title": {
+    "description": "Add asset help step 4 title."
+  },
+  "helpAddAssetStep4Body": "Tap Undo on the confirmation at the bottom.",
+  "@helpAddAssetStep4Body": {
+    "description": "Add asset help step 4 body."
+  },
+  "helpPriceAlertsTitle": "Price alerts",
+  "@helpPriceAlertsTitle": {
+    "description": "Price alerts help topic title."
+  },
+  "helpPriceAlertsSummary": "Every alert you've set, grouped by asset.",
+  "@helpPriceAlertsSummary": {
+    "description": "Price alerts help topic summary line."
+  },
+  "helpPriceAlertsStep1Title": "New alert",
+  "@helpPriceAlertsStep1Title": {
+    "description": "Price alerts help step 1 title."
+  },
+  "helpPriceAlertsStep1Body": "Tap +, or open an asset and tap the bell.",
+  "@helpPriceAlertsStep1Body": {
+    "description": "Price alerts help step 1 body."
+  },
+  "helpPriceAlertsStep2Title": "Pause or resume",
+  "@helpPriceAlertsStep2Title": {
+    "description": "Price alerts help step 2 title."
+  },
+  "helpPriceAlertsStep2Body": "Use the switch. One-off alerts switch themselves off after they fire.",
+  "@helpPriceAlertsStep2Body": {
+    "description": "Price alerts help step 2 body."
+  },
+  "helpPriceAlertsStep3Title": "Change or delete",
+  "@helpPriceAlertsStep3Title": {
+    "description": "Price alerts help step 3 title."
+  },
+  "helpPriceAlertsStep3Body": "Tap an alert to edit or remove it.",
+  "@helpPriceAlertsStep3Body": {
+    "description": "Price alerts help step 3 body."
+  },
+  "helpPriceAlertsStep4Title": "When alerts arrive",
+  "@helpPriceAlertsStep4Title": {
+    "description": "Price alerts help step 4 title."
+  },
+  "helpPriceAlertsStep4Body": "Prices are checked about every 15 minutes in the background, so an alert can arrive a few minutes late.",
+  "@helpPriceAlertsStep4Body": {
+    "description": "Price alerts help step 4 body."
+  },
+  "helpPriceAlertsStep5Title": "No notifications?",
+  "@helpPriceAlertsStep5Title": {
+    "description": "Price alerts help step 5 title."
+  },
+  "helpPriceAlertsStep5Body": "Allow notifications for Qima in system settings, or alerts can't reach you.",
+  "@helpPriceAlertsStep5Body": {
+    "description": "Price alerts help step 5 body."
+  },
+  "helpAlertEditorTitle": "Alert editor",
+  "@helpAlertEditorTitle": {
+    "description": "Alert editor help topic title."
+  },
+  "helpAlertEditorSummary": "Choose when Qima should notify you about this asset.",
+  "@helpAlertEditorSummary": {
+    "description": "Alert editor help topic summary line."
+  },
+  "helpAlertEditorStep1Title": "Price",
+  "@helpAlertEditorStep1Title": {
+    "description": "Alert editor help step 1 title."
+  },
+  "helpAlertEditorStep1Body": "Notify when the price goes above or below your target.",
+  "@helpAlertEditorStep1Body": {
+    "description": "Alert editor help step 1 body."
+  },
+  "helpAlertEditorStep2Title": "% move",
+  "@helpAlertEditorStep2Title": {
+    "description": "Alert editor help step 2 title."
+  },
+  "helpAlertEditorStep2Body": "Notify when it moves up, down or either way by 1-10% within 24 hours or 7 days.",
+  "@helpAlertEditorStep2Body": {
+    "description": "Alert editor help step 2 body."
+  },
+  "helpAlertEditorStep3Title": "Check the trigger",
+  "@helpAlertEditorStep3Title": {
+    "description": "Alert editor help step 3 title."
+  },
+  "helpAlertEditorStep3Body": "The line under your choice shows exactly which prices will fire it.",
+  "@helpAlertEditorStep3Body": {
+    "description": "Alert editor help step 3 body."
+  },
+  "helpAlertEditorStep4Title": "Repeat",
+  "@helpAlertEditorStep4Title": {
+    "description": "Alert editor help step 4 title."
+  },
+  "helpAlertEditorStep4Body": "Off: the alert fires once, then switches off. On: it fires every time.",
+  "@helpAlertEditorStep4Body": {
+    "description": "Alert editor help step 4 body."
+  },
+  "helpSettingsTitle": "Settings",
+  "@helpSettingsTitle": {
+    "description": "Settings help topic title."
+  },
+  "helpSettingsSummary": "Choices that apply across the whole app.",
+  "@helpSettingsSummary": {
+    "description": "Settings help topic summary line."
+  },
+  "helpSettingsStep1Title": "Appearance",
+  "@helpSettingsStep1Title": {
+    "description": "Settings help step 1 title."
+  },
+  "helpSettingsStep1Body": "System, Light or Dark.",
+  "@helpSettingsStep1Body": {
+    "description": "Settings help step 1 body."
+  },
+  "helpSettingsStep2Title": "Privacy & security",
+  "@helpSettingsStep2Title": {
+    "description": "Settings help step 2 title."
+  },
+  "helpSettingsStep2Body": "Hide balances, and lock Qima with Face ID or fingerprint.",
+  "@helpSettingsStep2Body": {
+    "description": "Settings help step 2 body."
+  },
+  "helpSettingsStep3Title": "Alerts",
+  "@helpSettingsStep3Title": {
+    "description": "Settings help step 3 title."
+  },
+  "helpSettingsStep3Body": "See every price alert and check that notifications are allowed.",
+  "@helpSettingsStep3Body": {
+    "description": "Settings help step 3 body."
+  },
+  "helpSettingsStep4Title": "Backup",
+  "@helpSettingsStep4Title": {
+    "description": "Settings help step 4 title."
+  },
+  "helpSettingsStep4Body": "Save everything to a file and restore it later.",
+  "@helpSettingsStep4Body": {
+    "description": "Settings help step 4 body."
+  },
+  "helpSettingsStep5Title": "Defaults",
+  "@helpSettingsStep5Title": {
+    "description": "Settings help step 5 title."
+  },
+  "helpSettingsStep5Body": "Base currency, chart range, widget refresh and language.",
+  "@helpSettingsStep5Body": {
+    "description": "Settings help step 5 body."
+  },
+  "helpBackupTitle": "Backup & restore",
+  "@helpBackupTitle": {
+    "description": "Backup & restore help topic title."
+  },
+  "helpBackupSummary": "Qima has no account, so a backup file is how you keep your data if this phone is lost or reset.",
+  "@helpBackupSummary": {
+    "description": "Backup & restore help topic summary line."
+  },
+  "helpBackupStep1Title": "Full backup",
+  "@helpBackupStep1Title": {
+    "description": "Backup & restore help step 1 title."
+  },
+  "helpBackupStep1Body": "Saves your watchlist, holdings, custom tickers and settings as a .json file.",
+  "@helpBackupStep1Body": {
+    "description": "Backup & restore help step 1 body."
+  },
+  "helpBackupStep2Title": "Add a password",
+  "@helpBackupStep2Title": {
+    "description": "Backup & restore help step 2 title."
+  },
+  "helpBackupStep2Body": "Optional. You'll need it to restore, and it can't be recovered.",
+  "@helpBackupStep2Body": {
+    "description": "Backup & restore help step 2 body."
+  },
+  "helpBackupStep3Title": "Save or share",
+  "@helpBackupStep3Title": {
+    "description": "Backup & restore help step 3 title."
+  },
+  "helpBackupStep3Body": "Keep the file in Files or iCloud Drive, or send it to yourself.",
+  "@helpBackupStep3Body": {
+    "description": "Backup & restore help step 3 body."
+  },
+  "helpBackupStep4Title": "Restore",
+  "@helpBackupStep4Title": {
+    "description": "Backup & restore help step 4 title."
+  },
+  "helpBackupStep4Body": "Import a .json backup. Merge adds what's missing and deletes nothing; Replace swaps everything for the file.",
+  "@helpBackupStep4Body": {
+    "description": "Backup & restore help step 4 body."
+  },
+  "helpBackupStep5Title": "Holdings spreadsheet",
+  "@helpBackupStep5Title": {
+    "description": "Backup & restore help step 5 title."
+  },
+  "helpBackupStep5Body": "A .csv for accounting. It can't be restored.",
+  "@helpBackupStep5Body": {
+    "description": "Backup & restore help step 5 body."
+  },
+  "helpWidgetsTitle": "Widgets",
+  "@helpWidgetsTitle": {
+    "description": "Widgets help topic title (iOS only)."
+  },
+  "helpWidgetsSummary": "Put live prices and your portfolio on the Home Screen and Lock Screen.",
+  "@helpWidgetsSummary": {
+    "description": "Widgets help topic summary line."
+  },
+  "helpWidgetsStep1Title": "Touch and hold the Home Screen",
+  "@helpWidgetsStep1Title": {
+    "description": "Widgets help step 1 title."
+  },
+  "helpWidgetsStep1Body": "When the apps jiggle, tap Edit, then Add Widget.",
+  "@helpWidgetsStep1Body": {
+    "description": "Widgets help step 1 body."
+  },
+  "helpWidgetsStep2Title": "Find Qima",
+  "@helpWidgetsStep2Title": {
+    "description": "Widgets help step 2 title."
+  },
+  "helpWidgetsStep2Body": "Search for Qima, choose Price or Portfolio, pick a size and tap Add Widget.",
+  "@helpWidgetsStep2Body": {
+    "description": "Widgets help step 2 body."
+  },
+  "helpWidgetsStep3Title": "Choose what it shows",
+  "@helpWidgetsStep3Title": {
+    "description": "Widgets help step 3 title."
+  },
+  "helpWidgetsStep3Body": "Touch and hold the widget, tap Edit Widget, then pick asset, unit, karat, currency and chart range.",
+  "@helpWidgetsStep3Body": {
+    "description": "Widgets help step 3 body."
+  },
+  "helpWidgetsStep4Title": "Lock Screen",
+  "@helpWidgetsStep4Title": {
+    "description": "Widgets help step 4 title."
+  },
+  "helpWidgetsStep4Body": "Touch and hold the Lock Screen, tap Customize, then add a Qima widget.",
+  "@helpWidgetsStep4Body": {
+    "description": "Widgets help step 4 body."
+  },
+  "helpWidgetsNote": "Widgets refresh every 15 minutes by default. Change it in Settings under Widget refresh interval.",
+  "@helpWidgetsNote": {
+    "description": "Widgets help topic footnote."
+  },
+  "helpHoldingsTitle": "Holdings",
+  "@helpHoldingsTitle": {
+    "description": "Holdings list help topic title."
+  },
+  "helpHoldingsSummary": "Every lot you bought of this asset, and what they add up to.",
+  "@helpHoldingsSummary": {
+    "description": "Holdings list help topic summary line."
+  },
+  "helpHoldingsStep1Title": "Read the totals",
+  "@helpHoldingsStep1Title": {
+    "description": "Holdings list help step 1 title."
+  },
+  "helpHoldingsStep1Body": "Quantity, average cost, current value and gain across every lot.",
+  "@helpHoldingsStep1Body": {
+    "description": "Holdings list help step 1 body."
+  },
+  "helpHoldingsStep2Title": "Add a lot",
+  "@helpHoldingsStep2Title": {
+    "description": "Holdings list help step 2 title."
+  },
+  "helpHoldingsStep2Body": "Tap + to record another purchase.",
+  "@helpHoldingsStep2Body": {
+    "description": "Holdings list help step 2 body."
+  },
+  "helpHoldingsStep3Title": "Edit or delete a lot",
+  "@helpHoldingsStep3Title": {
+    "description": "Holdings list help step 3 title."
+  },
+  "helpHoldingsStep3Body": "Tap a lot to change it, or swipe to delete.",
+  "@helpHoldingsStep3Body": {
+    "description": "Holdings list help step 3 body."
+  },
+  "helpCardConfigTitle": "Asset settings",
+  "@helpCardConfigTitle": {
+    "description": "Card config help topic title."
+  },
+  "helpCardConfigSummary": "Choose the currency, unit and karat this card shows before adding it.",
+  "@helpCardConfigSummary": {
+    "description": "Card config help topic summary line."
+  },
+  "helpCardConfigStep1Title": "Currency",
+  "@helpCardConfigStep1Title": {
+    "description": "Card config help step 1 title."
+  },
+  "helpCardConfigStep1Body": "Prices show in this currency on the card and its chart.",
+  "@helpCardConfigStep1Body": {
+    "description": "Card config help step 1 body."
+  },
+  "helpCardConfigStep2Title": "Unit",
+  "@helpCardConfigStep2Title": {
+    "description": "Card config help step 2 title."
+  },
+  "helpCardConfigStep2Body": "For metals, pick troy ounce, gram or kilogram.",
+  "@helpCardConfigStep2Body": {
+    "description": "Card config help step 2 body."
+  },
+  "helpCardConfigStep3Title": "Karat",
+  "@helpCardConfigStep3Title": {
+    "description": "Card config help step 3 title."
+  },
+  "helpCardConfigStep3Body": "For gold by weight, pick the purity you want priced.",
+  "@helpCardConfigStep3Body": {
+    "description": "Card config help step 3 body."
+  },
+  "helpCardConfigStep4Title": "Add it",
+  "@helpCardConfigStep4Title": {
+    "description": "Card config help step 4 title."
+  },
+  "helpCardConfigStep4Body": "You can change any of these later from the asset detail screen.",
+  "@helpCardConfigStep4Body": {
+    "description": "Card config help step 4 body."
+  },
+  "helpCustomTickerTitle": "Custom ticker",
+  "@helpCustomTickerTitle": {
+    "description": "Custom ticker help topic title."
+  },
+  "helpCustomTickerSummary": "Track a stock, ETF or index that isn't in Qima's catalog by its symbol.",
+  "@helpCustomTickerSummary": {
+    "description": "Custom ticker help topic summary line."
+  },
+  "helpCustomTickerStep1Title": "Enter the symbol",
+  "@helpCustomTickerStep1Title": {
+    "description": "Custom ticker help step 1 title."
+  },
+  "helpCustomTickerStep1Body": "Type the exact ticker symbol, like TSLA or VOO.",
+  "@helpCustomTickerStep1Body": {
+    "description": "Custom ticker help step 1 body."
+  },
+  "helpCustomTickerStep2Title": "Qima checks it",
+  "@helpCustomTickerStep2Title": {
+    "description": "Custom ticker help step 2 title."
+  },
+  "helpCustomTickerStep2Body": "It's looked up with the price provider first, so a typo is caught before it's added.",
+  "@helpCustomTickerStep2Body": {
+    "description": "Custom ticker help step 2 body."
+  },
+  "helpCustomTickerStep3Title": "Add it",
+  "@helpCustomTickerStep3Title": {
+    "description": "Custom ticker help step 3 title."
+  },
+  "helpCustomTickerStep3Body": "It's added to your watchlist with its real name and price.",
+  "@helpCustomTickerStep3Body": {
+    "description": "Custom ticker help step 3 body."
+  },
+  "helpCurrencyPickerTitle": "Currency picker",
+  "@helpCurrencyPickerTitle": {
+    "description": "Currency picker help topic title."
+  },
+  "helpCurrencyPickerSummary": "Pick the currency prices and totals should show in.",
+  "@helpCurrencyPickerSummary": {
+    "description": "Currency picker help topic summary line."
+  },
+  "helpCurrencyPickerStep1Title": "Search",
+  "@helpCurrencyPickerStep1Title": {
+    "description": "Currency picker help step 1 title."
+  },
+  "helpCurrencyPickerStep1Body": "Type an ISO code or a currency name, like EUR or dirham.",
+  "@helpCurrencyPickerStep1Body": {
+    "description": "Currency picker help step 1 body."
+  },
+  "helpCurrencyPickerStep2Title": "Pick one",
+  "@helpCurrencyPickerStep2Title": {
+    "description": "Currency picker help step 2 title."
+  },
+  "helpCurrencyPickerStep2Body": "Tap a currency to use it immediately.",
+  "@helpCurrencyPickerStep2Body": {
+    "description": "Currency picker help step 2 body."
+  },
+  "helpImportPreviewTitle": "Restore preview",
+  "@helpImportPreviewTitle": {
+    "description": "Import preview help topic title."
+  },
+  "helpImportPreviewSummary": "See what's in a backup file before it changes anything on this phone.",
+  "@helpImportPreviewSummary": {
+    "description": "Import preview help topic summary line."
+  },
+  "helpImportPreviewStep1Title": "Check the contents",
+  "@helpImportPreviewStep1Title": {
+    "description": "Import preview help step 1 title."
+  },
+  "helpImportPreviewStep1Body": "See how many cards, lots and alerts the file contains before restoring.",
+  "@helpImportPreviewStep1Body": {
+    "description": "Import preview help step 1 body."
+  },
+  "helpImportPreviewStep2Title": "Merge or Replace",
+  "@helpImportPreviewStep2Title": {
+    "description": "Import preview help step 2 title."
+  },
+  "helpImportPreviewStep2Body": "Merge adds what's missing and deletes nothing. Replace swaps everything for the file.",
+  "@helpImportPreviewStep2Body": {
+    "description": "Import preview help step 2 body."
+  },
+  "helpImportPreviewStep3Title": "Confirm",
+  "@helpImportPreviewStep3Title": {
+    "description": "Import preview help step 3 title."
+  },
+  "helpImportPreviewStep3Body": "A password-protected file asks for its password first.",
+  "@helpImportPreviewStep3Body": {
+    "description": "Import preview help step 3 body."
+  },
+  "settingsHelpGroup": "Help",
+  "@settingsHelpGroup": {
+    "description": "Settings \"Help\" group section header (last group)."
+  },
+  "settingsHelpReplayTour": "Replay the tour",
+  "@settingsHelpReplayTour": {
+    "description": "Settings Help group row title."
+  },
+  "settingsHelpReplayTourSubtitle": "See the five-step introduction again",
+  "@settingsHelpReplayTourSubtitle": {
+    "description": "Settings Help group row subtitle."
+  },
+  "settingsHelpHowQimaWorks": "How Qima works",
+  "@settingsHelpHowQimaWorks": {
+    "description": "Settings Help group row title."
+  },
+  "settingsHelpHowQimaWorksSubtitle": "A short guide to every page",
+  "@settingsHelpHowQimaWorksSubtitle": {
+    "description": "Settings Help group row subtitle."
+  },
+  "settingsHelpAddWidget": "Add a widget",
+  "@settingsHelpAddWidget": {
+    "description": "Settings Help group row title (iOS only)."
+  },
+  "settingsHelpAddWidgetSubtitle": "Home Screen and Lock Screen",
+  "@settingsHelpAddWidgetSubtitle": {
+    "description": "Settings Help group row subtitle (iOS only)."
+  }
 }

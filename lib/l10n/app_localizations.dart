@@ -2051,6 +2051,1194 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Continue'**
   String get commonContinue;
+
+  /// Onboarding tour primary button, steps 1-4.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get onboardingNext;
+
+  /// Onboarding tour text button under Next, steps 1-4.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get onboardingSkip;
+
+  /// Onboarding tour primary button, step 5 (final step).
+  ///
+  /// In en, this message translates to:
+  /// **'Get started'**
+  String get onboardingGetStarted;
+
+  /// Onboarding step 1 (Welcome) title.
+  ///
+  /// In en, this message translates to:
+  /// **'Everything you own, in one number'**
+  String get onboardingStep1Title;
+
+  /// Onboarding step 1 (Welcome) body.
+  ///
+  /// In en, this message translates to:
+  /// **'Gold, silver, crypto, stocks, indices and currencies, added up in your currency.'**
+  String get onboardingStep1Body;
+
+  /// Onboarding step 2 (Watchlist) title.
+  ///
+  /// In en, this message translates to:
+  /// **'Prices the way you buy'**
+  String get onboardingStep2Title;
+
+  /// Onboarding step 2 (Watchlist) body.
+  ///
+  /// In en, this message translates to:
+  /// **'Live prices by gram, ounce or kilogram, 24K to 18K, in any currency. Tap + to add, tap a card for its chart.'**
+  String get onboardingStep2Body;
+
+  /// Onboarding step 3 (Holdings) title.
+  ///
+  /// In en, this message translates to:
+  /// **'Know what you hold'**
+  String get onboardingStep3Title;
+
+  /// Onboarding step 3 (Holdings) body.
+  ///
+  /// In en, this message translates to:
+  /// **'Record each purchase: quantity, unit, karat, cost and date. See what you hold, your average cost, value and gain.'**
+  String get onboardingStep3Body;
+
+  /// Onboarding step 4 (Alerts & widgets) title.
+  ///
+  /// In en, this message translates to:
+  /// **'Never miss a move'**
+  String get onboardingStep4Title;
+
+  /// Onboarding step 4 (Alerts & widgets) title.
+  ///
+  /// In en, this message translates to:
+  /// **'Get notified when a price crosses a level or moves by a percent. Put prices on your Home and Lock Screen.'**
+  String get onboardingStep4Body;
+
+  /// Onboarding step 5 (Private by design) title.
+  ///
+  /// In en, this message translates to:
+  /// **'Private by design'**
+  String get onboardingStep5Title;
+
+  /// Onboarding step 5 (Private by design) title.
+  ///
+  /// In en, this message translates to:
+  /// **'No account. Your data stays on this device, with optional iCloud sync, Face ID lock and file backups.'**
+  String get onboardingStep5Body;
+
+  /// Onboarding step 5 body, Android wording (no iCloud, fingerprint/face unlock instead of Face ID).
+  ///
+  /// In en, this message translates to:
+  /// **'No account. Your data stays on this device, with fingerprint or face unlock and file backups.'**
+  String get onboardingStep5BodyAndroid;
+
+  /// Onboarding step 5 body on macOS (Touch ID instead of Face ID).
+  ///
+  /// In en, this message translates to:
+  /// **'No account. Your data stays on this Mac, with optional iCloud sync, Touch ID lock and file backups.'**
+  String get onboardingStep5BodyMac;
+
+  /// Onboarding step 5 pill.
+  ///
+  /// In en, this message translates to:
+  /// **'No account'**
+  String get onboardingStep5PillNoAccount;
+
+  /// Onboarding step 5 pill.
+  ///
+  /// In en, this message translates to:
+  /// **'On this device'**
+  String get onboardingStep5PillOnDevice;
+
+  /// Onboarding step 5 illustration row title (iOS only).
+  ///
+  /// In en, this message translates to:
+  /// **'iCloud sync'**
+  String get onboardingStep5ICloudTitle;
+
+  /// Onboarding step 5 illustration row subtitle (iOS only).
+  ///
+  /// In en, this message translates to:
+  /// **'Optional · keeps devices in step'**
+  String get onboardingStep5ICloudSubtitle;
+
+  /// Onboarding step 5 illustration row title.
+  ///
+  /// In en, this message translates to:
+  /// **'App lock'**
+  String get onboardingStep5AppLockTitle;
+
+  /// Onboarding step 5 App lock row subtitle, Apple platforms.
+  ///
+  /// In en, this message translates to:
+  /// **'Face ID or fingerprint'**
+  String get onboardingStep5AppLockSubtitleApple;
+
+  /// Onboarding step 5 App lock row subtitle, non-Apple platforms.
+  ///
+  /// In en, this message translates to:
+  /// **'Fingerprint or face unlock'**
+  String get onboardingStep5AppLockSubtitleGeneric;
+
+  /// Onboarding step 5 app lock row subtitle on macOS.
+  ///
+  /// In en, this message translates to:
+  /// **'Touch ID or your Mac password'**
+  String get onboardingStep5AppLockSubtitleMac;
+
+  /// Onboarding step 5 illustration row title.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide balances'**
+  String get onboardingStep5HideBalancesTitle;
+
+  /// Onboarding step 5 illustration row subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Show •••• instead of amounts'**
+  String get onboardingStep5HideBalancesSubtitle;
+
+  /// Onboarding step 5 base-currency row title.
+  ///
+  /// In en, this message translates to:
+  /// **'Base currency'**
+  String get onboardingBaseCurrencyTitle;
+
+  /// Onboarding step 5 base-currency row subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'From your region · change in Settings'**
+  String get onboardingBaseCurrencySubtitle;
+
+  /// Accessibility label for the onboarding page dots / progress.
+  ///
+  /// In en, this message translates to:
+  /// **'Step {step} of {total}'**
+  String onboardingSemanticStepOf(int step, int total);
+
+  /// Footer link on every help sheet, and a Settings row, that reopens the onboarding tour.
+  ///
+  /// In en, this message translates to:
+  /// **'Replay the tour'**
+  String get onboardingReplayTour;
+
+  /// Tooltip/semantic label for the help (question mark) button in every app bar.
+  ///
+  /// In en, this message translates to:
+  /// **'Help'**
+  String get helpButtonTooltip;
+
+  /// Small-caps header above the page name in the help sheet.
+  ///
+  /// In en, this message translates to:
+  /// **'ABOUT THIS PAGE'**
+  String get helpSheetAboutHeader;
+
+  /// Small-caps header above the numbered steps in the help sheet.
+  ///
+  /// In en, this message translates to:
+  /// **'HOW TO USE IT'**
+  String get helpSheetHowToHeader;
+
+  /// Small-caps header for the "How Qima works" index sheet.
+  ///
+  /// In en, this message translates to:
+  /// **'HELP'**
+  String get helpSheetIndexHeader;
+
+  /// Small-caps header for the Widgets help topic (opened from Settings).
+  ///
+  /// In en, this message translates to:
+  /// **'HELP · SETTINGS'**
+  String get helpSheetWidgetsHeader;
+
+  /// Close button semantic label in the help sheet header.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get helpSheetCloseTooltip;
+
+  /// "How Qima works" index sheet intro line.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a page to see what it does and how to use it.'**
+  String get helpIndexIntro;
+
+  /// Watchlist help topic title (matches the page name).
+  ///
+  /// In en, this message translates to:
+  /// **'Watchlist'**
+  String get helpWatchlistTitle;
+
+  /// Watchlist help topic summary line.
+  ///
+  /// In en, this message translates to:
+  /// **'Live prices for everything you follow, with your portfolio total on top.'**
+  String get helpWatchlistSummary;
+
+  /// Watchlist help step 1 title.
+  ///
+  /// In en, this message translates to:
+  /// **'Open a card'**
+  String get helpWatchlistStep1Title;
+
+  /// Watchlist help step 1 body.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap any card for its chart, key stats and your holdings.'**
+  String get helpWatchlistStep1Body;
+
+  /// Watchlist help step 2 title.
+  ///
+  /// In en, this message translates to:
+  /// **'Add an asset'**
+  String get helpWatchlistStep2Title;
+
+  /// Watchlist help step 2 body.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap + and search by name or symbol.'**
+  String get helpWatchlistStep2Body;
+
+  /// Watchlist help step 3 title.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter the list'**
+  String get helpWatchlistStep3Title;
+
+  /// Watchlist help step 3 body.
+  ///
+  /// In en, this message translates to:
+  /// **'Show only Metals, Crypto, Stocks, Indices or Currencies.'**
+  String get helpWatchlistStep3Body;
+
+  /// Watchlist help step 4 title.
+  ///
+  /// In en, this message translates to:
+  /// **'Change the chart range'**
+  String get helpWatchlistStep4Title;
+
+  /// Watchlist help step 4 body.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick 1W to All under the portfolio chart.'**
+  String get helpWatchlistStep4Body;
+
+  /// Watchlist help step 5 title.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh prices'**
+  String get helpWatchlistStep5Title;
+
+  /// Watchlist help step 5 body.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap refresh to fetch the latest prices now.'**
+  String get helpWatchlistStep5Body;
+
+  /// Asset detail help topic title.
+  ///
+  /// In en, this message translates to:
+  /// **'Asset detail'**
+  String get helpAssetDetailTitle;
+
+  /// Asset detail help topic summary line.
+  ///
+  /// In en, this message translates to:
+  /// **'One asset\'s price, chart and stats, plus what you hold of it.'**
+  String get helpAssetDetailSummary;
+
+  /// Asset detail help step 1 title.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a range'**
+  String get helpAssetDetailStep1Title;
+
+  /// Asset detail help step 1 body.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch between 1D and All under the chart.'**
+  String get helpAssetDetailStep1Body;
+
+  /// Asset detail help step 2 title.
+  ///
+  /// In en, this message translates to:
+  /// **'Change unit, karat or currency'**
+  String get helpAssetDetailStep2Title;
+
+  /// Asset detail help step 2 body.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap the sliders at the top of the page.'**
+  String get helpAssetDetailStep2Body;
+
+  /// Asset detail help step 3 title.
+  ///
+  /// In en, this message translates to:
+  /// **'Compare units'**
+  String get helpAssetDetailStep3Title;
+
+  /// Asset detail help step 3 body.
+  ///
+  /// In en, this message translates to:
+  /// **'Price per unit shows ounce, kilogram and each karat side by side.'**
+  String get helpAssetDetailStep3Body;
+
+  /// Asset detail help step 4 title.
+  ///
+  /// In en, this message translates to:
+  /// **'Set an alert'**
+  String get helpAssetDetailStep4Title;
+
+  /// Asset detail help step 4 body.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap the bell to hear when the price crosses a level or moves by a percent.'**
+  String get helpAssetDetailStep4Body;
+
+  /// Asset detail help step 5 title.
+  ///
+  /// In en, this message translates to:
+  /// **'Track what you own'**
+  String get helpAssetDetailStep5Title;
+
+  /// Asset detail help step 5 body.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap Holdings to see your lots or add a purchase.'**
+  String get helpAssetDetailStep5Body;
+
+  /// Portfolio help topic title.
+  ///
+  /// In en, this message translates to:
+  /// **'Portfolio'**
+  String get helpPortfolioTitle;
+
+  /// Portfolio help topic summary line.
+  ///
+  /// In en, this message translates to:
+  /// **'Everything you hold, added up in your base currency, with each asset\'s share and gain.'**
+  String get helpPortfolioSummary;
+
+  /// Portfolio help step 1 title.
+  ///
+  /// In en, this message translates to:
+  /// **'Read the donut'**
+  String get helpPortfolioStep1Title;
+
+  /// Portfolio help step 1 body.
+  ///
+  /// In en, this message translates to:
+  /// **'Each slice is one asset\'s share of your total value.'**
+  String get helpPortfolioStep1Body;
+
+  /// Portfolio help step 2 title.
+  ///
+  /// In en, this message translates to:
+  /// **'Open an asset'**
+  String get helpPortfolioStep2Title;
+
+  /// Portfolio help step 2 body.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap a row to see its lots, average cost and gain.'**
+  String get helpPortfolioStep2Body;
+
+  /// Portfolio help step 3 title.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a purchase'**
+  String get helpPortfolioStep3Title;
+
+  /// Portfolio help step 3 body.
+  ///
+  /// In en, this message translates to:
+  /// **'Open an asset, then tap +.'**
+  String get helpPortfolioStep3Body;
+
+  /// Portfolio help step 4 title.
+  ///
+  /// In en, this message translates to:
+  /// **'Change the currency'**
+  String get helpPortfolioStep4Title;
+
+  /// Portfolio help step 4 body.
+  ///
+  /// In en, this message translates to:
+  /// **'Totals use your base currency, set in Settings.'**
+  String get helpPortfolioStep4Body;
+
+  /// Portfolio help step 5 title.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide amounts'**
+  String get helpPortfolioStep5Title;
+
+  /// Portfolio help step 5 body.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn on Hide balances in Settings to mask every value.'**
+  String get helpPortfolioStep5Body;
+
+  /// Lot editor help topic title.
+  ///
+  /// In en, this message translates to:
+  /// **'Lot editor'**
+  String get helpLotEditorTitle;
+
+  /// Lot editor help topic summary line.
+  ///
+  /// In en, this message translates to:
+  /// **'Record one purchase so Qima can work out what you hold, your average cost and your gain.'**
+  String get helpLotEditorSummary;
+
+  /// Lot editor help step 1 title.
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity and unit'**
+  String get helpLotEditorStep1Title;
+
+  /// Lot editor help step 1 body.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter how much you bought, in troy ounces, grams or kilograms.'**
+  String get helpLotEditorStep1Body;
+
+  /// Lot editor help step 2 title.
+  ///
+  /// In en, this message translates to:
+  /// **'Karat'**
+  String get helpLotEditorStep2Title;
+
+  /// Lot editor help step 2 body.
+  ///
+  /// In en, this message translates to:
+  /// **'For gold by gram or kilogram, pick 24K, 22K, 21K or 18K. It starts at the card\'s karat.'**
+  String get helpLotEditorStep2Body;
+
+  /// Lot editor help step 3 title.
+  ///
+  /// In en, this message translates to:
+  /// **'What you paid'**
+  String get helpLotEditorStep3Title;
+
+  /// Lot editor help step 3 body.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the cost per unit or the total, in the currency you paid in.'**
+  String get helpLotEditorStep3Body;
+
+  /// Lot editor help step 4 title.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get helpLotEditorStep4Title;
+
+  /// Lot editor help step 4 body.
+  ///
+  /// In en, this message translates to:
+  /// **'The day you bought it.'**
+  String get helpLotEditorStep4Body;
+
+  /// Lot editor help step 5 title.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get helpLotEditorStep5Title;
+
+  /// Lot editor help step 5 body.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit or delete a lot any time from Holdings.'**
+  String get helpLotEditorStep5Body;
+
+  /// Add asset help topic title.
+  ///
+  /// In en, this message translates to:
+  /// **'Add asset'**
+  String get helpAddAssetTitle;
+
+  /// Add asset help topic summary line.
+  ///
+  /// In en, this message translates to:
+  /// **'Find something to follow and add it to your watchlist.'**
+  String get helpAddAssetSummary;
+
+  /// Add asset help step 1 title.
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get helpAddAssetStep1Title;
+
+  /// Add asset help step 1 body.
+  ///
+  /// In en, this message translates to:
+  /// **'Type a name or symbol, like gold, BTC or AAPL.'**
+  String get helpAddAssetStep1Body;
+
+  /// Add asset help step 2 title.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a result'**
+  String get helpAddAssetStep2Title;
+
+  /// Add asset help step 2 body.
+  ///
+  /// In en, this message translates to:
+  /// **'It\'s added to your watchlist and its page opens.'**
+  String get helpAddAssetStep2Body;
+
+  /// Add asset help step 3 title.
+  ///
+  /// In en, this message translates to:
+  /// **'Not in the list?'**
+  String get helpAddAssetStep3Title;
+
+  /// Add asset help step 3 body.
+  ///
+  /// In en, this message translates to:
+  /// **'Add the symbol as a custom ticker. Qima checks it with the price provider first.'**
+  String get helpAddAssetStep3Body;
+
+  /// Add asset help step 4 title.
+  ///
+  /// In en, this message translates to:
+  /// **'Changed your mind?'**
+  String get helpAddAssetStep4Title;
+
+  /// Add asset help step 4 body.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap Undo on the confirmation at the bottom.'**
+  String get helpAddAssetStep4Body;
+
+  /// Price alerts help topic title.
+  ///
+  /// In en, this message translates to:
+  /// **'Price alerts'**
+  String get helpPriceAlertsTitle;
+
+  /// Price alerts help topic summary line.
+  ///
+  /// In en, this message translates to:
+  /// **'Every alert you\'ve set, grouped by asset.'**
+  String get helpPriceAlertsSummary;
+
+  /// Price alerts help step 1 title.
+  ///
+  /// In en, this message translates to:
+  /// **'New alert'**
+  String get helpPriceAlertsStep1Title;
+
+  /// Price alerts help step 1 body.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap +, or open an asset and tap the bell.'**
+  String get helpPriceAlertsStep1Body;
+
+  /// Price alerts help step 2 title.
+  ///
+  /// In en, this message translates to:
+  /// **'Pause or resume'**
+  String get helpPriceAlertsStep2Title;
+
+  /// Price alerts help step 2 body.
+  ///
+  /// In en, this message translates to:
+  /// **'Use the switch. One-off alerts switch themselves off after they fire.'**
+  String get helpPriceAlertsStep2Body;
+
+  /// Price alerts help step 3 title.
+  ///
+  /// In en, this message translates to:
+  /// **'Change or delete'**
+  String get helpPriceAlertsStep3Title;
+
+  /// Price alerts help step 3 body.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap an alert to edit or remove it.'**
+  String get helpPriceAlertsStep3Body;
+
+  /// Price alerts help step 4 title.
+  ///
+  /// In en, this message translates to:
+  /// **'When alerts arrive'**
+  String get helpPriceAlertsStep4Title;
+
+  /// Price alerts help step 4 body.
+  ///
+  /// In en, this message translates to:
+  /// **'Prices are checked about every 15 minutes in the background, so an alert can arrive a few minutes late.'**
+  String get helpPriceAlertsStep4Body;
+
+  /// Price alerts help step 5 title.
+  ///
+  /// In en, this message translates to:
+  /// **'No notifications?'**
+  String get helpPriceAlertsStep5Title;
+
+  /// Price alerts help step 5 body.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow notifications for Qima in system settings, or alerts can\'t reach you.'**
+  String get helpPriceAlertsStep5Body;
+
+  /// Alert editor help topic title.
+  ///
+  /// In en, this message translates to:
+  /// **'Alert editor'**
+  String get helpAlertEditorTitle;
+
+  /// Alert editor help topic summary line.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose when Qima should notify you about this asset.'**
+  String get helpAlertEditorSummary;
+
+  /// Alert editor help step 1 title.
+  ///
+  /// In en, this message translates to:
+  /// **'Price'**
+  String get helpAlertEditorStep1Title;
+
+  /// Alert editor help step 1 body.
+  ///
+  /// In en, this message translates to:
+  /// **'Notify when the price goes above or below your target.'**
+  String get helpAlertEditorStep1Body;
+
+  /// Alert editor help step 2 title.
+  ///
+  /// In en, this message translates to:
+  /// **'% move'**
+  String get helpAlertEditorStep2Title;
+
+  /// Alert editor help step 2 body.
+  ///
+  /// In en, this message translates to:
+  /// **'Notify when it moves up, down or either way by 1-10% within 24 hours or 7 days.'**
+  String get helpAlertEditorStep2Body;
+
+  /// Alert editor help step 3 title.
+  ///
+  /// In en, this message translates to:
+  /// **'Check the trigger'**
+  String get helpAlertEditorStep3Title;
+
+  /// Alert editor help step 3 body.
+  ///
+  /// In en, this message translates to:
+  /// **'The line under your choice shows exactly which prices will fire it.'**
+  String get helpAlertEditorStep3Body;
+
+  /// Alert editor help step 4 title.
+  ///
+  /// In en, this message translates to:
+  /// **'Repeat'**
+  String get helpAlertEditorStep4Title;
+
+  /// Alert editor help step 4 body.
+  ///
+  /// In en, this message translates to:
+  /// **'Off: the alert fires once, then switches off. On: it fires every time.'**
+  String get helpAlertEditorStep4Body;
+
+  /// Settings help topic title.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get helpSettingsTitle;
+
+  /// Settings help topic summary line.
+  ///
+  /// In en, this message translates to:
+  /// **'Choices that apply across the whole app.'**
+  String get helpSettingsSummary;
+
+  /// Settings help step 1 title.
+  ///
+  /// In en, this message translates to:
+  /// **'Appearance'**
+  String get helpSettingsStep1Title;
+
+  /// Settings help step 1 body.
+  ///
+  /// In en, this message translates to:
+  /// **'System, Light or Dark.'**
+  String get helpSettingsStep1Body;
+
+  /// Settings help step 2 title.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy & security'**
+  String get helpSettingsStep2Title;
+
+  /// Settings help step 2 body.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide balances, and lock Qima with Face ID or fingerprint.'**
+  String get helpSettingsStep2Body;
+
+  /// Settings help step 3 title.
+  ///
+  /// In en, this message translates to:
+  /// **'Alerts'**
+  String get helpSettingsStep3Title;
+
+  /// Settings help step 3 body.
+  ///
+  /// In en, this message translates to:
+  /// **'See every price alert and check that notifications are allowed.'**
+  String get helpSettingsStep3Body;
+
+  /// Settings help step 4 title.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup'**
+  String get helpSettingsStep4Title;
+
+  /// Settings help step 4 body.
+  ///
+  /// In en, this message translates to:
+  /// **'Save everything to a file and restore it later.'**
+  String get helpSettingsStep4Body;
+
+  /// Settings help step 5 title.
+  ///
+  /// In en, this message translates to:
+  /// **'Defaults'**
+  String get helpSettingsStep5Title;
+
+  /// Settings help step 5 body.
+  ///
+  /// In en, this message translates to:
+  /// **'Base currency, chart range, widget refresh and language.'**
+  String get helpSettingsStep5Body;
+
+  /// Backup & restore help topic title.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup & restore'**
+  String get helpBackupTitle;
+
+  /// Backup & restore help topic summary line.
+  ///
+  /// In en, this message translates to:
+  /// **'Qima has no account, so a backup file is how you keep your data if this phone is lost or reset.'**
+  String get helpBackupSummary;
+
+  /// Backup & restore help step 1 title.
+  ///
+  /// In en, this message translates to:
+  /// **'Full backup'**
+  String get helpBackupStep1Title;
+
+  /// Backup & restore help step 1 body.
+  ///
+  /// In en, this message translates to:
+  /// **'Saves your watchlist, holdings, custom tickers and settings as a .json file.'**
+  String get helpBackupStep1Body;
+
+  /// Backup & restore help step 2 title.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a password'**
+  String get helpBackupStep2Title;
+
+  /// Backup & restore help step 2 body.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional. You\'ll need it to restore, and it can\'t be recovered.'**
+  String get helpBackupStep2Body;
+
+  /// Backup & restore help step 3 title.
+  ///
+  /// In en, this message translates to:
+  /// **'Save or share'**
+  String get helpBackupStep3Title;
+
+  /// Backup & restore help step 3 body.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep the file in Files or iCloud Drive, or send it to yourself.'**
+  String get helpBackupStep3Body;
+
+  /// Backup & restore help step 4 title.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore'**
+  String get helpBackupStep4Title;
+
+  /// Backup & restore help step 4 body.
+  ///
+  /// In en, this message translates to:
+  /// **'Import a .json backup. Merge adds what\'s missing and deletes nothing; Replace swaps everything for the file.'**
+  String get helpBackupStep4Body;
+
+  /// Backup & restore help step 5 title.
+  ///
+  /// In en, this message translates to:
+  /// **'Holdings spreadsheet'**
+  String get helpBackupStep5Title;
+
+  /// Backup & restore help step 5 body.
+  ///
+  /// In en, this message translates to:
+  /// **'A .csv for accounting. It can\'t be restored.'**
+  String get helpBackupStep5Body;
+
+  /// Widgets help topic title (iOS only).
+  ///
+  /// In en, this message translates to:
+  /// **'Widgets'**
+  String get helpWidgetsTitle;
+
+  /// Widgets help topic summary line.
+  ///
+  /// In en, this message translates to:
+  /// **'Put live prices and your portfolio on the Home Screen and Lock Screen.'**
+  String get helpWidgetsSummary;
+
+  /// Widgets help step 1 title.
+  ///
+  /// In en, this message translates to:
+  /// **'Touch and hold the Home Screen'**
+  String get helpWidgetsStep1Title;
+
+  /// Widgets help step 1 body.
+  ///
+  /// In en, this message translates to:
+  /// **'When the apps jiggle, tap Edit, then Add Widget.'**
+  String get helpWidgetsStep1Body;
+
+  /// Widgets help step 2 title.
+  ///
+  /// In en, this message translates to:
+  /// **'Find Qima'**
+  String get helpWidgetsStep2Title;
+
+  /// Widgets help step 2 body.
+  ///
+  /// In en, this message translates to:
+  /// **'Search for Qima, choose Price or Portfolio, pick a size and tap Add Widget.'**
+  String get helpWidgetsStep2Body;
+
+  /// Widgets help step 3 title.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose what it shows'**
+  String get helpWidgetsStep3Title;
+
+  /// Widgets help step 3 body.
+  ///
+  /// In en, this message translates to:
+  /// **'Touch and hold the widget, tap Edit Widget, then pick asset, unit, karat, currency and chart range.'**
+  String get helpWidgetsStep3Body;
+
+  /// Widgets help step 4 title.
+  ///
+  /// In en, this message translates to:
+  /// **'Lock Screen'**
+  String get helpWidgetsStep4Title;
+
+  /// Widgets help step 4 body.
+  ///
+  /// In en, this message translates to:
+  /// **'Touch and hold the Lock Screen, tap Customize, then add a Qima widget.'**
+  String get helpWidgetsStep4Body;
+
+  /// Widgets help topic footnote.
+  ///
+  /// In en, this message translates to:
+  /// **'Widgets refresh every 15 minutes by default. Change it in Settings under Widget refresh interval.'**
+  String get helpWidgetsNote;
+
+  /// Holdings list help topic title.
+  ///
+  /// In en, this message translates to:
+  /// **'Holdings'**
+  String get helpHoldingsTitle;
+
+  /// Holdings list help topic summary line.
+  ///
+  /// In en, this message translates to:
+  /// **'Every lot you bought of this asset, and what they add up to.'**
+  String get helpHoldingsSummary;
+
+  /// Holdings list help step 1 title.
+  ///
+  /// In en, this message translates to:
+  /// **'Read the totals'**
+  String get helpHoldingsStep1Title;
+
+  /// Holdings list help step 1 body.
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity, average cost, current value and gain across every lot.'**
+  String get helpHoldingsStep1Body;
+
+  /// Holdings list help step 2 title.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a lot'**
+  String get helpHoldingsStep2Title;
+
+  /// Holdings list help step 2 body.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap + to record another purchase.'**
+  String get helpHoldingsStep2Body;
+
+  /// Holdings list help step 3 title.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit or delete a lot'**
+  String get helpHoldingsStep3Title;
+
+  /// Holdings list help step 3 body.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap a lot to change it, or swipe to delete.'**
+  String get helpHoldingsStep3Body;
+
+  /// Card config help topic title.
+  ///
+  /// In en, this message translates to:
+  /// **'Asset settings'**
+  String get helpCardConfigTitle;
+
+  /// Card config help topic summary line.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose the currency, unit and karat this card shows before adding it.'**
+  String get helpCardConfigSummary;
+
+  /// Card config help step 1 title.
+  ///
+  /// In en, this message translates to:
+  /// **'Currency'**
+  String get helpCardConfigStep1Title;
+
+  /// Card config help step 1 body.
+  ///
+  /// In en, this message translates to:
+  /// **'Prices show in this currency on the card and its chart.'**
+  String get helpCardConfigStep1Body;
+
+  /// Card config help step 2 title.
+  ///
+  /// In en, this message translates to:
+  /// **'Unit'**
+  String get helpCardConfigStep2Title;
+
+  /// Card config help step 2 body.
+  ///
+  /// In en, this message translates to:
+  /// **'For metals, pick troy ounce, gram or kilogram.'**
+  String get helpCardConfigStep2Body;
+
+  /// Card config help step 3 title.
+  ///
+  /// In en, this message translates to:
+  /// **'Karat'**
+  String get helpCardConfigStep3Title;
+
+  /// Card config help step 3 body.
+  ///
+  /// In en, this message translates to:
+  /// **'For gold by weight, pick the purity you want priced.'**
+  String get helpCardConfigStep3Body;
+
+  /// Card config help step 4 title.
+  ///
+  /// In en, this message translates to:
+  /// **'Add it'**
+  String get helpCardConfigStep4Title;
+
+  /// Card config help step 4 body.
+  ///
+  /// In en, this message translates to:
+  /// **'You can change any of these later from the asset detail screen.'**
+  String get helpCardConfigStep4Body;
+
+  /// Custom ticker help topic title.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom ticker'**
+  String get helpCustomTickerTitle;
+
+  /// Custom ticker help topic summary line.
+  ///
+  /// In en, this message translates to:
+  /// **'Track a stock, ETF or index that isn\'t in Qima\'s catalog by its symbol.'**
+  String get helpCustomTickerSummary;
+
+  /// Custom ticker help step 1 title.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the symbol'**
+  String get helpCustomTickerStep1Title;
+
+  /// Custom ticker help step 1 body.
+  ///
+  /// In en, this message translates to:
+  /// **'Type the exact ticker symbol, like TSLA or VOO.'**
+  String get helpCustomTickerStep1Body;
+
+  /// Custom ticker help step 2 title.
+  ///
+  /// In en, this message translates to:
+  /// **'Qima checks it'**
+  String get helpCustomTickerStep2Title;
+
+  /// Custom ticker help step 2 body.
+  ///
+  /// In en, this message translates to:
+  /// **'It\'s looked up with the price provider first, so a typo is caught before it\'s added.'**
+  String get helpCustomTickerStep2Body;
+
+  /// Custom ticker help step 3 title.
+  ///
+  /// In en, this message translates to:
+  /// **'Add it'**
+  String get helpCustomTickerStep3Title;
+
+  /// Custom ticker help step 3 body.
+  ///
+  /// In en, this message translates to:
+  /// **'It\'s added to your watchlist with its real name and price.'**
+  String get helpCustomTickerStep3Body;
+
+  /// Currency picker help topic title.
+  ///
+  /// In en, this message translates to:
+  /// **'Currency picker'**
+  String get helpCurrencyPickerTitle;
+
+  /// Currency picker help topic summary line.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick the currency prices and totals should show in.'**
+  String get helpCurrencyPickerSummary;
+
+  /// Currency picker help step 1 title.
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get helpCurrencyPickerStep1Title;
+
+  /// Currency picker help step 1 body.
+  ///
+  /// In en, this message translates to:
+  /// **'Type an ISO code or a currency name, like EUR or dirham.'**
+  String get helpCurrencyPickerStep1Body;
+
+  /// Currency picker help step 2 title.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick one'**
+  String get helpCurrencyPickerStep2Title;
+
+  /// Currency picker help step 2 body.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap a currency to use it immediately.'**
+  String get helpCurrencyPickerStep2Body;
+
+  /// Import preview help topic title.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore preview'**
+  String get helpImportPreviewTitle;
+
+  /// Import preview help topic summary line.
+  ///
+  /// In en, this message translates to:
+  /// **'See what\'s in a backup file before it changes anything on this phone.'**
+  String get helpImportPreviewSummary;
+
+  /// Import preview help step 1 title.
+  ///
+  /// In en, this message translates to:
+  /// **'Check the contents'**
+  String get helpImportPreviewStep1Title;
+
+  /// Import preview help step 1 body.
+  ///
+  /// In en, this message translates to:
+  /// **'See how many cards, lots and alerts the file contains before restoring.'**
+  String get helpImportPreviewStep1Body;
+
+  /// Import preview help step 2 title.
+  ///
+  /// In en, this message translates to:
+  /// **'Merge or Replace'**
+  String get helpImportPreviewStep2Title;
+
+  /// Import preview help step 2 body.
+  ///
+  /// In en, this message translates to:
+  /// **'Merge adds what\'s missing and deletes nothing. Replace swaps everything for the file.'**
+  String get helpImportPreviewStep2Body;
+
+  /// Import preview help step 3 title.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm'**
+  String get helpImportPreviewStep3Title;
+
+  /// Import preview help step 3 body.
+  ///
+  /// In en, this message translates to:
+  /// **'A password-protected file asks for its password first.'**
+  String get helpImportPreviewStep3Body;
+
+  /// Settings "Help" group section header (last group).
+  ///
+  /// In en, this message translates to:
+  /// **'Help'**
+  String get settingsHelpGroup;
+
+  /// Settings Help group row title.
+  ///
+  /// In en, this message translates to:
+  /// **'Replay the tour'**
+  String get settingsHelpReplayTour;
+
+  /// Settings Help group row subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'See the five-step introduction again'**
+  String get settingsHelpReplayTourSubtitle;
+
+  /// Settings Help group row title.
+  ///
+  /// In en, this message translates to:
+  /// **'How Qima works'**
+  String get settingsHelpHowQimaWorks;
+
+  /// Settings Help group row subtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'A short guide to every page'**
+  String get settingsHelpHowQimaWorksSubtitle;
+
+  /// Settings Help group row title (iOS only).
+  ///
+  /// In en, this message translates to:
+  /// **'Add a widget'**
+  String get settingsHelpAddWidget;
+
+  /// Settings Help group row subtitle (iOS only).
+  ///
+  /// In en, this message translates to:
+  /// **'Home Screen and Lock Screen'**
+  String get settingsHelpAddWidgetSubtitle;
 }
 
 class _AppLocalizationsDelegate

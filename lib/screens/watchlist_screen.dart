@@ -9,10 +9,12 @@ import '../l10n/app_localizations.dart';
 import '../models/asset.dart';
 import '../models/watch_card.dart';
 import '../theme/design_system.dart';
+import '../theme/help_topics.dart';
 import '../theme/qima_colors.dart';
 import '../theme/strings.dart';
 import '../widgets/asset_class_filter.dart';
 import '../widgets/confirm_delete_dialog.dart';
+import '../widgets/help_button.dart';
 import '../widgets/instrument_row.dart';
 import '../widgets/portfolio_hero.dart';
 import 'add_instrument_screen.dart';
@@ -98,6 +100,7 @@ class _WatchlistScreenState extends State<WatchlistScreen> with WidgetsBindingOb
           backgroundColor: Colors.transparent,
           title: Text(l10n.appTitle),
           actions: [
+            const HelpButton(topic: HelpTopicId.watchlist),
             BlocBuilder<AppCubit, AppState>(
               builder: (context, state) {
                 return IconButton(
