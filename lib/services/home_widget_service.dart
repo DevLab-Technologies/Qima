@@ -31,9 +31,9 @@ import 'widget_snapshot.dart';
 ///   portfolio widget mirrors the base currency (`portfolio_widget_data`).
 ///   Everything is formatted here so Glance code stays a pure renderer.
 ///
-/// Money strings use each currency's fallback symbol: native widgets render
-/// with system fonts, which on older OS versions have no glyph for the
-/// Saudi Riyal sign the app itself draws from a bundled font.
+/// The Android blobs use each currency's fallback symbol: Glance renders with
+/// system fonts, which on older OS versions have no glyph for the Saudi Riyal
+/// sign. The iOS extension bundles the app's fonts and gets the real symbol.
 class HomeWidgetService {
   HomeWidgetService._();
 

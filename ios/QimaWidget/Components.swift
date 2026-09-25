@@ -49,10 +49,10 @@ struct MessageView: View {
     var body: some View {
         VStack(spacing: 6) {
             Image(systemName: icon)
-                .font(.system(size: 18, weight: .semibold))
+                .font(.qima(18, .semibold))
                 .foregroundStyle(Palette.brand)
             Text(message)
-                .font(.system(size: 12, weight: .medium))
+                .font(.qima(12, .medium))
                 .multilineTextAlignment(.center)
                 .foregroundStyle(.secondary)
                 .minimumScaleFactor(0.8)

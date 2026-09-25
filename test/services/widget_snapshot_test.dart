@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:qima/blocs/app_state.dart';
 import 'package:qima/models/asset.dart';
+import 'package:qima/models/currency_style.dart';
 import 'package:qima/models/fx_history.dart';
 import 'package:qima/models/holding.dart';
 import 'package:qima/models/metal_breakdown.dart';
@@ -46,7 +47,8 @@ void main() {
 
     final currencies = snapshot['currencies'] as Map<String, dynamic>;
     expect(currencies['EGP'], {'rate': 48.5, 'symbol': 'ج.م', 'suffix': true});
-    expect(currencies['SAR']['symbol'], 'ر.س', reason: 'system fonts lack the new Riyal sign');
+    expect(currencies['SAR']['symbol'], CurrencyStyle.saudiRiyalSign,
+        reason: 'the widget bundles the Riyal font, so it gets the real sign');
     expect(currencies['USD'], {'rate': 1.0, 'symbol': r'$', 'suffix': false});
     expect((snapshot['fxHistory'] as Map)['EGP'], [
       [now.subtract(const Duration(days: 2)).millisecondsSinceEpoch, 48.0],

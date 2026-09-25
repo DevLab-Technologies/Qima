@@ -7,8 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0D4228F17377A3E115A95C14 /* Riyal-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 59150B92530BBA1B1248398F /* Riyal-Regular.ttf */; };
 		0F7349CF2DC86E7FEFAE7E34 /* PortfolioWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07624C0012DECBE889434CFA /* PortfolioWidget.swift */; };
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
+		1B6FF9FB7B414C15D8E0CD9C /* Almarai-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E8B0961D05F84263F5F2318E /* Almarai-Regular.ttf */; };
 		331C808B294A63AB00263BE5 /* RunnerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 331C807B294A618700263BE5 /* RunnerTests.swift */; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
 		3E9DD0E261620C3558BC4233 /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75DD25601108DAD5152C600B /* Components.swift */; };
@@ -16,6 +18,7 @@
 		4DF3F8BD19290C3978CB3CBF /* Style.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFFB65C63B793F955A51C719 /* Style.swift */; };
 		5837FB7023AA69A61801EF7A /* AppIntents.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B75AD0EDDBE1390F319BFF7B /* AppIntents.framework */; };
 		61D21369D21F5848843B9A62 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01B2128AD33F3E9FBFBD9C27 /* Foundation.framework */; };
+		69D7A32ECB40BA5C75A79E01 /* Almarai-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5C328B25E071F6B1D5E2CE4A /* Almarai-Bold.ttf */; };
 		74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74858FAE1ED2DC5600515810 /* AppDelegate.swift */; };
 		78728EE0FFF6868E22D5BFCB /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D182F74BEE65A17C3768E4EE /* WidgetKit.framework */; };
 		7884E8682EC3CC0700C636F2 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7884E8672EC3CC0400C636F2 /* SceneDelegate.swift */; };
@@ -28,11 +31,14 @@
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
 		A131E80A7AA06ED4A9F20647 /* CloudKVPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C17207816BE6A8A148BE81D /* CloudKVPlugin.swift */; };
 		A9E90784C671485521F9FC10 /* QimaWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 1AB69C3516654ACD919EC695 /* QimaWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		BEED61BD5C190324C649EB61 /* Almarai-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BCBE5B0DCA1E2163E578CE39 /* Almarai-ExtraBold.ttf */; };
 		C30B5E44FD61F79F38D07BAB /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C568E3D1924E43B5B314D32 /* SwiftUI.framework */; };
 		E264BF0CD571C8346C1EEF60 /* QimaWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 049F19D0C32724E78A5E2DE8 /* QimaWidgetBundle.swift */; };
+		EBAB88C69D5C29A4E49241C0 /* Riyal-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A225EE856A4D8626EB99F8B3 /* Riyal-Bold.ttf */; };
 		F213BFF32CC6D97925090ED2 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 606679B5F3386110AF3C55EB /* Localizable.strings */; };
 		F96F99A3CC75BBE75FFB8F73 /* Pods_RunnerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 19923066CD80366CC12F0610 /* Pods_RunnerTests.framework */; };
 		FAFBC619DC50C0E43D04EE42 /* PriceWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC6F4E4FEB967333F0DD9ED7 /* PriceWidget.swift */; };
+		FCD3C8F8D8D582FFE11A490C /* Riyal-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 49C7CADE251C9EE01AD498C4 /* Riyal-Medium.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -93,6 +99,9 @@
 		331C8081294A63A400263BE5 /* RunnerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RunnerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = AppFrameworkInfo.plist; path = Flutter/AppFrameworkInfo.plist; sourceTree = "<group>"; };
 		45982C19AB91A2BE84668221 /* Snapshot.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Snapshot.swift; sourceTree = "<group>"; };
+		49C7CADE251C9EE01AD498C4 /* Riyal-Medium.ttf */ = {isa = PBXFileReference; includeInIndex = 1; name = "Riyal-Medium.ttf"; path = "../assets/fonts/riyal/Riyal-Medium.ttf"; sourceTree = SOURCE_ROOT; };
+		59150B92530BBA1B1248398F /* Riyal-Regular.ttf */ = {isa = PBXFileReference; includeInIndex = 1; name = "Riyal-Regular.ttf"; path = "../assets/fonts/riyal/Riyal-Regular.ttf"; sourceTree = SOURCE_ROOT; };
+		5C328B25E071F6B1D5E2CE4A /* Almarai-Bold.ttf */ = {isa = PBXFileReference; includeInIndex = 1; name = "Almarai-Bold.ttf"; path = "../assets/fonts/almarai/Almarai-Bold.ttf"; sourceTree = SOURCE_ROOT; };
 		6DDF1C9B8D9D7476FC8A321F /* Pods-Runner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"; sourceTree = "<group>"; };
 		6E54821E7E3CD29F0B8B958A /* ar */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.strings; name = ar; path = ar.lproj/Localizable.strings; sourceTree = "<group>"; };
 		74858FAD1ED2DC5600515810 /* Runner-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Runner-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -114,7 +123,9 @@
 		97C146FD1CF9000F007C117D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		97C147001CF9000F007C117D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		97C147021CF9000F007C117D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A225EE856A4D8626EB99F8B3 /* Riyal-Bold.ttf */ = {isa = PBXFileReference; includeInIndex = 1; name = "Riyal-Bold.ttf"; path = "../assets/fonts/riyal/Riyal-Bold.ttf"; sourceTree = SOURCE_ROOT; };
 		B75AD0EDDBE1390F319BFF7B /* AppIntents.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppIntents.framework; path = System/Library/Frameworks/AppIntents.framework; sourceTree = SDKROOT; };
+		BCBE5B0DCA1E2163E578CE39 /* Almarai-ExtraBold.ttf */ = {isa = PBXFileReference; includeInIndex = 1; name = "Almarai-ExtraBold.ttf"; path = "../assets/fonts/almarai/Almarai-ExtraBold.ttf"; sourceTree = SOURCE_ROOT; };
 		BDD496E82EFA8E007B85E83B /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BF3ECC85679FCE9412D97C20 /* SystemSettingsPlugin.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SystemSettingsPlugin.swift; sourceTree = "<group>"; };
 		BFD37CB6F239777D2EEC2734 /* es */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -123,6 +134,7 @@
 		D182F74BEE65A17C3768E4EE /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		DFFB65C63B793F955A51C719 /* Style.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Style.swift; sourceTree = "<group>"; };
 		E14A81BE438B9AE25D58F359 /* Pods-Runner.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig"; sourceTree = "<group>"; };
+		E8B0961D05F84263F5F2318E /* Almarai-Regular.ttf */ = {isa = PBXFileReference; includeInIndex = 1; name = "Almarai-Regular.ttf"; path = "../assets/fonts/almarai/Almarai-Regular.ttf"; sourceTree = SOURCE_ROOT; };
 		ED1CC9AB57161341EDE78586 /* Pods-RunnerTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.debug.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -206,6 +218,7 @@
 				2BFDCFD8791FD46B2C975F2E /* QimaWidget.entitlements */,
 				89303B6A20E7730FE37F7356 /* QimaWidget.xcconfig */,
 				606679B5F3386110AF3C55EB /* Localizable.strings */,
+				E3017C272BBCC1E3864AD117 /* Fonts */,
 			);
 			name = QimaWidget;
 			path = QimaWidget;
@@ -271,6 +284,19 @@
 				BF3ECC85679FCE9412D97C20 /* SystemSettingsPlugin.swift */,
 			);
 			path = Runner;
+			sourceTree = "<group>";
+		};
+		E3017C272BBCC1E3864AD117 /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				E8B0961D05F84263F5F2318E /* Almarai-Regular.ttf */,
+				5C328B25E071F6B1D5E2CE4A /* Almarai-Bold.ttf */,
+				BCBE5B0DCA1E2163E578CE39 /* Almarai-ExtraBold.ttf */,
+				59150B92530BBA1B1248398F /* Riyal-Regular.ttf */,
+				49C7CADE251C9EE01AD498C4 /* Riyal-Medium.ttf */,
+				A225EE856A4D8626EB99F8B3 /* Riyal-Bold.ttf */,
+			);
+			name = Fonts;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -400,6 +426,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				F213BFF32CC6D97925090ED2 /* Localizable.strings in Resources */,
+				1B6FF9FB7B414C15D8E0CD9C /* Almarai-Regular.ttf in Resources */,
+				69D7A32ECB40BA5C75A79E01 /* Almarai-Bold.ttf in Resources */,
+				BEED61BD5C190324C649EB61 /* Almarai-ExtraBold.ttf in Resources */,
+				0D4228F17377A3E115A95C14 /* Riyal-Regular.ttf in Resources */,
+				FCD3C8F8D8D582FFE11A490C /* Riyal-Medium.ttf in Resources */,
+				EBAB88C69D5C29A4E49241C0 /* Riyal-Bold.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

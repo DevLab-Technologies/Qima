@@ -60,9 +60,11 @@ class WidgetSnapshot {
       final rate = state.rates.rate(code);
       if (rate == null) continue;
       final style = CurrencyStyle.of(code);
+      // The real symbol, not the fallback: the iOS extension bundles the
+      // Riyal font, so it can draw the new Saudi Riyal sign.
       currencies[code] = {
         'rate': rate,
-        'symbol': style.fallbackSymbol,
+        'symbol': style.symbol,
         'suffix': style.position == SymbolPosition.suffix,
       };
     }

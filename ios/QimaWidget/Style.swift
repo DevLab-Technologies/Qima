@@ -27,6 +27,72 @@ enum L10n {
     static func karat(_ karat: Int) -> String { key("karat.short.\(karat)") }
 }
 
+/// The app's typography for widgets. Like the Flutter theme (`DS`
+/// fontFamilyFallback), Latin text uses the system font, Arabic falls back
+/// to Almarai and the Saudi Riyal sign (U+20C1, missing from older system
+/// fonts) to Riyal; with Arabic as the preferred language, Almarai leads.
+/// Both families ship in this extension (Info.plist UIAppFonts).
+enum Typeface {
+    static func font(_ size: CGFloat, _ weight: Font.Weight) -> Font {
+        let heavy = weight == .bold || weight == .heavy || weight == .black
+        let semibold = heavy || weight == .semibold
+        let almarai = heavy ? "Almarai-ExtraBold" : semibold ? "Almarai-Bold" : "Almarai-Regular"
+        let riyal = semibold ? "RiyalBold" : weight == .medium ? "RiyalMedium" : "RiyalRegular"
+        let arabicFirst = Locale.preferredLanguages.first?.hasPrefix("ar") ?? false
+
+        #if canImport(UIKit)
+        let system = UIFont.systemFont(ofSize: size, weight: uiWeight(weight)).fontDescriptor
+        let almaraiDescriptor = UIFontDescriptor(name: almarai, size: size)
+        let riyalDescriptor = UIFontDescriptor(name: riyal, size: size)
+        let primary = arabicFirst ? almaraiDescriptor : system
+        let cascade = arabicFirst ? [riyalDescriptor, system] : [almaraiDescriptor, riyalDescriptor]
+        return Font(UIFont(descriptor: primary.addingAttributes([.cascadeList: cascade]), size: size) as CTFont)
+        #else
+        let system = NSFont.systemFont(ofSize: size, weight: nsWeight(weight)).fontDescriptor
+        let almaraiDescriptor = NSFontDescriptor(name: almarai, size: size)
+        let riyalDescriptor = NSFontDescriptor(name: riyal, size: size)
+        let primary = arabicFirst ? almaraiDescriptor : system
+        let cascade = arabicFirst ? [riyalDescriptor, system] : [almaraiDescriptor, riyalDescriptor]
+        let font = NSFont(descriptor: primary.addingAttributes([.cascadeList: cascade]), size: size)
+            ?? NSFont.systemFont(ofSize: size, weight: nsWeight(weight))
+        return Font(font as CTFont)
+        #endif
+    }
+
+    #if canImport(UIKit)
+    private static func uiWeight(_ weight: Font.Weight) -> UIFont.Weight {
+        switch weight {
+        case .black: return .black
+        case .heavy: return .heavy
+        case .bold: return .bold
+        case .semibold: return .semibold
+        case .medium: return .medium
+        case .light: return .light
+        default: return .regular
+        }
+    }
+    #else
+    private static func nsWeight(_ weight: Font.Weight) -> NSFont.Weight {
+        switch weight {
+        case .black: return .black
+        case .heavy: return .heavy
+        case .bold: return .bold
+        case .semibold: return .semibold
+        case .medium: return .medium
+        case .light: return .light
+        default: return .regular
+        }
+    }
+    #endif
+}
+
+extension Font {
+    /// Qima's widget font; see [Typeface].
+    static func qima(_ size: CGFloat, _ weight: Font.Weight = .regular) -> Font {
+        Typeface.font(size, weight)
+    }
+}
+
 /// Number formatting that matches the app's `Money` type: magnitude-banded
 /// decimals, Western digits, and each currency's own symbol and placement.
 enum Format {

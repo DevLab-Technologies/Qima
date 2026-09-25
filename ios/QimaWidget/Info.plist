@@ -25,5 +25,14 @@
 		<key>NSExtensionPointIdentifier</key>
 		<string>com.apple.widgetkit-extension</string>
 	</dict>
+	<key>UIAppFonts</key>
+	<array>
+		<string>Almarai-Regular.ttf</string>
+		<string>Almarai-Bold.ttf</string>
+		<string>Almarai-ExtraBold.ttf</string>
+		<string>Riyal-Regular.ttf</string>
+		<string>Riyal-Medium.ttf</string>
+		<string>Riyal-Bold.ttf</string>
+	</array>
 </dict>
 </plist>

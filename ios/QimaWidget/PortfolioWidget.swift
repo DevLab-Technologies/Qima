@@ -171,13 +171,13 @@ private struct PortfolioHeader: View {
 
     var body: some View {
         HStack(spacing: 4) {
-            Text(L10n.key("portfolio.title")).font(.system(size: 12, weight: .semibold)).foregroundStyle(.secondary)
+            Text(L10n.key("portfolio.title")).font(.qima(12, .semibold)).foregroundStyle(.secondary)
             if model.hidden {
-                Image(systemName: "eye.slash").font(.system(size: 10)).foregroundStyle(.secondary)
+                Image(systemName: "eye.slash").font(.qima(10)).foregroundStyle(.secondary)
             }
             Spacer(minLength: 4)
             if showsScope {
-                Text("\(model.currency) · \(model.range.heading)").font(.system(size: 10)).foregroundStyle(.secondary)
+                Text("\(model.currency) · \(model.range.heading)").font(.qima(10)).foregroundStyle(.secondary)
             }
         }
     }
@@ -189,7 +189,7 @@ private struct PortfolioChange: View {
     var body: some View {
         if let text = model.changeText {
             Text(text)
-                .font(.system(size: 11, weight: .semibold))
+                .font(.qima(11, .semibold))
                 .foregroundStyle(Palette.trend(model.isUp))
                 .lineLimit(1)
                 .minimumScaleFactor(0.7)
@@ -206,7 +206,7 @@ struct PortfolioSummaryView: View {
             PortfolioHeader(model: model, showsScope: wide)
             Spacer(minLength: 6)
             Text(model.money(model.value))
-                .font(.system(size: wide ? 24 : 20, weight: .bold))
+                .font(.qima(wide ? 24 : 20, .bold))
                 .lineLimit(1)
                 .minimumScaleFactor(0.5)
                 .privacySensitive()
@@ -226,7 +226,7 @@ struct PortfolioLargeView: View {
         VStack(alignment: .leading, spacing: 4) {
             PortfolioHeader(model: model, showsScope: true)
             Text(model.money(model.value))
-                .font(.system(size: 26, weight: .bold))
+                .font(.qima(26, .bold))
                 .lineLimit(1)
                 .minimumScaleFactor(0.5)
                 .privacySensitive()
@@ -240,21 +240,21 @@ struct PortfolioLargeView: View {
             ForEach(model.rows.prefix(4)) { row in
                 HStack(spacing: 8) {
                     Image(systemName: Palette.icon(row.instrument))
-                        .font(.system(size: 14))
+                        .font(.qima(14))
                         .foregroundStyle(Palette.accent(row.instrument))
                         .widgetAccentable()
                     VStack(alignment: .leading, spacing: 0) {
-                        Text(L10n.key(row.instrument.nameKey)).font(.system(size: 12, weight: .semibold)).lineLimit(1)
+                        Text(L10n.key(row.instrument.nameKey)).font(.qima(12, .semibold)).lineLimit(1)
                         Text(Format.percent(row.share, digits: 1).replacingOccurrences(of: "+", with: ""))
-                            .font(.system(size: 9))
+                            .font(.qima(9))
                             .foregroundStyle(.secondary)
                     }
                     Spacer(minLength: 4)
                     VStack(alignment: .trailing, spacing: 0) {
-                        Text(model.money(row.value)).font(.system(size: 12, weight: .semibold)).lineLimit(1).privacySensitive()
+                        Text(model.money(row.value)).font(.qima(12, .semibold)).lineLimit(1).privacySensitive()
                         if !model.hidden {
                             Text(model.money(row.gain, signed: true))
-                                .font(.system(size: 9, weight: .medium))
+                                .font(.qima(9, .medium))
                                 .foregroundStyle(Palette.trend(row.gain >= 0))
                                 .lineLimit(1)
                                 .privacySensitive()
@@ -290,15 +290,15 @@ struct PortfolioRectangularView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Text(L10n.key("portfolio.title")).font(.system(size: 13, weight: .semibold)).lineLimit(1)
+            Text(L10n.key("portfolio.title")).font(.qima(13, .semibold)).lineLimit(1)
             Text(model.money(model.value, whole: true))
-                .font(.system(size: 17, weight: .bold))
+                .font(.qima(17, .bold))
                 .lineLimit(1)
                 .minimumScaleFactor(0.6)
                 .privacySensitive()
             if let fraction = model.gainFraction {
                 Text("\(Format.arrow(model.isUp)) \(Format.percent(fraction)) \(model.range.shortLabel)")
-                    .font(.system(size: 12))
+                    .font(.qima(12))
                     .lineLimit(1)
             }
         }

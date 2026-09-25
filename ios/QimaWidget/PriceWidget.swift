@@ -166,12 +166,12 @@ private struct PriceHeader: View {
     var body: some View {
         HStack(spacing: 6) {
             Image(systemName: Palette.icon(model.instrument))
-                .font(.system(size: 15))
+                .font(.qima(15))
                 .foregroundStyle(Palette.accent(model.instrument))
                 .widgetAccentable()
             VStack(alignment: .leading, spacing: 0) {
-                Text(model.title).font(.system(size: 12, weight: .semibold)).lineLimit(1)
-                Text(model.subtitle).font(.system(size: 9)).foregroundStyle(.secondary).lineLimit(1)
+                Text(model.title).font(.qima(12, .semibold)).lineLimit(1)
+                Text(model.subtitle).font(.qima(9)).foregroundStyle(.secondary).lineLimit(1)
             }
         }
     }
@@ -186,11 +186,11 @@ private struct ChangeLine: View {
                 (Text("\(Format.arrow(change.isUp)) \(Format.percent(change.fraction))")
                     .foregroundStyle(Palette.trend(change.isUp))
                     + Text(" \(model.range.shortLabel)").foregroundStyle(.secondary))
-                    .font(.system(size: 11, weight: .semibold))
+                    .font(.qima(11, .semibold))
             }
             if model.isStale {
                 FreshnessLabel(updatedAt: model.updatedAt, isStale: true)
-                    .font(.system(size: 10, weight: .medium))
+                    .font(.qima(10, .medium))
                     .foregroundStyle(.secondary)
             }
         }
@@ -207,7 +207,7 @@ struct PriceSmallView: View {
             PriceHeader(model: model)
             Spacer(minLength: 6)
             Text(model.money(model.price))
-                .font(.system(size: 20, weight: .bold))
+                .font(.qima(20, .bold))
                 .lineLimit(1)
                 .minimumScaleFactor(0.5)
             ChangeLine(model: model)
@@ -228,24 +228,24 @@ struct PriceMediumView: View {
                 PriceHeader(model: model)
                 Spacer(minLength: 6)
                 Text(model.money(model.price))
-                    .font(.system(size: 22, weight: .bold))
+                    .font(.qima(22, .bold))
                     .lineLimit(1)
                     .minimumScaleFactor(0.5)
                 ChangeLine(model: model)
                 Spacer(minLength: 6)
                 FreshnessLabel(updatedAt: model.updatedAt, isStale: false)
-                    .font(.system(size: 9))
+                    .font(.qima(9))
                     .foregroundStyle(.secondary)
             }
             .frame(width: 128, alignment: .leading)
 
             VStack(alignment: .leading, spacing: 4) {
                 HStack {
-                    Text(model.range.heading).font(.system(size: 10, weight: .semibold)).foregroundStyle(.secondary)
+                    Text(model.range.heading).font(.qima(10, .semibold)).foregroundStyle(.secondary)
                     Spacer(minLength: 4)
                     if let high = model.points.map(\.value).max(), let low = model.points.map(\.value).min() {
                         Text(String(format: L10n.text("H %@ · L %@"), model.money(high, whole: true), model.money(low, whole: true)))
-                            .font(.system(size: 9))
+                            .font(.qima(9))
                             .foregroundStyle(.secondary)
                             .lineLimit(1)
                             .minimumScaleFactor(0.7)
@@ -277,12 +277,12 @@ struct PriceCircularView: View {
             AccessoryWidgetBackground()
             VStack(spacing: 0) {
                 Text(model.instrument.symbol)
-                    .font(.system(size: 10, weight: .semibold))
+                    .font(.qima(10, .semibold))
                     .lineLimit(1)
                     .minimumScaleFactor(0.6)
                 if let change = model.change {
                     Text(Format.percent(change.fraction, digits: 1).replacingOccurrences(of: "%", with: ""))
-                        .font(.system(size: 15, weight: .bold))
+                        .font(.qima(15, .bold))
                         .lineLimit(1)
                         .minimumScaleFactor(0.6)
                 }
@@ -297,11 +297,11 @@ struct PriceRectangularView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Text(model.title).font(.system(size: 13, weight: .semibold)).lineLimit(1)
-            Text(model.money(model.price)).font(.system(size: 17, weight: .bold)).lineLimit(1).minimumScaleFactor(0.6)
+            Text(model.title).font(.qima(13, .semibold)).lineLimit(1)
+            Text(model.money(model.price)).font(.qima(17, .bold)).lineLimit(1).minimumScaleFactor(0.6)
             if let change = model.change {
                 Text("\(Format.arrow(change.isUp)) \(Format.percent(change.fraction)) \(model.range.shortLabel)")
-                    .font(.system(size: 12))
+                    .font(.qima(12))
                     .lineLimit(1)
             }
         }
