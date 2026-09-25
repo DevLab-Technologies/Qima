@@ -7,12 +7,26 @@ import 'qima_colors.dart';
 /// `main.dart` so `MaterialApp.theme`/`darkTheme` can both come from here
 /// (spec Phase 1). Dark keeps every value the app shipped with when it was
 /// dark-only; light is the new Figma "Qima DS" light palette.
-ThemeData buildTheme(Brightness brightness) {
+///
+/// This is the one place the app's font is decided ([DS.fontFamilyFor]
+/// [locale]). Component themes whose label styles replace the ambient text
+/// style rather than merging with it (chips, navigation labels) build them
+/// from [text] so they carry the same family.
+ThemeData buildTheme(Brightness brightness, {Locale? locale}) {
   final colors = brightness == Brightness.dark ? QimaColors.dark : QimaColors.light;
+  final fontFamily = locale == null ? null : DS.fontFamilyFor(locale);
+  TextStyle text({Color? color, double? fontSize, FontWeight? fontWeight}) => TextStyle(
+        fontFamily: fontFamily,
+        fontFamilyFallback: DS.fontFamilyFallback,
+        color: color,
+        fontSize: fontSize,
+        fontWeight: fontWeight,
+      );
 
   return ThemeData(
     brightness: brightness,
     scaffoldBackgroundColor: colors.bg0,
+    fontFamily: fontFamily,
     fontFamilyFallback: DS.fontFamilyFallback,
     extensions: [colors],
     // Seeded from the brand gold, but surfaces are pinned to the DS
@@ -42,6 +56,7 @@ ThemeData buildTheme(Brightness brightness) {
       foregroundColor: colors.textPrimary,
     ),
     textTheme: (brightness == Brightness.dark ? ThemeData.dark() : ThemeData.light()).textTheme.apply(
+          fontFamily: fontFamily,
           bodyColor: colors.textPrimary,
           displayColor: colors.textPrimary,
         ),
@@ -73,8 +88,8 @@ ThemeData buildTheme(Brightness brightness) {
       backgroundColor: colors.tileTop,
       selectedColor: colors.brand,
       side: BorderSide(color: colors.hairline),
-      labelStyle: TextStyle(color: colors.textSecondary),
-      secondaryLabelStyle: TextStyle(color: colors.onBrand),
+      labelStyle: text(color: colors.textSecondary),
+      secondaryLabelStyle: text(color: colors.onBrand),
     ),
     segmentedButtonTheme: SegmentedButtonThemeData(
       style: DS.segmentedButtonStyle(colors, colors.brand),
@@ -91,7 +106,7 @@ ThemeData buildTheme(Brightness brightness) {
         ),
       ),
       labelTextStyle: WidgetStateProperty.resolveWith(
-        (states) => TextStyle(
+        (states) => text(
           color: states.contains(WidgetState.selected) ? colors.textPrimary : colors.textTertiary,
           fontSize: 12,
           fontWeight: states.contains(WidgetState.selected) ? FontWeight.w700 : FontWeight.w500,
@@ -103,8 +118,8 @@ ThemeData buildTheme(Brightness brightness) {
       indicatorColor: colors.brand,
       selectedIconTheme: IconThemeData(color: colors.onBrand),
       unselectedIconTheme: IconThemeData(color: colors.textTertiary),
-      selectedLabelTextStyle: TextStyle(color: colors.textPrimary, fontSize: 12, fontWeight: FontWeight.w700),
-      unselectedLabelTextStyle: TextStyle(color: colors.textTertiary, fontSize: 12, fontWeight: FontWeight.w500),
+      selectedLabelTextStyle: text(color: colors.textPrimary, fontSize: 12, fontWeight: FontWeight.w700),
+      unselectedLabelTextStyle: text(color: colors.textTertiary, fontSize: 12, fontWeight: FontWeight.w500),
     ),
   );
 }

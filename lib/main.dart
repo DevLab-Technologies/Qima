@@ -17,7 +17,6 @@ import 'services/backup/backup_reminder_notifier.dart';
 import 'services/notification_service.dart';
 import 'services/preferences.dart';
 import 'theme/app_theme.dart';
-import 'theme/design_system.dart';
 import 'widgets/lock_gate.dart';
 
 /// Wear OS screens are typically 192-227dp square/round; a normal phone's
@@ -143,20 +142,13 @@ class _QimaAppState extends State<QimaApp> {
             theme: buildTheme(Brightness.light),
             darkTheme: buildTheme(Brightness.dark),
             themeMode: state.appearance.themeMode,
-            // Arabic is set entirely in the Arabic family; other locales keep
-            // the platform font and reach it only through the fallback chain.
+            // The theme depends on the resolved locale for its font (see
+            // `buildTheme`), which is only known here.
             builder: (context, child) {
-              Widget content = child!;
-              if (Localizations.localeOf(context).languageCode == 'ar') {
-                final theme = Theme.of(context);
-                content = Theme(
-                  data: theme.copyWith(
-                    textTheme: theme.textTheme.apply(fontFamily: DS.arabicFontFamily),
-                    primaryTextTheme: theme.primaryTextTheme.apply(fontFamily: DS.arabicFontFamily),
-                  ),
-                  child: content,
-                );
-              }
+              final content = Theme(
+                data: buildTheme(Theme.of(context).brightness, locale: Localizations.localeOf(context)),
+                child: child!,
+              );
               // LockGate sits above the app's screens but below the root
               // ScaffoldMessenger/Navigator that `MaterialApp` itself
               // supplies around `builder`'s output, so in-app snackbars

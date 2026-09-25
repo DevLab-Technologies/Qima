@@ -30,6 +30,11 @@ class DS {
   /// glyphs, so digits and tickers sit evenly with the Arabic around them.
   static const String arabicFontFamily = 'Almarai';
 
+  /// The app's font family for [locale]: Almarai for Arabic, the platform
+  /// font (null) otherwise. `buildTheme` is the only caller; everything
+  /// else gets the family from the theme.
+  static String? fontFamilyFor(Locale locale) => locale.languageCode == 'ar' ? arabicFontFamily : null;
+
   /// Consulted before the OS fallback chain in every locale: Arabic glyphs
   /// (currency symbols, Arabic names) render in Almarai rather than the system's
   /// basic Arabic face, and the Saudi Riyal sign always has a glyph.
@@ -157,10 +162,12 @@ class DSChoiceChip extends StatelessWidget {
       selectedColor: resolvedAccent,
       side: BorderSide(color: colors.hairline),
       shape: const StadiumBorder(),
-      labelStyle: TextStyle(
-        color: selected ? colors.onBrand : colors.textSecondary,
-        fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
-      ),
+      // A chip's label style replaces the ambient text style instead of
+      // merging with it, so start from the theme's to keep the app font.
+      labelStyle: Theme.of(context).textTheme.labelLarge?.copyWith(
+            color: selected ? colors.onBrand : colors.textSecondary,
+            fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+          ),
     );
   }
 }
