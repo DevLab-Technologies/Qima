@@ -21,6 +21,7 @@
 		7884E8682EC3CC0700C636F2 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7884E8672EC3CC0400C636F2 /* SceneDelegate.swift */; };
 		78A318202AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 78A3181F2AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage */; };
 		78FEB5371876CC3CC21541C6 /* Snapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45982C19AB91A2BE84668221 /* Snapshot.swift */; };
+		939D1EC5CEAB4A33465B37CD /* SystemSettingsPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF3ECC85679FCE9412D97C20 /* SystemSettingsPlugin.swift */; };
 		96337F53EA67D635F6AE883B /* Intents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85BC897468A93912BFFD90DD /* Intents.swift */; };
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
@@ -115,6 +116,7 @@
 		97C147021CF9000F007C117D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B75AD0EDDBE1390F319BFF7B /* AppIntents.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppIntents.framework; path = System/Library/Frameworks/AppIntents.framework; sourceTree = SDKROOT; };
 		BDD496E82EFA8E007B85E83B /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		BF3ECC85679FCE9412D97C20 /* SystemSettingsPlugin.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SystemSettingsPlugin.swift; sourceTree = "<group>"; };
 		BFD37CB6F239777D2EEC2734 /* es */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Localizable.strings; sourceTree = "<group>"; };
 		C5B31F6407E07BC04B701770 /* Pods-Runner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"; sourceTree = "<group>"; };
 		CC6F4E4FEB967333F0DD9ED7 /* PriceWidget.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PriceWidget.swift; sourceTree = "<group>"; };
@@ -266,6 +268,7 @@
 				74858FAD1ED2DC5600515810 /* Runner-Bridging-Header.h */,
 				2C17207816BE6A8A148BE81D /* CloudKVPlugin.swift */,
 				8FC8DB27897060618A7308B6 /* Runner.entitlements */,
+				BF3ECC85679FCE9412D97C20 /* SystemSettingsPlugin.swift */,
 			);
 			path = Runner;
 			sourceTree = "<group>";
@@ -522,6 +525,7 @@
 				1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */,
 				7884E8682EC3CC0700C636F2 /* SceneDelegate.swift in Sources */,
 				A131E80A7AA06ED4A9F20647 /* CloudKVPlugin.swift in Sources */,
+				939D1EC5CEAB4A33465B37CD /* SystemSettingsPlugin.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -31,6 +31,7 @@
 		33CC11132044BFA00003C045 /* MainFlutterWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33CC11122044BFA00003C045 /* MainFlutterWindow.swift */; };
 		78A318202AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 78A3181F2AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage */; };
 		E147DD45B9F3719AE3ABA33C /* CloudKVPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08A3123DA6056FA14123F29F /* CloudKVPlugin.swift */; };
+		FCFA6FD55E45018E2A26DCBE /* SystemSettingsPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC5554DCB91DEE7EA62D855B /* SystemSettingsPlugin.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -91,6 +92,7 @@
 		800EC5F4E63077FA5158C963 /* Pods-RunnerTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.release.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.release.xcconfig"; sourceTree = "<group>"; };
 		9740EEB21CF90195004384FC /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
 		A8B58E73EB47DDB2CA3D1836 /* Pods_Runner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Runner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		AC5554DCB91DEE7EA62D855B /* SystemSettingsPlugin.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SystemSettingsPlugin.swift; sourceTree = "<group>"; };
 		D757B2F8DCB169212367E719 /* Pods-RunnerTests.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.profile.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.profile.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -202,6 +204,7 @@
 				33CC11242044D66E0003C045 /* Resources */,
 				33BA886A226E78AF003329D5 /* Configs */,
 				08A3123DA6056FA14123F29F /* CloudKVPlugin.swift */,
+				AC5554DCB91DEE7EA62D855B /* SystemSettingsPlugin.swift */,
 			);
 			path = Runner;
 			sourceTree = "<group>";
@@ -436,6 +439,7 @@
 				33CC10F12044A3C60003C045 /* AppDelegate.swift in Sources */,
 				335BBD1B22A9A15E00E9071D /* GeneratedPluginRegistrant.swift in Sources */,
 				E147DD45B9F3719AE3ABA33C /* CloudKVPlugin.swift in Sources */,
+				FCFA6FD55E45018E2A26DCBE /* SystemSettingsPlugin.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

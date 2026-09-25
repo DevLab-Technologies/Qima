@@ -5,7 +5,6 @@
 import FlutterMacOS
 import Foundation
 
-import app_settings
 import cryptography_flutter
 import file_selector_macos
 import flutter_local_notifications
@@ -16,7 +15,6 @@ import shared_preferences_foundation
 import workmanager_apple
 
 func RegisterGeneratedPlugins(registry: FlutterPluginRegistry) {
-  AppSettingsPlugin.register(with: registry.registrar(forPlugin: "AppSettingsPlugin"))
   CryptographyFlutterPlugin.register(with: registry.registrar(forPlugin: "CryptographyFlutterPlugin"))
   FileSelectorPlugin.register(with: registry.registrar(forPlugin: "FileSelectorPlugin"))
   FlutterLocalNotificationsPlugin.register(with: registry.registrar(forPlugin: "FlutterLocalNotificationsPlugin"))

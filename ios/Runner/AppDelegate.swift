@@ -42,9 +42,10 @@ import workmanager_apple
 
   func didInitializeImplicitFlutterEngine(_ engineBridge: FlutterImplicitEngineBridge) {
     GeneratedPluginRegistrant.register(with: engineBridge.pluginRegistry)
-    // `CloudKVPlugin` lives directly in this target (it's not a pub
-    // package), so `GeneratedPluginRegistrant` never picks it up — it has to
+    // `CloudKVPlugin` and `SystemSettingsPlugin` live directly in this target (not pub
+    // packages), so `GeneratedPluginRegistrant` never picks them up — they have to
     // be registered by hand, same as any other app-target-local plugin.
     CloudKVPlugin.register(with: engineBridge.pluginRegistry.registrar(forPlugin: "CloudKVPlugin")!)
+    SystemSettingsPlugin.register(with: engineBridge.pluginRegistry.registrar(forPlugin: "SystemSettingsPlugin")!)
   }
 }

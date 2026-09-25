@@ -1,4 +1,3 @@
-import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -7,6 +6,7 @@ import '../blocs/app_state.dart';
 import '../l10n/app_localizations.dart';
 import '../models/price_alert.dart';
 import '../models/watch_card.dart';
+import '../services/system_settings.dart';
 import '../theme/design_system.dart';
 import '../theme/instrument_theme.dart';
 import '../theme/qima_colors.dart';
@@ -76,7 +76,7 @@ class _AlertsScreenState extends State<AlertsScreen> with WidgetsBindingObserver
               padding: const EdgeInsets.all(DS.spaceMD),
               children: [
                 if (!state.notificationsEnabled) ...[
-                  _NotificationsOffBanner(onOpenSettings: () => AppSettings.openAppSettings(type: AppSettingsType.notification)),
+                  _NotificationsOffBanner(onOpenSettings: SystemSettings.openNotificationSettings),
                   const SizedBox(height: DS.spaceMD),
                 ],
                 DSCard(
