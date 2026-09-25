@@ -162,7 +162,7 @@ jobs:
           version="$(grep -E '^version:' pubspec.yaml | awk '{print $2}' | cut -d+ -f1)"
           mkdir -p dist
           ditto -c -k --sequesterRsrc --keepParent \
-            "build/macos/Build/Products/Release/qima.app" \
+            "build/macos/Build/Products/Release/Qima.app" \
             "dist/qima-${version}-macos.zip"
           cd dist
           shasum -a 256 "qima-${version}-macos.zip" > "qima-${version}-macos.zip.sha256"
