@@ -25,6 +25,18 @@ import workmanager_apple
     // must-run-before-launch-completes API. See the Phase 5 implementation
     // report for the full chain of reasoning.
     WorkmanagerPlugin.registerLaunchHandlers()
+    // `registerLaunchHandlers()` only restores identifiers persisted by an
+    // earlier session, so on a fresh install the refresh task had no
+    // handler, and the first `registerPeriodicTask` from Dart (made when
+    // alerts or notifications are turned on) hit BGTaskScheduler's
+    // "submitted without a registered launch handler" assertion and
+    // aborted. Register the one identifier the app schedules
+    // (`BackgroundRefresh.uniqueName`, listed in Info.plist's
+    // BGTaskSchedulerPermittedIdentifiers) up front, every launch.
+    WorkmanagerPlugin.registerPeriodicTask(
+      withIdentifier: "com.devlabtechnologies.qima.refresh",
+      earliestBeginInSeconds: NSNumber(value: 15 * 60)
+    )
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 
