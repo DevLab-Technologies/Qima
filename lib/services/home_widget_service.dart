@@ -108,11 +108,14 @@ class HomeWidgetService {
   /// iOS kinds, matching `kind` in the widget extension.
   static const iOSPriceKind = 'PriceWidget';
   static const iOSPortfolioKind = 'PortfolioWidget';
+  static const iOSWatchlistKind = 'WatchlistWidget';
 
   static Future<void> _publishSnapshot(AppState state) async {
     if (defaultTargetPlatform != TargetPlatform.iOS) return;
     final snapshot = WidgetSnapshot.build(state, now: DateTime.now());
     await HomeWidget.saveWidgetData<String>(WidgetSnapshot.storageKey, jsonEncode(snapshot));
+    // Price and Portfolio are reloaded by their own publish steps below.
+    await HomeWidget.updateWidget(iOSName: iOSWatchlistKind);
   }
 
   static Future<void> _publishPrice(AppState state) async {

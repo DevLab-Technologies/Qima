@@ -42,6 +42,7 @@
 		A03B1AD84FFC830BCA99FC7C /* Riyal-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 916725D8519EAC892D158D82 /* Riyal-Bold.ttf */; };
 		A3689DCCB749963A5A0B7DDF /* Riyal-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E9F1F8F2A2BD6B3A9ED80B36 /* Riyal-Medium.ttf */; };
 		A96507D57EEB7BEC821C4109 /* Snapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 137760BC25B862D4328A3861 /* Snapshot.swift */; };
+		B9091AD0E53515CF3625A479 /* WatchlistWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = F552B1B3A2213AF3C4D89296 /* WatchlistWidget.swift */; };
 		C6ABA7E1A94B0B6E857A2C4D /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8522850E59815F03567CB939 /* Localizable.strings */; };
 		CDE6EF2B93810E47CF62FE1A /* Riyal-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9D420D68A7F3DA4038F10904 /* Riyal-Regular.ttf */; };
 		CE138C6FEEA510323C0A3CAC /* Almarai-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1C2EE2BB869BEE7FA12BD49D /* Almarai-ExtraBold.ttf */; };
@@ -153,6 +154,7 @@
 		E4E34D6C2CC8DC9B6B4B047C /* PriceWidget.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PriceWidget.swift; sourceTree = "<group>"; };
 		E802E9E263C0C0E7631C1A9C /* Style.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Style.swift; sourceTree = "<group>"; };
 		E9F1F8F2A2BD6B3A9ED80B36 /* Riyal-Medium.ttf */ = {isa = PBXFileReference; includeInIndex = 1; name = "Riyal-Medium.ttf"; path = "riyal/Riyal-Medium.ttf"; sourceTree = "<group>"; };
+		F552B1B3A2213AF3C4D89296 /* WatchlistWidget.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WatchlistWidget.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -336,6 +338,7 @@
 				E4E34D6C2CC8DC9B6B4B047C /* PriceWidget.swift */,
 				BAB6E5380877E84A0DAF4100 /* PortfolioWidget.swift */,
 				8522850E59815F03567CB939 /* Localizable.strings */,
+				F552B1B3A2213AF3C4D89296 /* WatchlistWidget.swift */,
 			);
 			name = Shared;
 			path = ../../ios/QimaWidget;
@@ -618,6 +621,7 @@
 				D0449DDDF2C648BB9599AF06 /* Components.swift in Sources */,
 				81E83E7996F84E4B438CDC3E /* PriceWidget.swift in Sources */,
 				D530618D525AABA83D45332E /* PortfolioWidget.swift in Sources */,
+				B9091AD0E53515CF3625A479 /* WatchlistWidget.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

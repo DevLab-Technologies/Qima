@@ -2,13 +2,14 @@
 
 ## iOS (WidgetKit)
 
-The `QimaWidgetExtension` target (`ios/QimaWidget/`, iOS 17+) ships two
+The `QimaWidgetExtension` target (`ios/QimaWidget/`, iOS 17+) ships three
 widgets, each configured per placed instance with an App Intent:
 
 | Widget | Sizes | Settings |
 |---|---|---|
 | Price (`PriceWidget`) | small, medium, lock-screen inline / circular / rectangular | asset (a watchlist card or another priced instrument), unit, karat, currency, chart range |
 | Portfolio (`PortfolioWidget`) | small, medium, large, lock-screen rectangular | currency, chart range |
+| Watchlist (`WatchlistWidget`) | small (3 rows), medium (3), large (7) | assets (all watchlist cards in order, or up to 3/7 picked), chart range, currency |
 
 "Automatic" unit, karat and currency follow the picked watchlist card (or the
 base currency for an instrument without a card).

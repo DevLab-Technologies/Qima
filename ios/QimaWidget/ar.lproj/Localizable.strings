@@ -9,9 +9,11 @@
 "22K" = "٢٢ قيراط";
 "24K" = "٢٤ قيراط";
 "3 months" = "٣ أشهر";
+"Add assets in Qima to see them here" = "أضف أصولًا في قيمة لتظهر هنا";
 "Add holdings in Qima to see your portfolio" = "أضف ممتلكاتك في قيمة لعرض محفظتك";
 "All time" = "كل الوقت";
 "Asset" = "الأصل";
+"Assets" = "الأصول";
 "Automatic" = "تلقائي";
 "Chart range" = "مدى الرسم البياني";
 "Currency" = "العملة";
@@ -33,9 +35,11 @@
 "Troy ounce" = "أونصة تروي";
 "Unit" = "الوحدة";
 "Updated %@" = "آخر تحديث %@";
+"Watchlist" = "قائمة المتابعة";
 "Watchlist or base currency" = "عملة قائمة المتابعة أو العملة الأساسية";
 "Your holdings' value and gain." = "قيمة ممتلكاتك وأرباحها.";
 "Your watchlist" = "قائمة المتابعة";
+"Your watchlist at a glance." = "قائمة المتابعة في لمحة.";
 "assetAlphabet" = "ألفابت";
 "assetAmazon" = "أمازون";
 "assetApple" = "أبل";

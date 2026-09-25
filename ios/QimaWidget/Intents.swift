@@ -235,3 +235,18 @@ struct PortfolioWidgetIntent: WidgetConfigurationIntent {
     @Parameter(title: "Chart range", default: .all)
     var range: RangeOption
 }
+
+struct WatchlistWidgetIntent: WidgetConfigurationIntent {
+    static let title: LocalizedStringResource = "Watchlist"
+    static let description = IntentDescription("Your watchlist at a glance.")
+
+    /// Empty means every watchlist card, in watchlist order.
+    @Parameter(title: "Assets", size: [.systemSmall: 3, .systemMedium: 3, .systemLarge: 7])
+    var assets: [AssetEntity]?
+
+    @Parameter(title: "Chart range", default: .day)
+    var range: RangeOption
+
+    @Parameter(title: "Currency")
+    var currency: CurrencyEntity?
+}

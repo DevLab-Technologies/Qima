@@ -9,5 +9,6 @@ struct QimaWidgetBundle: WidgetBundle {
     var body: some Widget {
         PriceWidget()
         PortfolioWidget()
+        WatchlistWidget()
     }
 }

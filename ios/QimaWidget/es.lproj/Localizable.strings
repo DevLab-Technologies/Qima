@@ -9,9 +9,11 @@
 "22K" = "22K";
 "24K" = "24K";
 "3 months" = "3 meses";
+"Add assets in Qima to see them here" = "Añade activos en Qima para verlos aquí";
 "Add holdings in Qima to see your portfolio" = "Añade tenencias en Qima para ver tu cartera";
 "All time" = "Desde el inicio";
 "Asset" = "Activo";
+"Assets" = "Activos";
 "Automatic" = "Automático";
 "Chart range" = "Rango del gráfico";
 "Currency" = "Moneda";
@@ -33,9 +35,11 @@
 "Troy ounce" = "Onza troy";
 "Unit" = "Unidad";
 "Updated %@" = "Actualizado %@";
+"Watchlist" = "Seguimiento";
 "Watchlist or base currency" = "La de tu lista o la moneda base";
 "Your holdings' value and gain." = "El valor y la ganancia de tus tenencias.";
 "Your watchlist" = "Tu lista";
+"Your watchlist at a glance." = "Tu lista de un vistazo.";
 "assetAlphabet" = "Alphabet";
 "assetAmazon" = "Amazon";
 "assetApple" = "Apple";

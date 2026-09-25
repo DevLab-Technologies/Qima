@@ -40,7 +40,26 @@ struct PriceModel {
         let assetID = intent.asset?.id
             ?? snapshot.cards.first.map { AssetEntity.cardPrefix + $0.id }
         guard let assetID else { return nil }
+        return resolve(
+            assetID: assetID,
+            unit: intent.unit,
+            karat: intent.karat,
+            currency: intent.currency,
+            range: intent.range,
+            in: snapshot
+        )
+    }
 
+    /// One asset ("card:<id>" or "instrument:<id>") priced with the given
+    /// overrides; `.automatic` / nil keep the card's own settings.
+    static func resolve(
+        assetID: String,
+        unit unitOption: UnitOption = .automatic,
+        karat karatOption: KaratOption = .automatic,
+        currency currencyOption: CurrencyEntity?,
+        range: RangeOption,
+        in snapshot: Snapshot
+    ) -> PriceModel? {
         let card: Snapshot.Card?
         let instrumentID: String
         if assetID.hasPrefix(AssetEntity.cardPrefix) {
@@ -55,22 +74,22 @@ struct PriceModel {
 
         var unit = card.flatMap { PriceUnit(rawValue: $0.unit) }
             ?? instrument.units.first.flatMap(PriceUnit.init(rawValue:)) ?? .each
-        if intent.unit != .automatic, instrument.units.contains(intent.unit.rawValue),
-           let chosen = PriceUnit(rawValue: intent.unit.rawValue) {
+        if unitOption != .automatic, instrument.units.contains(unitOption.rawValue),
+           let chosen = PriceUnit(rawValue: unitOption.rawValue) {
             unit = chosen
         }
 
-        let karat = instrument.karats.isEmpty ? nil : (intent.karat.karat ?? card?.karat)
+        let karat = instrument.karats.isEmpty ? nil : (karatOption.karat ?? card?.karat)
         let purity = Double(karat ?? 24) / 24
 
         var currency = card?.currency ?? snapshot.baseCurrency
-        if let chosen = intent.currency, !chosen.isAutomatic, snapshot.currencies[chosen.id] != nil {
+        if let chosen = currencyOption, !chosen.isAutomatic, snapshot.currencies[chosen.id] != nil {
             currency = chosen.id
         }
 
         guard let latest = instrument.latest, let liveRate = snapshot.liveRate(currency) else { return nil }
         let factor = unit.multiplier * purity
-        let points = (instrument.series[intent.range.window.rawValue] ?? []).compactMap { sample -> ChartPoint? in
+        let points = (instrument.series[range.window.rawValue] ?? []).compactMap { sample -> ChartPoint? in
             guard sample.count == 2, let rate = snapshot.rate(currency, at: sample[0]) else { return nil }
             return ChartPoint(date: Date(timeIntervalSince1970: sample[0] / 1000), value: sample[1] * rate * factor)
         }
@@ -81,7 +100,7 @@ struct PriceModel {
             currency: currency,
             unit: unit,
             karat: karat,
-            range: intent.range,
+            range: range,
             price: latest * liveRate * factor,
             points: points,
             change: Change(points),

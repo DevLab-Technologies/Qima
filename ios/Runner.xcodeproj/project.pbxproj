@@ -11,6 +11,7 @@
 		0F7349CF2DC86E7FEFAE7E34 /* PortfolioWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07624C0012DECBE889434CFA /* PortfolioWidget.swift */; };
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
 		1B6FF9FB7B414C15D8E0CD9C /* Almarai-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E8B0961D05F84263F5F2318E /* Almarai-Regular.ttf */; };
+		1F7EB2958E30914F71B205B8 /* WatchlistWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FDD20824A59F7550B4CC321 /* WatchlistWidget.swift */; };
 		331C808B294A63AB00263BE5 /* RunnerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 331C807B294A618700263BE5 /* RunnerTests.swift */; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
 		3E9DD0E261620C3558BC4233 /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75DD25601108DAD5152C600B /* Components.swift */; };
@@ -104,6 +105,7 @@
 		5C328B25E071F6B1D5E2CE4A /* Almarai-Bold.ttf */ = {isa = PBXFileReference; includeInIndex = 1; name = "Almarai-Bold.ttf"; path = "../assets/fonts/almarai/Almarai-Bold.ttf"; sourceTree = SOURCE_ROOT; };
 		6DDF1C9B8D9D7476FC8A321F /* Pods-Runner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"; sourceTree = "<group>"; };
 		6E54821E7E3CD29F0B8B958A /* ar */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.strings; name = ar; path = ar.lproj/Localizable.strings; sourceTree = "<group>"; };
+		6FDD20824A59F7550B4CC321 /* WatchlistWidget.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WatchlistWidget.swift; sourceTree = "<group>"; };
 		74858FAD1ED2DC5600515810 /* Runner-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Runner-Bridging-Header.h"; sourceTree = "<group>"; };
 		74858FAE1ED2DC5600515810 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		75DD25601108DAD5152C600B /* Components.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Components.swift; sourceTree = "<group>"; };
@@ -219,6 +221,7 @@
 				89303B6A20E7730FE37F7356 /* QimaWidget.xcconfig */,
 				606679B5F3386110AF3C55EB /* Localizable.strings */,
 				E3017C272BBCC1E3864AD117 /* Fonts */,
+				6FDD20824A59F7550B4CC321 /* WatchlistWidget.swift */,
 			);
 			name = QimaWidget;
 			path = QimaWidget;
@@ -546,6 +549,7 @@
 				3E9DD0E261620C3558BC4233 /* Components.swift in Sources */,
 				FAFBC619DC50C0E43D04EE42 /* PriceWidget.swift in Sources */,
 				0F7349CF2DC86E7FEFAE7E34 /* PortfolioWidget.swift in Sources */,
+				1F7EB2958E30914F71B205B8 /* WatchlistWidget.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

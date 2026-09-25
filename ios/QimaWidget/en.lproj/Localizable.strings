@@ -9,9 +9,11 @@
 "22K" = "22K";
 "24K" = "24K";
 "3 months" = "3 months";
+"Add assets in Qima to see them here" = "Add assets in Qima to see them here";
 "Add holdings in Qima to see your portfolio" = "Add holdings in Qima to see your portfolio";
 "All time" = "All time";
 "Asset" = "Asset";
+"Assets" = "Assets";
 "Automatic" = "Automatic";
 "Chart range" = "Chart range";
 "Currency" = "Currency";
@@ -33,9 +35,11 @@
 "Troy ounce" = "Troy ounce";
 "Unit" = "Unit";
 "Updated %@" = "Updated %@";
+"Watchlist" = "Watchlist";
 "Watchlist or base currency" = "Watchlist or base currency";
 "Your holdings' value and gain." = "Your holdings' value and gain.";
 "Your watchlist" = "Your watchlist";
+"Your watchlist at a glance." = "Your watchlist at a glance.";
 "assetAlphabet" = "Alphabet";
 "assetAmazon" = "Amazon";
 "assetApple" = "Apple";
