@@ -1,3 +1,16 @@
+import 'package:flutter/foundation.dart' show TargetPlatform, defaultTargetPlatform, kIsWeb;
+
+/// Whether this platform can sync through iCloud key-value storage at all:
+/// iOS and macOS, which share one store (same
+/// `com.apple.developer.ubiquity-kvstore-identifier` on both). Whether it
+/// actually works on a given device is [CloudKVStore.accountStatus]: an
+/// iCloud account must be signed in, and the build must carry the
+/// entitlement (local macOS debug builds don't).
+bool get platformSupportsICloud {
+  if (kIsWeb) return false;
+  return defaultTargetPlatform == TargetPlatform.iOS || defaultTargetPlatform == TargetPlatform.macOS;
+}
+
 /// Why a key-value store's external-change notification fired — mirrors
 /// `NSUbiquitousKeyValueStoreChangeReasonKey`'s possible values (see
 /// `CloudKVPlugin.swift`). Values other than the four modeled below collapse

@@ -333,10 +333,7 @@ class Preferences {
   /// account availability); this getter just answers "did the user turn it
   /// on", defaulting to on so a first launch on a device with an iCloud
   /// account already signed in starts syncing without an extra step.
-  bool get iCloudSyncEnabledDefault {
-    if (kIsWeb) return false;
-    return defaultTargetPlatform == TargetPlatform.iOS;
-  }
+  bool get iCloudSyncEnabledDefault => platformSupportsICloud;
 
   bool get iCloudSyncEnabled => local.getBool(_iCloudSyncEnabledKey) ?? iCloudSyncEnabledDefault;
 

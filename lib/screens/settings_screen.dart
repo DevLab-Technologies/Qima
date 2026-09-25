@@ -8,6 +8,7 @@ import '../blocs/app_state.dart';
 import '../l10n/app_localizations.dart';
 import '../models/chart_range.dart';
 import '../services/app_lock_service.dart';
+import '../services/cloud_kv_store.dart';
 import '../services/preferences.dart';
 import '../theme/design_system.dart';
 import '../theme/qima_colors.dart';
@@ -71,7 +72,7 @@ class SettingsScreen extends StatelessWidget {
                 _SectionHeader(l10n.settingsPrivacy),
                 const _PrivacySecuritySection(),
                 const SizedBox(height: DS.spaceLG),
-                if (!kIsWeb && defaultTargetPlatform == TargetPlatform.iOS) ...[
+                if (platformSupportsICloud) ...[
                   _SectionHeader(l10n.settingsICloudSync),
                   const _ICloudSyncSection(),
                   const SizedBox(height: DS.spaceLG),

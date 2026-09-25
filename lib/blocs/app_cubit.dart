@@ -138,7 +138,7 @@ class AppCubit extends Cubit<AppState> {
     // cloud.isEmpty`) sees the real cloud contents, so a device joining an
     // already-populated account merges into it instead of re-seeding
     // defaults next to it.
-    final iCloudAccountAvailable = _platformSupportsICloud ? await cloudStore.accountStatus() : false;
+    final iCloudAccountAvailable = platformSupportsICloud ? await cloudStore.accountStatus() : false;
     final iCloudSyncEnabled = preferences.iCloudSyncEnabled;
     final cloudEnabledAtStartup = iCloudSyncEnabled && iCloudAccountAvailable;
     cloudStore.setEnabled(cloudEnabledAtStartup);
@@ -216,7 +216,7 @@ class AppCubit extends Cubit<AppState> {
       cloudSyncStatus: _statusFor(
         syncEnabled: iCloudSyncEnabled,
         accountAvailable: iCloudAccountAvailable,
-        platformSupported: _platformSupportsICloud,
+        platformSupported: platformSupportsICloud,
       ),
       lastCloudSyncAt: cloudEnabledAtStartup ? DateTime.now() : null,
     ));
@@ -300,15 +300,6 @@ class AppCubit extends Cubit<AppState> {
     return store.load();
   }
 
-  /// Whether this platform can offer iCloud KVS at all — iOS only for now.
-  /// macOS stays local-only until its entitlement is added (see the Phase 7
-  /// report / `macos/Runner/CloudKVPlugin.swift`'s note); every other
-  /// platform has no iCloud concept whatsoever.
-  bool get _platformSupportsICloud {
-    if (kIsWeb) return false;
-    return defaultTargetPlatform == TargetPlatform.iOS;
-  }
-
   /// Registers which store to reload when an external-change event names
   /// its cloud key, and starts listening for them if this platform can
   /// support iCloud at all. Called once from [init] AFTER the cloud backend
@@ -323,7 +314,7 @@ class AppCubit extends Cubit<AppState> {
       'alerts.records': () => _reloadAlerts(),
     };
 
-    if (!_platformSupportsICloud) return;
+    if (!platformSupportsICloud) return;
     _cloudChangesSubscription ??= cloudStore.didChangeExternally.listen(_handleCloudChange);
   }
 
@@ -336,7 +327,7 @@ class AppCubit extends Cubit<AppState> {
   /// calling this, since this emits [CloudSyncStatus.syncing] transiently in
   /// a way that would flash before [init]'s own first `emit`.
   Future<void> _refreshICloudAvailabilityAndSync({required bool userInitiatedEnable}) async {
-    if (!_platformSupportsICloud) {
+    if (!platformSupportsICloud) {
       cloudStore.setEnabled(false);
       if (isClosed) return;
       emit(state.copyWith(

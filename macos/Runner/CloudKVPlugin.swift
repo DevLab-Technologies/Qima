@@ -1,22 +1,21 @@
 import FlutterMacOS
 import Foundation
+import Security
 
 /// macOS counterpart of `ios/Runner/CloudKVPlugin.swift` — same
-/// `MethodChannel`/`EventChannel` contract over `NSUbiquitousKeyValueStore`.
+/// `MethodChannel`/`EventChannel` contract over `NSUbiquitousKeyValueStore`,
+/// and the same store: `AppStore.entitlements` declares the iOS app's
+/// `com.apple.developer.ubiquity-kvstore-identifier`, so a Mac and an iPhone
+/// on one iCloud account see each other's data.
 ///
-/// NOTE: the macOS `Runner` target does not yet declare the
-/// `com.apple.developer.ubiquity-kvstore-identifier` entitlement (see
-/// `macos/Runner/DebugProfile.entitlements` / `Release.entitlements` and the
-/// Phase 7 report for the exact line to add later plus the signing/minimum
-/// OS-version decisions that are still pending). Without that entitlement,
-/// `NSUbiquitousKeyValueStore` silently behaves as an empty, non-syncing
-/// store and `FileManager.ubiquityIdentityToken` still reflects the signed
-/// -in iCloud account, so `accountStatus` alone is not a reliable signal
-/// that sync is actually wired up on macOS yet — this plugin is registered
-/// so the channel exists, but `SwitchableCloudKVStore` only routes to it
-/// once the entitlement is added. Until then the Dart side stays on
-/// `LocalOnlyCloudKVStore` on macOS, which is what keeps macOS working
-/// local-only per the Phase 7 spec.
+/// Only App Store / TestFlight builds carry that entitlement (the signing
+/// lane switches to `AppStore.entitlements`, which needs the Mac App Store
+/// profile). Debug builds and the direct-download zip are signed without
+/// it, and there
+/// `NSUbiquitousKeyValueStore` silently acts as an empty, non-syncing store
+/// while `ubiquityIdentityToken` still reports the signed-in account. So
+/// `accountStatus` also checks the running process's own entitlement, and
+/// the Dart side stays local-only when it is missing.
 final class CloudKVPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
   private let store = NSUbiquitousKeyValueStore.default
   private var eventSink: FlutterEventSink?
@@ -60,7 +59,7 @@ final class CloudKVPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
       result(store.synchronize())
 
     case "accountStatus":
-      result(FileManager.default.ubiquityIdentityToken != nil)
+      result(CloudKVPlugin.hasKeyValueStoreEntitlement && FileManager.default.ubiquityIdentityToken != nil)
 
     default:
       result(FlutterMethodNotImplemented)
@@ -109,6 +108,16 @@ final class CloudKVPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
       }
     }
   }
+
+  /// Whether this build was signed with the iCloud key-value store
+  /// entitlement (see the type comment).
+  private static let hasKeyValueStoreEntitlement: Bool = {
+    guard let task = SecTaskCreateFromSelf(nil) else { return false }
+    let value = SecTaskCopyValueForEntitlement(
+      task, "com.apple.developer.ubiquity-kvstore-identifier" as CFString, nil
+    )
+    return value != nil
+  }()
 
   private static func reasonName(for code: Int?) -> String {
     switch code {
