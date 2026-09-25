@@ -41,6 +41,32 @@ class PortfolioRangeChange extends Equatable {
     required this.latestValue,
   });
 
+  /// The change over [points] (a [PortfolioHistory.build] series for
+  /// [range]); null when there are none.
+  ///
+  /// The percent is the gain change over the money at work in the range:
+  /// the value held at its start plus what was invested during it (a simple
+  /// Dietz return). "All" starts from before the first purchase, so it
+  /// reads as total gain over total cost. Dividing by the first day's cost
+  /// alone, as before, blew up whenever more was bought later (a $130 first
+  /// lot followed by $23,000 more read as -1670%).
+  static PortfolioRangeChange? from(List<PortfolioHistoryPoint> points, ChartRange range) {
+    if (points.isEmpty) return null;
+    final last = points.last;
+    final start = range == ChartRange.all
+        ? PortfolioHistoryPoint(date: points.first.date, value: 0, cost: 0)
+        : points.first;
+    final gainDelta = last.gain - start.gain;
+    final invested = start.value + (last.cost - start.cost);
+    return PortfolioRangeChange(
+      gainDelta: gainDelta,
+      valueDelta: last.value - points.first.value,
+      percentValue: invested > 0 ? gainDelta / invested : 0,
+      isUp: gainDelta >= 0,
+      latestValue: last.value,
+    );
+  }
+
   @override
   List<Object?> get props => [gainDelta, valueDelta, percentValue, isUp, latestValue];
 }

@@ -1134,26 +1134,10 @@ class AppCubit extends Cubit<AppState> {
   }
 
   /// Change in GAIN (value − cost), not value, over [range] — so adding a
-  /// new lot mid-range is never shown as if it were profit. Null when there
-  /// isn't at least one point on or before the range's start (e.g. the
-  /// range predates every lot, or the portfolio is empty).
-  PortfolioRangeChange? portfolioChange(ChartRange range) {
-    final points = portfolioHistory(range);
-    if (points.isEmpty) return null;
-    final first = points.first;
-    final last = points.last;
-    final gainDelta = last.gain - first.gain;
-    final valueDelta = last.value - first.value;
-    final denominator = first.cost != 0 ? first.cost : first.value;
-    final fraction = denominator != 0 ? gainDelta / denominator : 0.0;
-    return PortfolioRangeChange(
-      gainDelta: gainDelta,
-      valueDelta: valueDelta,
-      percentValue: fraction,
-      isUp: gainDelta >= 0,
-      latestValue: last.value,
-    );
-  }
+  /// new lot mid-range is never shown as if it were profit. See
+  /// [PortfolioRangeChange.from].
+  PortfolioRangeChange? portfolioChange(ChartRange range) =>
+      PortfolioRangeChange.from(portfolioHistory(range), range);
 
   // ---------------------------------------------------------------------
   // Home-screen widgets (Android Glance + iOS/macOS WidgetKit)

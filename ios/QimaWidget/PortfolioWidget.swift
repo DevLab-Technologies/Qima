@@ -60,13 +60,17 @@ struct PortfolioModel {
             gains.append((value, sample[2] * liveRate))
         }
 
+        // Same rule as the app's PortfolioRangeChange.from: gain change over
+        // the money at work (start value plus what was invested during the
+        // range); "All" starts from before the first purchase.
         var gainDelta: Double?
         var gainFraction: Double?
         if let first = gains.first, let last = gains.last {
-            let delta = (last.value - last.cost) - (first.value - first.cost)
-            let denominator = first.cost != 0 ? first.cost : first.value
+            let start = intent.range == .all ? (value: 0.0, cost: 0.0) : first
+            let delta = (last.value - last.cost) - (start.value - start.cost)
+            let invested = start.value + (last.cost - start.cost)
             gainDelta = delta
-            gainFraction = denominator != 0 ? delta / denominator : 0
+            gainFraction = invested > 0 ? delta / invested : 0
         }
 
         let total = valueUSD
