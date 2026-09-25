@@ -21,10 +21,34 @@ def require_play_json_key!
   json_key_data
 end
 
-# Play requires versionCode to strictly increase across all tracks. Asking Play
-# for the highest one in use is robust against manual Console uploads, which a
-# CI counter (like github.run_number) cannot see.
-def next_version_code(json_key_data)
+REPO_ROOT = File.expand_path("../..", __dir__)
+
+# pubspec.yaml's `version: <name>+<build>` is the single source of truth for
+# the version on every platform, and the build number restarts at 1 for each
+# new version name. Returns [name, build].
+def pubspec_version!
+  pubspec = File.read(File.join(REPO_ROOT, "pubspec.yaml"))
+  match = pubspec.match(/^version:\s*(\d+\.\d+\.\d+)\+(\d+)\s*$/)
+  UI.user_error!("pubspec.yaml's version must look like 2.1.1+1.") unless match
+  [match[1], match[2].to_i]
+end
+
+# Play's versionCode must strictly increase across ALL versions, so unlike
+# Apple's build number it can't restart at 1. It's derived from the version
+# and build instead - MAJOR, then MINOR, PATCH and BUILD at two digits each:
+# 2.1.1+1 -> 2010101 - so it always sorts after every earlier version's
+# builds while the visible build number still restarts per version.
+def version_code_for(version, build)
+  major, minor, patch = version.split(".").map(&:to_i)
+  unless minor < 100 && patch < 100 && build.between?(1, 99)
+    UI.user_error!("#{version}+#{build} doesn't fit the versionCode scheme (minor, patch and build must be below 100; build at least 1).")
+  end
+  major * 1_000_000 + minor * 10_000 + patch * 100 + build
+end
+
+# The highest versionCode already on any Play track. Asking Play is robust
+# against manual Console uploads, which nothing in CI can see.
+def highest_version_code(json_key_data)
   used_codes = PLAY_TRACKS.flat_map do |track|
     google_play_track_version_codes(
       package_name: PACKAGE_NAME,
@@ -36,16 +60,13 @@ def next_version_code(json_key_data)
     UI.message("No version codes on track '#{track}' (#{e.message.lines.first&.strip}).")
     []
   end
-
-  next_code = (used_codes.map(&:to_i).max || 0) + 1
-  UI.message("Highest versionCode on Play: #{used_codes.max || 'none'} -> using #{next_code}.")
-  next_code
+  used_codes.map(&:to_i).max || 0
 end
 
 # Builds the signed release App Bundle. Signing comes from the QIMA_KEYSTORE_*
 # environment variables read by android/app/build.gradle.kts.
 def build_release_aab!(build_number)
-  Dir.chdir(File.expand_path("../..", __dir__)) do
+  Dir.chdir(REPO_ROOT) do
     sh("flutter", "build", "appbundle", "--release", "--build-number=#{build_number}")
   end
   UI.user_error!("No App Bundle at #{AAB_PATH} after flutter build appbundle.") unless File.exist?(AAB_PATH)
@@ -100,10 +121,18 @@ platform :android do
   desc "Build the signed release App Bundle and upload it to the Play internal track."
   lane :internal do
     json_key_data = require_play_json_key!
-    # Authenticate up front: next_version_code tolerates per-track lookup
+    # Authenticate up front: highest_version_code tolerates per-track lookup
     # errors, so a bad key must not be mistaken for "no releases yet".
     validate_play_store_json_key(json_key_data: json_key_data)
-    version_code = next_version_code(json_key_data)
+    version, build = pubspec_version!
+    version_code = version_code_for(version, build)
+    highest = highest_version_code(json_key_data)
+    if version_code <= highest
+      UI.user_error!(
+        "versionCode #{version_code} (#{version}+#{build}) is not above #{highest}, the highest already on Play. " \
+        "Bump the +build in pubspec.yaml and push a new tag."
+      )
+    end
 
     build_release_aab!(version_code)
 
@@ -125,12 +154,12 @@ platform :android do
       skip_upload_screenshots: true
     )
 
-    UI.success("Uploaded versionCode #{version_code} to the Play internal track.")
+    UI.success("Uploaded #{version} build #{build} (versionCode #{version_code}) to the Play internal track.")
   end
 
   desc "Build and verify the signed release App Bundle WITHOUT uploading. Used for workflow_dispatch validation runs."
   lane :build_only do
-    build_release_aab!(ENV["QIMA_BUILD_NUMBER"] || "1")
+    build_release_aab!(version_code_for(*pubspec_version!))
     UI.success("Built and verified the signed App Bundle without uploading (build_only lane).")
   end
 

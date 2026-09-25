@@ -6,13 +6,22 @@ and upload. Making a build public is a manual step in each store console.
 | | iOS | Android |
 |---|---|---|
 | Workflow | `.github/workflows/testflight.yml` | `.github/workflows/play-store.yml` |
-| Trigger | push tag `ios-v<version>` | push tag `android-v<version>` |
+| Trigger | push tag `ios-v<version>+<build>` | push tag `android-v<version>+<build>` |
 | Destination | TestFlight (internal testers) | Play **internal testing** track, as a draft |
-| Build number | GitHub run number | highest versionCode on Play + 1 |
+| Build number | the `+build` in `pubspec.yaml` | versionCode derived from it: `2.1.1+1` → `2010101` |
 | Manual dry run | Actions → TestFlight → Run workflow (builds and signs, no upload) | Actions → Play Store → Run workflow (builds and verifies, no upload) |
 
-`pubspec.yaml`'s `version:` is the source of truth for the version name. The
-tag must match it, or the workflow fails before building.
+`pubspec.yaml`'s `version: <name>+<build>` is the one source of truth for the
+version and build on every platform (iOS, macOS, Android, Windows, Linux). The
+build restarts at 1 for each new version: `2.1.1+1`, `2.1.1+2`, then `2.1.2+1`.
+The tag must match it exactly, or the workflow fails before building.
+
+- **Apple** accepts a build number again under a new version, so it restarts
+  at 1. The lanes check TestFlight first and fail with the next free number
+  if the build is already taken.
+- **Google Play** needs `versionCode` to rise across every version, so the
+  lane derives it: major, then minor, patch and build at two digits each
+  (`2.1.1+1` → `2010101`). Minor, patch and build must stay below 100.
 
 ## 1. One-time setup
 
@@ -35,7 +44,7 @@ tag must match it, or the workflow fails before building.
    - `MAC_INSTALLER_CERT_BASE64` / `MAC_INSTALLER_CERT_PASSWORD`: a *Mac Installer Distribution* certificate exported with its private key as `.p12` (it signs the `.pkg`).
    - `MACOS_PROVISION_PROFILE_BASE64`: a *Mac App Store Connect* profile for `com.devlabtechnologies.qima`: `base64 -i Qima_Mac_App_Store.provisionprofile | pbcopy`
    - `MACOS_WIDGET_PROVISION_PROFILE_BASE64`: the same for the widget extension, `com.devlabtechnologies.qima.widget`: `base64 -i Qima_Widget_Mac_App_Store.provisionprofile | pbcopy`
-   - Upload with a `macos-v<version>` tag (`.github/workflows/testflight-macos.yml`).
+   - Upload with a `macos-v<version>+<build>` tag (`.github/workflows/testflight-macos.yml`).
 
 Check the key without uploading: `cd ios && ASC_KEY_ID=… ASC_ISSUER_ID=… ASC_KEY_CONTENT=… bundle exec fastlane ios preflight`.
 
@@ -56,10 +65,13 @@ Add all secrets under GitHub → Settings → Secrets and variables → Actions.
 
 ```sh
 git checkout main && git pull
-V=$(grep -E '^version:' pubspec.yaml | awk '{print $2}' | cut -d+ -f1)   # e.g. 1.1.0
-git tag "ios-v$V" && git tag "android-v$V"
-git push origin "ios-v$V" "android-v$V"
+V=$(grep -E '^version:' pubspec.yaml | awk '{print $2}')   # e.g. 2.1.1+1
+git tag "ios-v$V" && git tag "macos-v$V" && git tag "android-v$V"
+git push origin "ios-v$V" "macos-v$V" "android-v$V"
 ```
+
+For another build of the same version, bump only the build (`2.1.1+1` →
+`2.1.1+2`), commit, and tag again.
 
 Then promote:
 

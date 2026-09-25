@@ -15,6 +15,34 @@ APPLE_TEAM_ID = "ZS3A435WC2"
 # anchor every path to it explicitly. __dir__ here is ios/fastlane.
 REPO_ROOT = File.expand_path("../..", __dir__)
 
+# pubspec.yaml's `version: <name>+<build>` is the single source of truth for
+# the version on every platform, and the build number restarts at 1 for each
+# new version name (2.1.1+1, 2.1.1+2, then 2.1.2+1). Returns [name, build].
+def pubspec_version!
+  pubspec = File.read(File.join(REPO_ROOT, "pubspec.yaml"))
+  match = pubspec.match(/^version:\s*(\d+\.\d+\.\d+)\+(\d+)\s*$/)
+  UI.user_error!("pubspec.yaml's version must look like 2.1.1+1.") unless match
+  [match[1], match[2].to_i]
+end
+
+# TestFlight rejects a build number already used for the same version, and
+# only after a full build and upload - check first, and say how to fix it.
+def ensure_unused_build_number!(api_key, version, build_number, platform)
+  latest = latest_testflight_build_number(
+    api_key: api_key,
+    app_identifier: APP_IDENTIFIER,
+    version: version,
+    platform: platform,
+    initial_build_number: 0
+  ).to_i
+  return if build_number > latest
+
+  UI.user_error!(
+    "#{version} build #{latest} is already on TestFlight (#{platform}). " \
+    "Set pubspec.yaml to version: #{version}+#{latest + 1} and push a new tag."
+  )
+end
+
 # Loads the App Store Connect API key from ASC_KEY_ID / ASC_ISSUER_ID /
 # ASC_KEY_CONTENT (base64-encoded .p8 contents). This is the only supported
 # auth path here - no Apple ID/password, so nothing breaks on a 2FA prompt in CI.
@@ -230,12 +258,11 @@ platform :ios do
     Actions.lane_context[:QIMA_WIDGET_PROFILE_NAME] = widget_profile_name
   end
 
-  desc "Build the release IPA and upload it to TestFlight. Requires QIMA_BUILD_NUMBER (CI passes github.run_number, or latest_testflight_build_number + 1)."
+  desc "Build the release IPA and upload it to TestFlight, as the version and build in pubspec.yaml."
   lane :beta do
-    build_number = ENV["QIMA_BUILD_NUMBER"]
-    UI.user_error!("QIMA_BUILD_NUMBER must be set - build numbers must strictly increase per TestFlight upload.") unless build_number
-
+    version, build_number = pubspec_version!
     api_key = require_asc_api_key!
+    ensure_unused_build_number!(api_key, version, build_number, "ios")
     setup_signing
     export_options_path = write_export_options!(
       Actions.lane_context[:QIMA_PROFILE_NAME],
@@ -261,12 +288,12 @@ platform :ios do
       distribute_external: false
     )
 
-    UI.success("Uploaded build #{build_number} to TestFlight.")
+    UI.success("Uploaded #{version} build #{build_number} to TestFlight.")
   end
 
   desc "Build and code-sign the release IPA WITHOUT uploading. Used for workflow_dispatch validation runs so a broken secret fails privately, not on a public tag."
   lane :build_only do
-    build_number = ENV["QIMA_BUILD_NUMBER"] || "0"
+    _version, build_number = pubspec_version!
     setup_signing
     export_options_path = write_export_options!(
       Actions.lane_context[:QIMA_PROFILE_NAME],
@@ -288,9 +315,7 @@ platform :ios do
   desc "Upload the App Store listing (text from fastlane/metadata, screenshots from fastlane/screenshots) for the pubspec version. Never uploads a binary and never submits for review."
   lane :metadata do
     api_key = require_asc_api_key!
-    pubspec = File.read(File.expand_path("../../pubspec.yaml", __dir__))
-    app_version = pubspec[/^version:\s*([0-9.]+)/, 1]
-    UI.user_error!("Could not read the version from pubspec.yaml.") unless app_version
+    app_version, _build_number = pubspec_version!
 
     deliver(
       api_key: api_key,
@@ -343,12 +368,11 @@ platform :mac do
     Actions.lane_context[:QIMA_MAC_WIDGET_PROFILE_NAME] = widget_profile_name
   end
 
-  desc "Build the signed Mac App Store installer package and upload it to TestFlight. Requires QIMA_BUILD_NUMBER."
+  desc "Build the signed Mac App Store installer package and upload it to TestFlight, as the version and build in pubspec.yaml."
   lane :beta do
-    build_number = ENV["QIMA_BUILD_NUMBER"]
-    UI.user_error!("QIMA_BUILD_NUMBER must be set - build numbers must strictly increase per TestFlight upload.") unless build_number
-
+    version, build_number = pubspec_version!
     api_key = require_asc_api_key!
+    ensure_unused_build_number!(api_key, version, build_number, "osx")
     setup_signing
     pkg_path = build_mac_pkg!(
       build_number,
@@ -364,14 +388,15 @@ platform :mac do
       distribute_external: false
     )
 
-    UI.success("Uploaded macOS build #{build_number} to TestFlight.")
+    UI.success("Uploaded macOS #{version} build #{build_number} to TestFlight.")
   end
 
   desc "Build and sign the Mac App Store installer package WITHOUT uploading, for workflow_dispatch validation runs."
   lane :build_only do
+    _version, build_number = pubspec_version!
     setup_signing
     build_mac_pkg!(
-      ENV["QIMA_BUILD_NUMBER"] || "0",
+      build_number,
       Actions.lane_context[:QIMA_MAC_PROFILE_NAME],
       Actions.lane_context[:QIMA_MAC_WIDGET_PROFILE_NAME]
     )

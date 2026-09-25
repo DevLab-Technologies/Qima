@@ -1,6 +1,6 @@
 name: TestFlight
 
-# Tag-driven: `git tag ios-v1.0.0+1 && git push origin ios-v1.0.0+1` builds a
+# Tag-driven: `git tag ios-v2.1.1+1 && git push origin ios-v2.1.1+1` builds a
 # signed IPA and uploads it to TestFlight via the App Store Connect API.
 # Manual runs (workflow_dispatch) build and code-sign the same artifact
 # without uploading, so a misconfigured secret fails privately on a run
@@ -49,17 +49,18 @@ jobs:
             exit 1
           fi
 
-      # pubspec.yaml is the single source of truth for the version name, same
-      # convention as release.yml. Only enforced on a real tag push.
+      # pubspec.yaml is the single source of truth for the version and build
+      # number (the build restarts at 1 for each version). The tag carries
+      # both, e.g. ios-v2.1.1+1, so it always names exactly what ships.
+      # Only enforced on a real tag push.
       - name: Verify tag matches pubspec version
         if: startsWith(github.ref, 'refs/tags/')
         run: |
-          pubspec_version="$(grep -E '^version:' pubspec.yaml | awk '{print $2}' | cut -d+ -f1)"
+          pubspec_version="$(grep -E '^version:' pubspec.yaml | awk '{print $2}')"
           tag_version="${GITHUB_REF_NAME#ios-v}"
-          tag_version="${tag_version%%+*}"
           if [ "$pubspec_version" != "$tag_version" ]; then
             echo "::error::Tag $GITHUB_REF_NAME does not match pubspec version $pubspec_version."
-            echo 'Bump the version: line in pubspec.yaml and retag.'
+            echo 'Tag ios-v<version>+<build> exactly as in the version: line of pubspec.yaml.'
             exit 1
           fi
 
@@ -102,14 +103,6 @@ jobs:
         working-directory: ios
         run: bundle exec pod install --repo-update
 
-      # Build numbers must strictly increase per TestFlight upload. The CI run
-      # number is monotonically increasing for this workflow and needs no API
-      # call, so it's the default; override with QIMA_BUILD_NUMBER if you'd
-      # rather derive it from `latest_testflight_build_number + 1`.
-      - name: Determine build number
-        id: build_number
-        run: echo "number=${{ github.run_number }}" >> "$GITHUB_OUTPUT"
-
       - name: Build, sign, and (on tag push) upload to TestFlight
         working-directory: ios
         env:
@@ -120,7 +113,6 @@ jobs:
           IOS_DIST_CERT_PASSWORD: ${{ secrets.IOS_DIST_CERT_PASSWORD }}
           IOS_PROVISION_PROFILE_BASE64: ${{ secrets.IOS_PROVISION_PROFILE_BASE64 }}
           IOS_WIDGET_PROVISION_PROFILE_BASE64: ${{ secrets.IOS_WIDGET_PROVISION_PROFILE_BASE64 }}
-          QIMA_BUILD_NUMBER: ${{ steps.build_number.outputs.number }}
         run: |
           if [ "${{ startsWith(github.ref, 'refs/tags/') }}" = "true" ]; then
             bundle exec fastlane ios beta
