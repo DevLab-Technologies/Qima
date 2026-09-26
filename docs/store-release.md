@@ -83,8 +83,9 @@ Things to know:
   App Store Connect.
 - **Released once:** a version is released only once. Pushes to `main` after
   that do nothing until a build of a new version has been tested.
-- **No build number spent on listing-only pushes:** pushes that change only
-  docs, store text or screenshots don't use up a build number.
+- **No build number spent on listing-only pushes:** a push to `develop` that
+  changes only docs, store text or screenshots since the last build doesn't
+  use up a build number.
 - **Dry run:** Actions → Ship → Run workflow builds every platform without
   uploading anything.
 - **One platform only:** push its own tag, e.g. `ios-v2.1.1+3`.
