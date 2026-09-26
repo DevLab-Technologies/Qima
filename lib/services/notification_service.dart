@@ -43,7 +43,16 @@ class NotificationService {
   Future<void> init() async {
     if (_initialized) return;
     const androidSettings = AndroidInitializationSettings('ic_notification');
-    const darwinSettings = DarwinInitializationSettings();
+    // Never ask at startup: on Apple platforms the default settings request
+    // permission inside initialize(), which shows the system prompt over the
+    // loading screen before onboarding and holds app startup until it's
+    // answered. Permission is asked for in context instead, when the user
+    // creates their first alert (requestPermission).
+    const darwinSettings = DarwinInitializationSettings(
+      requestAlertPermission: false,
+      requestBadgePermission: false,
+      requestSoundPermission: false,
+    );
     const settings = InitializationSettings(
       android: androidSettings,
       iOS: darwinSettings,
