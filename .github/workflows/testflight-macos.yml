@@ -14,6 +14,10 @@ on:
         description: Upload the build instead of only building it.
         type: boolean
         required: true
+      build_number:
+        description: Build number to use instead of pubspec.yaml's (ship.yml's next free build on develop).
+        type: string
+        default: ""
   workflow_dispatch:
 
 # Keep in step with ci.yml / release.yml / testflight.yml.
@@ -30,6 +34,8 @@ jobs:
     env:
       # Upload when ship.yml asks to, or on this platform's own macos-v tag.
       PUBLISH: ${{ inputs.publish || startsWith(github.ref, 'refs/tags/macos-v') }}
+      # Read by the fastlane lanes; empty means pubspec.yaml's build.
+      QIMA_BUILD_NUMBER: ${{ inputs.build_number }}
     steps:
       - uses: actions/checkout@v4
 

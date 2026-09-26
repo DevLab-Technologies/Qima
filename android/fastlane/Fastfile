@@ -25,12 +25,16 @@ REPO_ROOT = File.expand_path("../..", __dir__)
 
 # pubspec.yaml's `version: <name>+<build>` is the single source of truth for
 # the version on every platform, and the build number restarts at 1 for each
-# new version name. Returns [name, build].
+# new version name (2.1.1+1, 2.1.1+2, then 2.1.2+1). QIMA_BUILD_NUMBER
+# overrides the build: ship.yml passes the next free build for each push to
+# develop, so testers get new builds without anyone editing pubspec.yaml.
+# Returns [name, build].
 def pubspec_version!
   pubspec = File.read(File.join(REPO_ROOT, "pubspec.yaml"))
   match = pubspec.match(/^version:\s*(\d+\.\d+\.\d+)\+(\d+)\s*$/)
   UI.user_error!("pubspec.yaml's version must look like 2.1.1+1.") unless match
-  [match[1], match[2].to_i]
+  override = ENV["QIMA_BUILD_NUMBER"].to_s.strip
+  [match[1], override.empty? ? match[2].to_i : Integer(override, 10)]
 end
 
 # Play's versionCode must strictly increase across ALL versions, so unlike
@@ -175,6 +179,33 @@ platform :android do
     )
 
     UI.success("Uploaded #{version} build #{build} (versionCode #{version_code}) to the Play internal track.")
+  end
+
+  desc "Promote the tested internal-testing build (pubspec version, QIMA_BUILD_NUMBER) to production. Uploads nothing new."
+  lane :production do
+    json_key_data = require_play_json_key!
+    validate_play_store_json_key(json_key_data: json_key_data)
+    version, build = pubspec_version!
+    version_code = version_code_for(version, build)
+    # Same rule as uploads: an app never published only accepts drafts.
+    status = ENV["PLAY_RELEASE_STATUS"].to_s.strip.empty? ? "draft" : ENV["PLAY_RELEASE_STATUS"]
+
+    upload_to_play_store(
+      package_name: PACKAGE_NAME,
+      track: "internal",
+      track_promote_to: "production",
+      version_code: version_code,
+      track_promote_release_status: status,
+      json_key_data: json_key_data,
+      skip_upload_aab: true,
+      skip_upload_apk: true,
+      skip_upload_metadata: true,
+      skip_upload_changelogs: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true
+    )
+
+    UI.success("Promoted #{version} build #{build} (versionCode #{version_code}) to production (#{status}).")
   end
 
   desc "Build and verify the signed release App Bundle WITHOUT uploading. Used for workflow_dispatch validation runs."

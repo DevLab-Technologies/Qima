@@ -1,1 +1,10 @@
-Primera versión en la tienda: precios en directo de metales, cripto, acciones, índices y divisas; posiciones y valor de la cartera; gráficos; árabe, español y francés.
+Qima 2.1.1
+• Nuevo diseño: pestañas Seguimiento, Cartera y Ajustes, con tu cartera en directo al frente
+• Filtra tu lista por metales, cripto, acciones, índices o divisas
+• Alertas de precio con notificaciones
+• Widgets para la pantalla de inicio y el Mac: precios, cartera y lista de seguimiento, cada uno a tu manera
+• Sincronización con iCloud entre iPhone, iPad y Mac
+• Bloqueo con Face ID y opción para ocultar saldos
+• Tema claro
+• Copia de seguridad cifrada y restauración
+• Recorrido inicial y ayuda en cada pantalla

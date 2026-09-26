@@ -1,9 +1,10 @@
 name: GitHub Release
 
 # Builds the downloadable apps - signed Android APK, macOS, Windows (installer
-# and zip) and Linux - and, when publishing, attaches them to a GitHub
-# Release for the given tag. Called by ship.yml, which decides when to
-# publish; manual runs only build, which is the safe way to test changes here.
+# and zip) and Linux. Called by ship.yml: builds from develop stay run
+# artifacts for testers; a release from main attaches them to the public
+# GitHub Release for the given tag. Manual runs only build, which is the safe
+# way to test changes here.
 on:
   workflow_call:
     inputs:
@@ -15,11 +16,17 @@ on:
         description: The release tag, e.g. v2.1.1+1. Required when publishing.
         type: string
         default: ""
+      build_number:
+        description: Build number to use instead of pubspec.yaml's.
+        type: string
+        default: ""
   workflow_dispatch:
 
 # Keep in step with ci.yml.
 env:
   FLUTTER_VERSION: "3.41.6"
+  # Empty means pubspec.yaml's build number.
+  BUILD_NUMBER: ${{ inputs.build_number }}
 
 permissions:
   contents: write
@@ -79,7 +86,13 @@ jobs:
           QIMA_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
           QIMA_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           QIMA_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
-        run: flutter build apk --release
+        # Same versionCode scheme as the Play lanes (2.1.1+1 -> 2010101), so
+        # this APK and a Play install can update each other.
+        run: |
+          version="$(grep -E '^version:' pubspec.yaml | awk '{print $2}')"
+          build="${BUILD_NUMBER:-${version#*+}}"
+          IFS=. read -r major minor patch <<< "${version%%+*}"
+          flutter build apk --release --build-number="$((major * 1000000 + minor * 10000 + patch * 100 + build))"
 
       # Confirms the APK carries the release certificate and not the debug one.
       # The debug key is always CN=Android Debug, so its presence here means the
@@ -129,7 +142,7 @@ jobs:
         run: flutter pub get
 
       - name: Build macOS (release)
-        run: flutter build macos --release
+        run: flutter build macos --release ${BUILD_NUMBER:+--build-number=$BUILD_NUMBER}
 
       # Not notarized: launching the .app will require the user to right-click
       # > Open (or clear the quarantine flag) the first time, since it is not
@@ -165,7 +178,8 @@ jobs:
         run: flutter pub get
 
       - name: Build Windows (release)
-        run: flutter build windows --release
+        shell: bash
+        run: flutter build windows --release ${BUILD_NUMBER:+--build-number=$BUILD_NUMBER}
 
       # Inno Setup ships on GitHub's Windows images; install it if an image
       # update ever drops it.
@@ -220,7 +234,7 @@ jobs:
         run: flutter pub get
 
       - name: Build Linux (release)
-        run: flutter build linux --release
+        run: flutter build linux --release ${BUILD_NUMBER:+--build-number=$BUILD_NUMBER}
 
       - name: Prepare release assets
         run: |
@@ -238,8 +252,7 @@ jobs:
           path: dist/
 
   # One release, created once every build has succeeded, so a half-built
-  # release is never public. Pre-release: store builds are still in testing
-  # when this runs; untick "pre-release" on GitHub once the version ships.
+  # release is never public.
   publish:
     name: Publish GitHub Release
     if: inputs.publish
@@ -262,5 +275,4 @@ jobs:
             --repo "$GITHUB_REPOSITORY" \
             --title "Qima ${TAG#v}" \
             --generate-notes \
-            --prerelease \
             --verify-tag

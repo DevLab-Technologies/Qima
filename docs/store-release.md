@@ -6,7 +6,7 @@ and upload. Making a build public is a manual step in each store console.
 | | iOS | Android |
 |---|---|---|
 | Workflow | `.github/workflows/testflight.yml` | `.github/workflows/play-store.yml` |
-| Trigger | version bump merged to `main` (Ship), or tag `ios-v<version>+<build>` | version bump merged to `main` (Ship), or tag `android-v<version>+<build>` |
+| Trigger | push to `develop` (testers) / `main` (App Review), via Ship | push to `develop` (internal testing) / `main` (production), via Ship |
 | Destination | TestFlight (internal testers) | Play **internal testing** track, as a draft |
 | Build number | the `+build` in `pubspec.yaml` | versionCode derived from it: `2.1.1+1` → `2010101` |
 | Manual dry run | Actions → TestFlight → Run workflow (builds and signs, no upload) | Actions → Play Store → Run workflow (builds and verifies, no upload) |
@@ -63,38 +63,38 @@ Add all secrets under GitHub → Settings → Secrets and variables → Actions.
 
 ## 2. Ship a version
 
-Releasing is automatic (`.github/workflows/ship.yml`). Bump the version in
-`pubspec.yaml`, for example `version: 2.1.1+1`, and merge it to `main`. The
-Ship workflow then:
+Releasing is automatic (`.github/workflows/ship.yml`), in two stages:
 
-1. tags the commit `v2.1.1+1` (a version+build ships once; later pushes that
-   leave the version alone do nothing);
-2. uploads iOS and macOS to TestFlight and Android to Play internal testing;
-3. builds the Android APK, macOS, Windows (installer and zip) and Linux apps
-   and publishes them as a GitHub **pre-release** under that tag.
+| Branch | What a push does |
+|---|---|
+| `develop` | Builds the **next build of the current version** (`2.1.1+1`, `2.1.1+2`, …) and tags it `v2.1.1+N`. iOS and macOS go to TestFlight and Android to Play internal testing. The APK, macOS, Windows and Linux apps are attached to the run for testers. Nobody bumps the build number by hand. |
+| `main` | Releases the **last tested build** of that version, without rebuilding it for the stores. iOS and macOS are submitted for App Review, using the listing and screenshots from `ios/fastlane/metadata` and `ios/fastlane/screenshots`. Android is promoted from internal testing to production. The downloads go to the public GitHub Release under the build's tag. |
 
-Before bumping to a new version, update the Play release notes in
-`android/fastlane/metadata/android/<locale>/changelogs/default.txt` (at most
-500 characters each). Each file opens with the version, e.g. `Qima 2.1.1`,
-and the Android upload refuses to run while any locale still names an older
-version. Play then creates the internal-testing release with those notes.
+So the day-to-day flow is:
 
-For another build of the same version, bump only the build (`2.1.1+2`) and
-merge again. Other ways to run it:
+1. Work lands on `develop`, and testers get each build automatically.
+2. When a build is good, merge `develop` into `main`. That exact build goes out.
+3. For the next version, set `version: 2.1.2+1` in `pubspec.yaml` on `develop`
+   and update the Play release notes (below).
 
+Things to know:
+
+- **Approval is still manual:** once App Review approves, press *Release* in
+  App Store Connect.
+- **Released once:** a version is released only once. Pushes to `main` after
+  that do nothing until a build of a new version has been tested.
+- **No build number spent on listing-only pushes:** pushes that change only
+  docs, store text or screenshots don't use up a build number.
 - **Dry run:** Actions → Ship → Run workflow builds every platform without
-  uploading. Tick *publish* to ship the current version from that branch.
-- **One platform only:** push its own tag, e.g. `ios-v2.1.1+1`,
-  `macos-v2.1.1+1` or `android-v2.1.1+1`.
+  uploading anything.
+- **One platform only:** push its own tag, e.g. `ios-v2.1.1+3`.
 
-Then promote:
+After a release from `main`:
 
-- **Listing**: run the *Store listing* workflow once per release (see §3).
-- **GitHub Release**: once the version is live in the stores, open the release and untick *Set as a pre-release*.
-- **iOS**: TestFlight → add internal testers → test. Then App Store → the version → select the build → *Add for Review*.
-- **Android**: Play Console → Testing → Internal testing → review the draft release → *Start rollout*. Then promote it to Production (or Closed testing first) → *Send for review*.
+- **iOS and macOS:** when App Review approves, press *Release* in App Store Connect.
+- **Android:** the production release starts as a draft while `PLAY_RELEASE_STATUS` is unset. That's required until the app has been published once. Review it in Play Console → *Send for review*.
   - A new personal developer account must run a closed test with at least 12 testers for 14 days before production access unlocks.
-  - Once the app is live, set the repository variable `PLAY_RELEASE_STATUS=completed` so internal uploads roll out without the manual step.
+  - Once the app is live, set the repository variable `PLAY_RELEASE_STATUS=completed`. Internal builds then reach testers straight away, and releases go to review without the manual step.
 
 ## 3. Store listing
 
