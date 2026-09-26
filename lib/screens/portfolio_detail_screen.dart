@@ -4,58 +4,106 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../blocs/app_cubit.dart';
 import '../blocs/app_state.dart';
 import '../l10n/app_localizations.dart';
+import '../models/holding.dart';
 import '../theme/design_system.dart';
+import '../theme/help_topics.dart';
+import '../theme/masking.dart';
+import '../theme/qima_colors.dart';
 import '../theme/strings.dart';
+import '../widgets/allocation_donut.dart';
+import '../widgets/help_button.dart';
 import '../widgets/instrument_icon.dart';
 import 'instrument_detail_screen.dart';
 
-/// Portfolio breakdown: header totals + one row per held instrument.
-/// Mirrors `PortfolioDetailView.swift`.
+/// Portfolio breakdown: an allocation-donut hero (total value, gain, cost)
+/// plus one row per held instrument — name, lot count/weight, value, gain,
+/// and a thin weight bar in the holding's accent color (spec §v2-A
+/// "Portfolio"). Mirrors `PortfolioDetailView.swift`.
+///
+/// Used two ways (spec §v2-C): pushed on the root navigator (default —
+/// shows a back arrow like any other pushed screen) or hosted as
+/// `HomeShell`'s Portfolio tab, which passes [asTab]: true so no back arrow
+/// is shown (there's nothing to pop to; the tab bar itself gets you back to
+/// Watchlist) and a title with 16px leading padding per the Figma frame.
 class PortfolioDetailScreen extends StatelessWidget {
-  const PortfolioDetailScreen({super.key});
+  final bool asTab;
+  final ScrollController? scrollController;
+
+  const PortfolioDetailScreen({super.key, this.asTab = false, this.scrollController});
 
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<AppCubit>();
     final l10n = AppLocalizations.of(context)!;
+    final colors = context.colors;
 
     return ScreenBackground(
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        appBar: AppBar(backgroundColor: Colors.transparent, title: Text(l10n.portfolioTitle)),
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          automaticallyImplyLeading: !asTab,
+          titleSpacing: asTab ? 16 : null,
+          title: Text(l10n.portfolioTitle),
+          actions: [
+            const HelpButton(topic: HelpTopicId.portfolio),
+            BlocBuilder<AppCubit, AppState>(
+              buildWhen: (previous, current) => previous.hideBalances != current.hideBalances,
+              builder: (context, state) {
+                return IconButton(
+                  icon: Icon(state.hideBalances ? Icons.visibility_off_outlined : Icons.visibility_outlined),
+                  tooltip: state.hideBalances ? l10n.privacyShowBalances : l10n.privacyHideBalances,
+                  onPressed: cubit.toggleHideBalances,
+                );
+              },
+            ),
+          ],
+        ),
         body: BlocBuilder<AppCubit, AppState>(
-          builder: (context, _) {
+          builder: (context, state) {
+            final hidden = state.hideBalances;
             final valuation = cubit.portfolioValuation;
             final heldInstruments = cubit.heldInstruments;
+            final slices = resolveAllocation(heldInstruments, colors);
+            final sliceByID = {for (final s in slices) s.holding.id: s};
 
             return ListView(
+              controller: scrollController,
               padding: const EdgeInsets.all(DS.spaceMD),
               children: [
                 if (valuation != null)
                   DSHeroCard(
-                    accent: DS.brand,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    accent: colors.brand,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Text(l10n.portfolioValue, style: const TextStyle(color: DS.textTertiary, fontSize: 12)),
-                        const SizedBox(height: 4),
-                        Text(
-                          valuation.value.formatted(),
-                          style: const TextStyle(color: DS.textPrimary, fontSize: 30, fontWeight: FontWeight.w800),
+                        AllocationDonut(
+                          slices: slices,
+                          centerValue: Masking.compactAmount(valuation.value, hidden: hidden),
+                          centerLabel: l10n.portfolioValue,
                         ),
-                        const SizedBox(height: DS.spaceSM),
-                        Row(
-                          children: [
-                            Expanded(child: _metricTile(l10n.holdingsCost, valuation.cost.formatted())),
-                            const SizedBox(width: DS.spaceXS),
-                            Expanded(
-                              child: _metricTile(
-                                l10n.holdingsGain,
-                                signedFigure(valuation.gain.formatted(), isUp: valuation.isUp),
-                                tint: DS.trendColor(valuation.isUp),
+                        const SizedBox(width: DS.spaceLG),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(l10n.portfolioValue, style: TextStyle(color: colors.textTertiary, fontSize: 12)),
+                              const SizedBox(height: 4),
+                              Text(
+                                Masking.amount(valuation.value, hidden: hidden),
+                                style: TextStyle(color: colors.textPrimary, fontSize: 24, fontWeight: FontWeight.w800),
                               ),
-                            ),
-                          ],
+                              const SizedBox(height: DS.spaceSM),
+                              _metricTile(
+                                colors,
+                                l10n.holdingsGain,
+                                Masking.signedAmount(valuation.gain, hidden: hidden, isUp: valuation.isUp),
+                                tint: QimaColors.trendColor(valuation.isUp, colors),
+                              ),
+                              const SizedBox(height: DS.spaceXS),
+                              _metricTile(colors, l10n.holdingsCost, Masking.amount(valuation.cost, hidden: hidden)),
+                            ],
+                          ),
                         ),
                       ],
                     ),
@@ -63,51 +111,25 @@ class PortfolioDetailScreen extends StatelessWidget {
                 else
                   DSCard(
                     child: Text(l10n.portfolioEmpty,
-                        style: const TextStyle(color: DS.textTertiary)),
+                        style: TextStyle(color: colors.textTertiary)),
                   ),
                 const SizedBox(height: DS.spaceLG),
                 for (final held in heldInstruments)
                   Padding(
                     padding: const EdgeInsets.only(bottom: DS.spaceSM),
-                    child: DSCard(
-                      child: InkWell(
-                        onTap: () {
-                          final card = cubit.firstCard(held.instrument);
-                          if (card != null) {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(builder: (_) => InstrumentDetailScreen(card: card)),
-                            );
-                          }
-                        },
-                        child: Row(
-                          children: [
-                            InstrumentIcon(instrument: held.instrument, size: 36),
-                            const SizedBox(width: DS.spaceSM),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(displayLabel(context, held.instrument.nameKey),
-                                      style: const TextStyle(color: DS.textPrimary, fontWeight: FontWeight.w600)),
-                                  Text(l10n.portfolioLotCount(held.lotCount),
-                                      style: const TextStyle(color: DS.textTertiary, fontSize: 12)),
-                                ],
-                              ),
-                            ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                Text(held.valuation.value.formatted(),
-                                    style: const TextStyle(color: DS.textPrimary, fontWeight: FontWeight.w700)),
-                                Text(
-                                  signedFigure(held.valuation.gain.formatted(), isUp: held.valuation.isUp),
-                                  style: TextStyle(color: DS.trendColor(held.valuation.isUp), fontSize: 12),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
+                    child: _HoldingRow(
+                      held: held,
+                      color: sliceByID[held.id]?.color ?? colors.brand,
+                      fraction: sliceByID[held.id]?.fraction ?? 0,
+                      hidden: hidden,
+                      onTap: () {
+                        final card = cubit.firstCard(held.instrument);
+                        if (card != null) {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(builder: (_) => InstrumentDetailScreen(card: card)),
+                          );
+                        }
+                      },
                     ),
                   ),
               ],
@@ -118,16 +140,99 @@ class PortfolioDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _metricTile(String label, String value, {Color? tint}) {
+  Widget _metricTile(QimaColors colors, String label, String value, {Color? tint}) {
     return DSTile(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(label.toUpperCase(), style: const TextStyle(color: DS.textTertiary, fontSize: 10)),
+          Text(label.toUpperCase(), style: TextStyle(color: colors.textTertiary, fontSize: 10)),
           const SizedBox(height: 2),
-          Text(value, style: TextStyle(color: tint ?? DS.textPrimary, fontWeight: FontWeight.w700)),
+          Text(value, style: TextStyle(color: tint ?? colors.textPrimary, fontWeight: FontWeight.w700)),
         ],
+      ),
+    );
+  }
+}
+
+class _HoldingRow extends StatelessWidget {
+  final HeldInstrument held;
+  final Color color;
+  final double fraction;
+  final bool hidden;
+  final VoidCallback onTap;
+
+  const _HoldingRow({
+    required this.held,
+    required this.color,
+    required this.fraction,
+    required this.hidden,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final colors = context.colors;
+    final weightPercent = (fraction * 100).toStringAsFixed(1);
+
+    return DSCard(
+      child: InkWell(
+        borderRadius: BorderRadius.circular(DS.radiusCard),
+        onTap: onTap,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              children: [
+                InstrumentIcon(instrument: held.instrument, size: 36),
+                const SizedBox(width: DS.spaceSM),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(displayLabel(context, held.instrument.nameKey),
+                          style: TextStyle(color: colors.textPrimary, fontWeight: FontWeight.w600)),
+                      Text(
+                        '${l10n.portfolioLotCount(held.lotCount)} · $weightPercent%',
+                        style: TextStyle(color: colors.textTertiary, fontSize: 12),
+                      ),
+                    ],
+                  ),
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(Masking.amount(held.valuation.value, hidden: hidden),
+                        style: TextStyle(color: colors.textPrimary, fontWeight: FontWeight.w700)),
+                    Text(
+                      Masking.signedAmount(held.valuation.gain, hidden: hidden, isUp: held.valuation.isUp),
+                      style: TextStyle(color: QimaColors.trendColor(held.valuation.isUp, colors), fontSize: 12),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: DS.spaceSM),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(DS.radiusPill),
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  return Stack(
+                    children: [
+                      Container(height: 4, color: colors.hairline),
+                      Container(
+                        height: 4,
+                        width: constraints.maxWidth * fraction.clamp(0.0, 1.0),
+                        color: color,
+                      ),
+                    ],
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

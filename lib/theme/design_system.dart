@@ -2,34 +2,16 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
-/// Design-system tokens ported from `DesignSystem.swift` (spec §3.1). The app
-/// is dark-mode-only. Every text color keeps ≥ 4.5:1 contrast on the lightest
-/// surface it can sit on ([tileTop]); `design_system_contrast_test.dart`
-/// enforces this.
+import 'qima_colors.dart';
+
+/// Theme-independent design-system tokens ported from `DesignSystem.swift`
+/// (spec §3.1): radii, spacing and type sizes that don't change between
+/// light and dark. Colors live on [QimaColors] (`context.colors`) instead —
+/// see `qima_colors.dart` and `app_theme.dart`. Every text color keeps ≥
+/// 4.5:1 contrast on the lightest surface it can sit on (`tileTop`);
+/// `design_system_contrast_test.dart` enforces this for both palettes.
 class DS {
   DS._();
-
-  // ---- Palette ----
-  static const Color bg0 = Color(0xFF08090C);
-  static const Color bg1 = Color(0xFF0F1116);
-  static const Color surfaceTop = Color(0xFF1F2229);
-  static const Color surfaceBottom = Color(0xFF191B21);
-  static const Color tileTop = Color(0xFF2B2F39);
-  static const Color tileBottom = Color(0xFF22252D);
-
-  /// Menus, dialogs and sheets floating above cards.
-  static const Color overlay = Color(0xFF262A33);
-  static const Color hairline = Color.fromRGBO(255, 255, 255, 0.10);
-  static const Color hairlineStrong = Color.fromRGBO(255, 255, 255, 0.18);
-  static const Color textPrimary = Colors.white;
-  static const Color textSecondary = Color.fromRGBO(255, 255, 255, 0.60);
-  static const Color textTertiary = Color.fromRGBO(255, 255, 255, 0.52);
-
-  /// Brand accent (gold): selection, links, progress and non-instrument hero
-  /// cards. Green/red are reserved for price direction ([up]/[down]).
-  static const Color brand = Color(0xFFE6BA4D);
-  static const Color up = Color(0xFF30D158);
-  static const Color down = Color(0xFFFF6B61);
 
   // ---- Radius ----
   static const double radiusTile = 14;
@@ -48,61 +30,64 @@ class DS {
   /// glyphs, so digits and tickers sit evenly with the Arabic around them.
   static const String arabicFontFamily = 'Almarai';
 
+  /// The app's font family for [locale]: Almarai for Arabic, the platform
+  /// font (null) otherwise. `buildTheme` is the only caller; everything
+  /// else gets the family from the theme.
+  static String? fontFamilyFor(Locale locale) => locale.languageCode == 'ar' ? arabicFontFamily : null;
+
   /// Consulted before the OS fallback chain in every locale: Arabic glyphs
   /// (currency symbols, Arabic names) render in Almarai rather than the system's
   /// basic Arabic face, and the Saudi Riyal sign always has a glyph.
   static const List<String> fontFamilyFallback = [arabicFontFamily, 'Riyal'];
 
-  static Color trendColor(bool isUp) => isUp ? up : down;
+  static LinearGradient cardFill(QimaColors colors) => LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [colors.surfaceTop, colors.surfaceBottom],
+      );
 
-  static const LinearGradient cardFill = LinearGradient(
-    begin: Alignment.topCenter,
-    end: Alignment.bottomCenter,
-    colors: [surfaceTop, surfaceBottom],
-  );
+  static LinearGradient tileFill(QimaColors colors) => LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [colors.tileTop, colors.tileBottom],
+      );
 
-  static const LinearGradient tileFill = LinearGradient(
-    begin: Alignment.topCenter,
-    end: Alignment.bottomCenter,
-    colors: [tileTop, tileBottom],
-  );
-
-  static const LinearGradient backgroundGradient = LinearGradient(
-    begin: Alignment.topCenter,
-    end: Alignment.bottomCenter,
-    colors: [bg1, bg0],
-  );
+  static LinearGradient backgroundGradient(QimaColors colors) => LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [colors.bg1, colors.bg0],
+      );
 
   /// `.dsCard` — flat surface card.
-  static BoxDecoration card({double cornerRadius = radiusCard}) {
+  static BoxDecoration card(QimaColors colors, {double cornerRadius = radiusCard}) {
     return BoxDecoration(
-      gradient: cardFill,
+      gradient: cardFill(colors),
       borderRadius: BorderRadius.circular(cornerRadius),
-      border: Border.all(color: hairline, width: 1),
-      boxShadow: const [
-        BoxShadow(color: Color.fromRGBO(0, 0, 0, 0.45), blurRadius: 18, offset: Offset(0, 10)),
+      border: Border.all(color: colors.hairline, width: 1),
+      boxShadow: [
+        BoxShadow(color: colors.shadow, blurRadius: 18, offset: const Offset(0, 10)),
       ],
     );
   }
 
   /// `.dsTile` — inset tile, no shadow.
-  static BoxDecoration tile({double cornerRadius = radiusTile}) {
+  static BoxDecoration tile(QimaColors colors, {double cornerRadius = radiusTile}) {
     return BoxDecoration(
-      gradient: tileFill,
+      gradient: tileFill(colors),
       borderRadius: BorderRadius.circular(cornerRadius),
-      border: Border.all(color: hairline, width: 1),
+      border: Border.all(color: colors.hairline, width: 1),
     );
   }
 
   /// `.dsHeroCard` — surface card plus an accent radial wash and a gradient
   /// border, with a colored glow shadow in addition to the base drop shadow.
-  static BoxDecoration heroCard(Color accent, {double cornerRadius = radiusCard}) {
+  static BoxDecoration heroCard(QimaColors colors, Color accent, {double cornerRadius = radiusCard}) {
     return BoxDecoration(
-      gradient: cardFill,
+      gradient: cardFill(colors),
       borderRadius: BorderRadius.circular(cornerRadius),
       boxShadow: [
         BoxShadow(color: accent.withValues(alpha: 0.18), blurRadius: 24, offset: const Offset(0, 12)),
-        const BoxShadow(color: Color.fromRGBO(0, 0, 0, 0.45), blurRadius: 18, offset: Offset(0, 10)),
+        BoxShadow(color: colors.shadow, blurRadius: 18, offset: const Offset(0, 10)),
       ],
     );
   }
@@ -110,11 +95,11 @@ class DS {
   /// Border gradient used atop [heroCard] (draw via a `Container` foreground
   /// decoration or a bordered overlay, since `BoxDecoration` can't combine a
   /// gradient border with a gradient fill in one pass).
-  static Gradient heroBorderGradient(Color accent) {
+  static Gradient heroBorderGradient(QimaColors colors, Color accent) {
     return LinearGradient(
       begin: Alignment.topRight,
       end: Alignment.bottomLeft,
-      colors: [accent.withValues(alpha: 0.55), hairline],
+      colors: [accent.withValues(alpha: 0.55), colors.hairline],
     );
   }
 
@@ -130,52 +115,59 @@ class DS {
   /// with [accent] instead of Material 3's auto-generated (and, for a gold
   /// seed color, often blue/purple-looking) `secondaryContainer`. Pass the
   /// current instrument's accent (`InstrumentTheme.accentColor`) wherever an
-  /// instrument is in scope, or [brand] when it isn't (spec §3.1/§3.2).
-  static ButtonStyle segmentedButtonStyle(Color accent) {
+  /// instrument is in scope, or `colors.brand` when it isn't (spec §3.1/§3.2).
+  /// The selected segment's fill is a brand-style accent, so its label uses
+  /// [QimaColors.onBrand] rather than a fixed dark color.
+  static ButtonStyle segmentedButtonStyle(QimaColors colors, Color accent) {
     return SegmentedButton.styleFrom(
-      backgroundColor: tileTop,
-      foregroundColor: textSecondary,
+      backgroundColor: colors.tileTop,
+      foregroundColor: colors.textSecondary,
       selectedBackgroundColor: accent,
-      selectedForegroundColor: bg0,
-      side: const BorderSide(color: hairline),
+      selectedForegroundColor: colors.onBrand,
+      side: BorderSide(color: colors.hairline),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(radiusPill)),
     );
   }
 }
 
 /// A [ChoiceChip] pre-styled to pull its selected fill from [accent] (an
-/// instrument accent, or [DS.brand] by default) rather than Material 3's
-/// auto-generated secondary color, matching [DS.segmentedButtonStyle]'s
-/// intent for the chip widget family (spec §3.1/§3.2).
+/// instrument accent, or `context.colors.brand` by default) rather than
+/// Material 3's auto-generated secondary color, matching
+/// [DS.segmentedButtonStyle]'s intent for the chip widget family (spec
+/// §3.1/§3.2). The selected label uses [QimaColors.onBrand].
 class DSChoiceChip extends StatelessWidget {
   final String label;
   final bool selected;
   final ValueChanged<bool> onSelected;
-  final Color accent;
+  final Color? accent;
 
   const DSChoiceChip({
     super.key,
     required this.label,
     required this.selected,
     required this.onSelected,
-    this.accent = DS.brand,
+    this.accent,
   });
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+    final resolvedAccent = accent ?? colors.brand;
     return ChoiceChip(
       label: Text(label),
       selected: selected,
       onSelected: onSelected,
       showCheckmark: false,
-      backgroundColor: DS.tileTop,
-      selectedColor: accent,
-      side: const BorderSide(color: DS.hairline),
+      backgroundColor: colors.tileTop,
+      selectedColor: resolvedAccent,
+      side: BorderSide(color: colors.hairline),
       shape: const StadiumBorder(),
-      labelStyle: TextStyle(
-        color: selected ? DS.bg0 : DS.textSecondary,
-        fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
-      ),
+      // A chip's label style replaces the ambient text style instead of
+      // merging with it, so start from the theme's to keep the app font.
+      labelStyle: Theme.of(context).textTheme.labelLarge?.copyWith(
+            color: selected ? colors.onBrand : colors.textSecondary,
+            fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+          ),
     );
   }
 }
@@ -189,10 +181,11 @@ class ScreenBackground extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return Stack(
       fit: StackFit.expand,
       children: [
-        const DecoratedBox(decoration: BoxDecoration(gradient: DS.backgroundGradient)),
+        DecoratedBox(decoration: BoxDecoration(gradient: DS.backgroundGradient(colors))),
         Positioned(
           top: -180 - 180,
           left: 0,
@@ -204,9 +197,9 @@ class ScreenBackground extends StatelessWidget {
               child: Container(
                 width: 520,
                 height: 360,
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Color.fromRGBO(255, 255, 255, 0.08),
+                  color: colors.textPrimary.withValues(alpha: 0.08),
                 ),
               ),
             ),
@@ -235,7 +228,7 @@ class DSCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: padding,
-      decoration: DS.card(cornerRadius: cornerRadius),
+      decoration: DS.card(context.colors, cornerRadius: cornerRadius),
       child: child,
     );
   }
@@ -258,7 +251,7 @@ class DSTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: padding,
-      decoration: DS.tile(cornerRadius: cornerRadius),
+      decoration: DS.tile(context.colors, cornerRadius: cornerRadius),
       child: child,
     );
   }
@@ -282,9 +275,10 @@ class DSHeroCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     final radius = BorderRadius.circular(cornerRadius);
     return Container(
-      decoration: DS.heroCard(accent, cornerRadius: cornerRadius),
+      decoration: DS.heroCard(colors, accent, cornerRadius: cornerRadius),
       child: ClipRRect(
         borderRadius: radius,
         child: Stack(
@@ -296,7 +290,7 @@ class DSHeroCard extends StatelessWidget {
               child: DecoratedBox(
                 decoration: BoxDecoration(
                   borderRadius: radius,
-                  border: GradientBoxBorder(gradient: DS.heroBorderGradient(accent), width: 1),
+                  border: GradientBoxBorder(gradient: DS.heroBorderGradient(colors, accent), width: 1),
                 ),
               ),
             ),

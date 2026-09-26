@@ -18,6 +18,15 @@ import '../l10n/app_localizations.dart';
 /// instrument's freeform name) still falls through untouched.
 String displayLabel(BuildContext context, String key) {
   final loc = AppLocalizations.of(context)!;
+  return displayLabelFor(loc, key);
+}
+
+/// [displayLabel] without a [BuildContext] — used where a real widget tree
+/// isn't available, such as a background isolate's notification text (spec
+/// Phase 5 `RefreshPipeline`/`NotificationService`), which resolves an
+/// [AppLocalizations] instance directly via
+/// `AppLocalizations.delegate.load(locale)` instead.
+String displayLabelFor(AppLocalizations loc, String key) {
   final resolved = _resolve(loc, key);
   if (resolved != null) return resolved;
 
@@ -137,6 +146,8 @@ String? _resolve(AppLocalizations loc, String key) {
       return loc.range3D;
     case 'range.7D':
       return loc.range7D;
+    case 'range.1W':
+      return loc.range1W;
     case 'range.1M':
       return loc.range1M;
     case 'range.3M':
@@ -166,6 +177,34 @@ String? _resolve(AppLocalizations loc, String key) {
 
     case 'error.refreshFailed':
       return loc.errorRefreshFailed;
+
+    // App lock grace periods
+    case 'lockGrace.immediately':
+      return loc.lockGraceImmediately;
+    case 'lockGrace.1m':
+      return loc.lockGrace1m;
+    case 'lockGrace.5m':
+      return loc.lockGrace5m;
+    case 'lockGrace.15m':
+      return loc.lockGrace15m;
+
+    // Price alerts
+    case 'alertKind.above':
+      return loc.alertKindAbove;
+    case 'alertKind.below':
+      return loc.alertKindBelow;
+    case 'alertKind.percentMove':
+      return loc.alertKindPercentMove;
+    case 'alertDirection.up':
+      return loc.alertDirectionUp;
+    case 'alertDirection.down':
+      return loc.alertDirectionDown;
+    case 'alertDirection.either':
+      return loc.alertDirectionEither;
+    case 'alertWindow.h24':
+      return loc.alertWindowWithin24h;
+    case 'alertWindow.d7':
+      return loc.alertWindowWithin7d;
 
     default:
       return null;

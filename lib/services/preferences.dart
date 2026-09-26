@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart' show TargetPlatform, defaultTargetPlatform, kIsWeb;
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/chart_range.dart';
@@ -68,6 +70,64 @@ enum AppLanguage {
   }
 }
 
+/// How long the app may sit in the background before [LockGate] re-locks it
+/// on return, once app lock is enabled (spec Phase 4 "App lock · Lock
+/// after"). `immediately` re-locks on every backgrounding, with no grace at
+/// all.
+enum LockGrace {
+  immediately(0),
+  oneMinute(1),
+  fiveMinutes(5),
+  fifteenMinutes(15);
+
+  final int minutes;
+  const LockGrace(this.minutes);
+
+  Duration get duration => Duration(minutes: minutes);
+
+  static const LockGrace defaultValue = LockGrace.oneMinute;
+
+  String get labelKey {
+    switch (this) {
+      case LockGrace.immediately:
+        return 'lockGrace.immediately';
+      case LockGrace.oneMinute:
+        return 'lockGrace.1m';
+      case LockGrace.fiveMinutes:
+        return 'lockGrace.5m';
+      case LockGrace.fifteenMinutes:
+        return 'lockGrace.15m';
+    }
+  }
+
+  static LockGrace fromRawValue(int value) {
+    return LockGrace.values.firstWhere((v) => v.minutes == value, orElse: () => defaultValue);
+  }
+}
+
+/// Light/dark override, independent of [AppLanguage]. Mirrors the "Appearance"
+/// setting added in Phase 1 (spec Figma "Settings · v2").
+enum Appearance {
+  system,
+  light,
+  dark;
+
+  ThemeMode get themeMode {
+    switch (this) {
+      case Appearance.system:
+        return ThemeMode.system;
+      case Appearance.light:
+        return ThemeMode.light;
+      case Appearance.dark:
+        return ThemeMode.dark;
+    }
+  }
+
+  static Appearance fromRawValue(String value) {
+    return Appearance.values.firstWhere((v) => v.name == value, orElse: () => Appearance.system);
+  }
+}
+
 /// User settings, mirrored between a (pluggable) cloud KV store — source of
 /// truth for cross-device sync — and local `SharedPreferences` as a fast
 /// local cache. Mirrors `Preferences.swift` (spec §2.14).
@@ -75,7 +135,16 @@ class Preferences {
   static const String _baseCurrencyKey = 'baseCurrency';
   static const String _widgetRefreshIntervalKey = 'widgetRefreshInterval';
   static const String _appLanguageKey = 'appLanguage';
+  static const String _appearanceKey = 'appearance';
   static const String _preferredChartRangeKey = 'preferredChartRange';
+  static const String _preferredPortfolioRangeKey = 'preferredPortfolioRange';
+  static const String _hideBalancesKey = 'hideBalances';
+  static const String _appLockEnabledKey = 'appLockEnabled';
+  static const String _lockGraceKey = 'lockGrace';
+  static const String _deliverAlertsOnThisDeviceKey = 'deliverAlertsOnThisDevice';
+  static const String _lastAlertEvaluationAtKey = 'lastAlertEvaluationAt';
+  static const String _iCloudSyncEnabledKey = 'iCloudSyncEnabled';
+  static const String _onboardingCompletedKey = 'onboardingCompleted';
   static const String _legacyWatchcardsKey = 'pref.watchcards';
   static const String _legacyWatchlistKey = 'pref.watchlist';
 
@@ -103,6 +172,15 @@ class Preferences {
     await cloud.setString(_baseCurrencyKey, value);
     await cloud.synchronize();
   }
+
+  /// Whether the user (or a previous device's sync) has ever actually set a
+  /// base currency, as opposed to [baseCurrency] simply falling back to
+  /// `'USD'`. Used only to decide whether the onboarding tour's step 5 may
+  /// prefill from the device region (spec "prefilled from the device region
+  /// ... otherwise the current base currency") — a fresh install with
+  /// nothing stored yet is fair game; a currency the user (or a synced
+  /// device) already chose is never silently overridden.
+  bool get baseCurrencyExplicitlySet => local.containsKey(_baseCurrencyKey);
 
   Future<WidgetRefreshInterval> get widgetRefreshInterval async {
     final cloudValue = await cloud.getString(_widgetRefreshIntervalKey);
@@ -136,6 +214,22 @@ class Preferences {
     await cloud.synchronize();
   }
 
+  Future<Appearance> get appearance async {
+    final cloudValue = await cloud.getString(_appearanceKey);
+    if (cloudValue != null) {
+      await local.setString(_appearanceKey, cloudValue);
+      return Appearance.fromRawValue(cloudValue);
+    }
+    final localValue = local.getString(_appearanceKey);
+    return localValue == null ? Appearance.system : Appearance.fromRawValue(localValue);
+  }
+
+  Future<void> setAppearance(Appearance value) async {
+    await local.setString(_appearanceKey, value.name);
+    await cloud.setString(_appearanceKey, value.name);
+    await cloud.synchronize();
+  }
+
   /// Local-only, NOT synced to iCloud. Extended ranges (5Y/all) are
   /// coerced back to [ChartRange.fallbackDefault] on read — extended
   /// windows are viewing-only, never persisted as default.
@@ -149,6 +243,123 @@ class Preferences {
   Future<void> setPreferredChartRange(ChartRange value) async {
     final coerced = value.isExtended ? ChartRange.fallbackDefault : value;
     await local.setString(_preferredChartRangeKey, coerced.name);
+  }
+
+  /// Local-only, like [preferredChartRange]. Restricted to
+  /// [ChartRange.portfolioSelectable] — anything else read back (a stale
+  /// value from a future app version, say) falls back to
+  /// [ChartRange.portfolioDefault] rather than being trusted blindly.
+  ChartRange get preferredPortfolioRange {
+    final raw = local.getString(_preferredPortfolioRangeKey);
+    if (raw == null) return ChartRange.portfolioDefault;
+    final range = ChartRange.values.firstWhere((r) => r.name == raw, orElse: () => ChartRange.portfolioDefault);
+    return ChartRange.portfolioSelectable.contains(range) ? range : ChartRange.portfolioDefault;
+  }
+
+  Future<void> setPreferredPortfolioRange(ChartRange value) async {
+    if (!ChartRange.portfolioSelectable.contains(value)) return;
+    await local.setString(_preferredPortfolioRangeKey, value.name);
+  }
+
+  /// Local-only, NOT synced — hiding balances is a per-device, in-the-moment
+  /// privacy choice (e.g. "don't show this over someone's shoulder right
+  /// now"), not something that should silently reveal or hide amounts on a
+  /// second device.
+  bool get hideBalances => local.getBool(_hideBalancesKey) ?? false;
+
+  Future<void> setHideBalances(bool value) async {
+    await local.setBool(_hideBalancesKey, value);
+  }
+
+  /// Local-only, like [hideBalances] — app lock is tied to this device's own
+  /// biometric/passcode enrollment, so it can never be meaningfully synced.
+  bool get appLockEnabled => local.getBool(_appLockEnabledKey) ?? false;
+
+  Future<void> setAppLockEnabled(bool value) async {
+    await local.setBool(_appLockEnabledKey, value);
+  }
+
+  LockGrace get lockGrace {
+    final raw = local.getInt(_lockGraceKey);
+    return raw == null ? LockGrace.defaultValue : LockGrace.fromRawValue(raw);
+  }
+
+  Future<void> setLockGrace(LockGrace value) async {
+    await local.setInt(_lockGraceKey, value.minutes);
+  }
+
+  /// Local-only, NOT synced — like [hideBalances]/[appLockEnabled], whether
+  /// THIS device should show alert notifications is a per-device choice (a
+  /// tablet or a rarely-carried device may not need to buzz), not something
+  /// that should silently enable/disable itself when another device changes
+  /// it (spec Phase 5). Defaults to on for phones, off for macOS/desktop,
+  /// where a background-refreshed notification is far less likely to be
+  /// seen promptly and is more likely to be treated as noise.
+  bool get deliverAlertsOnThisDeviceDefault {
+    if (kIsWeb) return false;
+    switch (defaultTargetPlatform) {
+      case TargetPlatform.android:
+      case TargetPlatform.iOS:
+        return true;
+      case TargetPlatform.macOS:
+      case TargetPlatform.windows:
+      case TargetPlatform.linux:
+      case TargetPlatform.fuchsia:
+        return false;
+    }
+  }
+
+  bool get deliverAlertsOnThisDevice =>
+      local.getBool(_deliverAlertsOnThisDeviceKey) ?? deliverAlertsOnThisDeviceDefault;
+
+  Future<void> setDeliverAlertsOnThisDevice(bool value) async {
+    await local.setBool(_deliverAlertsOnThisDeviceKey, value);
+  }
+
+  /// Local-only, NOT synced — the last time [RefreshPipeline] evaluated
+  /// alerts on THIS device, from any caller (foreground or the background
+  /// task). Backed by `SharedPreferences` (a real file the OS shares between
+  /// the running app process and a background isolate's separate process, on
+  /// every platform that has a background isolate at all), rather than an
+  /// in-memory field, specifically so `RefreshPipeline`'s overlap guard
+  /// actually works ACROSS that process boundary — an in-memory-only guard
+  /// would never see the foreground app's timestamp from inside a background
+  /// isolate, since they never share a Dart VM (spec Phase 5 "Guard against
+  /// double evaluation").
+  DateTime? get lastAlertEvaluationAt {
+    final raw = local.getString(_lastAlertEvaluationAtKey);
+    if (raw == null) return null;
+    return DateTime.tryParse(raw);
+  }
+
+  Future<void> setLastAlertEvaluationAt(DateTime value) async {
+    await local.setString(_lastAlertEvaluationAtKey, value.toUtc().toIso8601String());
+  }
+
+  /// Local-only, NOT synced through the cloud store itself — this is the
+  /// on/off switch FOR cloud sync, so it can never be read from the thing it
+  /// controls (spec Phase 7). Whether this device even offers the setting is
+  /// a separate concern (`AppCubit`/`SettingsScreen` gate on platform +
+  /// account availability); this getter just answers "did the user turn it
+  /// on", defaulting to on so a first launch on a device with an iCloud
+  /// account already signed in starts syncing without an extra step.
+  bool get iCloudSyncEnabledDefault => platformSupportsICloud;
+
+  bool get iCloudSyncEnabled => local.getBool(_iCloudSyncEnabledKey) ?? iCloudSyncEnabledDefault;
+
+  Future<void> setICloudSyncEnabled(bool value) async {
+    await local.setBool(_iCloudSyncEnabledKey, value);
+  }
+
+  /// Local-only, NOT synced — whether the first-launch onboarding tour has
+  /// been shown (finished or skipped) on THIS device. Like
+  /// [hideBalances]/[appLockEnabled], there's no reason a second device
+  /// should silently skip its own first-run tour just because another
+  /// device already saw it.
+  bool get onboardingCompleted => local.getBool(_onboardingCompletedKey) ?? false;
+
+  Future<void> setOnboardingCompleted(bool value) async {
+    await local.setBool(_onboardingCompletedKey, value);
   }
 
   /// Migration chain, simplified for a from-scratch app: (1) pre-sync

@@ -19,10 +19,9 @@ app's Xcode project as a companion target — it can't be an independently
 distributed app that happens to talk to a different bundle id. Since
 `ios/Runner.xcodeproj` (the Flutter app's iOS project) is a different
 Xcode project from the original `/Users/elkhayyat/Dev/Qima/Qima.xcodeproj`,
-the watch target has to be re-created inside `Runner.xcodeproj` — this is
-inherently a GUI target-creation + provisioning-profile task, the same
-category of work as the iOS/macOS WidgetKit extension in
-`WIDGETS_IOS_SETUP.md`.
+the watch target has to be re-created inside `Runner.xcodeproj` — a
+target-creation + provisioning-profile task like the iOS WidgetKit extension
+(`WIDGETS_IOS_SETUP.md`).
 
 ## Steps
 
@@ -45,8 +44,8 @@ category of work as the iOS/macOS WidgetKit extension in
    `Watch/Assets.xcassets/AppIcon.appiconset/` into the new target's asset
    catalog.
 3. **App Group.** Add the same `group.com.devlabtechnologies.qima` App
-   Group capability to the `QimaWatch` target that you set up for the
-   widget extension in `WIDGETS_IOS_SETUP.md` — `AppGroup.swift` (part of
+   Group capability to the `QimaWatch` target that the Runner and widget
+   extension targets already use — `AppGroup.swift` (part of
    the copied `Shared/Services/`) reads/writes through this container, and
    it must be the *same* group id the Flutter iOS app's widget/App Group
    setup uses so both can eventually share cached price data.

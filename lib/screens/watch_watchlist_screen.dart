@@ -7,6 +7,7 @@ import '../blocs/app_cubit.dart';
 import '../blocs/app_state.dart';
 import '../l10n/app_localizations.dart';
 import '../theme/design_system.dart';
+import '../theme/qima_colors.dart';
 import '../theme/strings.dart';
 import '../widgets/instrument_icon.dart';
 
@@ -70,6 +71,7 @@ class _WatchWatchlistScreenState extends State<WatchWatchlistScreen> with Widget
         body: SafeArea(
           child: BlocBuilder<AppCubit, AppState>(
             builder: (context, state) {
+              final colors = context.colors;
               if (!state.initialized) {
                 return const Center(child: CircularProgressIndicator(strokeWidth: 2));
               }
@@ -80,12 +82,12 @@ class _WatchWatchlistScreenState extends State<WatchWatchlistScreen> with Widget
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.star_border, color: DS.textTertiary, size: 28),
+                        Icon(Icons.star_border, color: colors.textTertiary, size: 28),
                         const SizedBox(height: DS.spaceXS),
                         Text(
                           l10n.watchlistEmptyTitle,
                           textAlign: TextAlign.center,
-                          style: const TextStyle(color: DS.textPrimary, fontSize: 13, fontWeight: FontWeight.w700),
+                          style: TextStyle(color: colors.textPrimary, fontSize: 13, fontWeight: FontWeight.w700),
                         ),
                       ],
                     ),
@@ -142,7 +144,7 @@ class _WatchRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final accent = DS.trendColor(isTrendingUp);
+    final accent = QimaColors.trendColor(isTrendingUp, context.colors);
     return DSTile(
       padding: const EdgeInsets.symmetric(horizontal: DS.spaceSM, vertical: DS.spaceSM),
       child: Column(
@@ -155,7 +157,7 @@ class _WatchRow extends StatelessWidget {
               Expanded(
                 child: Text(
                   karatLabel != null ? '$instrumentName · $karatLabel' : instrumentName,
-                  style: const TextStyle(color: DS.textPrimary, fontSize: 12, fontWeight: FontWeight.w600),
+                  style: TextStyle(color: context.colors.textPrimary, fontSize: 12, fontWeight: FontWeight.w600),
                   overflow: TextOverflow.ellipsis,
                   maxLines: 1,
                 ),

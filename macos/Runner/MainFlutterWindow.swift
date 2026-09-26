@@ -9,6 +9,12 @@ class MainFlutterWindow: NSWindow {
     self.setFrame(windowFrame, display: true)
 
     RegisterGeneratedPlugins(registry: flutterViewController)
+    // `CloudKVPlugin`, `SystemSettingsPlugin` and `WidgetBridgePlugin` live directly in this target (not pub
+    // packages), so `RegisterGeneratedPlugins` never picks them up — they have to
+    // be registered by hand, same as any other app-target-local plugin.
+    CloudKVPlugin.register(with: flutterViewController.registrar(forPlugin: "CloudKVPlugin"))
+    SystemSettingsPlugin.register(with: flutterViewController.registrar(forPlugin: "SystemSettingsPlugin"))
+    WidgetBridgePlugin.register(with: flutterViewController.registrar(forPlugin: "WidgetBridgePlugin"))
 
     super.awakeFromNib()
   }

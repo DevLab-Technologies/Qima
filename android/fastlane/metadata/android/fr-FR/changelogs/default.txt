@@ -1,1 +1,10 @@
-Première version sur le store : cours en direct des métaux, crypto, actions, indices et devises ; avoirs et valeur du portefeuille ; graphiques ; arabe, espagnol et français.
+Qima 2.1.1
+• Nouveau design : onglets Suivi, Portefeuille et Réglages, avec votre portefeuille en direct
+• Filtrez votre liste par métaux, crypto, actions, indices ou devises
+• Alertes de prix avec notifications
+• Widgets personnalisables : actif, unité, carats, devise et période
+• Verrouillage par empreinte ou visage, et masquage des soldes
+• Thème clair
+• Sauvegarde chiffrée et restauration
+• Visite guidée au démarrage, et aide sur chaque écran
+• Corrigé : les cours ne se chargeaient pas

@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 
 import 'asset.dart';
+import 'metal_breakdown.dart';
 import 'money.dart';
 import 'syncable.dart';
 
@@ -15,6 +16,15 @@ class HoldingLot extends Equatable implements Syncable {
   final String costCurrency;
   final DateTime date;
 
+  /// Purity of the physical metal this lot represents, e.g. 21K jewelry
+  /// bought and weighed at 21K rather than fine gold. `null` means fine
+  /// metal (24K) — the historical default before karat-per-lot existed, so
+  /// old records without a stored karat keep valuing exactly as before
+  /// (no migration needed). Only ever meaningful for gold lots priced by
+  /// weight (gram/kilogram); a troy-ounce lot is fine weight by convention
+  /// and never carries a karat.
+  final GoldKarat? karat;
+
   const HoldingLot({
     required this.id,
     required this.instrumentID,
@@ -23,9 +33,22 @@ class HoldingLot extends Equatable implements Syncable {
     required this.unitCost,
     required this.costCurrency,
     required this.date,
+    this.karat,
   });
 
   double get totalCost => quantity * unitCost;
+
+  /// This lot's purity as a fraction of fine metal (1.0 for 24K/non-gold).
+  double get purity => karat?.purity ?? 1;
+
+  /// Fine-metal content of this lot, expressed in troy ounces: quantity in
+  /// the lot's own unit, converted to the canonical troy-ounce basis via
+  /// [PriceUnit.multiplier] (same convention [PriceConverter.factor] and
+  /// [HoldingValuation.aggregate] use), then scaled down by [purity] so a
+  /// karat lot counts for only the fine metal it actually contains. This is
+  /// a property of the LOT alone — it must never depend on the karat of
+  /// whatever watch card or screen happens to be displaying it.
+  double get fineOunces => quantity * unit.multiplier * purity;
 
   HoldingLot copyWith({
     String? id,
@@ -35,6 +58,8 @@ class HoldingLot extends Equatable implements Syncable {
     double? unitCost,
     String? costCurrency,
     DateTime? date,
+    GoldKarat? karat,
+    bool clearKarat = false,
   }) {
     return HoldingLot(
       id: id ?? this.id,
@@ -44,6 +69,7 @@ class HoldingLot extends Equatable implements Syncable {
       unitCost: unitCost ?? this.unitCost,
       costCurrency: costCurrency ?? this.costCurrency,
       date: date ?? this.date,
+      karat: clearKarat ? null : (karat ?? this.karat),
     );
   }
 
@@ -56,6 +82,7 @@ class HoldingLot extends Equatable implements Syncable {
         'unitCost': unitCost,
         'costCurrency': costCurrency,
         'date': date.toUtc().toIso8601String(),
+        if (karat != null) 'karat': karat!.rawValue,
       };
 
   factory HoldingLot.fromJson(Map<String, dynamic> json) => HoldingLot(
@@ -68,10 +95,11 @@ class HoldingLot extends Equatable implements Syncable {
         // Stored as a UTC instant; converted back so the calendar day shown
         // matches the day the user picked in their own time zone.
         date: DateTime.parse(json['date'] as String).toLocal(),
+        karat: json['karat'] == null ? null : GoldKarat.fromRawValue(json['karat'] as int),
       );
 
   @override
-  List<Object?> get props => [id, instrumentID, quantity, unit, unitCost, costCurrency, date];
+  List<Object?> get props => [id, instrumentID, quantity, unit, unitCost, costCurrency, date, karat];
 }
 
 /// Aggregated valuation across a group of lots, expressed in a display
@@ -116,12 +144,15 @@ class HoldingValuation extends Equatable {
       final usd = latestUSD(lot.instrumentID);
       if (usd == null) continue;
       final costToUSD = rates.rate(lot.costCurrency) ?? 1;
-      final currentValueUSD = lot.quantity * usd * lot.unit.multiplier;
+      // Purity is applied exactly once, here, to the lot's fine-metal
+      // content — never to the price itself and never a second time by a
+      // caller. `lot.fineOunces` already folds in `lot.unit.multiplier`.
+      final currentValueUSD = lot.fineOunces * usd;
       final costUSD = lot.totalCost / costToUSD;
       valueDisplay += currentValueUSD * toDisplay;
       costDisplay += costUSD * toDisplay;
       costUSDTotal += costUSD;
-      canonicalQty += lot.quantity * lot.unit.multiplier;
+      canonicalQty += lot.fineOunces;
       valued = true;
     }
 

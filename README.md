@@ -56,6 +56,12 @@ layout for Arabic and an in-app language override.
 **Private by design** — no accounts, no analytics, no tracking. All data is
 stored locally on-device. See [Privacy](#privacy).
 
+**Backup & restore** — export your watchlist, holdings, custom tickers,
+alerts and settings to a single file, optionally password-protected with
+AES-256; restore it on this device or another with a Merge (last-write-wins)
+or Replace choice and a live before/after diff. Holdings can also be
+exported as a spreadsheet for your own records.
+
 ---
 
 ## Requirements
@@ -180,9 +186,8 @@ Flutter codebase. A few things are intentionally incomplete rather than faked:
   browser. Metals/crypto spot prices and live FX rates work fine there —
   `gold-api.com` and `open.er-api.com` both send `Access-Control-Allow-Origin:
   *`. This isn't fixable without introducing a backend, which is out of scope.
-- **iOS/macOS home-screen widgets**: WidgetKit extensions require native Xcode
-  target creation (provisioning, App Groups) that can't be safely scripted
-  blind. See `WIDGETS_IOS_SETUP.md` for the exact steps to finish wiring it.
+- **Widgets**: iOS and macOS have configurable price and portfolio widgets;
+  Android's have no per-widget settings yet. See `WIDGETS_IOS_SETUP.md`.
 - **watchOS**: a true Apple Watch app needs native Swift (Flutter has no
   watchOS target). See `WATCHOS_SETUP.md` for how to point the original app's
   watch companion at this project's data contract.

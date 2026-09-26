@@ -9,16 +9,39 @@ import '../models/chart_range.dart';
 import '../models/instrument_presentation.dart';
 import '../models/watch_card.dart';
 import '../theme/design_system.dart';
+import '../theme/help_topics.dart';
 import '../theme/instrument_theme.dart';
 import '../theme/price_chart.dart';
+import '../theme/qima_colors.dart';
 import '../theme/strings.dart';
+import '../widgets/alerts_card.dart';
+import '../widgets/help_button.dart';
 import '../widgets/instrument_icon.dart';
-import '../widgets/stat_pill.dart';
+import '../widgets/key_stats_grid.dart';
+import '../widgets/unit_price_carousel.dart';
+import 'alert_editor_sheet.dart';
 import 'currency_picker.dart';
 import 'holdings_card.dart';
 
-/// The main instrument screen: hero price card, metal breakdown, chart with
-/// range chips, holdings, and a stats row. Mirrors
+/// Chart-first ranges offered on the instrument detail screen. Every range
+/// is always shown — none are gated behind a "load history" action; picking
+/// one that needs data beyond what's cached triggers a lazy background load
+/// instead (spec §v2-A "Instrument detail").
+const List<ChartRange> _detailRanges = [
+  ChartRange.day1,
+  ChartRange.day3,
+  ChartRange.day7,
+  ChartRange.month1,
+  ChartRange.month3,
+  ChartRange.month6,
+  ChartRange.ytd,
+  ChartRange.year1,
+  ChartRange.all,
+];
+
+/// The main instrument screen: an open (no-card) price header, a full-width
+/// chart with range chips, key stats, a price-per-unit carousel (metals
+/// only), and a compact holdings summary. Mirrors
 /// `InstrumentDetailView.swift`.
 class InstrumentDetailScreen extends StatefulWidget {
   final WatchCard card;
@@ -32,52 +55,64 @@ class InstrumentDetailScreen extends StatefulWidget {
 class _InstrumentDetailScreenState extends State<InstrumentDetailScreen> {
   late WatchCard _card;
   late ChartRange _range;
-  bool _showsExtendedRanges = false;
 
   @override
   void initState() {
     super.initState();
     _card = widget.card;
     final cubit = context.read<AppCubit>();
-    _range = cubit.state.preferredChartRange;
+    final preferred = cubit.state.preferredChartRange;
+    _range = _detailRanges.contains(preferred) ? preferred : ChartRange.fallbackDefault;
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final presentation = cubit.presentation(_card);
       if (presentation.series.isEmpty) {
         cubit.refresh(presentation.instrument);
       }
+      _ensureHistoryFor(_range);
     });
+  }
+
+  /// Triggers a lazy history backfill the first time a range that needs
+  /// data older than what's cached is selected — the replacement for the
+  /// old explicit "Load history" button. Cheap to call repeatedly:
+  /// `AppCubit.loadHistory` itself no-ops while already loading, and this
+  /// only fires when the currently available points don't reach back far
+  /// enough for the requested range.
+  void _ensureHistoryFor(ChartRange range) {
+    final cubit = context.read<AppCubit>();
+    final presentation = cubit.presentation(_card);
+    final now = DateTime.now();
+    final points = presentation.points;
+    final start = range.startDate(now);
+    final reachesBack = points.length >= 2 &&
+        (start == null ? true : !points.first.date.isAfter(start));
+    if (reachesBack) return;
+    cubit.loadHistory(presentation.instrument, _card.currency);
   }
 
   void _select(ChartRange range) {
     setState(() => _range = range);
-    context.read<AppCubit>().setPreferredChartRange(range);
-  }
-
-  void _revealAllTime() {
-    final cubit = context.read<AppCubit>();
-    setState(() {
-      _showsExtendedRanges = true;
-      _range = ChartRange.all;
-    });
-    final presentation = cubit.presentation(_card);
-    cubit.loadHistory(presentation.instrument, _card.currency);
+    if (!range.isExtended) {
+      context.read<AppCubit>().setPreferredChartRange(range);
+    }
+    _ensureHistoryFor(range);
   }
 
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<AppCubit>();
     final l10n = AppLocalizations.of(context)!;
+    final colors = context.colors;
 
     return BlocBuilder<AppCubit, AppState>(
       builder: (context, state) {
         final presentation = cubit.presentation(_card);
         final instrument = presentation.instrument;
         final now = DateTime.now();
-        final availableRanges = ChartRange.available(presentation.points, now, includeExtended: _showsExtendedRanges);
-        final effectiveRange = availableRanges.contains(_range) ? _range : availableRanges.last;
-        final windowChange = presentation.change(effectiveRange, now);
-        final accent = InstrumentTheme.accentColor(instrument);
+        final windowChange = presentation.change(_range, now);
+        final accent = InstrumentTheme.accentColor(instrument, colors);
+        final lastQuoteTime = presentation.series.latest?.timestamp.toLocal();
 
         return ScreenBackground(
           child: Scaffold(
@@ -86,6 +121,7 @@ class _InstrumentDetailScreenState extends State<InstrumentDetailScreen> {
               backgroundColor: Colors.transparent,
               title: Text(displayLabel(context, instrument.nameKey)),
               actions: [
+                const HelpButton(topic: HelpTopicId.assetDetail),
                 PopupMenuButton<String>(
                   icon: const Icon(Icons.tune),
                   onSelected: (value) async {
@@ -117,6 +153,11 @@ class _InstrumentDetailScreenState extends State<InstrumentDetailScreen> {
                   ],
                 ),
                 IconButton(
+                  icon: const Icon(Icons.notifications_outlined),
+                  tooltip: l10n.alertBellTooltip,
+                  onPressed: () => AlertEditorSheet.show(context, card: _card),
+                ),
+                IconButton(
                   icon: state.phase == RefreshPhase.refreshing
                       ? const SizedBox(
                           width: 18,
@@ -131,83 +172,112 @@ class _InstrumentDetailScreenState extends State<InstrumentDetailScreen> {
             body: RefreshIndicator(
               onRefresh: () => cubit.refresh(instrument),
               child: ListView(
-                padding: const EdgeInsets.all(DS.spaceMD),
+                padding: const EdgeInsets.symmetric(horizontal: DS.spaceMD, vertical: DS.spaceSM),
                 children: [
-                  _CurrentPriceCard(presentation: presentation, change: windowChange, accent: accent),
-                  if (instrument.assetClass == AssetClass.metal) ...[
-                    const SizedBox(height: DS.spaceMD),
-                    _MetalBreakdownCard(presentation: presentation),
-                  ],
-                  const SizedBox(height: DS.spaceMD),
-                  DSCard(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Row(
-                          children: [
-                            Text(l10n.detailHistory, style: const TextStyle(color: DS.textPrimary, fontWeight: FontWeight.w700)),
-                            const Spacer(),
-                            TextButton(
-                              onPressed: state.isLoadingHistory ? null : _revealAllTime,
-                              child: state.isLoadingHistory
-                                  ? const SizedBox(
-                                      width: 14,
-                                      height: 14,
-                                      child: CircularProgressIndicator(strokeWidth: 2),
-                                    )
-                                  : Text(l10n.detailLoadHistory),
+                  // Open header — no card background, per spec: icon, name,
+                  // symbol/unit line, big price, change pill.
+                  Row(
+                    children: [
+                      InstrumentIcon(instrument: instrument, size: 40),
+                      const SizedBox(width: DS.spaceSM),
+                      Expanded(
+                        child: Text(
+                          '${presentation.symbol} · ${presentation.displayCurrency}'
+                          '${presentation.unitSuffix != null ? ' / ${displayLabel(context, presentation.unitSuffix!)}' : ''}',
+                          style: TextStyle(color: colors.textTertiary, fontSize: 13),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: DS.spaceSM),
+                  Text(
+                    presentation.latestPrice,
+                    style: TextStyle(color: colors.textPrimary, fontSize: 40, fontWeight: FontWeight.w800),
+                  ),
+                  const SizedBox(height: DS.spaceXS),
+                  Row(
+                    children: [
+                      if (windowChange != null)
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: DS.spaceSM, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: QimaColors.trendColor(windowChange.isUp, colors).withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(DS.radiusPill),
+                          ),
+                          child: Text(
+                            signedFigure('${(windowChange.percentValue * 100).toStringAsFixed(2)}%', isUp: windowChange.isUp),
+                            style: TextStyle(
+                              color: QimaColors.trendColor(windowChange.isUp, colors),
+                              fontWeight: FontWeight.w700,
+                              fontSize: 13,
                             ),
-                          ],
-                        ),
-                        const SizedBox(height: DS.spaceXS),
-                        SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: Row(
-                            children: [
-                              for (final range in availableRanges)
-                                Padding(
-                                  padding: const EdgeInsets.only(right: DS.spaceXS),
-                                  child: DSChoiceChip(
-                                    label: displayLabel(context, range.labelKey),
-                                    selected: effectiveRange == range,
-                                    onSelected: (_) => _select(range),
-                                    accent: accent,
-                                  ),
-                                ),
-                              if (!_showsExtendedRanges)
-                                Padding(
-                                  padding: const EdgeInsets.only(right: DS.spaceXS),
-                                  child: DSChoiceChip(
-                                    label: displayLabel(context, ChartRange.all.labelKey),
-                                    selected: false,
-                                    onSelected: (_) => _revealAllTime(),
-                                    accent: accent,
-                                  ),
-                                ),
-                            ],
                           ),
+                        )
+                      else if (!presentation.hasData)
+                        Text(l10n.pricePullToRefresh, style: TextStyle(color: colors.textTertiary, fontSize: 12)),
+                      const SizedBox(width: DS.spaceSM),
+                      Expanded(
+                        child: Text(
+                          lastQuoteTime == null
+                              ? ''
+                              : '${displayLabel(context, _range.labelKey)} · ${l10n.detailUpdatedAt(_timeOfDay(lastQuoteTime))}',
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(color: colors.textTertiary, fontSize: 12),
                         ),
-                        const SizedBox(height: DS.spaceSM),
-                        SizedBox(
-                          height: 240,
-                          child: KeyedSubtree(
-                            key: ValueKey(effectiveRange),
-                            child: _buildChart(context, presentation, effectiveRange, now, windowChange, accent, state),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: DS.spaceMD),
+                  AlertsCard(card: _card),
+                  const SizedBox(height: DS.spaceMD),
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        for (final range in _detailRanges)
+                          Padding(
+                            padding: const EdgeInsets.only(right: DS.spaceXS),
+                            child: DSChoiceChip(
+                              label: displayLabel(context, range.labelKey),
+                              selected: _range == range,
+                              onSelected: (_) => _select(range),
+                              accent: accent,
+                            ),
                           ),
-                        ),
                       ],
                     ),
                   ),
+                  const SizedBox(height: DS.spaceSM),
+                  SizedBox(
+                    height: 260,
+                    child: KeyedSubtree(
+                      key: ValueKey(_range),
+                      child: _buildChart(context, colors, presentation, _range, now, windowChange, accent, state),
+                    ),
+                  ),
                   const SizedBox(height: DS.spaceMD),
-                  HoldingsCard(instrument: instrument, displayCurrency: _card.currency),
+                  KeyStatsGrid(
+                    windowed: _range.filter(presentation.points, now),
+                    changePercent: windowChange?.percentValue,
+                    changeIsUp: windowChange?.isUp,
+                  ),
+                  if (instrument.assetClass == AssetClass.metal) ...[
+                    const SizedBox(height: DS.spaceMD),
+                    UnitPriceCarousel(rows: presentation.metalBreakdown),
+                  ],
                   const SizedBox(height: DS.spaceMD),
-                  _StatsRow(presentation: presentation, range: effectiveRange, now: now, change: windowChange),
+                  HoldingsCard(
+                    instrument: instrument,
+                    displayCurrency: _card.currency,
+                    refUnit: _card.unit,
+                    refKarat: _card.karat,
+                  ),
                   if (state.phase == RefreshPhase.failed && state.errorMessage != null) ...[
                     const SizedBox(height: DS.spaceMD),
                     DSCard(
                       child: Text(
                         displayLabel(context, state.errorMessage!),
-                        style: const TextStyle(color: DS.down),
+                        style: TextStyle(color: colors.down),
                       ),
                     ),
                   ],
@@ -220,8 +290,11 @@ class _InstrumentDetailScreenState extends State<InstrumentDetailScreen> {
     );
   }
 
+  String _timeOfDay(DateTime time) => '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
+
   Widget _buildChart(
     BuildContext context,
+    QimaColors colors,
     InstrumentPresentation presentation,
     ChartRange range,
     DateTime now,
@@ -239,13 +312,11 @@ class _InstrumentDetailScreenState extends State<InstrumentDetailScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.show_chart, color: DS.textTertiary, size: 32),
+            Icon(Icons.show_chart, color: colors.textTertiary, size: 32),
             const SizedBox(height: DS.spaceSM),
-            Text(l10n.detailNoHistoryTitle, style: const TextStyle(color: DS.textSecondary)),
+            Text(l10n.detailNoHistoryTitle, style: TextStyle(color: colors.textSecondary)),
             const SizedBox(height: 2),
-            Text(l10n.detailNoHistoryMessage, style: const TextStyle(color: DS.textTertiary, fontSize: 12)),
-            const SizedBox(height: DS.spaceXS),
-            TextButton(onPressed: _revealAllTime, child: Text(l10n.detailLoadHistory)),
+            Text(l10n.detailNoHistoryMessage, style: TextStyle(color: colors.textTertiary, fontSize: 12)),
           ],
         ),
       );
@@ -253,162 +324,9 @@ class _InstrumentDetailScreenState extends State<InstrumentDetailScreen> {
     return PriceChartView(
       points: windowed,
       isTrendingUp: windowChange?.isUp ?? presentation.isTrendingUp,
-      accent: DS.trendColor(windowChange?.isUp ?? presentation.isTrendingUp),
+      accent: QimaColors.trendColor(windowChange?.isUp ?? presentation.isTrendingUp, colors),
       isInteractive: true,
       currencyCode: presentation.displayCurrency,
-    );
-  }
-}
-
-class _CurrentPriceCard extends StatelessWidget {
-  final InstrumentPresentation presentation;
-  final RangeChange? change;
-  final Color accent;
-
-  const _CurrentPriceCard({required this.presentation, required this.change, required this.accent});
-
-  @override
-  Widget build(BuildContext context) {
-    final now = DateTime.now();
-    return DSHeroCard(
-      accent: accent,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              InstrumentIcon(instrument: presentation.instrument, size: 36),
-              const SizedBox(width: DS.spaceSM),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(displayLabel(context, presentation.instrument.nameKey),
-                        style: const TextStyle(color: DS.textPrimary, fontWeight: FontWeight.w700)),
-                    Text(presentation.symbol, style: const TextStyle(color: DS.textTertiary, fontSize: 12)),
-                  ],
-                ),
-              ),
-              if (presentation.hasData)
-                Text(
-                  '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}',
-                  style: const TextStyle(color: DS.textTertiary, fontSize: 12),
-                ),
-            ],
-          ),
-          const SizedBox(height: DS.spaceMD),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                presentation.latestPrice,
-                style: const TextStyle(color: DS.textPrimary, fontSize: 38, fontWeight: FontWeight.w800),
-              ),
-              if (presentation.unitSuffix != null)
-                Padding(
-                  padding: const EdgeInsets.only(left: 6, bottom: 6),
-                  child: Text('/ ${displayLabel(context, presentation.unitSuffix!)}',
-                      style: const TextStyle(color: DS.textTertiary, fontSize: 14)),
-                ),
-              if (presentation.karatLabel != null)
-                Padding(
-                  padding: const EdgeInsets.only(left: 6, bottom: 6),
-                  child: Text(displayLabel(context, presentation.karatLabel!),
-                      style: const TextStyle(color: DS.textSecondary, fontSize: 14)),
-                ),
-            ],
-          ),
-          const SizedBox(height: DS.spaceSM),
-          if (change != null)
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: DS.spaceSM, vertical: 4),
-              decoration: BoxDecoration(
-                color: DS.trendColor(change!.isUp).withValues(alpha: 0.15),
-                borderRadius: BorderRadius.circular(DS.radiusPill),
-              ),
-              child: Text(
-                signedFigure('${(change!.percentValue * 100).toStringAsFixed(2)}%', isUp: change!.isUp),
-                style: TextStyle(color: DS.trendColor(change!.isUp), fontWeight: FontWeight.w700, fontSize: 13),
-              ),
-            )
-          else if (!presentation.hasData)
-            Text(AppLocalizations.of(context)!.pricePullToRefresh, style: const TextStyle(color: DS.textTertiary, fontSize: 12)),
-        ],
-      ),
-    );
-  }
-}
-
-class _MetalBreakdownCard extends StatelessWidget {
-  final InstrumentPresentation presentation;
-
-  const _MetalBreakdownCard({required this.presentation});
-
-  @override
-  Widget build(BuildContext context) {
-    final rows = presentation.metalBreakdown;
-    if (rows.isEmpty) return const SizedBox.shrink();
-    return DSCard(
-      // Fixed tile height: an aspect ratio made tiles balloon on tablets.
-      child: GridView(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          mainAxisExtent: 66,
-          mainAxisSpacing: DS.spaceXS,
-          crossAxisSpacing: DS.spaceXS,
-        ),
-        children: [
-          for (final row in rows)
-            DSTile(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(displayLabel(context, row.label), style: const TextStyle(color: DS.textTertiary, fontSize: 11)),
-                  const SizedBox(height: 2),
-                  Text(row.value, style: const TextStyle(color: DS.textPrimary, fontWeight: FontWeight.w700)),
-                ],
-              ),
-            ),
-        ],
-      ),
-    );
-  }
-}
-
-class _StatsRow extends StatelessWidget {
-  final InstrumentPresentation presentation;
-  final ChartRange range;
-  final DateTime now;
-  final RangeChange? change;
-
-  const _StatsRow({required this.presentation, required this.range, required this.now, required this.change});
-
-  @override
-  Widget build(BuildContext context) {
-    final windowed = range.filter(presentation.points, now);
-    final high = windowed.isEmpty ? null : windowed.map((p) => p.value).reduce((a, b) => a > b ? a : b);
-    final low = windowed.isEmpty ? null : windowed.map((p) => p.value).reduce((a, b) => a < b ? a : b);
-    final l10n = AppLocalizations.of(context)!;
-
-    return Row(
-      children: [
-        Expanded(
-          child: StatPill(
-            title: l10n.statChange,
-            value: change == null ? '—' : signedFigure('${(change!.percentValue * 100).toStringAsFixed(2)}%', isUp: change!.isUp),
-            tint: change == null ? null : DS.trendColor(change!.isUp),
-          ),
-        ),
-        const SizedBox(width: DS.spaceXS),
-        Expanded(child: StatPill(title: l10n.statHigh, value: high?.toStringAsFixed(2) ?? '—')),
-        const SizedBox(width: DS.spaceXS),
-        Expanded(child: StatPill(title: l10n.statLow, value: low?.toStringAsFixed(2) ?? '—')),
-        const SizedBox(width: DS.spaceXS),
-        Expanded(child: StatPill(title: l10n.statPoints, value: '${windowed.length}')),
-      ],
     );
   }
 }

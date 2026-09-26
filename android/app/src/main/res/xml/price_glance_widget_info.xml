@@ -8,5 +8,7 @@
     android:resizeMode="horizontal|vertical"
     android:widgetCategory="home_screen"
     android:updatePeriodMillis="1800000"
+    android:configure="com.devlabtechnologies.qima.widget.PriceConfigActivity"
+    android:widgetFeatures="reconfigurable|configuration_optional"
     android:description="@string/price_widget_description">
 </appwidget-provider>

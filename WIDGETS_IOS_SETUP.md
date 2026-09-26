@@ -1,78 +1,105 @@
-# Finishing the iOS/macOS home-screen widgets
+# Home-screen widgets
 
-Android's Price and Portfolio widgets are fully implemented (Jetpack Glance,
-see `android/app/src/main/kotlin/com/devlabtechnologies/qima/widget/`) and
-build cleanly today. iOS/macOS need a WidgetKit extension, which is a native
-Xcode target — something a Flutter CLI/agent can't safely scaffold blind
-(it needs Xcode's own target-creation flow, an App Group entitlement, and a
-provisioning profile tied to a real Apple Developer team). This doc is the
-checklist to finish it by hand.
+## iOS (WidgetKit)
 
-## What's already done (Flutter side)
+The `QimaWidgetExtension` target (`ios/QimaWidget/`, iOS 17+) ships three
+widgets, each configured per placed instance with an App Intent:
 
-`lib/services/home_widget_service.dart` writes two JSON blobs via the
-`home_widget` package after every successful refresh:
-
-| Key | Written when | Shape |
+| Widget | Sizes | Settings |
 |---|---|---|
-| `price_widget_data` | always | `{available, symbol, currency, price, compactPrice, unitSuffix, karatLabel, changePercent, isUp, hasChange, sparkline: [double], accentColor: int (ARGB32), updatedAtMillis}` or `{available: false}` |
-| `portfolio_widget_data` | always | `{available, currency, value, cost, gain, percent, isUp, updatedAtMillis}` or `{available: false}` |
+| Price (`PriceWidget`) | small, medium, lock-screen inline / circular / rectangular | asset (a watchlist card or another priced instrument), unit, karat, currency, chart range |
+| Portfolio (`PortfolioWidget`) | small, medium, large, lock-screen rectangular | currency, chart range |
+| Watchlist (`WatchlistWidget`) | small (3 rows), medium (3), large (7) | assets (all watchlist cards in order, or up to 3/7 picked), chart range, currency |
 
-Today every placed widget instance shows the same thing: the price widget
-mirrors the *first* watchlist card, the portfolio widget mirrors the base
-currency. Per-instance configuration (picking an instrument/currency/unit/
-range per widget, per spec §5.1) is a later enhancement — see "Next steps"
-below.
+"Automatic" unit, karat and currency follow the picked watchlist card (or the
+base currency for an instrument without a card).
 
-`HomeWidget.updateWidget(...)` is called with `iOSName: 'PriceWidget'` /
-`'PortfolioWidget'` after each write — these must match the WidgetKit kind
-strings you create below.
+### Data flow
 
-## Steps in Xcode
+The extension never fetches anything. After every widget-relevant state
+change and every background refresh the app writes one JSON snapshot
+(`lib/services/widget_snapshot.dart`) to the App Group
+`group.com.devlabtechnologies.qima` under `widget_snapshot`, then reloads the
+`PriceWidget` / `PortfolioWidget` timelines
+(`lib/services/home_widget_service.dart`). The snapshot holds canonical-USD
+series per instrument and range, live FX rates and FX history; the extension
+(`ios/QimaWidget/Snapshot.swift`) applies the app's own conversion rules, so
+any unit/karat/currency combination prices exactly as it does in the app.
 
-1. **Add an App Group.** In `ios/Runner.xcworkspace` (and separately for
-   `macos/Runner.xcworkspace`), select the Runner target → Signing &
-   Capabilities → `+ Capability` → App Groups → add
-   `group.com.devlabtechnologies.qima` (matches the bundle id already used
-   by `pubspec.yaml`'s `com.devlabtechnologies` org). Repeat for the widget
-   extension target once it exists (step 2) — both must share the same
-   group id, since that's how `home_widget` hands data from the Flutter
-   process to the extension process.
-2. **File → New → Target → Widget Extension**, name it `QimaWidget`, uncheck
-   "Include Configuration Intent" for a first pass (add it back for
-   per-instance config later). Do this once for iOS, once for macOS (or a
-   multiplatform target if your Xcode version supports it).
-3. In the generated `QimaWidget.swift`, define two `Widget`s with `kind:
-   "PriceWidget"` and `kind: "PortfolioWidget"` respectively (a
-   `WidgetBundle` hosts both from one extension). Read data via
-   `UserDefaults(suiteName: "group.com.devlabtechnologies.qima")`, keys
-   `price_widget_data` / `portfolio_widget_data` (the `home_widget` plugin
-   writes JSON strings under these exact keys in the shared group's
-   defaults) — `JSONSerialization` the string back into a dictionary and
-   render it. Reference `qima_spec.md` §5.1/§5.2 (or the original Swift
-   app's `Widget/` target at `/Users/elkhayyat/Dev/Qima/Widget/` if still
-   present) for layout fidelity — small/medium sizes at minimum.
-4. Add the App Group's container URL entitlement to both the widget
-   extension's and the Runner target's entitlements files (mirrors
-   `com.apple.security.application-groups` — same pattern the original
-   Swift app used in `AppGroup.swift`).
-5. Build & run once with the widget target selected as the scheme to catch
-   entitlement/provisioning errors before wiring it back into the main
-   Runner scheme's build.
-6. Long-press the iOS/macOS home screen or Notification Center → add the
-   Qima widget → confirm it shows live data after the app has run at least
-   once (the extension only reads what the app last wrote — it never
-   fetches network data itself, matching the original app's `reloadsWidgets:
-   false` design so the extension never triggers its own refresh cycle).
+Bump `WidgetSnapshot.schemaVersion` and `Snapshot.supportedVersion` together
+whenever the shape changes.
 
-## Next steps (not required to ship a first working widget)
+### Strings
 
-- Per-instance configuration: add `AppIntentConfiguration` (iOS 17+/macOS
-  14+, matching this app's deployment target) with an `InstrumentEntity`
-  picker, mirroring spec §5.3. Requires the Flutter side to key its writes
-  by widget id instead of a single shared blob — a real (if contained)
-  follow-up change to `home_widget_service.dart`.
-- Widget refresh interval (`Preferences.widgetRefreshInterval`) currently
-  only affects how *often the Flutter app itself* re-publishes; the
-  WidgetKit `TimelineProvider`'s own `.after(...)` reload policy should be
-  set from the same value once the extension exists.
+`ios/QimaWidget/<lang>.lproj/Localizable.strings` is generated: asset, unit,
+karat and range names come from the app's ARB files, widget-only phrases
+from `tool/widget_strings.json`. Regenerate after changing either:
+
+```sh
+python3 tool/generate_widget_strings.py
+```
+
+### Signing
+
+Bundle ID `com.devlabtechnologies.qima.widget`, App Group as above. Release
+builds sign it with the `IOS_WIDGET_PROVISION_PROFILE_BASE64` profile (see
+`docs/store-release.md`).
+
+## Android (Glance)
+
+`android/app/src/main/kotlin/com/devlabtechnologies/qima/widget/` has the
+same two widgets as iOS, each configured per placed instance:
+
+| Widget | Settings |
+|---|---|
+| Price (`PriceGlanceWidget`) | asset (a watchlist card or another priced instrument), unit, karat, currency, chart range |
+| Portfolio (`PortfolioGlanceWidget`) | currency, chart range |
+
+Placing a widget without visiting the configuration screen (some launchers
+skip it) falls back to the same defaults as iOS: the first watchlist card's
+own settings for Price, the base currency for Portfolio, 1 month / all time
+respectively (`PriceWidgetIntent` / `PortfolioWidgetIntent`'s own
+defaults).
+
+### Data flow
+
+Both widgets read the SAME `WidgetSnapshot` iOS does, written by
+`lib/services/home_widget_service.dart` via the `home_widget` plugin to its
+own SharedPreferences file. `widget/Snapshot.kt` is a Kotlin port of
+`ios/QimaWidget/Snapshot.swift` (rate lookup, `PriceUnit` multipliers,
+`ChartWindow`, `Change`); `widget/PriceModel.kt` / `widget/PortfolioModel.kt`
+port `PriceModel.resolve` / `PortfolioModel.resolve` from the Swift widgets
+so both platforms price a configuration identically. Keep the three
+snapshot consumers (Dart, Swift, Kotlin) in lockstep by hand when the shape
+changes — there's no shared native layer between iOS and Android.
+
+### Configuration
+
+`PriceConfigActivity` / `PortfolioConfigActivity` are native Compose
+Material 3 Activities, wired up via `android:configure` and
+`android:widgetFeatures="reconfigurable|configuration_optional"` in
+`res/xml/price_glance_widget_info.xml` / `portfolio_glance_widget_info.xml`.
+They store one config per `appWidgetId` in their own SharedPreferences file
+(`widget/WidgetConfigStore.kt`), cleaned up in the receivers' `onDeleted`.
+Long-press → widget settings reopens the same screen on Android 12+.
+
+### Strings
+
+Android's `res/values*/widget_generated_strings.xml` is generated by the
+same `tool/generate_widget_strings.py` that writes iOS's
+`Localizable.strings`, from the same two sources (the app's ARB files and
+`tool/widget_strings.json`), so the two platforms never drift. Regenerate
+after changing either source (see the iOS section above). Strings looked up
+by name at runtime (`WidgetStrings.kt`) are kept from release resource
+shrinking by `res/raw/keep.xml`.
+
+## macOS
+
+`QimaWidgetExtension` in `macos/Runner.xcodeproj` (macOS 14+) compiles the
+same Swift sources, strings and fonts as iOS (the `Shared` group points at
+`ios/QimaWidget`), with the small, medium and large families. `home_widget`
+has no macOS implementation, so the Mac runner's `WidgetBridgePlugin`
+writes the snapshot to the team-prefixed App Group
+`ZS3A435WC2.com.devlabtechnologies.qima` and reloads the timelines. The App
+Group (like iCloud) is only in `AppStore.entitlements`, so Mac widgets work
+in App Store / TestFlight builds, not in the direct-download zip.

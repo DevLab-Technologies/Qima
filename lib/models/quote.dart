@@ -72,12 +72,29 @@ class QuoteSeries extends Equatable {
   bool get isTrendingUp => absoluteChangeUSD >= 0;
 
   /// Appends a live quote, de-duping any existing quote in the same
-  /// device-local calendar minute (newest wins), keeping at most [limit]
-  /// most-recent samples.
-  QuoteSeries appending(Quote quote, {int limit = 2000}) {
-    final key = _minuteKey(quote.timestamp);
-    final merged = quotes.where((q) => _minuteKey(q.timestamp) != key).toList()..add(quote);
-    merged.sort((a, b) => a.timestamp.compareTo(b.timestamp));
+  /// device-local calendar minute (newest wins). Samples older than 2 days
+  /// are first collapsed to one point per calendar day (the same approach
+  /// [merging] uses for backfilled history) so that a long-running foreground
+  /// refresh — which only ever calls this method — can't slowly evict years
+  /// of daily history by filling [limit] with recent one-minute samples.
+  /// Keeps at most [limit] most-recent samples after collapsing.
+  QuoteSeries appending(Quote quote, {int limit = 2000, DateTime? now}) {
+    final effectiveNow = now ?? quote.timestamp;
+    final intradayCutoff = effectiveNow.subtract(const Duration(days: 2));
+    String keyFor(Quote q) => q.timestamp.isBefore(intradayCutoff) ? _dayKey(q.timestamp) : _minuteKey(q.timestamp);
+
+    // Same collision rule as [merging]: the sample with the greatest
+    // timestamp wins any bucket collision (ties broken arbitrarily, since
+    // the values are then identical for tie purposes).
+    final byKey = <String, Quote>{};
+    for (final q in [...quotes, quote]) {
+      final key = keyFor(q);
+      final existing = byKey[key];
+      if (existing == null || q.timestamp.isAfter(existing.timestamp)) {
+        byKey[key] = q;
+      }
+    }
+    final merged = byKey.values.toList()..sort((a, b) => a.timestamp.compareTo(b.timestamp));
     final trimmed = merged.length > limit ? merged.sublist(merged.length - limit) : merged;
     return QuoteSeries(instrumentID: instrumentID, quotes: trimmed);
   }

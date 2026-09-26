@@ -12,7 +12,7 @@ UNA SOLA CARTERA
 
 PRIVADA POR DISEÑO
 • Sin cuenta, sin registro, sin inicio de sesión.
-• Tus posiciones se quedan en tu teléfono y nunca se suben.
+• Tus posiciones se quedan en tus dispositivos y en tu iCloud privado, nunca en nuestros servidores.
 • Sin anuncios, sin analíticas, sin rastreo.
 
 Gratis: sin suscripción ni compras dentro de la app.

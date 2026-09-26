@@ -5,6 +5,7 @@ enum ChartRange {
   day1,
   day3,
   day7,
+  week1,
   month1,
   month3,
   month6,
@@ -21,6 +22,8 @@ enum ChartRange {
         return 'range.3D';
       case ChartRange.day7:
         return 'range.7D';
+      case ChartRange.week1:
+        return 'range.1W';
       case ChartRange.month1:
         return 'range.1M';
       case ChartRange.month3:
@@ -53,6 +56,20 @@ enum ChartRange {
   /// Ranges only shown after an explicit user action ("load history").
   static const List<ChartRange> extended = [ChartRange.year5, ChartRange.all];
 
+  /// Ranges offered by the watchlist's portfolio hero chart (spec §v2-A):
+  /// 1W/1M/3M/1Y/All, always available regardless of history depth since the
+  /// portfolio series is computed on the fly rather than gated behind a
+  /// "load history" action.
+  static const List<ChartRange> portfolioSelectable = [
+    ChartRange.week1,
+    ChartRange.month1,
+    ChartRange.month3,
+    ChartRange.year1,
+    ChartRange.all,
+  ];
+
+  static const ChartRange portfolioDefault = ChartRange.all;
+
   bool get isExtended => extended.contains(this);
 
   static const ChartRange fallbackDefault = ChartRange.month3;
@@ -66,6 +83,8 @@ enum ChartRange {
       case ChartRange.day3:
         return now.subtract(const Duration(days: 3));
       case ChartRange.day7:
+        return now.subtract(const Duration(days: 7));
+      case ChartRange.week1:
         return now.subtract(const Duration(days: 7));
       case ChartRange.month1:
         return _subtractMonths(now, 1);

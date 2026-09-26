@@ -21,10 +21,53 @@ def require_play_json_key!
   json_key_data
 end
 
-# Play requires versionCode to strictly increase across all tracks. Asking Play
-# for the highest one in use is robust against manual Console uploads, which a
-# CI counter (like github.run_number) cannot see.
-def next_version_code(json_key_data)
+REPO_ROOT = File.expand_path("../..", __dir__)
+
+# pubspec.yaml's `version: <name>+<build>` is the single source of truth for
+# the version on every platform, and the build number restarts at 1 for each
+# new version name (2.1.1+1, 2.1.1+2, then 2.1.2+1). QIMA_BUILD_NUMBER
+# overrides the build: ship.yml passes the next free build for each push to
+# develop, so testers get new builds without anyone editing pubspec.yaml.
+# Returns [name, build].
+def pubspec_version!
+  pubspec = File.read(File.join(REPO_ROOT, "pubspec.yaml"))
+  match = pubspec.match(/^version:\s*(\d+\.\d+\.\d+)\+(\d+)\s*$/)
+  UI.user_error!("pubspec.yaml's version must look like 2.1.1+1.") unless match
+  override = ENV["QIMA_BUILD_NUMBER"].to_s.strip
+  [match[1], override.empty? ? match[2].to_i : Integer(override, 10)]
+end
+
+# Play's versionCode must strictly increase across ALL versions, so unlike
+# Apple's build number it can't restart at 1. It's derived from the version
+# and build instead - MAJOR, then MINOR, PATCH and BUILD at two digits each:
+# 2.1.1+1 -> 2010101 - so it always sorts after every earlier version's
+# builds while the visible build number still restarts per version.
+def version_code_for(version, build)
+  major, minor, patch = version.split(".").map(&:to_i)
+  unless minor < 100 && patch < 100 && build.between?(1, 99)
+    UI.user_error!("#{version}+#{build} doesn't fit the versionCode scheme (minor, patch and build must be below 100; build at least 1).")
+  end
+  major * 1_000_000 + minor * 10_000 + patch * 100 + build
+end
+
+# Each locale's release notes open with the version they describe ("Qima
+# 2.1.1" / "قيمة 2.1.1"), so a new version can't ship with the last one's
+# notes by accident: check before spending a build on it.
+def ensure_release_notes_for!(version)
+  notes = Dir.glob(File.expand_path("metadata/android/*/changelogs/default.txt", __dir__))
+  UI.user_error!("No release notes under metadata/android/*/changelogs/default.txt.") if notes.empty?
+  stale = notes.reject { |path| File.foreach(path).first.to_s.include?(version) }
+  return if stale.empty?
+
+  UI.user_error!(
+    "Release notes don't mention #{version} yet - update these for this version:\n" +
+    stale.map { |path| "  #{path.delete_prefix(REPO_ROOT + '/')}" }.join("\n")
+  )
+end
+
+# The highest versionCode already on any Play track. Asking Play is robust
+# against manual Console uploads, which nothing in CI can see.
+def highest_version_code(json_key_data)
   used_codes = PLAY_TRACKS.flat_map do |track|
     google_play_track_version_codes(
       package_name: PACKAGE_NAME,
@@ -36,20 +79,43 @@ def next_version_code(json_key_data)
     UI.message("No version codes on track '#{track}' (#{e.message.lines.first&.strip}).")
     []
   end
-
-  next_code = (used_codes.map(&:to_i).max || 0) + 1
-  UI.message("Highest versionCode on Play: #{used_codes.max || 'none'} -> using #{next_code}.")
-  next_code
+  used_codes.map(&:to_i).max || 0
 end
 
 # Builds the signed release App Bundle. Signing comes from the QIMA_KEYSTORE_*
 # environment variables read by android/app/build.gradle.kts.
 def build_release_aab!(build_number)
-  Dir.chdir(File.expand_path("../..", __dir__)) do
+  Dir.chdir(REPO_ROOT) do
     sh("flutter", "build", "appbundle", "--release", "--build-number=#{build_number}")
   end
   UI.user_error!("No App Bundle at #{AAB_PATH} after flutter build appbundle.") unless File.exist?(AAB_PATH)
   verify_release_signature!
+  verify_release_permissions!
+  verify_release_resources!
+end
+
+# Flutter adds INTERNET only to debug/profile manifests, so a release build
+# that loses the declaration still runs fine in development but can't load a
+# single price. Checks the merged manifest inside the bundle itself.
+REQUIRED_PERMISSIONS = %w[android.permission.INTERNET].freeze
+
+def verify_release_permissions!
+  manifest = sh("unzip -p #{AAB_PATH.shellescape} base/manifest/AndroidManifest.xml", log: false)
+  missing = REQUIRED_PERMISSIONS.reject { |permission| manifest.include?(permission) }
+  UI.user_error!("App Bundle manifest is missing: #{missing.join(', ')}.") unless missing.empty?
+  UI.success("App Bundle declares #{REQUIRED_PERMISSIONS.join(', ')}.")
+end
+
+# Resources looked up by name at runtime, which resource shrinking can't see
+# (kept via res/raw/keep.xml). Without the notification icon, notification
+# setup fails on every launch.
+REQUIRED_RESOURCES = %w[base/res/drawable/ic_notification.xml].freeze
+
+def verify_release_resources!
+  entries = sh("unzip -Z1 #{AAB_PATH.shellescape}", log: false).lines.map(&:strip)
+  missing = REQUIRED_RESOURCES - entries
+  UI.user_error!("App Bundle is missing resources: #{missing.join(', ')}.") unless missing.empty?
+  UI.success("App Bundle keeps #{REQUIRED_RESOURCES.join(', ')}.")
 end
 
 # build.gradle.kts falls back to the debug key when signing material is
@@ -74,10 +140,19 @@ platform :android do
   desc "Build the signed release App Bundle and upload it to the Play internal track."
   lane :internal do
     json_key_data = require_play_json_key!
-    # Authenticate up front: next_version_code tolerates per-track lookup
+    # Authenticate up front: highest_version_code tolerates per-track lookup
     # errors, so a bad key must not be mistaken for "no releases yet".
     validate_play_store_json_key(json_key_data: json_key_data)
-    version_code = next_version_code(json_key_data)
+    version, build = pubspec_version!
+    ensure_release_notes_for!(version)
+    version_code = version_code_for(version, build)
+    highest = highest_version_code(json_key_data)
+    if version_code <= highest
+      UI.user_error!(
+        "versionCode #{version_code} (#{version}+#{build}) is not above #{highest}, the highest already on Play. " \
+        "Bump the +build in pubspec.yaml and push a new tag."
+      )
+    end
 
     build_release_aab!(version_code)
 
@@ -93,18 +168,49 @@ platform :android do
       # CI passes an unset repository variable as "", so treat blank as unset.
       release_status: ENV["PLAY_RELEASE_STATUS"].to_s.strip.empty? ? "draft" : ENV["PLAY_RELEASE_STATUS"],
       skip_upload_apk: true,
+      # The release carries its "What's new" text from
+      # metadata/android/<locale>/changelogs/default.txt (update it with each
+      # version); the store listing itself only changes via the metadata lane.
+      metadata_path: File.expand_path("metadata/android", __dir__),
+      skip_upload_metadata: true,
+      skip_upload_changelogs: false,
+      skip_upload_images: true,
+      skip_upload_screenshots: true
+    )
+
+    UI.success("Uploaded #{version} build #{build} (versionCode #{version_code}) to the Play internal track.")
+  end
+
+  desc "Promote the tested internal-testing build (pubspec version, QIMA_BUILD_NUMBER) to production. Uploads nothing new."
+  lane :production do
+    json_key_data = require_play_json_key!
+    validate_play_store_json_key(json_key_data: json_key_data)
+    version, build = pubspec_version!
+    version_code = version_code_for(version, build)
+    # Same rule as uploads: an app never published only accepts drafts.
+    status = ENV["PLAY_RELEASE_STATUS"].to_s.strip.empty? ? "draft" : ENV["PLAY_RELEASE_STATUS"]
+
+    upload_to_play_store(
+      package_name: PACKAGE_NAME,
+      track: "internal",
+      track_promote_to: "production",
+      version_code: version_code,
+      track_promote_release_status: status,
+      json_key_data: json_key_data,
+      skip_upload_aab: true,
+      skip_upload_apk: true,
       skip_upload_metadata: true,
       skip_upload_changelogs: true,
       skip_upload_images: true,
       skip_upload_screenshots: true
     )
 
-    UI.success("Uploaded versionCode #{version_code} to the Play internal track.")
+    UI.success("Promoted #{version} build #{build} (versionCode #{version_code}) to production (#{status}).")
   end
 
   desc "Build and verify the signed release App Bundle WITHOUT uploading. Used for workflow_dispatch validation runs."
   lane :build_only do
-    build_release_aab!(ENV["QIMA_BUILD_NUMBER"] || "1")
+    build_release_aab!(version_code_for(*pubspec_version!))
     UI.success("Built and verified the signed App Bundle without uploading (build_only lane).")
   end
 

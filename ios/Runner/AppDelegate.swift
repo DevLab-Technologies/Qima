@@ -1,5 +1,6 @@
 import Flutter
 import UIKit
+import workmanager_apple
 
 @main
 @objc class AppDelegate: FlutterAppDelegate, FlutterImplicitEngineDelegate {
@@ -7,10 +8,44 @@ import UIKit
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
+    // BGTaskScheduler requires every launch handler to be (re-)registered
+    // before this method returns, or a cold relaunch the OS uses to deliver
+    // a previously-scheduled background task crashes with "All launch
+    // handlers must be registered before application finishes launching".
+    //
+    // Under this app's UIScene/implicit-engine setup (see
+    // `didInitializeImplicitFlutterEngine` below), `GeneratedPluginRegistrant`
+    // — and therefore `WorkmanagerPlugin`'s own application-delegate hook
+    // that normally does this automatically — doesn't run until AFTER
+    // `didFinishLaunchingWithOptions` returns (Flutter defers plugin
+    // registration to `scene:willConnectToSession:` under UIScene). That is
+    // too late for BGTaskScheduler, so this calls the plugin's public,
+    // early-registration entry point directly instead, exactly as Flutter's
+    // own UIScene migration guide recommends for plugins with a
+    // must-run-before-launch-completes API. See the Phase 5 implementation
+    // report for the full chain of reasoning.
+    WorkmanagerPlugin.registerLaunchHandlers()
+    // `registerLaunchHandlers()` only restores identifiers persisted by an
+    // earlier session, so on a fresh install the refresh task had no
+    // handler, and the first `registerPeriodicTask` from Dart (made when
+    // alerts or notifications are turned on) hit BGTaskScheduler's
+    // "submitted without a registered launch handler" assertion and
+    // aborted. Register the one identifier the app schedules
+    // (`BackgroundRefresh.uniqueName`, listed in Info.plist's
+    // BGTaskSchedulerPermittedIdentifiers) up front, every launch.
+    WorkmanagerPlugin.registerPeriodicTask(
+      withIdentifier: "com.devlabtechnologies.qima.refresh",
+      earliestBeginInSeconds: NSNumber(value: 15 * 60)
+    )
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 
   func didInitializeImplicitFlutterEngine(_ engineBridge: FlutterImplicitEngineBridge) {
     GeneratedPluginRegistrant.register(with: engineBridge.pluginRegistry)
+    // `CloudKVPlugin` and `SystemSettingsPlugin` live directly in this target (not pub
+    // packages), so `GeneratedPluginRegistrant` never picks them up — they have to
+    // be registered by hand, same as any other app-target-local plugin.
+    CloudKVPlugin.register(with: engineBridge.pluginRegistry.registrar(forPlugin: "CloudKVPlugin")!)
+    SystemSettingsPlugin.register(with: engineBridge.pluginRegistry.registrar(forPlugin: "SystemSettingsPlugin")!)
   }
 }

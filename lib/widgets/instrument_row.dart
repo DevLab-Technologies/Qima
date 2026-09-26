@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/instrument_presentation.dart';
 import '../theme/design_system.dart';
 import '../theme/price_chart.dart';
+import '../theme/qima_colors.dart';
 import '../theme/strings.dart';
 import 'instrument_icon.dart';
 
@@ -16,6 +17,7 @@ class InstrumentRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     final now = DateTime.now();
     final change = presentation.sparklineChange(now);
     final unitSuffix = presentation.unitSuffix != null ? ' ${displayLabel(context, presentation.unitSuffix!)}' : '';
@@ -36,13 +38,13 @@ class InstrumentRow extends StatelessWidget {
                 children: [
                   Text(
                     displayLabel(context, presentation.instrument.nameKey),
-                    style: const TextStyle(color: DS.textPrimary, fontSize: 15, fontWeight: FontWeight.w600),
+                    style: TextStyle(color: colors.textPrimary, fontSize: 15, fontWeight: FontWeight.w600),
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 2),
                   Text(
                     '${presentation.symbol} · ${presentation.displayCurrency}$unitSuffix$karat',
-                    style: const TextStyle(color: DS.textTertiary, fontSize: 12),
+                    style: TextStyle(color: colors.textTertiary, fontSize: 12),
                     overflow: TextOverflow.ellipsis,
                   ),
                 ],
@@ -56,7 +58,7 @@ class InstrumentRow extends StatelessWidget {
                   ? PriceChartView(
                       points: presentation.sparklinePoints(now),
                       isTrendingUp: change?.isUp ?? presentation.isTrendingUp,
-                      accent: DS.trendColor(change?.isUp ?? presentation.isTrendingUp),
+                      accent: QimaColors.trendColor(change?.isUp ?? presentation.isTrendingUp, colors),
                       showsAxes: false,
                       lineWidth: 1.5,
                     )
@@ -68,7 +70,7 @@ class InstrumentRow extends StatelessWidget {
               children: [
                 Text(
                   presentation.latestPrice,
-                  style: const TextStyle(color: DS.textPrimary, fontSize: 15, fontWeight: FontWeight.w700),
+                  style: TextStyle(color: colors.textPrimary, fontSize: 15, fontWeight: FontWeight.w700),
                 ),
                 const SizedBox(height: 2),
                 if (change != null)
@@ -77,17 +79,18 @@ class InstrumentRow extends StatelessWidget {
                     children: [
                       Icon(
                         change.isUp ? Icons.arrow_drop_up : Icons.arrow_drop_down,
-                        color: DS.trendColor(change.isUp),
+                        color: QimaColors.trendColor(change.isUp, colors),
                         size: 16,
                       ),
                       Text(
                         '${(change.percentValue.abs() * 100).toStringAsFixed(2)}%',
-                        style: TextStyle(color: DS.trendColor(change.isUp), fontSize: 12, fontWeight: FontWeight.w600),
+                        style: TextStyle(
+                            color: QimaColors.trendColor(change.isUp, colors), fontSize: 12, fontWeight: FontWeight.w600),
                       ),
                     ],
                   )
                 else
-                  const Text('—', style: TextStyle(color: DS.textTertiary, fontSize: 12)),
+                  Text('—', style: TextStyle(color: colors.textTertiary, fontSize: 12)),
               ],
             ),
           ],

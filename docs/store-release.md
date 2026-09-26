@@ -6,13 +6,22 @@ and upload. Making a build public is a manual step in each store console.
 | | iOS | Android |
 |---|---|---|
 | Workflow | `.github/workflows/testflight.yml` | `.github/workflows/play-store.yml` |
-| Trigger | push tag `ios-v<version>` | push tag `android-v<version>` |
+| Trigger | push to `develop` (testers) / `main` (App Review), via Ship | push to `develop` (internal testing) / `main` (production), via Ship |
 | Destination | TestFlight (internal testers) | Play **internal testing** track, as a draft |
-| Build number | GitHub run number | highest versionCode on Play + 1 |
+| Build number | the `+build` in `pubspec.yaml` | versionCode derived from it: `2.1.1+1` → `2010101` |
 | Manual dry run | Actions → TestFlight → Run workflow (builds and signs, no upload) | Actions → Play Store → Run workflow (builds and verifies, no upload) |
 
-`pubspec.yaml`'s `version:` is the source of truth for the version name. The
-tag must match it, or the workflow fails before building.
+`pubspec.yaml`'s `version: <name>+<build>` is the one source of truth for the
+version and build on every platform (iOS, macOS, Android, Windows, Linux). The
+build restarts at 1 for each new version: `2.1.1+1`, `2.1.1+2`, then `2.1.2+1`.
+The tag must match it exactly, or the workflow fails before building.
+
+- **Apple** accepts a build number again under a new version, so it restarts
+  at 1. The lanes check TestFlight first and fail with the next free number
+  if the build is already taken.
+- **Google Play** needs `versionCode` to rise across every version, so the
+  lane derives it: major, then minor, patch and build at two digits each
+  (`2.1.1+1` → `2010101`). Minor, patch and build must stay below 100.
 
 ## 1. One-time setup
 
@@ -28,8 +37,14 @@ tag must match it, or the workflow fails before building.
 3. **Distribution certificate**: Keychain Access → export the *Apple Distribution* certificate with its private key as `.p12`.
    - `IOS_DIST_CERT_BASE64`: `base64 -i dist.p12 | pbcopy`
    - `IOS_DIST_CERT_PASSWORD`: the export password
-4. **Provisioning profile**: developer.apple.com → Profiles → **+** → *App Store Connect*, for the bundle ID and certificate above.
-   - `IOS_PROVISION_PROFILE_BASE64`: `base64 -i Qima_AppStore.mobileprovision | pbcopy`
+4. **Provisioning profiles**: developer.apple.com → Profiles → **+** → *App Store Connect*, one per bundle ID, both with the certificate above. Both App IDs need the App Group `group.com.devlabtechnologies.qima`; the app's also needs iCloud (key-value storage).
+   - `IOS_PROVISION_PROFILE_BASE64`: the app, `com.devlabtechnologies.qima`: `base64 -i Qima_App_Store.mobileprovision | pbcopy`
+   - `IOS_WIDGET_PROVISION_PROFILE_BASE64`: the widget extension, `com.devlabtechnologies.qima.widget`: `base64 -i Qima_Widget_App_Store.mobileprovision | pbcopy`
+5. **macOS**: the Apple Distribution certificate above also signs the Mac app.
+   - `MAC_INSTALLER_CERT_BASE64` / `MAC_INSTALLER_CERT_PASSWORD`: a *Mac Installer Distribution* certificate exported with its private key as `.p12` (it signs the `.pkg`).
+   - `MACOS_PROVISION_PROFILE_BASE64`: a *Mac App Store Connect* profile for `com.devlabtechnologies.qima`: `base64 -i Qima_Mac_App_Store.provisionprofile | pbcopy`
+   - `MACOS_WIDGET_PROVISION_PROFILE_BASE64`: the same for the widget extension, `com.devlabtechnologies.qima.widget`: `base64 -i Qima_Widget_Mac_App_Store.provisionprofile | pbcopy`
+   - Upload with a `macos-v<version>+<build>` tag (`.github/workflows/testflight-macos.yml`).
 
 Check the key without uploading: `cd ios && ASC_KEY_ID=… ASC_ISSUER_ID=… ASC_KEY_CONTENT=… bundle exec fastlane ios preflight`.
 
@@ -48,20 +63,39 @@ Add all secrets under GitHub → Settings → Secrets and variables → Actions.
 
 ## 2. Ship a version
 
-```sh
-git checkout main && git pull
-V=$(grep -E '^version:' pubspec.yaml | awk '{print $2}' | cut -d+ -f1)   # e.g. 1.1.0
-git tag "ios-v$V" && git tag "android-v$V"
-git push origin "ios-v$V" "android-v$V"
-```
+Releasing is automatic (`.github/workflows/ship.yml`), in two stages:
 
-Then promote:
+| Branch | What a push does |
+|---|---|
+| `develop` | Builds the **next build of the current version** (`2.1.1+1`, `2.1.1+2`, …) and tags it `v2.1.1+N`. iOS and macOS go to TestFlight and Android to Play internal testing. The APK, macOS, Windows and Linux apps are attached to the run for testers. Nobody bumps the build number by hand. |
+| `main` | Releases the **last tested build** of that version, without rebuilding it for the stores. iOS and macOS are submitted for App Review, using the listing and screenshots from `ios/fastlane/metadata` and `ios/fastlane/screenshots`. Android is promoted from internal testing to production. The downloads go to the public GitHub Release under the build's tag. |
 
-- **Listing**: run the *Store listing* workflow once per release (see §3).
-- **iOS**: TestFlight → add internal testers → test. Then App Store → the version → select the build → *Add for Review*.
-- **Android**: Play Console → Testing → Internal testing → review the draft release → *Start rollout*. Then promote it to Production (or Closed testing first) → *Send for review*.
+So the day-to-day flow is:
+
+1. Work lands on `develop`, and testers get each build automatically.
+2. When a build is good, merge `develop` into `main`. That exact build goes out.
+3. For the next version, set `version: 2.1.2+1` in `pubspec.yaml` on `develop`
+   and update the Play release notes (below).
+
+Things to know:
+
+- **Approval is still manual:** once App Review approves, press *Release* in
+  App Store Connect.
+- **Released once:** a version is released only once. Pushes to `main` after
+  that do nothing until a build of a new version has been tested.
+- **No build number spent on listing-only pushes:** a push to `develop` that
+  changes only docs, store text or screenshots since the last build doesn't
+  use up a build number.
+- **Dry run:** Actions → Ship → Run workflow builds every platform without
+  uploading anything.
+- **One platform only:** push its own tag, e.g. `ios-v2.1.1+3`.
+
+After a release from `main`:
+
+- **iOS and macOS:** when App Review approves, press *Release* in App Store Connect.
+- **Android:** the production release starts as a draft while `PLAY_RELEASE_STATUS` is unset. That's required until the app has been published once. Review it in Play Console → *Send for review*.
   - A new personal developer account must run a closed test with at least 12 testers for 14 days before production access unlocks.
-  - Once the app is live, set the repository variable `PLAY_RELEASE_STATUS=completed` so internal uploads roll out without the manual step.
+  - Once the app is live, set the repository variable `PLAY_RELEASE_STATUS=completed`. Internal builds then reach testers straight away, and releases go to review without the manual step.
 
 ## 3. Store listing
 

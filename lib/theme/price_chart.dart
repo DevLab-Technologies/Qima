@@ -6,6 +6,7 @@ import '../models/money.dart';
 import '../services/chart_sampling.dart';
 import '../services/scrub_resolver.dart';
 import 'design_system.dart';
+import 'qima_colors.dart';
 
 // Re-exported so callers only need to import price_chart.dart for the
 // granularity/resolver types used alongside the chart.
@@ -27,6 +28,16 @@ class PriceChartView extends StatefulWidget {
   final bool isInteractive;
   final String? currencyCode;
 
+  /// Overrides the default up/down trend color (`context.colors.up`/`.down`)
+  /// for both the line and its area gradient. Null (the default) keeps
+  /// today's trend-colored behaviour.
+  final Color? lineColor;
+
+  /// Hides axis value labels and the scrub callout's price text (for the
+  /// upcoming Hide balances feature). The callout date and the chart shape
+  /// itself are unaffected. Defaults to false, matching current behaviour.
+  final bool maskValues;
+
   const PriceChartView({
     super.key,
     required this.points,
@@ -36,6 +47,8 @@ class PriceChartView extends StatefulWidget {
     this.lineWidth = 2.5,
     this.isInteractive = false,
     this.currencyCode,
+    this.lineColor,
+    this.maskValues = false,
   });
 
   @override
@@ -78,6 +91,7 @@ class _PriceChartViewState extends State<PriceChartView> {
     if (points.length < 2) {
       return const SizedBox.shrink();
     }
+    final colors = context.colors;
 
     final drawn = ChartSampling.thinned(points, maxDrawnPoints);
     final lo = points.map((p) => p.value).reduce((a, b) => a < b ? a : b);
@@ -111,8 +125,9 @@ class _PriceChartViewState extends State<PriceChartView> {
               drawnPoints: drawn,
               domainLo: domainLo,
               domainHi: domainHi,
-              color: widget.isTrendingUp ? DS.up : DS.down,
-              showsAxes: widget.showsAxes,
+              color: widget.lineColor ?? QimaColors.trendColor(widget.isTrendingUp, colors),
+              textTertiary: colors.textTertiary,
+              showsAxes: widget.showsAxes && !widget.maskValues,
               lineWidth: widget.lineWidth,
               granularity: granularity,
               scrubbed: _scrubbed,
@@ -135,9 +150,10 @@ class _PriceChartViewState extends State<PriceChartView> {
             child: IgnorePointer(
               child: _Callout(
                 point: _scrubbed!,
-                color: widget.isTrendingUp ? DS.up : DS.down,
+                color: widget.lineColor ?? QimaColors.trendColor(widget.isTrendingUp, colors),
                 granularity: granularity,
                 currencyCode: widget.currencyCode,
+                maskValue: widget.maskValues,
               ),
             ),
           ),
@@ -154,27 +170,32 @@ class _Callout extends StatelessWidget {
   final Color color;
   final AxisGranularity granularity;
   final String? currencyCode;
+  final bool maskValue;
 
   const _Callout({
     required this.point,
     required this.color,
     required this.granularity,
     required this.currencyCode,
+    this.maskValue = false,
   });
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     final dateText = calloutDateFormat(granularity).format(point.date);
-    final priceText = currencyCode != null
-        ? Money(point.value, currencyCode!).formatted()
-        : point.value.toStringAsFixed(2);
+    final priceText = maskValue
+        ? '••••'
+        : currencyCode != null
+            ? Money(point.value, currencyCode!).formatted()
+            : point.value.toStringAsFixed(2);
     return Align(
       alignment: Alignment.topLeft,
       child: Container(
         margin: const EdgeInsets.only(bottom: DS.spaceXS),
         padding: const EdgeInsets.symmetric(horizontal: DS.spaceSM, vertical: DS.spaceXS),
         decoration: BoxDecoration(
-          gradient: DS.tileFill,
+          gradient: DS.tileFill(colors),
           borderRadius: BorderRadius.circular(DS.radiusTile),
           border: Border.all(color: color.withValues(alpha: 0.35), width: 1),
         ),
@@ -182,10 +203,10 @@ class _Callout extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(dateText, style: const TextStyle(color: DS.textTertiary, fontSize: 11)),
+            Text(dateText, style: TextStyle(color: colors.textTertiary, fontSize: 11)),
             Text(
               priceText,
-              style: const TextStyle(color: DS.textPrimary, fontSize: 14, fontWeight: FontWeight.w700),
+              style: TextStyle(color: colors.textPrimary, fontSize: 14, fontWeight: FontWeight.w700),
             ),
           ],
         ),
@@ -221,6 +242,10 @@ class _PriceChartPainter extends CustomPainter {
   final double domainLo;
   final double domainHi;
   final Color color;
+
+  /// Axis tick label color — passed in rather than read from `DS` since a
+  /// [CustomPainter] has no [BuildContext] to resolve the current theme.
+  final Color textTertiary;
   final bool showsAxes;
   final double lineWidth;
   final AxisGranularity granularity;
@@ -233,6 +258,7 @@ class _PriceChartPainter extends CustomPainter {
     required this.domainLo,
     required this.domainHi,
     required this.color,
+    required this.textTertiary,
     required this.showsAxes,
     required this.lineWidth,
     required this.granularity,
@@ -300,7 +326,7 @@ class _PriceChartPainter extends CustomPainter {
         final date = rangeStart.add(Duration(microseconds: micros));
         final label = format.format(date);
         final tp = TextPainter(
-          text: TextSpan(text: label, style: const TextStyle(color: DS.textTertiary, fontSize: 10)),
+          text: TextSpan(text: label, style: TextStyle(color: textTertiary, fontSize: 10)),
           textDirection: TextDirection.ltr,
         )..layout();
         var dx = t * plotWidth - tp.width / 2;
@@ -362,6 +388,7 @@ class _PriceChartPainter extends CustomPainter {
         oldDelegate.domainLo != domainLo ||
         oldDelegate.domainHi != domainHi ||
         oldDelegate.color != color ||
+        oldDelegate.textTertiary != textTertiary ||
         oldDelegate.scrubbed != scrubbed;
   }
 }

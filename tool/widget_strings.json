@@ -1,0 +1,187 @@
+{
+  "Price": {
+    "ar": "السعر",
+    "es": "Precio",
+    "fr": "Prix"
+  },
+  "Save": {
+    "ar": "حفظ",
+    "es": "Guardar",
+    "fr": "Enregistrer"
+  },
+  "Portfolio": {
+    "ar": "المحفظة",
+    "es": "Cartera",
+    "fr": "Portefeuille"
+  },
+  "Follow one asset in the unit, karat and currency you choose.": {
+    "ar": "تابع أصلًا واحدًا بالوحدة والعيار والعملة التي تختارها.",
+    "es": "Sigue un activo en la unidad, el quilate y la moneda que elijas.",
+    "fr": "Suivez un actif dans l’unité, le carat et la devise de votre choix."
+  },
+  "Your holdings' value and gain.": {
+    "ar": "قيمة ممتلكاتك وأرباحها.",
+    "es": "El valor y la ganancia de tus tenencias.",
+    "fr": "La valeur et le gain de vos avoirs."
+  },
+  "Asset": {
+    "ar": "الأصل",
+    "es": "Activo",
+    "fr": "Actif"
+  },
+  "Unit": {
+    "ar": "الوحدة",
+    "es": "Unidad",
+    "fr": "Unité"
+  },
+  "Karat": {
+    "ar": "العيار",
+    "es": "Quilates",
+    "fr": "Carats"
+  },
+  "Currency": {
+    "ar": "العملة",
+    "es": "Moneda",
+    "fr": "Devise"
+  },
+  "Chart range": {
+    "ar": "مدى الرسم البياني",
+    "es": "Rango del gráfico",
+    "fr": "Période du graphique"
+  },
+  "Automatic": {
+    "ar": "تلقائي",
+    "es": "Automático",
+    "fr": "Automatique"
+  },
+  "Watchlist or base currency": {
+    "ar": "عملة قائمة المتابعة أو العملة الأساسية",
+    "es": "La de tu lista o la moneda base",
+    "fr": "Celle de votre liste ou la devise de base"
+  },
+  "Troy ounce": {
+    "ar": "أونصة تروي",
+    "es": "Onza troy",
+    "fr": "Once troy"
+  },
+  "Gram": {
+    "ar": "جرام",
+    "es": "Gramo",
+    "fr": "Gramme"
+  },
+  "Kilogram": {
+    "ar": "كيلوجرام",
+    "es": "Kilogramo",
+    "fr": "Kilogramme"
+  },
+  "1 day": {
+    "ar": "يوم",
+    "es": "1 día",
+    "fr": "1 jour"
+  },
+  "1 week": {
+    "ar": "أسبوع",
+    "es": "1 semana",
+    "fr": "1 semaine"
+  },
+  "1 month": {
+    "ar": "شهر",
+    "es": "1 mes",
+    "fr": "1 mois"
+  },
+  "3 months": {
+    "ar": "٣ أشهر",
+    "es": "3 meses",
+    "fr": "3 mois"
+  },
+  "1 year": {
+    "ar": "سنة",
+    "es": "1 año",
+    "fr": "1 an"
+  },
+  "All time": {
+    "ar": "كل الوقت",
+    "es": "Desde el inicio",
+    "fr": "Depuis le début"
+  },
+  "Past day": {
+    "ar": "آخر يوم",
+    "es": "Último día",
+    "fr": "Dernier jour"
+  },
+  "Past week": {
+    "ar": "آخر أسبوع",
+    "es": "Última semana",
+    "fr": "Dernière semaine"
+  },
+  "Past month": {
+    "ar": "آخر شهر",
+    "es": "Último mes",
+    "fr": "Dernier mois"
+  },
+  "Past 3 months": {
+    "ar": "آخر ٣ أشهر",
+    "es": "Últimos 3 meses",
+    "fr": "3 derniers mois"
+  },
+  "Past year": {
+    "ar": "آخر سنة",
+    "es": "Último año",
+    "fr": "Dernière année"
+  },
+  "Your watchlist": {
+    "ar": "قائمة المتابعة",
+    "es": "Tu lista",
+    "fr": "Votre liste"
+  },
+  "Other assets": {
+    "ar": "أصول أخرى",
+    "es": "Otros activos",
+    "fr": "Autres actifs"
+  },
+  "Open Qima to load prices": {
+    "ar": "افتح قيمة لتحميل الأسعار",
+    "es": "Abre Qima para cargar los precios",
+    "fr": "Ouvrez Qima pour charger les prix"
+  },
+  "Edit the widget to pick an asset": {
+    "ar": "عدّل الأداة لاختيار أصل",
+    "es": "Edita el widget para elegir un activo",
+    "fr": "Modifiez le widget pour choisir un actif"
+  },
+  "Add holdings in Qima to see your portfolio": {
+    "ar": "أضف ممتلكاتك في قيمة لعرض محفظتك",
+    "es": "Añade tenencias en Qima para ver tu cartera",
+    "fr": "Ajoutez des avoirs dans Qima pour voir votre portefeuille"
+  },
+  "Updated %@": {
+    "ar": "آخر تحديث %@",
+    "es": "Actualizado %@",
+    "fr": "Mis à jour %@"
+  },
+  "H %@ · L %@": {
+    "ar": "أعلى %@ · أدنى %@",
+    "es": "Máx %@ · Mín %@",
+    "fr": "Haut %@ · Bas %@"
+  },
+  "Watchlist": {
+    "ar": "قائمة المتابعة",
+    "es": "Seguimiento",
+    "fr": "Suivi"
+  },
+  "Your watchlist at a glance.": {
+    "ar": "قائمة المتابعة في لمحة.",
+    "es": "Tu lista de un vistazo.",
+    "fr": "Votre liste de suivi en un coup d’œil."
+  },
+  "Assets": {
+    "ar": "الأصول",
+    "es": "Activos",
+    "fr": "Actifs"
+  },
+  "Add assets in Qima to see them here": {
+    "ar": "أضف أصولًا في قيمة لتظهر هنا",
+    "es": "Añade activos en Qima para verlos aquí",
+    "fr": "Ajoutez des actifs dans Qima pour les voir ici"
+  }
+}

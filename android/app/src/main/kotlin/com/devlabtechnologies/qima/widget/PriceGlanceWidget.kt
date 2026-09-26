@@ -10,11 +10,11 @@ import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
+import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.SizeMode
 import androidx.glance.appwidget.action.actionStartActivity
 import androidx.glance.appwidget.provideContent
 import androidx.glance.background
-import androidx.glance.currentState
 import androidx.glance.layout.Alignment
 import androidx.glance.layout.Box
 import androidx.glance.layout.Column
@@ -28,25 +28,25 @@ import androidx.glance.layout.width
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
-import androidx.glance.unit.ColorProvider
 import com.devlabtechnologies.qima.MainActivity
-import es.antonborri.home_widget.HomeWidgetGlanceState
-import es.antonborri.home_widget.HomeWidgetGlanceStateDefinition
-import org.json.JSONObject
+import com.devlabtechnologies.qima.R
+import kotlin.math.max
+import kotlin.math.min
 
 /**
  * Home-screen Price widget (Glance port of `PriceWidget.swift`, spec §5.1).
  *
- * This pass does not have an Android "Configuration Activity" wired up yet,
- * so every placed instance shows the SAME instrument: whichever watchlist
- * card is first (see `HomeWidgetService._priceSnapshot`). A future pass can
- * add per-instance configuration by giving this class a real config
- * activity and keying the read below by `GlanceId`/`appWidgetId` instead of
- * always reading the single shared `price_widget_data` key.
+ * Every placed instance is configured on its own via [PriceConfigActivity]
+ * (asset, unit, karat, currency, chart range), the same settings iOS's
+ * `PriceWidgetIntent` offers. This widget never reads the config store
+ * directly, though -- [PriceModel.resolve] (Kotlin port of
+ * `PriceModel.resolve` in `PriceWidget.swift`) applies it on top of the
+ * shared [Snapshot] so the two platforms price a configuration identically.
+ * An instance placed without ever visiting the configuration screen (some
+ * launchers skip `android:configure`) falls back to the same defaults as
+ * iOS: the first watchlist card, its own currency/unit/karat, 1 month.
  */
 class PriceGlanceWidget : GlanceAppWidget() {
-
-    override val stateDefinition = HomeWidgetGlanceStateDefinition()
 
     // Glance recomposes per declared size bucket; a price card only needs a
     // "compact vs roomy" distinction so `Single` (fixed layout, we branch on
@@ -54,64 +54,76 @@ class PriceGlanceWidget : GlanceAppWidget() {
     override val sizeMode = SizeMode.Single
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
-        provideContent { Content(context, currentState()) }
+        val appWidgetId = GlanceAppWidgetManager(context).getAppWidgetId(id)
+        provideContent { Content(context, appWidgetId) }
     }
 
     @Composable
-    private fun Content(context: Context, state: HomeWidgetGlanceState) {
-        val json = readJson(state.preferences, "price_widget_data")
-        val cardBg = Color(0xFF1F2229)
+    private fun Content(context: Context, appWidgetId: Int) {
+        val snapshot = Snapshot.load(context)
 
         Box(
             modifier = GlanceModifier
                 .fillMaxSize()
-                .background(cardBg)
+                .background(QimaWidgetColors.surfaceTop)
                 .padding(14.dp)
                 .clickable(onClick = actionStartActivity(Intent(context, MainActivity::class.java)))
         ) {
-            if (json == null || !json.optBoolean("available", false)) {
-                NoData(json)
+            if (snapshot == null) {
+                Message(textRes = R.string.widgetOpenQimaToLoadPrices)
+                return@Box
+            }
+            val config = WidgetConfigStore.loadPriceConfig(context, appWidgetId)
+            val assetID = config.assetID ?: snapshot.cards.firstOrNull()?.let { PriceModel.CARD_PREFIX + it.id }
+            if (assetID == null) {
+                Message(textRes = R.string.widgetAddAssetsInQimaToSeeThemHere)
+                return@Box
+            }
+            val model = PriceModel.resolve(
+                snapshot = snapshot,
+                assetID = assetID,
+                unitOption = config.unit,
+                karatOption = config.karat,
+                karatIsAutomatic = config.karatIsAutomatic,
+                currencyOption = config.currency,
+                range = config.range,
+            )
+            if (model == null) {
+                Message(textRes = R.string.widgetEditTheWidgetToPickAnAsset)
             } else {
-                PriceCard(json)
+                PriceCard(context, snapshot, model)
             }
         }
     }
 
     @Composable
-    private fun NoData(json: JSONObject?) {
+    private fun Message(textRes: Int) {
         Column(
             modifier = GlanceModifier.fillMaxSize(),
             horizontalAlignment = Alignment.Horizontal.CenterHorizontally,
             verticalAlignment = Alignment.Vertical.CenterVertically,
         ) {
             Text(
-                json?.optString("symbol").takeUnless { it.isNullOrBlank() } ?: "—",
+                androidx.glance.LocalContext.current.getString(textRes),
                 style = TextStyle(
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = ColorProvider(Color.White),
+                    fontSize = 12.sp,
+                    color = QimaWidgetColors.textSecondary,
+                    textAlign = androidx.glance.text.TextAlign.Center,
                 ),
-            )
-            Spacer(modifier = GlanceModifier.height(4.dp))
-            Text(
-                "No data yet",
-                style = TextStyle(fontSize = 12.sp, color = ColorProvider(Color(0xB3FFFFFF))),
             )
         }
     }
 
     @Composable
-    private fun PriceCard(json: JSONObject) {
-        val symbol = json.optString("symbol", "")
-        val karatLabel = json.optString("karatLabel", "")
-        val unitSuffix = json.optString("unitSuffix", "")
-        val price = json.optString("price", "—")
-        val hasChange = json.optBoolean("hasChange", false)
-        val isUp = json.optBoolean("isUp", true)
-        val changePercent = json.optDouble("changePercent", 0.0)
-        val accent = argbColor(json.optInt("accentColor", 0xFFE6BA4D.toInt()))
-        val trendColor = if (isUp) Color(0xFF30D158) else Color(0xFFFF6B61)
-        val sparkline = json.optJSONArray("sparkline")
+    private fun PriceCard(context: Context, snapshot: Snapshot, model: PriceModel) {
+        val karatLabel = model.karat?.let { WidgetStrings.karat(context, it) } ?: ""
+        val unitSuffix = WidgetStrings.unitAbbreviation(context, model.unit) ?: ""
+        val name = WidgetStrings.key(context, model.instrument.nameKey)
+        val price = MoneyFormat.format(model.price, model.currency, snapshot)
+        val change = model.change
+        val isUp = change?.isUp ?: true
+        val accent = InstrumentPalette.accent(model.instrument)
+        val trendColor = if (isUp) QimaWidgetColors.up else QimaWidgetColors.down
 
         Column(modifier = GlanceModifier.fillMaxSize()) {
             Row(verticalAlignment = Alignment.Vertical.CenterVertically) {
@@ -123,12 +135,13 @@ class PriceGlanceWidget : GlanceAppWidget() {
                 ) {}
                 Spacer(modifier = GlanceModifier.width(6.dp))
                 Text(
-                    if (karatLabel.isNotBlank()) "$symbol · $karatLabel" else symbol,
+                    if (karatLabel.isNotBlank()) "$name · $karatLabel" else name,
                     style = TextStyle(
                         fontSize = 13.sp,
                         fontWeight = FontWeight.Medium,
-                        color = ColorProvider(Color(0xB3FFFFFF)),
+                        color = QimaWidgetColors.textSecondary,
                     ),
+                    maxLines = 1,
                 )
             }
             Spacer(modifier = GlanceModifier.height(8.dp))
@@ -137,30 +150,32 @@ class PriceGlanceWidget : GlanceAppWidget() {
                 style = TextStyle(
                     fontSize = 26.sp,
                     fontWeight = FontWeight.Bold,
-                    color = ColorProvider(Color.White),
+                    color = QimaWidgetColors.textPrimary,
                 ),
+                maxLines = 1,
             )
             if (unitSuffix.isNotBlank()) {
                 Text(
                     "per $unitSuffix",
-                    style = TextStyle(fontSize = 11.sp, color = ColorProvider(Color(0x99FFFFFF))),
+                    style = TextStyle(fontSize = 11.sp, color = QimaWidgetColors.textTertiary),
                 )
             }
             Spacer(modifier = GlanceModifier.height(6.dp))
-            if (hasChange) {
+            if (change != null) {
                 Text(
-                    "${trendArrow(isUp)} ${formatPercent(changePercent, isUp)}",
+                    "${trendArrow(isUp)} ${formatPercent(change.fraction * 100, isUp)} ${WidgetStrings.rangeShortLabel(context, model.range)}",
                     style = TextStyle(
                         fontSize = 13.sp,
                         fontWeight = FontWeight.Medium,
-                        color = ColorProvider(trendColor),
+                        color = trendColor,
                     ),
+                    maxLines = 1,
                 )
             } else {
-                Text("—", style = TextStyle(fontSize = 13.sp, color = ColorProvider(Color(0x85FFFFFF))))
+                Text("—", style = TextStyle(fontSize = 13.sp, color = QimaWidgetColors.textTertiary))
             }
             Spacer(modifier = GlanceModifier.height(8.dp))
-            Sparkline(sparkline, accent)
+            Sparkline(model.points, accent)
         }
     }
 
@@ -172,29 +187,24 @@ class PriceGlanceWidget : GlanceAppWidget() {
      * glance, which is the actual goal of the sparkline in this widget.
      */
     @Composable
-    private fun Sparkline(points: org.json.JSONArray?, accent: Color) {
-        if (points == null || points.length() < 2) {
+    private fun Sparkline(points: List<ChartPoint>, accent: Color) {
+        if (points.size < 2) {
             Spacer(modifier = GlanceModifier.height(22.dp))
             return
         }
         val maxBars = 16
-        val step = maxOf(1, points.length() / maxBars)
-        val sampled = mutableListOf<Double>()
-        var i = 0
-        while (i < points.length()) {
-            sampled.add(points.optDouble(i, 0.0))
-            i += step
-        }
-        val min = sampled.min()
-        val max = sampled.max()
-        val range = (max - min).let { if (it == 0.0) 1.0 else it }
+        val step = max(1, points.size / maxBars)
+        val sampled = points.filterIndexed { index, _ -> index % step == 0 }.map { it.value }
+        val minValue = sampled.min()
+        val maxValue = sampled.max()
+        val range = (maxValue - minValue).let { if (it == 0.0) 1.0 else it }
 
         Row(
             modifier = GlanceModifier.fillMaxWidth().height(22.dp),
             verticalAlignment = Alignment.Vertical.Bottom,
         ) {
             sampled.forEachIndexed { index, value ->
-                val fraction = ((value - min) / range).coerceIn(0.05, 1.0)
+                val fraction = min(1.0, max(0.05, (value - minValue) / range))
                 val barHeight = (4 + fraction * 18).dp
                 Box(modifier = GlanceModifier.width(3.dp).height(barHeight).background(accent)) {}
                 if (index != sampled.lastIndex) Spacer(modifier = GlanceModifier.width(2.dp))

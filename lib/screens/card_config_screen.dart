@@ -8,8 +8,12 @@ import '../models/asset.dart';
 import '../models/metal_breakdown.dart';
 import '../models/watch_card.dart';
 import '../theme/design_system.dart';
+import '../theme/help_topics.dart';
 import '../theme/instrument_theme.dart';
+import '../theme/qima_colors.dart';
 import '../theme/strings.dart';
+import '../widgets/help_button.dart';
+import 'add_flow_navigation.dart';
 import 'currency_picker.dart';
 
 /// Configure currency/unit/karat before adding an instrument to the
@@ -42,12 +46,17 @@ class _CardConfigScreenState extends State<CardConfigScreen> {
     final cubit = context.read<AppCubit>();
     final instrument = widget.instrument;
     final l10n = AppLocalizations.of(context)!;
-    final accent = InstrumentTheme.accentColor(instrument);
+    final colors = context.colors;
+    final accent = InstrumentTheme.accentColor(instrument, colors);
 
     return ScreenBackground(
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        appBar: AppBar(backgroundColor: Colors.transparent, title: Text(displayLabel(context, instrument.nameKey))),
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          title: Text(displayLabel(context, instrument.nameKey)),
+          actions: const [HelpButton(topic: HelpTopicId.cardConfig)],
+        ),
         body: ListView(
           padding: const EdgeInsets.all(DS.spaceMD),
           children: [
@@ -57,8 +66,8 @@ class _CardConfigScreenState extends State<CardConfigScreen> {
                 children: [
                   ListTile(
                     contentPadding: EdgeInsets.zero,
-                    title: Text(l10n.commonCurrency, style: const TextStyle(color: DS.textPrimary)),
-                    trailing: Text(_currency, style: const TextStyle(color: DS.textSecondary)),
+                    title: Text(l10n.commonCurrency, style: TextStyle(color: colors.textPrimary)),
+                    trailing: Text(_currency, style: TextStyle(color: colors.textSecondary)),
                     onTap: () async {
                       final selected = await CurrencyPicker.show(
                         context,
@@ -70,7 +79,7 @@ class _CardConfigScreenState extends State<CardConfigScreen> {
                   ),
                   if (instrument.supportedUnits.length > 1) ...[
                     const SizedBox(height: DS.spaceSM),
-                    Text(l10n.settingsUnit, style: const TextStyle(color: DS.textTertiary, fontSize: 12)),
+                    Text(l10n.settingsUnit, style: TextStyle(color: colors.textTertiary, fontSize: 12)),
                     const SizedBox(height: 4),
                     SegmentedButton<PriceUnit>(
                       segments: [
@@ -79,12 +88,12 @@ class _CardConfigScreenState extends State<CardConfigScreen> {
                       ],
                       selected: {_unit},
                       onSelectionChanged: (s) => setState(() => _unit = s.first),
-                      style: DS.segmentedButtonStyle(accent),
+                      style: DS.segmentedButtonStyle(colors, accent),
                     ),
                   ],
                   if (instrument.supportedKarats.isNotEmpty) ...[
                     const SizedBox(height: DS.spaceSM),
-                    Text(l10n.settingsKarat, style: const TextStyle(color: DS.textTertiary, fontSize: 12)),
+                    Text(l10n.settingsKarat, style: TextStyle(color: colors.textTertiary, fontSize: 12)),
                     const SizedBox(height: 4),
                     SegmentedButton<GoldKarat>(
                       segments: [
@@ -93,7 +102,7 @@ class _CardConfigScreenState extends State<CardConfigScreen> {
                       ],
                       selected: {_karat ?? instrument.supportedKarats.first},
                       onSelectionChanged: (s) => setState(() => _karat = s.first),
-                      style: DS.segmentedButtonStyle(accent),
+                      style: DS.segmentedButtonStyle(colors, accent),
                     ),
                   ],
                 ],
@@ -110,8 +119,10 @@ class _CardConfigScreenState extends State<CardConfigScreen> {
                   unit: _unit,
                   karat: karat,
                 );
-                await cubit.addCard(card);
-                if (context.mounted) Navigator.of(context).pop();
+                final result = await cubit.addCard(card);
+                if (context.mounted) {
+                  completeAdd(context, result.card, created: result.created);
+                }
               },
               child: Text(l10n.cardConfigAddToWatchlist),
             ),
