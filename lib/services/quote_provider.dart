@@ -33,6 +33,8 @@ abstract class QuoteProvider {
   Future<double> canonicalUSDPrice(Instrument instrument);
 }
 
+/// Sent on every request: gold-api.com answers Dart's default
+/// `Dart/x (dart:io)` agent with 429, and Yahoo rejects it too.
 const _userAgentHeader = {'User-Agent': 'Mozilla/5.0'};
 
 /// GBp/GBX (London pence quoting) quirk: treat as GBP at 1/100 scale.
@@ -67,7 +69,7 @@ class GoldAPIProvider implements QuoteProvider {
   @override
   Future<double> canonicalUSDPrice(Instrument instrument) async {
     final uri = Uri.parse('$baseUrl/price/${instrument.sourceSymbol}');
-    final response = await client.get(uri);
+    final response = await client.get(uri, headers: _userAgentHeader);
     if (response.statusCode != 200) throw const PriceError.invalidResponse();
     try {
       final json = jsonDecode(response.body) as Map<String, dynamic>;

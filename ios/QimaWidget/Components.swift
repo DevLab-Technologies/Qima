@@ -79,7 +79,7 @@ struct PlaceholderView: View {
     }
 }
 
-/// "Updated 14:32", or a cloud-slash and "3h ago" once the prices are old.
+/// "Updated 14:32" ("Updated Sep 25, 14:32" if not today), or a cloud-slash and "3h ago" once the prices are old.
 struct FreshnessLabel: View {
     let updatedAt: Date?
     let isStale: Bool
@@ -94,9 +94,16 @@ struct FreshnessLabel: View {
                 }
                 .labelStyle(.titleAndIcon)
             } else {
-                Text(String(format: L10n.text("Updated %@"), updatedAt.formatted(date: .omitted, time: .shortened)))
+                Text(String(format: L10n.text("Updated %@"), Self.stamp(updatedAt)))
             }
         }
+    }
+
+    /// Time alone for today's prices, otherwise the date too.
+    private static func stamp(_ date: Date) -> String {
+        Calendar.current.isDateInToday(date)
+            ? date.formatted(date: .omitted, time: .shortened)
+            : date.formatted(.dateTime.month(.abbreviated).day().hour().minute())
     }
 }
 

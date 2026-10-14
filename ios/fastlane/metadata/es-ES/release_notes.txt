@@ -1,4 +1,4 @@
-Qima 2.1.1
+Qima 2.2.0
 • Nuevo diseño: pestañas Seguimiento, Cartera y Ajustes, con tu cartera en directo al frente
 • Filtra tu lista por metales, cripto, acciones, índices o divisas
 • Alertas de precio con notificaciones
@@ -8,3 +8,4 @@ Qima 2.1.1
 • Tema claro
 • Copia de seguridad cifrada y restauración
 • Recorrido inicial y ayuda en cada pantalla
+• Corregido: los precios del oro, la plata y las cripto no se actualizaban; «Actualizado» ahora muestra la fecha si no son de hoy

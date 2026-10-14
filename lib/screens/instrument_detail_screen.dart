@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 
 import '../blocs/app_cubit.dart';
 import '../blocs/app_state.dart';
@@ -220,7 +221,7 @@ class _InstrumentDetailScreenState extends State<InstrumentDetailScreen> {
                         child: Text(
                           lastQuoteTime == null
                               ? ''
-                              : '${displayLabel(context, _range.labelKey)} · ${l10n.detailUpdatedAt(_timeOfDay(lastQuoteTime))}',
+                              : '${displayLabel(context, _range.labelKey)} · ${l10n.detailUpdatedAt(_updatedLabel(context, lastQuoteTime, now))}',
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(color: colors.textTertiary, fontSize: 12),
                         ),
@@ -290,7 +291,14 @@ class _InstrumentDetailScreenState extends State<InstrumentDetailScreen> {
     );
   }
 
-  String _timeOfDay(DateTime time) => '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
+  /// "14:32" for a quote from today, "Sep 25, 14:32" for an older one, so a
+  /// stale price never reads as fresh.
+  String _updatedLabel(BuildContext context, DateTime time, DateTime now) {
+    final locale = Localizations.localeOf(context).toString();
+    final isToday = time.year == now.year && time.month == now.month && time.day == now.day;
+    final format = isToday ? DateFormat.Hm(locale) : DateFormat.MMMd(locale).add_Hm();
+    return format.format(time);
+  }
 
   Widget _buildChart(
     BuildContext context,

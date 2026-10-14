@@ -1,4 +1,4 @@
-Qima 2.1.1
+Qima 2.2.0
 • New layout: Watchlist, Portfolio and Settings tabs, with a live portfolio chart up front
 • Filter your watchlist by metals, crypto, stocks, indices or currencies
 • Price alerts with notifications
@@ -8,3 +8,4 @@ Qima 2.1.1
 • Light theme
 • Encrypted backup and restore
 • A first-run tour, and a help button on every screen
+• Fixed: gold, silver and crypto prices not updating; "Updated" now shows the date when prices aren't from today
