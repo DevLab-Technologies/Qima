@@ -198,14 +198,13 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get portfolioEmpty =>
-      'لا توجد قيمة للمحفظة بعد — أضف دفعة مقتنيات للبدء.';
+      'لا توجد قيمة للمحفظة بعد — أضف عملية شراء لأي أصل للبدء.';
 
   @override
   String get portfolioNoChange => 'لا يوجد سجل كافٍ لهذه الفترة بعد';
 
   @override
-  String get portfolioNoHistory =>
-      'أضف دفعة مقتنيات لعرض الرسم البياني لمحفظتك';
+  String get portfolioNoHistory => 'أضف عملية شراء لعرض الرسم البياني لمحفظتك';
 
   @override
   String get settingsTitle => 'الإعدادات';
@@ -268,7 +267,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get settingsHideBalancesFooter =>
-      'إخفاء مبالغ المحفظة والممتلكات والصفقات في جميع أنحاء التطبيق.';
+      'إخفاء مبالغ المحفظة والممتلكات والمعاملات في جميع أنحاء التطبيق.';
 
   @override
   String get settingsAppLock => 'قفل التطبيق';
@@ -778,8 +777,21 @@ class AppLocalizationsAr extends AppLocalizations {
   String get settingsBackupSubtitleNever => 'لم يتم النسخ الاحتياطي مطلقًا';
 
   @override
-  String settingsBackupSubtitle(String date, int instruments, int lots) {
-    return 'آخر نسخة احتياطية $date · $instruments أصل، $lots دفعة';
+  String settingsBackupSubtitle(
+    String date,
+    int instruments,
+    int transactions,
+  ) {
+    String _temp0 = intl.Intl.pluralLogic(
+      transactions,
+      locale: localeName,
+      other: '$transactions معاملة',
+      many: '$transactions معاملة',
+      few: '$transactions معاملات',
+      two: 'معاملتان',
+      one: 'معاملة واحدة',
+    );
+    return 'آخر نسخة احتياطية $date · $instruments أصل، $_temp0';
   }
 
   @override
@@ -895,10 +907,19 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String backupExportSheetContentsSummary(
     int cards,
-    int lots,
+    int transactions,
     int customTickers,
   ) {
-    return '$cards بطاقة متابعة · $lots دفعة · $customTickers رمز مخصص';
+    String _temp0 = intl.Intl.pluralLogic(
+      transactions,
+      locale: localeName,
+      other: '$transactions معاملة',
+      many: '$transactions معاملة',
+      few: '$transactions معاملات',
+      two: 'معاملتان',
+      one: 'معاملة واحدة',
+    );
+    return '$cards بطاقة متابعة · $_temp0 · $customTickers رمز مخصص';
   }
 
   @override
@@ -1267,7 +1288,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get helpAssetDetailStep5Body =>
-      'اضغط على الممتلكات لعرض دفعاتك أو إضافة عملية شراء.';
+      'اضغط على المقتنيات لعرض معاملاتك أو إضافة عملية شراء أو بيع.';
 
   @override
   String get helpPortfolioTitle => 'المحفظة';
@@ -1288,7 +1309,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get helpPortfolioStep2Body =>
-      'اضغط على صف لعرض دفعاته ومتوسط تكلفته وأرباحه.';
+      'اضغط على صف لعرض معاملاته ومتوسط تكلفته وأرباحه.';
 
   @override
   String get helpPortfolioStep3Title => 'أضف عملية شراء';
@@ -1761,7 +1782,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get zakatEmptyMessage =>
-      'تُحسب الزكاة من ممتلكاتك. أضف دفعة لأي أصل وسيظهر هنا مع ما يُحتسب ضمن النصاب.';
+      'تُحسب الزكاة من ممتلكاتك. أضف عملية شراء لأي أصل وسيظهر هنا مع ما يُحتسب ضمن النصاب.';
 
   @override
   String get zakatNisabSection => 'النصاب';
@@ -2595,4 +2616,13 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get csvProblemDuplicate => 'موجودة في Qima';
+
+  @override
+  String get transactionBuyPricePlain => 'السعر المدفوع';
+
+  @override
+  String get transactionSalePricePlain => 'سعر البيع';
+
+  @override
+  String get transactionCarriedCostPlain => 'التكلفة الأصلية (اختياري)';
 }

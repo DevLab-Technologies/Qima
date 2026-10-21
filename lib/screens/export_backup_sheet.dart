@@ -27,7 +27,9 @@ class ExportBackupSheet extends StatefulWidget {
       isScrollControlled: true,
       backgroundColor: colors.overlay,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(DS.radiusCard)),
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(DS.radiusCard),
+        ),
       ),
       builder: (sheetContext) => const ExportBackupSheet(),
     );
@@ -54,7 +56,8 @@ class _ExportBackupSheetState extends State<ExportBackupSheet> {
 
   bool get _passwordValid => !_protect || _passwordController.text.length >= 8;
 
-  bool get _passwordsMatch => !_protect || _passwordController.text == _confirmController.text;
+  bool get _passwordsMatch =>
+      !_protect || _passwordController.text == _confirmController.text;
 
   bool get _canExport => _passwordValid && _passwordsMatch && !_working;
 
@@ -67,7 +70,9 @@ class _ExportBackupSheetState extends State<ExportBackupSheet> {
     });
     try {
       final box = context.findRenderObject() as RenderBox?;
-      final origin = box == null ? null : (box.localToGlobal(Offset.zero) & box.size);
+      final origin = box == null
+          ? null
+          : (box.localToGlobal(Offset.zero) & box.size);
       final completed = await cubit.backupService.exportJson(
         password: _protect ? _passwordController.text : null,
         sharePositionOrigin: origin,
@@ -111,7 +116,11 @@ class _ExportBackupSheetState extends State<ExportBackupSheet> {
             children: [
               Text(
                 l10n.backupExportSheetTitle,
-                style: TextStyle(color: colors.textPrimary, fontWeight: FontWeight.w700, fontSize: 18),
+                style: TextStyle(
+                  color: colors.textPrimary,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 18,
+                ),
               ),
               const SizedBox(height: DS.spaceMD),
               DSCard(
@@ -125,7 +134,7 @@ class _ExportBackupSheetState extends State<ExportBackupSheet> {
                       l10n.backupExportSheetFileContents,
                       l10n.backupExportSheetContentsSummary(
                         state.cards.length,
-                        state.lots.length,
+                        state.transactions.length,
                         _customTickerCount(cubit),
                       ),
                     ),
@@ -139,10 +148,16 @@ class _ExportBackupSheetState extends State<ExportBackupSheet> {
                   children: [
                     SwitchListTile(
                       contentPadding: EdgeInsets.zero,
-                      title: Text(l10n.backupExportSheetProtectTitle, style: TextStyle(color: colors.textPrimary)),
+                      title: Text(
+                        l10n.backupExportSheetProtectTitle,
+                        style: TextStyle(color: colors.textPrimary),
+                      ),
                       subtitle: Text(
                         l10n.backupExportSheetProtectSubtitle,
-                        style: TextStyle(color: colors.textTertiary, fontSize: 12),
+                        style: TextStyle(
+                          color: colors.textTertiary,
+                          fontSize: 12,
+                        ),
                       ),
                       value: _protect,
                       activeThumbColor: colors.onBrand,
@@ -155,7 +170,9 @@ class _ExportBackupSheetState extends State<ExportBackupSheet> {
                         colors,
                         l10n.backupExportSheetPasswordLabel,
                         _passwordController,
-                        errorText: _passwordController.text.isNotEmpty && !_passwordValid
+                        errorText:
+                            _passwordController.text.isNotEmpty &&
+                                !_passwordValid
                             ? l10n.backupExportSheetPasswordTooShort
                             : null,
                       ),
@@ -164,7 +181,9 @@ class _ExportBackupSheetState extends State<ExportBackupSheet> {
                         colors,
                         l10n.backupExportSheetPasswordConfirmLabel,
                         _confirmController,
-                        errorText: _confirmController.text.isNotEmpty && !_passwordsMatch
+                        errorText:
+                            _confirmController.text.isNotEmpty &&
+                                !_passwordsMatch
                             ? l10n.backupExportSheetPasswordMismatch
                             : null,
                       ),
@@ -177,12 +196,19 @@ class _ExportBackupSheetState extends State<ExportBackupSheet> {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(Icons.info_outline, color: colors.textTertiary, size: 16),
+                    Icon(
+                      Icons.info_outline,
+                      color: colors.textTertiary,
+                      size: 16,
+                    ),
                     const SizedBox(width: DS.spaceXS),
                     Expanded(
                       child: Text(
                         l10n.backupExportSheetUnprotectedWarning,
-                        style: TextStyle(color: colors.textTertiary, fontSize: 12),
+                        style: TextStyle(
+                          color: colors.textTertiary,
+                          fontSize: 12,
+                        ),
                       ),
                     ),
                   ],
@@ -190,18 +216,30 @@ class _ExportBackupSheetState extends State<ExportBackupSheet> {
               ],
               if (_error != null) ...[
                 const SizedBox(height: DS.spaceSM),
-                Text(_error!, style: TextStyle(color: colors.down, fontSize: 12)),
+                Text(
+                  _error!,
+                  style: TextStyle(color: colors.down, fontSize: 12),
+                ),
               ],
               const SizedBox(height: DS.spaceLG),
-              FilledButton(
-                onPressed: _canExport ? () => _export(context) : null,
-                child: _working
-                    ? SizedBox(
-                        height: 18,
-                        width: 18,
-                        child: CircularProgressIndicator(strokeWidth: 2, color: colors.onBrand),
-                      )
-                    : Text(l10n.backupExportSheetAction),
+              // Full width like every other primary action: the theme's
+              // filled buttons have no side padding of their own, so in a
+              // start-aligned column this one clipped its label.
+              SizedBox(
+                width: double.infinity,
+                child: FilledButton(
+                  onPressed: _canExport ? () => _export(context) : null,
+                  child: _working
+                      ? SizedBox(
+                          height: 18,
+                          width: 18,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: colors.onBrand,
+                          ),
+                        )
+                      : Text(l10n.backupExportSheetAction),
+                ),
               ),
             ],
           ),
@@ -227,13 +265,22 @@ class _ExportBackupSheetState extends State<ExportBackupSheet> {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Expanded(child: Text(label, style: TextStyle(color: colors.textTertiary, fontSize: 12))),
+        Expanded(
+          child: Text(
+            label,
+            style: TextStyle(color: colors.textTertiary, fontSize: 12),
+          ),
+        ),
         Expanded(
           flex: 2,
           child: Text(
             value,
             textAlign: TextAlign.end,
-            style: TextStyle(color: colors.textPrimary, fontSize: 12, fontWeight: FontWeight.w600),
+            style: TextStyle(
+              color: colors.textPrimary,
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ),
       ],
@@ -259,9 +306,17 @@ class _ExportBackupSheetState extends State<ExportBackupSheet> {
         errorText: errorText,
         filled: true,
         fillColor: colors.tileTop,
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(DS.radiusTile), borderSide: BorderSide.none),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(DS.radiusTile),
+          borderSide: BorderSide.none,
+        ),
         suffixIcon: IconButton(
-          icon: Icon(_obscure ? Icons.visibility_outlined : Icons.visibility_off_outlined, color: colors.textTertiary),
+          icon: Icon(
+            _obscure
+                ? Icons.visibility_outlined
+                : Icons.visibility_off_outlined,
+            color: colors.textTertiary,
+          ),
           onPressed: () => setState(() => _obscure = !_obscure),
         ),
       ),

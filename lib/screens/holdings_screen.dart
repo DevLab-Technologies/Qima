@@ -90,8 +90,10 @@ class HoldingsScreen extends StatelessWidget {
                 padding: const EdgeInsets.all(DS.spaceMD),
                 children: [
                   DSCard(
+                    // Stretched: the app's filled buttons are full width and
+                    // carry no side padding of their own.
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         Text(l10n.holdingsEmpty, style: TextStyle(color: colors.textSecondary)),
                         const SizedBox(height: DS.spaceSM),
@@ -229,7 +231,7 @@ class _Summary extends StatelessWidget {
           ),
         ],
         Divider(color: colors.hairline, height: DS.spaceLG),
-        if (average != null) row(l10n.holdingsAverageCost, l10n.ledgerPerUnit(Masking.amount(average, hidden: false), unitText)),
+        if (average != null) row(l10n.holdingsAverageCost, perUnitLabel(l10n, Masking.amount(average, hidden: false), unit, unitText)),
         if (valuation != null) ...[
           row(l10n.ledgerMarketValue, Masking.amount(valuation.value, hidden: hidden)),
           row(
@@ -277,7 +279,7 @@ class _TransactionRow extends StatelessWidget {
     switch (t.kind) {
       case TransactionKind.buy:
       case TransactionKind.sell:
-        final price = l10n.ledgerPerUnit(Masking.amount(Money(t.unitPrice, t.currency), hidden: hidden),
+        final price = perUnitLabel(l10n, Masking.amount(Money(t.unitPrice, t.currency), hidden: hidden), t.unit,
             displayLabel(context, t.unit.abbreviationKey ?? t.unit.labelKey));
         detail = t.fee > 0
             ? l10n.ledgerDetailWithFee(date, price, Masking.amount(Money(t.fee, t.currency), hidden: hidden))
@@ -416,6 +418,11 @@ String transactionKindLabel(AppLocalizations l10n, TransactionKind kind) {
       return l10n.transactionKindFee;
   }
 }
+
+/// "$74.10 / g" — or just "$74.10" for a share, coin or currency, where a
+/// per-unit suffix ("/ Each") only adds noise.
+String perUnitLabel(AppLocalizations l10n, String amount, PriceUnit unit, String unitText) =>
+    unit == PriceUnit.each ? amount : l10n.ledgerPerUnit(amount, unitText);
 
 /// "12 Mar 2026" with Western digits, like the other dates on these screens.
 String transactionDateLabel(BuildContext context, DateTime date) => dateWithYear(context, date);

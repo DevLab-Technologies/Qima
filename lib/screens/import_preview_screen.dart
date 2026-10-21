@@ -165,6 +165,9 @@ class _ImportPreviewScreenState extends State<ImportPreviewScreen> {
           title: l10n.backupImportCsvErrorTitle,
           message: l10n.backupImportCsvErrorMessage,
           action: FilledButton(
+            // The theme's filled buttons are full width with no side
+            // padding; this one sizes to its label in a centred column.
+            style: FilledButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: DS.spaceLG, vertical: 14)),
             onPressed: () => Navigator.of(context).pushReplacement(MaterialPageRoute(
               builder: (_) => CsvImportScreen(fileName: widget.picked.name, text: widget.picked.raw),
             )),

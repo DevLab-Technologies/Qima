@@ -421,6 +421,13 @@ class _TransactionEditorScreenState extends State<TransactionEditorScreen> {
         _ => l10n.holdingsTotalCost,
       };
     }
+    if (_unit == PriceUnit.each) {
+      return switch (_kind) {
+        _Kind.sell => l10n.transactionSalePricePlain,
+        _Kind.transfer => l10n.transactionCarriedCostPlain,
+        _ => l10n.transactionBuyPricePlain,
+      };
+    }
     final per = supportsKarat
         ? l10n.transactionPerUnitKarat(unitLabel, displayLabel(context, (_karat ?? GoldKarat.k24).shortLabelKey))
         : unitLabel;
@@ -522,7 +529,7 @@ class _SellPreview extends StatelessWidget {
                     ? l10n.transactionPreviewClosesPosition
                     : l10n.transactionPreviewRemaining(
                         hidden ? Masking.mask : quantityWithUnitKaratLabel(context, remainingQty, unit, candidate.karat),
-                        l10n.ledgerPerUnit(Masking.amount(remainingAverage, hidden: false), unitText),
+                        perUnitLabel(l10n, Masking.amount(remainingAverage, hidden: false), unit, unitText),
                       ),
                 style: TextStyle(color: colors.textTertiary, fontSize: 12),
               ),
