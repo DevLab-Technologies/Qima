@@ -5,6 +5,7 @@ import 'package:qima/models/asset.dart';
 import 'package:qima/models/backup.dart';
 import 'package:qima/models/holding.dart';
 import 'package:qima/models/watch_card.dart';
+import 'package:qima/models/zakat.dart';
 import 'package:qima/services/alerts_store.dart';
 import 'package:qima/services/backup/backup_codec.dart';
 import 'package:qima/services/backup/backup_service.dart';
@@ -177,6 +178,30 @@ void main() {
       );
 
       expect(await service.preferences.baseCurrency, 'EGP');
+    });
+
+    test('carries zakat settings and restores them on replace', () async {
+      final source = await makeService();
+      final zakat = ZakatSettings(basis: NisabBasis.silver, hawlStart: DateTime(2025, 3, 12), remind: true);
+      await source.preferences.setZakatSettings(zakat);
+      final payload = await source.buildPayload();
+      expect(payload.settings.zakat, zakat.toJson());
+
+      await source.preferences.setZakatSettings(const ZakatSettings());
+      await source.import(payload, mode: BackupImportMode.replace);
+      expect(await source.preferences.zakatSettings, zakat);
+    });
+
+    test('a backup from before zakat leaves current zakat settings alone', () async {
+      final service = await makeService();
+      final mine = ZakatSettings(hawlStart: DateTime(2024, 1, 1));
+      await service.preferences.setZakatSettings(mine);
+      final payload = await service.buildPayload();
+      final legacy = payload.settings.copyWithBaseCurrency('USD'); // drops `zakat`
+      expect(legacy.zakat, isNull);
+
+      await service.import(BackupPayloadBuilder.fromRecords(settings: legacy), mode: BackupImportMode.replace);
+      expect(await service.preferences.zakatSettings, mine);
     });
   });
 

@@ -25,6 +25,7 @@ import 'preferences.dart';
 import 'price_converter.dart';
 import 'price_repository.dart';
 import 'watchlist_store.dart';
+import 'zakat_reminder_notifier.dart';
 
 /// The single place a price refresh, alert evaluation, notification and
 /// widget publish all happen together — used by BOTH the foreground
@@ -126,6 +127,10 @@ class RefreshPipeline {
     // would otherwise skip the reminder for entirely (spec Phase 6: "have
     // the background task post one notification at most once per 30 days").
     await BackupReminderNotifier(backupService: backupService, notificationService: notificationService)
+        .notifyIfDue(now: effectiveNow, l10n: l10n);
+    // Date-driven like the backup reminder, so it also runs before the
+    // early returns below: a hawl completes whether or not prices moved.
+    await ZakatReminderNotifier(preferences: preferences, notificationService: notificationService)
         .notifyIfDue(now: effectiveNow, l10n: l10n);
 
     final customs = await customInstrumentStore.load();

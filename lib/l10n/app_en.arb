@@ -1454,5 +1454,263 @@
   "settingsHelpAddWidgetSubtitle": "Home Screen and Lock Screen",
   "@settingsHelpAddWidgetSubtitle": {
     "description": "Settings Help group row subtitle (iOS only)."
+  },
+  "commonDone": "Done",
+  "zakatTitle": "Zakat",
+  "@zakatTitle": {
+    "description": "Zakat screen title, portfolio entry row and settings section header."
+  },
+  "zakatSettingsTitle": "Zakat settings",
+  "settingsZakatSubtitle": "Nisab basis, what counts, hawl date and reminder",
+  "zakatEmptyTitle": "Nothing to assess yet",
+  "zakatEmptyMessage": "Zakat is worked out from your holdings. Add a lot to any asset and it appears here, with what counts toward nisab.",
+  "zakatNisabSection": "Nisab",
+  "zakatWhatCountsSection": "What counts",
+  "zakatStatusAbove": "Above nisab",
+  "zakatStatusBelow": "Below nisab",
+  "zakatStatusUnknown": "Nisab not priced yet",
+  "zakatDueLabel": "Zakat due · {rate}",
+  "zakatExplainAboveNoHawl": "On a zakatable base of {base}. Set your hawl date to know when it falls due.",
+  "@zakatExplainAboveNoHawl": {
+    "placeholders": {
+      "base": {
+        "type": "String"
+      }
+    }
+  },
+  "zakatExplainAboveToday": "On a zakatable base of {base}. Your hawl completes today.",
+  "@zakatExplainAboveToday": {
+    "placeholders": {
+      "base": {
+        "type": "String"
+      }
+    }
+  },
+  "zakatExplainAboveUpcoming": "On a zakatable base of {base}. Due when your hawl completes on {date} ({days, plural, =1{in 1 day} other{in {days} days}}), if your wealth is still above nisab then.",
+  "@zakatExplainAboveUpcoming": {
+    "placeholders": {
+      "base": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      },
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "zakatExplainBelow": "Your zakatable base of {base} is below today’s nisab of {threshold}, so no zakat is due.",
+  "@zakatExplainBelow": {
+    "placeholders": {
+      "base": {
+        "type": "String"
+      },
+      "threshold": {
+        "type": "String"
+      }
+    }
+  },
+  "zakatExplainUnknown": "Today’s {metal} price hasn’t loaded, so the nisab threshold can’t be checked yet.",
+  "@zakatExplainUnknown": {
+    "placeholders": {
+      "metal": {
+        "type": "String"
+      }
+    }
+  },
+  "zakatRetry": "Try again",
+  "zakatUnpricedNote": "Some assets have no price yet and aren’t counted. They count as soon as their price loads.",
+  "zakatBasisRow": "Basis",
+  "zakatBasisValue": "{metal} · {grams} g",
+  "@zakatBasisValue": {
+    "placeholders": {
+      "metal": {
+        "type": "String"
+      },
+      "grams": {
+        "type": "String"
+      }
+    }
+  },
+  "zakatOtherBasisLine": "{metal} basis would be {amount}",
+  "@zakatOtherBasisLine": {
+    "placeholders": {
+      "metal": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "zakatThresholdToday": "Threshold today",
+  "zakatYourBase": "Your zakatable base",
+  "zakatHawlStart": "Hawl start",
+  "zakatHawlSet": "Set date",
+  "zakatHawlNotSetSubtitle": "The day your wealth first reached nisab",
+  "zakatHawlCompletesToday": "completes today",
+  "zakatHawlNext": "next completes {date}",
+  "@zakatHawlNext": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "zakatWhatCountsFooter": "Switch an asset off to leave it out — for example jewelry worn every day, if you follow the view that it is exempt.",
+  "zakatExcludedClass": "{cls} switched off",
+  "@zakatExcludedClass": {
+    "placeholders": {
+      "cls": {
+        "type": "String"
+      }
+    }
+  },
+  "zakatExcludedHolding": "left out",
+  "zakatExcludedNoPrice": "no price yet",
+  "zakatLineTitle": "{name} · {quantity}",
+  "@zakatLineTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "quantity": {
+        "type": "String"
+      }
+    }
+  },
+  "zakatDisclaimer": "Qima computes; it does not rule. The basis and what counts are yours to set — ask a scholar you trust when unsure.",
+  "zakatClassMetals": "Metals",
+  "zakatClassCrypto": "Crypto",
+  "zakatClassEquities": "Equities",
+  "zakatClassCash": "Cash & currencies",
+  "zakatClassMetalsSubtitle": "Gold, silver, platinum, palladium",
+  "zakatClassCryptoSubtitle": "Treated as a tradeable asset",
+  "zakatClassEquitiesSubtitle": "Off by default — views on long-term shareholdings differ",
+  "zakatClassCashSubtitle": "Currencies you hold",
+  "zakatOverridesCount": "{count, plural, =1{1 asset set individually} other{{count} assets set individually}}",
+  "@zakatOverridesCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "zakatOverridesSubtitle": "Chosen on the zakat screen, overriding their class",
+  "zakatOverridesReset": "Reset",
+  "zakatNisabBasisSection": "Nisab basis",
+  "zakatClassesSection": "Zakatable classes",
+  "zakatHawlSection": "Hawl",
+  "zakatBasisPriceMissing": "Price not loaded yet",
+  "zakatBasisToday": "{amount} today",
+  "@zakatBasisToday": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "zakatBasisHigher": "Higher threshold · {amount} today",
+  "@zakatBasisHigher": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "zakatBasisLower": "Lower threshold · {amount} today · more people owe",
+  "@zakatBasisLower": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "zakatCalendar": "Calendar",
+  "zakatCalendarHijri": "Hijri",
+  "zakatCalendarGregorian": "Gregorian",
+  "zakatGregorianNote": "A Gregorian year is about 11 days longer than a lunar one. Some scholars raise the rate to {solarRate} to account for it; Qima keeps {rate}.",
+  "zakatHawlClear": "Clear hawl date",
+  "zakatRemind": "Remind me",
+  "zakatRemindSubtitle": "A notification on the day your hawl completes",
+  "zakatRemindNeedsStart": "Set a hawl start date first",
+  "zakatRemindNotificationsOff": "Notifications are off for Qima — turn them on in system settings to get this reminder",
+  "zakatHawlPickerTitle": "Hawl start",
+  "zakatHawlPickerDay": "Day",
+  "zakatHawlPickerMonth": "Month",
+  "zakatHawlPickerYear": "Year",
+  "zakatHawlPickerFuture": "A hawl can’t start in the future",
+  "zakatHawlPickerGregorian": "Gregorian: {date}",
+  "@zakatHawlPickerGregorian": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "zakatEntryDue": "{amount} due · above nisab",
+  "@zakatEntryDue": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "zakatEntryCalculate": "See what’s due",
+  "zakatReminderNotificationTitle": "Your hawl is complete",
+  "zakatReminderNotificationBody": "Your zakat year completed today. Open Qima to see what’s due.",
+  "hijriMonth1": "Muharram",
+  "hijriMonth2": "Safar",
+  "hijriMonth3": "Rabi al-Awwal",
+  "hijriMonth4": "Rabi al-Thani",
+  "hijriMonth5": "Jumada al-Ula",
+  "hijriMonth6": "Jumada al-Akhirah",
+  "hijriMonth7": "Rajab",
+  "hijriMonth8": "Shaban",
+  "hijriMonth9": "Ramadan",
+  "hijriMonth10": "Shawwal",
+  "hijriMonth11": "Dhu al-Qadah",
+  "hijriMonth12": "Dhu al-Hijjah",
+  "hijriDate": "{day} {month} {year} AH",
+  "@hijriDate": {
+    "placeholders": {
+      "day": {
+        "type": "int"
+      },
+      "month": {
+        "type": "String"
+      },
+      "year": {
+        "type": "int"
+      }
+    }
+  },
+  "helpZakatTitle": "Zakat",
+  "helpZakatSummary": "Qima works out zakat from your holdings at today’s prices. It calculates; the choices behind the calculation are yours.",
+  "helpZakatStep1Title": "Nisab",
+  "helpZakatStep1Body": "The threshold is 85 g of fine gold or 595 g of silver, priced live. Pick the basis in Zakat settings; silver is lower, so more people owe.",
+  "helpZakatStep2Title": "What counts",
+  "helpZakatStep2Body": "Metals, crypto and cash count by default; equities don’t. Karat gold counts by its gold content. Switch any single asset off on the zakat screen.",
+  "helpZakatStep3Title": "Hawl",
+  "helpZakatStep3Body": "Set the day your wealth first reached nisab. Zakat falls due each lunar year after it, and Qima can remind you on the day.",
+  "helpZakatStep4Title": "A calculator, not a fatwa",
+  "helpZakatStep4Body": "Scholars differ on the basis, on equities and on jewelry. Every default here can be changed — when unsure, ask a scholar you trust.",
+  "@zakatDueLabel": {
+    "placeholders": {
+      "rate": {
+        "type": "String"
+      }
+    }
+  },
+  "@zakatGregorianNote": {
+    "placeholders": {
+      "solarRate": {
+        "type": "String"
+      },
+      "rate": {
+        "type": "String"
+      }
+    }
   }
 }

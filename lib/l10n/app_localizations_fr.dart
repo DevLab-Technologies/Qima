@@ -1833,4 +1833,357 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get settingsHelpAddWidgetSubtitle =>
       'Écran d\'accueil et de verrouillage';
+
+  @override
+  String get commonDone => 'OK';
+
+  @override
+  String get zakatTitle => 'Zakat';
+
+  @override
+  String get zakatSettingsTitle => 'Réglages de la zakat';
+
+  @override
+  String get settingsZakatSubtitle =>
+      'Base du nisab, ce qui compte, date du hawl et rappel';
+
+  @override
+  String get zakatEmptyTitle => 'Rien à calculer pour l’instant';
+
+  @override
+  String get zakatEmptyMessage =>
+      'La zakat se calcule à partir de vos avoirs. Ajoutez un lot à un actif : il apparaîtra ici, avec ce qui compte pour le nisab.';
+
+  @override
+  String get zakatNisabSection => 'Nisab';
+
+  @override
+  String get zakatWhatCountsSection => 'Ce qui compte';
+
+  @override
+  String get zakatStatusAbove => 'Au-dessus du nisab';
+
+  @override
+  String get zakatStatusBelow => 'En dessous du nisab';
+
+  @override
+  String get zakatStatusUnknown => 'Nisab pas encore évalué';
+
+  @override
+  String zakatDueLabel(String rate) {
+    return 'Zakat due · $rate';
+  }
+
+  @override
+  String zakatExplainAboveNoHawl(String base) {
+    return 'Sur une assiette de $base. Indiquez la date de votre hawl pour savoir quand elle est due.';
+  }
+
+  @override
+  String zakatExplainAboveToday(String base) {
+    return 'Sur une assiette de $base. Votre hawl s’achève aujourd’hui.';
+  }
+
+  @override
+  String zakatExplainAboveUpcoming(String base, String date, int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'dans $days jours',
+      one: 'dans 1 jour',
+    );
+    return 'Sur une assiette de $base. Due à la fin de votre hawl, le $date ($_temp0), si votre patrimoine reste au-dessus du nisab.';
+  }
+
+  @override
+  String zakatExplainBelow(String base, String threshold) {
+    return 'Votre assiette de $base est inférieure au nisab du jour, $threshold : aucune zakat n’est due.';
+  }
+
+  @override
+  String zakatExplainUnknown(String metal) {
+    return 'Le cours du jour de l’$metal n’est pas encore chargé : impossible de vérifier le nisab pour l’instant.';
+  }
+
+  @override
+  String get zakatRetry => 'Réessayer';
+
+  @override
+  String get zakatUnpricedNote =>
+      'Certains actifs n’ont pas encore de cours et ne sont pas comptés. Ils le seront dès que leur cours sera chargé.';
+
+  @override
+  String get zakatBasisRow => 'Base';
+
+  @override
+  String zakatBasisValue(String metal, String grams) {
+    return '$metal · $grams g';
+  }
+
+  @override
+  String zakatOtherBasisLine(String metal, String amount) {
+    return 'Sur la base de l’$metal : $amount';
+  }
+
+  @override
+  String get zakatThresholdToday => 'Seuil du jour';
+
+  @override
+  String get zakatYourBase => 'Votre assiette';
+
+  @override
+  String get zakatHawlStart => 'Début du hawl';
+
+  @override
+  String get zakatHawlSet => 'Choisir';
+
+  @override
+  String get zakatHawlNotSetSubtitle =>
+      'Le jour où votre patrimoine a atteint le nisab pour la première fois';
+
+  @override
+  String get zakatHawlCompletesToday => 's’achève aujourd’hui';
+
+  @override
+  String zakatHawlNext(String date) {
+    return 'prochain le $date';
+  }
+
+  @override
+  String get zakatWhatCountsFooter =>
+      'Désactivez un actif pour l’exclure, par exemple des bijoux portés au quotidien si vous suivez l’avis qui les exempte.';
+
+  @override
+  String zakatExcludedClass(String cls) {
+    return '$cls désactivé';
+  }
+
+  @override
+  String get zakatExcludedHolding => 'exclu';
+
+  @override
+  String get zakatExcludedNoPrice => 'pas encore de cours';
+
+  @override
+  String zakatLineTitle(String name, String quantity) {
+    return '$name · $quantity';
+  }
+
+  @override
+  String get zakatDisclaimer =>
+      'Qima calcule, il ne rend pas d’avis. La base et ce qui compte sont à vous de fixer : en cas de doute, consultez un savant de confiance.';
+
+  @override
+  String get zakatClassMetals => 'Métaux';
+
+  @override
+  String get zakatClassCrypto => 'Crypto';
+
+  @override
+  String get zakatClassEquities => 'Actions';
+
+  @override
+  String get zakatClassCash => 'Liquidités et devises';
+
+  @override
+  String get zakatClassMetalsSubtitle => 'Or, argent, platine, palladium';
+
+  @override
+  String get zakatClassCryptoSubtitle => 'Traitées comme un actif négociable';
+
+  @override
+  String get zakatClassEquitiesSubtitle =>
+      'Désactivé par défaut : les avis divergent sur les actions détenues à long terme';
+
+  @override
+  String get zakatClassCashSubtitle => 'Les devises que vous détenez';
+
+  @override
+  String zakatOverridesCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count actifs réglés individuellement',
+      one: '1 actif réglé individuellement',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get zakatOverridesSubtitle =>
+      'Choisis sur l’écran zakat, en dérogation à leur catégorie';
+
+  @override
+  String get zakatOverridesReset => 'Réinitialiser';
+
+  @override
+  String get zakatNisabBasisSection => 'Base du nisab';
+
+  @override
+  String get zakatClassesSection => 'Catégories soumises';
+
+  @override
+  String get zakatHawlSection => 'Hawl';
+
+  @override
+  String get zakatBasisPriceMissing => 'Cours pas encore chargé';
+
+  @override
+  String zakatBasisToday(String amount) {
+    return '$amount aujourd’hui';
+  }
+
+  @override
+  String zakatBasisHigher(String amount) {
+    return 'Seuil plus élevé · $amount aujourd’hui';
+  }
+
+  @override
+  String zakatBasisLower(String amount) {
+    return 'Seuil plus bas · $amount aujourd’hui · plus de personnes redevables';
+  }
+
+  @override
+  String get zakatCalendar => 'Calendrier';
+
+  @override
+  String get zakatCalendarHijri => 'Hégirien';
+
+  @override
+  String get zakatCalendarGregorian => 'Grégorien';
+
+  @override
+  String zakatGregorianNote(String solarRate, String rate) {
+    return 'Une année grégorienne compte environ 11 jours de plus qu’une année lunaire. Certains savants portent le taux à $solarRate pour en tenir compte ; Qima garde $rate.';
+  }
+
+  @override
+  String get zakatHawlClear => 'Effacer la date du hawl';
+
+  @override
+  String get zakatRemind => 'Me le rappeler';
+
+  @override
+  String get zakatRemindSubtitle =>
+      'Une notification le jour où votre hawl s’achève';
+
+  @override
+  String get zakatRemindNeedsStart =>
+      'Indiquez d’abord la date de début du hawl';
+
+  @override
+  String get zakatRemindNotificationsOff =>
+      'Les notifications de Qima sont désactivées : activez-les dans les réglages du système pour recevoir ce rappel';
+
+  @override
+  String get zakatHawlPickerTitle => 'Début du hawl';
+
+  @override
+  String get zakatHawlPickerDay => 'Jour';
+
+  @override
+  String get zakatHawlPickerMonth => 'Mois';
+
+  @override
+  String get zakatHawlPickerYear => 'Année';
+
+  @override
+  String get zakatHawlPickerFuture =>
+      'Un hawl ne peut pas commencer dans le futur';
+
+  @override
+  String zakatHawlPickerGregorian(String date) {
+    return 'Grégorien : $date';
+  }
+
+  @override
+  String zakatEntryDue(String amount) {
+    return '$amount dus · au-dessus du nisab';
+  }
+
+  @override
+  String get zakatEntryCalculate => 'Voir ce qui est dû';
+
+  @override
+  String get zakatReminderNotificationTitle => 'Votre hawl est achevé';
+
+  @override
+  String get zakatReminderNotificationBody =>
+      'Votre année de zakat s’est achevée aujourd’hui. Ouvrez Qima pour voir ce qui est dû.';
+
+  @override
+  String get hijriMonth1 => 'Mouharram';
+
+  @override
+  String get hijriMonth2 => 'Safar';
+
+  @override
+  String get hijriMonth3 => 'Rabia al-Awal';
+
+  @override
+  String get hijriMonth4 => 'Rabia ath-Thani';
+
+  @override
+  String get hijriMonth5 => 'Joumada al-Oula';
+
+  @override
+  String get hijriMonth6 => 'Joumada ath-Thania';
+
+  @override
+  String get hijriMonth7 => 'Rajab';
+
+  @override
+  String get hijriMonth8 => 'Chaabane';
+
+  @override
+  String get hijriMonth9 => 'Ramadan';
+
+  @override
+  String get hijriMonth10 => 'Chawwal';
+
+  @override
+  String get hijriMonth11 => 'Dhou al-Qi’da';
+
+  @override
+  String get hijriMonth12 => 'Dhou al-Hijja';
+
+  @override
+  String hijriDate(int day, String month, int year) {
+    return '$day $month $year H';
+  }
+
+  @override
+  String get helpZakatTitle => 'Zakat';
+
+  @override
+  String get helpZakatSummary =>
+      'Qima calcule la zakat à partir de vos avoirs aux cours du jour. Il calcule ; les choix derrière le calcul vous appartiennent.';
+
+  @override
+  String get helpZakatStep1Title => 'Nisab';
+
+  @override
+  String get helpZakatStep1Body =>
+      'Le seuil est de 85 g d’or fin ou 595 g d’argent, au cours du moment. Choisissez la base dans les réglages ; celle de l’argent est plus basse, donc plus de personnes sont redevables.';
+
+  @override
+  String get helpZakatStep2Title => 'Ce qui compte';
+
+  @override
+  String get helpZakatStep2Body =>
+      'Les métaux, la crypto et les liquidités comptent par défaut, pas les actions. L’or en carats compte pour sa teneur en or. Excluez n’importe quel actif depuis l’écran zakat.';
+
+  @override
+  String get helpZakatStep3Title => 'Hawl';
+
+  @override
+  String get helpZakatStep3Body =>
+      'Indiquez le jour où votre patrimoine a atteint le nisab. La zakat est due chaque année lunaire ensuite, et Qima peut vous le rappeler le jour venu.';
+
+  @override
+  String get helpZakatStep4Title => 'Un calculateur, pas une fatwa';
+
+  @override
+  String get helpZakatStep4Body =>
+      'Les savants divergent sur la base, les actions et les bijoux. Chaque réglage par défaut peut être modifié ; en cas de doute, consultez un savant de confiance.';
 }

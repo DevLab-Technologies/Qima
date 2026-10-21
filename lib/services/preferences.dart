@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart' show TargetPlatform, defaultTargetPlatform, kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -5,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../models/chart_range.dart';
 import '../models/instrument_catalog.dart';
 import '../models/watch_card.dart';
+import '../models/zakat.dart';
 import 'cloud_kv_store.dart';
 
 enum WidgetRefreshInterval {
@@ -145,6 +148,8 @@ class Preferences {
   static const String _lastAlertEvaluationAtKey = 'lastAlertEvaluationAt';
   static const String _iCloudSyncEnabledKey = 'iCloudSyncEnabled';
   static const String _onboardingCompletedKey = 'onboardingCompleted';
+  static const String _zakatSettingsKey = 'zakatSettings';
+  static const String _zakatReminderNotifiedForKey = 'zakatReminderNotifiedFor';
   static const String _legacyWatchcardsKey = 'pref.watchcards';
   static const String _legacyWatchlistKey = 'pref.watchlist';
 
@@ -196,6 +201,51 @@ class Preferences {
     await local.setInt(_widgetRefreshIntervalKey, value.rawValue);
     await cloud.setString(_widgetRefreshIntervalKey, value.rawValue.toString());
     await cloud.synchronize();
+  }
+
+  /// Synced like [baseCurrency]: zakat choices (nisab basis, classes, hawl
+  /// date) belong to the person, not the device. Stored as one JSON string
+  /// so the whole object moves together and a newer version's extra fields
+  /// survive a round-trip through an older reader's tolerant parse.
+  Future<ZakatSettings> get zakatSettings async {
+    final cloudValue = await cloud.getString(_zakatSettingsKey);
+    if (cloudValue != null) {
+      await local.setString(_zakatSettingsKey, cloudValue);
+      return _decodeZakat(cloudValue);
+    }
+    final localValue = local.getString(_zakatSettingsKey);
+    return localValue == null ? const ZakatSettings() : _decodeZakat(localValue);
+  }
+
+  Future<void> setZakatSettings(ZakatSettings value) async {
+    final encoded = jsonEncode(value.toJson());
+    await local.setString(_zakatSettingsKey, encoded);
+    await cloud.setString(_zakatSettingsKey, encoded);
+    await cloud.synchronize();
+  }
+
+  static ZakatSettings _decodeZakat(String raw) {
+    try {
+      final decoded = jsonDecode(raw);
+      if (decoded is Map<String, dynamic>) return ZakatSettings.fromJson(decoded);
+    } on FormatException {
+      // Corrupt value: fall through to defaults rather than failing init.
+    }
+    return const ZakatSettings();
+  }
+
+  /// Local-only: the hawl completion day this device last posted the zakat
+  /// reminder for, so each completion notifies once per device.
+  DateTime? get zakatReminderNotifiedFor {
+    final raw = local.getString(_zakatReminderNotifiedForKey);
+    return raw == null ? null : DateTime.tryParse(raw);
+  }
+
+  Future<void> setZakatReminderNotifiedFor(DateTime day) async {
+    await local.setString(
+      _zakatReminderNotifiedForKey,
+      '${day.year.toString().padLeft(4, '0')}-${day.month.toString().padLeft(2, '0')}-${day.day.toString().padLeft(2, '0')}',
+    );
   }
 
   Future<AppLanguage> get appLanguage async {

@@ -1803,4 +1803,360 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get settingsHelpAddWidgetSubtitle => 'الشاشة الرئيسية وشاشة القفل';
+
+  @override
+  String get commonDone => 'تم';
+
+  @override
+  String get zakatTitle => 'الزكاة';
+
+  @override
+  String get zakatSettingsTitle => 'إعدادات الزكاة';
+
+  @override
+  String get settingsZakatSubtitle =>
+      'أساس النصاب، وما يُحتسب، وتاريخ الحول، والتذكير';
+
+  @override
+  String get zakatEmptyTitle => 'لا شيء لحسابه بعد';
+
+  @override
+  String get zakatEmptyMessage =>
+      'تُحسب الزكاة من ممتلكاتك. أضف دفعة لأي أصل وسيظهر هنا مع ما يُحتسب ضمن النصاب.';
+
+  @override
+  String get zakatNisabSection => 'النصاب';
+
+  @override
+  String get zakatWhatCountsSection => 'ما يُحتسب';
+
+  @override
+  String get zakatStatusAbove => 'فوق النصاب';
+
+  @override
+  String get zakatStatusBelow => 'دون النصاب';
+
+  @override
+  String get zakatStatusUnknown => 'لم يُسعَّر النصاب بعد';
+
+  @override
+  String zakatDueLabel(String rate) {
+    return 'الزكاة المستحقة · $rate';
+  }
+
+  @override
+  String zakatExplainAboveNoHawl(String base) {
+    return 'على وعاء زكوي قدره $base. حدّد تاريخ حولك لتعرف موعد وجوبها.';
+  }
+
+  @override
+  String zakatExplainAboveToday(String base) {
+    return 'على وعاء زكوي قدره $base. يكتمل حولك اليوم.';
+  }
+
+  @override
+  String zakatExplainAboveUpcoming(String base, String date, int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'بعد $days يوم',
+      many: 'بعد $days يومًا',
+      few: 'بعد $days أيام',
+      two: 'بعد يومين',
+      one: 'بعد يوم واحد',
+    );
+    return 'على وعاء زكوي قدره $base. تجب عند اكتمال حولك في $date ($_temp0)، إن بقي مالك فوق النصاب حينها.';
+  }
+
+  @override
+  String zakatExplainBelow(String base, String threshold) {
+    return 'وعاؤك الزكوي البالغ $base دون نصاب اليوم البالغ $threshold، فلا زكاة عليك.';
+  }
+
+  @override
+  String zakatExplainUnknown(String metal) {
+    return 'لم يُحمَّل سعر $metal اليوم بعد، لذا لا يمكن التحقق من النصاب الآن.';
+  }
+
+  @override
+  String get zakatRetry => 'حاول مجددًا';
+
+  @override
+  String get zakatUnpricedNote =>
+      'بعض الأصول بلا سعر بعد فلم تُحتسب، وستُحتسب فور تحميل سعرها.';
+
+  @override
+  String get zakatBasisRow => 'الأساس';
+
+  @override
+  String zakatBasisValue(String metal, String grams) {
+    return '$metal · $grams غ';
+  }
+
+  @override
+  String zakatOtherBasisLine(String metal, String amount) {
+    return 'أساس $metal سيكون $amount';
+  }
+
+  @override
+  String get zakatThresholdToday => 'النصاب اليوم';
+
+  @override
+  String get zakatYourBase => 'وعاؤك الزكوي';
+
+  @override
+  String get zakatHawlStart => 'بداية الحول';
+
+  @override
+  String get zakatHawlSet => 'حدّد التاريخ';
+
+  @override
+  String get zakatHawlNotSetSubtitle =>
+      'اليوم الذي بلغ فيه مالك النصاب أول مرة';
+
+  @override
+  String get zakatHawlCompletesToday => 'يكتمل اليوم';
+
+  @override
+  String zakatHawlNext(String date) {
+    return 'يكتمل التالي في $date';
+  }
+
+  @override
+  String get zakatWhatCountsFooter =>
+      'أوقف أصلًا لاستبعاده، كالحُلي المستعمل يوميًا إن كنت تأخذ بالرأي القائل بإعفائه.';
+
+  @override
+  String zakatExcludedClass(String cls) {
+    return '$cls غير محتسبة';
+  }
+
+  @override
+  String get zakatExcludedHolding => 'مستبعد';
+
+  @override
+  String get zakatExcludedNoPrice => 'بلا سعر بعد';
+
+  @override
+  String zakatLineTitle(String name, String quantity) {
+    return '$name · $quantity';
+  }
+
+  @override
+  String get zakatDisclaimer =>
+      'Qima يحسب ولا يُفتي. الأساس وما يُحتسب قرارك أنت، فاسأل عالمًا تثق به عند الشك.';
+
+  @override
+  String get zakatClassMetals => 'المعادن';
+
+  @override
+  String get zakatClassCrypto => 'العملات المشفرة';
+
+  @override
+  String get zakatClassEquities => 'الأسهم';
+
+  @override
+  String get zakatClassCash => 'النقد والعملات';
+
+  @override
+  String get zakatClassMetalsSubtitle => 'الذهب والفضة والبلاتين والبلاديوم';
+
+  @override
+  String get zakatClassCryptoSubtitle => 'تُعامل كأصل قابل للتداول';
+
+  @override
+  String get zakatClassEquitiesSubtitle =>
+      'غير محتسبة افتراضيًا، فالآراء في الأسهم طويلة الأجل مختلفة';
+
+  @override
+  String get zakatClassCashSubtitle => 'العملات التي تملكها';
+
+  @override
+  String zakatOverridesCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count أصل محدد يدويًا',
+      many: '$count أصلًا محددًا يدويًا',
+      few: '$count أصول محددة يدويًا',
+      two: 'أصلان محددان يدويًا',
+      one: 'أصل واحد محدد يدويًا',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get zakatOverridesSubtitle =>
+      'اختيرت من شاشة الزكاة وتتجاوز إعداد فئتها';
+
+  @override
+  String get zakatOverridesReset => 'إعادة ضبط';
+
+  @override
+  String get zakatNisabBasisSection => 'أساس النصاب';
+
+  @override
+  String get zakatClassesSection => 'الفئات الزكوية';
+
+  @override
+  String get zakatHawlSection => 'الحول';
+
+  @override
+  String get zakatBasisPriceMissing => 'لم يُحمَّل السعر بعد';
+
+  @override
+  String zakatBasisToday(String amount) {
+    return '$amount اليوم';
+  }
+
+  @override
+  String zakatBasisHigher(String amount) {
+    return 'نصاب أعلى · $amount اليوم';
+  }
+
+  @override
+  String zakatBasisLower(String amount) {
+    return 'نصاب أدنى · $amount اليوم · تجب على عدد أكبر';
+  }
+
+  @override
+  String get zakatCalendar => 'التقويم';
+
+  @override
+  String get zakatCalendarHijri => 'هجري';
+
+  @override
+  String get zakatCalendarGregorian => 'ميلادي';
+
+  @override
+  String zakatGregorianNote(String solarRate, String rate) {
+    return 'السنة الميلادية أطول من القمرية بنحو 11 يومًا، ويرفع بعض العلماء النسبة إلى $solarRate لذلك، بينما يُبقي Qima على $rate.';
+  }
+
+  @override
+  String get zakatHawlClear => 'مسح تاريخ الحول';
+
+  @override
+  String get zakatRemind => 'ذكّرني';
+
+  @override
+  String get zakatRemindSubtitle => 'إشعار في يوم اكتمال حولك';
+
+  @override
+  String get zakatRemindNeedsStart => 'حدّد تاريخ بداية الحول أولًا';
+
+  @override
+  String get zakatRemindNotificationsOff =>
+      'الإشعارات متوقفة لـ Qima، فعّلها من إعدادات النظام لتصلك هذه التذكرة';
+
+  @override
+  String get zakatHawlPickerTitle => 'بداية الحول';
+
+  @override
+  String get zakatHawlPickerDay => 'اليوم';
+
+  @override
+  String get zakatHawlPickerMonth => 'الشهر';
+
+  @override
+  String get zakatHawlPickerYear => 'السنة';
+
+  @override
+  String get zakatHawlPickerFuture => 'لا يمكن أن يبدأ الحول في المستقبل';
+
+  @override
+  String zakatHawlPickerGregorian(String date) {
+    return 'بالميلادي: $date';
+  }
+
+  @override
+  String zakatEntryDue(String amount) {
+    return '$amount مستحقة · فوق النصاب';
+  }
+
+  @override
+  String get zakatEntryCalculate => 'اعرف ما يستحق';
+
+  @override
+  String get zakatReminderNotificationTitle => 'اكتمل حولك';
+
+  @override
+  String get zakatReminderNotificationBody =>
+      'اكتمل عامك الزكوي اليوم. افتح Qima لترى ما يستحق.';
+
+  @override
+  String get hijriMonth1 => 'محرم';
+
+  @override
+  String get hijriMonth2 => 'صفر';
+
+  @override
+  String get hijriMonth3 => 'ربيع الأول';
+
+  @override
+  String get hijriMonth4 => 'ربيع الآخر';
+
+  @override
+  String get hijriMonth5 => 'جمادى الأولى';
+
+  @override
+  String get hijriMonth6 => 'جمادى الآخرة';
+
+  @override
+  String get hijriMonth7 => 'رجب';
+
+  @override
+  String get hijriMonth8 => 'شعبان';
+
+  @override
+  String get hijriMonth9 => 'رمضان';
+
+  @override
+  String get hijriMonth10 => 'شوال';
+
+  @override
+  String get hijriMonth11 => 'ذو القعدة';
+
+  @override
+  String get hijriMonth12 => 'ذو الحجة';
+
+  @override
+  String hijriDate(int day, String month, int year) {
+    return '$day $month $year هـ';
+  }
+
+  @override
+  String get helpZakatTitle => 'الزكاة';
+
+  @override
+  String get helpZakatSummary =>
+      'يحسب Qima الزكاة من ممتلكاتك بأسعار اليوم. هو يحسب، والاختيارات وراء الحساب لك.';
+
+  @override
+  String get helpZakatStep1Title => 'النصاب';
+
+  @override
+  String get helpZakatStep1Body =>
+      'النصاب 85 غرامًا من الذهب الخالص أو 595 غرامًا من الفضة، بسعر اللحظة. اختر الأساس من إعدادات الزكاة؛ نصاب الفضة أدنى فتجب على عدد أكبر.';
+
+  @override
+  String get helpZakatStep2Title => 'ما يُحتسب';
+
+  @override
+  String get helpZakatStep2Body =>
+      'المعادن والعملات المشفرة والنقد تُحتسب افتراضيًا، والأسهم لا. يُحتسب الذهب بعياره حسب محتواه من الذهب الخالص. ويمكنك استبعاد أي أصل من شاشة الزكاة.';
+
+  @override
+  String get helpZakatStep3Title => 'الحول';
+
+  @override
+  String get helpZakatStep3Body =>
+      'حدّد اليوم الذي بلغ فيه مالك النصاب أول مرة. تجب الزكاة كل سنة قمرية بعده، ويمكن لـ Qima تذكيرك في يومها.';
+
+  @override
+  String get helpZakatStep4Title => 'حاسبة لا فتوى';
+
+  @override
+  String get helpZakatStep4Body =>
+      'يختلف العلماء في الأساس وفي الأسهم والحُلي. كل خيار افتراضي هنا قابل للتغيير، فاسأل عالمًا تثق به عند الشك.';
 }
