@@ -47,6 +47,10 @@ void completeAdd(
   messenger.hideCurrentSnackBar();
   messenger.showSnackBar(
     SnackBar(
+      // A snackbar with an action persists by default; this one is a
+      // short-lived chance to undo, not a message to dismiss by hand.
+      persist: false,
+      duration: const Duration(seconds: 6),
       content: Text(created ? l10n.addedToWatchlist(name) : l10n.alreadyInWatchlist(name)),
       action: created
           ? SnackBarAction(
