@@ -858,7 +858,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get backupExportCsvSubtitle =>
-      'Your lots as a spreadsheet, for your records (.csv)';
+      'Every transaction as a spreadsheet (.csv) — it imports back too';
 
   @override
   String get backupRestoreSection => 'Restore';
@@ -1020,7 +1020,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get backupImportCsvErrorMessage =>
-      'A holdings spreadsheet (.csv) only has your lots, and can\'t be restored. Choose a full backup file (.json) instead.';
+      'This is a spreadsheet, not a Qima backup. You can import its rows as transactions instead.';
 
   @override
   String get backupErrorNotQimaFile =>
@@ -1053,13 +1053,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get backupCsvHeaderKarat => 'Karat';
 
   @override
-  String get backupCsvHeaderUnitCost => 'Unit cost';
+  String get backupCsvHeaderUnitCost => 'Price per unit';
 
   @override
-  String get backupCsvHeaderCostCurrency => 'Cost currency';
+  String get backupCsvHeaderCostCurrency => 'Currency';
 
   @override
-  String get backupCsvHeaderTotalCost => 'Total cost';
+  String get backupCsvHeaderTotalCost => 'Total';
 
   @override
   String get backupCsvHeaderDate => 'Date';
@@ -1543,11 +1543,11 @@ class AppLocalizationsEn extends AppLocalizations {
       'Import a .json backup. Merge adds what\'s missing and deletes nothing; Replace swaps everything for the file.';
 
   @override
-  String get helpBackupStep5Title => 'Holdings spreadsheet';
+  String get helpBackupStep5Title => 'Spreadsheets';
 
   @override
   String get helpBackupStep5Body =>
-      'A .csv for accounting. It can\'t be restored.';
+      'Export every transaction as a .csv, or import one — from Qima, a spreadsheet or a broker. It adds transactions; it doesn’t restore settings.';
 
   @override
   String get helpWidgetsTitle => 'Widgets';
@@ -1712,7 +1712,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get helpImportPreviewStep1Body =>
-      'See how many cards, lots and alerts the file contains before restoring.';
+      'See how many cards, transactions and alerts the file contains before restoring.';
 
   @override
   String get helpImportPreviewStep2Title => 'Merge or Replace';
@@ -2360,4 +2360,228 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get transactionPreviewClosesPosition =>
       'Weighted average basis. This sells everything you hold.';
+
+  @override
+  String get backupCsvHeaderType => 'Type';
+
+  @override
+  String get backupCsvHeaderFee => 'Fee';
+
+  @override
+  String get backupCsvHeaderNote => 'Note';
+
+  @override
+  String get csvImportTitle => 'Import from a spreadsheet';
+
+  @override
+  String get csvImportEntryTitle => 'Import transactions from CSV';
+
+  @override
+  String get csvImportEntrySubtitle =>
+      'From a spreadsheet, a broker export or another app';
+
+  @override
+  String get csvImportFromBackupError => 'Import these as transactions';
+
+  @override
+  String csvImportRowCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count rows',
+      one: '1 row',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get csvImportEmptyFile =>
+      'This file has a header row but no data under it.';
+
+  @override
+  String get csvImportColumnsSection => 'Columns';
+
+  @override
+  String get csvImportColumnsFooter =>
+      'Matched from the header row where Qima could. A price or a total will do; the asset can be a symbol or a name. * needed.';
+
+  @override
+  String get csvImportNotInFile => 'Not in file';
+
+  @override
+  String get csvImportOptionsSection => 'Reading the file';
+
+  @override
+  String get csvImportFallbackCurrency => 'Currency';
+
+  @override
+  String get csvImportFallbackCurrencySubtitle =>
+      'For rows that don’t name one';
+
+  @override
+  String get csvImportDateOrder => 'Dates like 03/04/2026 mean';
+
+  @override
+  String get csvImportDayFirst => '3 April';
+
+  @override
+  String get csvImportMonthFirst => 'March 4';
+
+  @override
+  String get csvImportDecimalComma => 'Comma is the decimal mark';
+
+  @override
+  String get csvImportDecimalCommaSubtitle =>
+      'Read 1.234,56 as one thousand two hundred…';
+
+  @override
+  String get csvImportNeedsColumns =>
+      'Choose at least the asset, the date and the quantity.';
+
+  @override
+  String get csvImportReview => 'Review rows';
+
+  @override
+  String get csvImportReadyCount => 'Ready';
+
+  @override
+  String get csvImportDuplicateCount => 'Already in Qima';
+
+  @override
+  String get csvImportProblemCount => 'Can’t import';
+
+  @override
+  String get csvImportSkipNote =>
+      'Rows that can’t be read, or are already in Qima, are skipped. Nothing is guessed.';
+
+  @override
+  String get csvImportShowAll => 'All rows';
+
+  @override
+  String get csvImportShowProblems => 'Skipped only';
+
+  @override
+  String get csvImportSkipped => 'Skipped';
+
+  @override
+  String get csvImportDuplicate => 'Duplicate';
+
+  @override
+  String get csvImportBackToColumns => 'Columns';
+
+  @override
+  String csvImportConfirm(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Import $count transactions',
+      one: 'Import 1 transaction',
+      zero: 'Nothing to import',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String csvImportDoneTitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count transactions imported',
+      one: '1 transaction imported',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get csvImportDoneMessage =>
+      'They’re in each asset’s ledger now. If something looks off, undo removes exactly what this import added.';
+
+  @override
+  String get csvImportUndo => 'Undo this import';
+
+  @override
+  String csvImportUndone(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Removed $count imported transactions',
+      one: 'Removed 1 imported transaction',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get csvFieldType => 'Type';
+
+  @override
+  String get csvFieldAsset => 'Asset name';
+
+  @override
+  String get csvFieldSymbol => 'Symbol';
+
+  @override
+  String get csvFieldQuantity => 'Quantity';
+
+  @override
+  String get csvFieldUnit => 'Unit';
+
+  @override
+  String get csvFieldKarat => 'Karat';
+
+  @override
+  String get csvFieldUnitPrice => 'Price per unit';
+
+  @override
+  String get csvFieldTotal => 'Total';
+
+  @override
+  String get csvFieldFee => 'Fee';
+
+  @override
+  String get csvFieldCurrency => 'Currency';
+
+  @override
+  String get csvFieldDate => 'Date';
+
+  @override
+  String get csvFieldNote => 'Note';
+
+  @override
+  String get csvProblemUnknownAsset => 'unknown asset';
+
+  @override
+  String get csvProblemMissingQuantity => 'no quantity';
+
+  @override
+  String get csvProblemBadNumber => 'a number can’t be read';
+
+  @override
+  String get csvProblemMissingPrice => 'no price';
+
+  @override
+  String get csvProblemMissingDate => 'no date';
+
+  @override
+  String get csvProblemBadDate => 'date can’t be read';
+
+  @override
+  String get csvProblemFutureDate => 'date in the future';
+
+  @override
+  String get csvProblemUnknownType => 'unknown type';
+
+  @override
+  String get csvProblemUnknownCurrency => 'unknown currency';
+
+  @override
+  String get csvProblemUnsupportedUnit => 'unit doesn’t fit this asset';
+
+  @override
+  String get csvProblemUnsupportedKarat => 'karat doesn’t fit this asset';
+
+  @override
+  String get csvProblemOversell => 'sells more than was held';
+
+  @override
+  String get csvProblemDuplicate => 'already in Qima';
 }

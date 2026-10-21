@@ -57,6 +57,20 @@ class TransactionsStore {
     return _store.delete(id);
   }
 
+  /// Adds [transactions] (new ids) in one commit — a CSV import.
+  Future<List<HoldingTransaction>> addAll(List<HoldingTransaction> transactions) async {
+    final now = DateTime.now();
+    final existing = await _store.exportRecords();
+    var order = existing.isEmpty ? 0.0 : existing.map((r) => r.order).reduce((a, b) => a > b ? a : b) + 1;
+    await _store.insertMissing([
+      for (final t in transactions) Record<HoldingTransaction>(item: t, order: order++, updatedAt: now),
+    ]);
+    return _store.load();
+  }
+
+  /// Deletes every transaction in [ids] in one commit — undoing an import.
+  Future<List<HoldingTransaction>> deleteAll(Iterable<String> ids) => _store.deleteAll(ids);
+
   Future<List<HoldingTransaction>?> adoptCloudChanges() async {
     await migrateLegacyLots();
     return _store.adoptCloudChanges();

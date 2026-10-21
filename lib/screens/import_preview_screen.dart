@@ -12,6 +12,7 @@ import '../theme/help_topics.dart';
 import '../theme/qima_colors.dart';
 import '../widgets/confirm_delete_dialog.dart';
 import '../widgets/help_button.dart';
+import 'csv_import_screen.dart';
 
 /// Import preview (spec Phase 6): shows the picked file's summary, prompts
 /// for a password if it's encrypted, lets the user choose Merge vs Replace
@@ -163,6 +164,12 @@ class _ImportPreviewScreenState extends State<ImportPreviewScreen> {
           icon: Icons.table_chart_outlined,
           title: l10n.backupImportCsvErrorTitle,
           message: l10n.backupImportCsvErrorMessage,
+          action: FilledButton(
+            onPressed: () => Navigator.of(context).pushReplacement(MaterialPageRoute(
+              builder: (_) => CsvImportScreen(fileName: widget.picked.name, text: widget.picked.raw),
+            )),
+            child: Text(l10n.csvImportFromBackupError),
+          ),
         );
       case _Stage.error:
         return _ErrorState(
@@ -327,8 +334,9 @@ class _ErrorState extends StatelessWidget {
   final IconData icon;
   final String title;
   final String message;
+  final Widget? action;
 
-  const _ErrorState({required this.icon, required this.title, required this.message});
+  const _ErrorState({required this.icon, required this.title, required this.message, this.action});
 
   @override
   Widget build(BuildContext context) {
@@ -352,6 +360,10 @@ class _ErrorState extends StatelessWidget {
               textAlign: TextAlign.center,
               style: TextStyle(color: colors.textTertiary, fontSize: 13),
             ),
+            if (action != null) ...[
+              const SizedBox(height: DS.spaceLG),
+              action!,
+            ],
           ],
         ),
       ),

@@ -857,7 +857,8 @@ class AppLocalizationsAr extends AppLocalizations {
   String get backupExportCsvTitle => 'جدول بيانات الممتلكات';
 
   @override
-  String get backupExportCsvSubtitle => 'دفعاتك كجدول بيانات، لسجلاتك (.csv)';
+  String get backupExportCsvSubtitle =>
+      'كل المعاملات في جدول بيانات (‎.csv)، ويمكن استيراده مجددًا';
 
   @override
   String get backupRestoreSection => 'استعادة';
@@ -1020,7 +1021,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get backupImportCsvErrorMessage =>
-      'جدول بيانات الممتلكات (.csv) يحتوي على دفعاتك فقط، ولا يمكن استعادته. اختر ملف نسخة احتياطية كاملة (.json) بدلاً من ذلك.';
+      'هذا جدول بيانات وليس نسخة احتياطية من Qima. يمكنك استيراد صفوفه كمعاملات بدلًا من ذلك.';
 
   @override
   String get backupErrorNotQimaFile =>
@@ -1053,13 +1054,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get backupCsvHeaderKarat => 'العيار';
 
   @override
-  String get backupCsvHeaderUnitCost => 'تكلفة الوحدة';
+  String get backupCsvHeaderUnitCost => 'السعر للوحدة';
 
   @override
-  String get backupCsvHeaderCostCurrency => 'عملة التكلفة';
+  String get backupCsvHeaderCostCurrency => 'العملة';
 
   @override
-  String get backupCsvHeaderTotalCost => 'التكلفة الإجمالية';
+  String get backupCsvHeaderTotalCost => 'الإجمالي';
 
   @override
   String get backupCsvHeaderDate => 'التاريخ';
@@ -1536,10 +1537,11 @@ class AppLocalizationsAr extends AppLocalizations {
       'استورد نسخة احتياطية بصيغة ‎.json. يضيف الدمج ما ينقص ولا يحذف شيئًا؛ ويستبدل الاستبدال كل شيء بمحتوى الملف.';
 
   @override
-  String get helpBackupStep5Title => 'جدول بيانات الممتلكات';
+  String get helpBackupStep5Title => 'جداول البيانات';
 
   @override
-  String get helpBackupStep5Body => 'ملف ‎.csv للمحاسبة. لا يمكن استعادته.';
+  String get helpBackupStep5Body =>
+      'صدّر كل المعاملات كملف ‎.csv أو استورد واحدًا من Qima أو جدول بيانات أو وسيط. الاستيراد يضيف معاملات ولا يستعيد الإعدادات.';
 
   @override
   String get helpWidgetsTitle => 'الودجت';
@@ -1703,7 +1705,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get helpImportPreviewStep1Body =>
-      'اطّلع على عدد البطاقات والدفعات والتنبيهات في الملف قبل الاستعادة.';
+      'اطّلع على عدد البطاقات والمعاملات والتنبيهات في الملف قبل الاستعادة.';
 
   @override
   String get helpImportPreviewStep2Title => 'دمج أو استبدال';
@@ -2359,4 +2361,238 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get transactionPreviewClosesPosition =>
       'على أساس المتوسط المرجّح. هذا يبيع كل ما تملكه.';
+
+  @override
+  String get backupCsvHeaderType => 'النوع';
+
+  @override
+  String get backupCsvHeaderFee => 'الرسوم';
+
+  @override
+  String get backupCsvHeaderNote => 'ملاحظة';
+
+  @override
+  String get csvImportTitle => 'استيراد من جدول بيانات';
+
+  @override
+  String get csvImportEntryTitle => 'استيراد المعاملات من CSV';
+
+  @override
+  String get csvImportEntrySubtitle =>
+      'من جدول بيانات أو ملف وسيط أو تطبيق آخر';
+
+  @override
+  String get csvImportFromBackupError => 'استيرادها كمعاملات';
+
+  @override
+  String csvImportRowCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count صف',
+      many: '$count صفًا',
+      few: '$count صفوف',
+      two: 'صفان',
+      one: 'صف واحد',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get csvImportEmptyFile =>
+      'يحتوي هذا الملف على صف عناوين بلا بيانات تحته.';
+
+  @override
+  String get csvImportColumnsSection => 'الأعمدة';
+
+  @override
+  String get csvImportColumnsFooter =>
+      'طابقها Qima من صف العناوين حيثما أمكن. يكفي السعر أو الإجمالي، ويمكن أن يكون الأصل رمزًا أو اسمًا. * مطلوب.';
+
+  @override
+  String get csvImportNotInFile => 'غير موجود في الملف';
+
+  @override
+  String get csvImportOptionsSection => 'قراءة الملف';
+
+  @override
+  String get csvImportFallbackCurrency => 'العملة';
+
+  @override
+  String get csvImportFallbackCurrencySubtitle => 'للصفوف التي لا تذكر عملة';
+
+  @override
+  String get csvImportDateOrder => 'التواريخ مثل 03/04/2026 تعني';
+
+  @override
+  String get csvImportDayFirst => '3 أبريل';
+
+  @override
+  String get csvImportMonthFirst => '4 مارس';
+
+  @override
+  String get csvImportDecimalComma => 'الفاصلة هي العلامة العشرية';
+
+  @override
+  String get csvImportDecimalCommaSubtitle =>
+      'قراءة 1.234,56 على أنها ألف ومئتان…';
+
+  @override
+  String get csvImportNeedsColumns => 'اختر على الأقل الأصل والتاريخ والكمية.';
+
+  @override
+  String get csvImportReview => 'مراجعة الصفوف';
+
+  @override
+  String get csvImportReadyCount => 'جاهزة';
+
+  @override
+  String get csvImportDuplicateCount => 'موجودة في Qima';
+
+  @override
+  String get csvImportProblemCount => 'لا يمكن استيرادها';
+
+  @override
+  String get csvImportSkipNote =>
+      'تُتخطى الصفوف غير المقروءة أو الموجودة مسبقًا في Qima، ولا يُخمَّن شيء.';
+
+  @override
+  String get csvImportShowAll => 'كل الصفوف';
+
+  @override
+  String get csvImportShowProblems => 'المتخطاة فقط';
+
+  @override
+  String get csvImportSkipped => 'متخطاة';
+
+  @override
+  String get csvImportDuplicate => 'مكررة';
+
+  @override
+  String get csvImportBackToColumns => 'الأعمدة';
+
+  @override
+  String csvImportConfirm(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'استيراد $count معاملة',
+      many: 'استيراد $count معاملة',
+      few: 'استيراد $count معاملات',
+      two: 'استيراد معاملتين',
+      one: 'استيراد معاملة واحدة',
+      zero: 'لا شيء للاستيراد',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String csvImportDoneTitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'تم استيراد $count معاملة',
+      many: 'تم استيراد $count معاملة',
+      few: 'تم استيراد $count معاملات',
+      two: 'تم استيراد معاملتين',
+      one: 'تم استيراد معاملة واحدة',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get csvImportDoneMessage =>
+      'أصبحت في سجل كل أصل. إن بدا شيء غير صحيح فالتراجع يزيل ما أضافه هذا الاستيراد فقط.';
+
+  @override
+  String get csvImportUndo => 'التراجع عن هذا الاستيراد';
+
+  @override
+  String csvImportUndone(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'أُزيلت $count معاملة مستوردة',
+      many: 'أُزيلت $count معاملة مستوردة',
+      few: 'أُزيلت $count معاملات مستوردة',
+      two: 'أُزيلت معاملتان مستوردتان',
+      one: 'أُزيلت معاملة مستوردة واحدة',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get csvFieldType => 'النوع';
+
+  @override
+  String get csvFieldAsset => 'اسم الأصل';
+
+  @override
+  String get csvFieldSymbol => 'الرمز';
+
+  @override
+  String get csvFieldQuantity => 'الكمية';
+
+  @override
+  String get csvFieldUnit => 'الوحدة';
+
+  @override
+  String get csvFieldKarat => 'العيار';
+
+  @override
+  String get csvFieldUnitPrice => 'السعر للوحدة';
+
+  @override
+  String get csvFieldTotal => 'الإجمالي';
+
+  @override
+  String get csvFieldFee => 'الرسوم';
+
+  @override
+  String get csvFieldCurrency => 'العملة';
+
+  @override
+  String get csvFieldDate => 'التاريخ';
+
+  @override
+  String get csvFieldNote => 'ملاحظة';
+
+  @override
+  String get csvProblemUnknownAsset => 'أصل غير معروف';
+
+  @override
+  String get csvProblemMissingQuantity => 'بلا كمية';
+
+  @override
+  String get csvProblemBadNumber => 'رقم غير مقروء';
+
+  @override
+  String get csvProblemMissingPrice => 'بلا سعر';
+
+  @override
+  String get csvProblemMissingDate => 'بلا تاريخ';
+
+  @override
+  String get csvProblemBadDate => 'تاريخ غير مقروء';
+
+  @override
+  String get csvProblemFutureDate => 'تاريخ في المستقبل';
+
+  @override
+  String get csvProblemUnknownType => 'نوع غير معروف';
+
+  @override
+  String get csvProblemUnknownCurrency => 'عملة غير معروفة';
+
+  @override
+  String get csvProblemUnsupportedUnit => 'وحدة لا تناسب هذا الأصل';
+
+  @override
+  String get csvProblemUnsupportedKarat => 'عيار لا يناسب هذا الأصل';
+
+  @override
+  String get csvProblemOversell => 'تبيع أكثر مما كان محتفظًا به';
+
+  @override
+  String get csvProblemDuplicate => 'موجودة في Qima';
 }
