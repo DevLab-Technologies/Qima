@@ -4,6 +4,8 @@ import 'package:qima/models/asset.dart';
 import 'package:qima/models/asset_group.dart';
 import 'package:qima/models/fx_history.dart';
 import 'package:qima/models/holding.dart';
+import 'package:qima/models/holding_transaction.dart';
+import 'package:qima/models/ledger.dart';
 import 'package:qima/models/instrument_catalog.dart';
 import 'package:qima/models/metal_breakdown.dart';
 import 'package:qima/models/money.dart';
@@ -35,7 +37,7 @@ void main() {
     return [
       for (final e in byId.entries)
         if (HoldingValuation.aggregate(lots: e.value, rates: rates, displayCurrency: 'USD', latestUSD: (id) => p[id]) case final v?)
-          HeldInstrument(instrument: InstrumentCatalog.instrument(e.key)!, valuation: v, lotCount: e.value.length),
+          HeldInstrument(instrument: InstrumentCatalog.instrument(e.key)!, valuation: v, transactionCount: e.value.length),
     ];
   }
 
@@ -97,7 +99,7 @@ void main() {
 
     DriftResult? drift(List<HoldingLot> lots, DateTime now, Map<String, QuoteSeries> history, {String base = 'USD', FXHistory fx = FXHistory.empty}) =>
         Allocation.drift(
-          lots: lots,
+          ledger: Ledger.derive(lots.map(HoldingTransaction.fromLot)),
           heldNow: held(lots),
           seriesByID: history,
           fxHistory: fx,
@@ -142,7 +144,7 @@ void main() {
         btc: series(btc, {DateTime(2025, 12, 1): 10000}),
       };
       final result = Allocation.drift(
-        lots: lots,
+        ledger: Ledger.derive(lots.map(HoldingTransaction.fromLot)),
         heldNow: held(lots, prices: {gold: goldOz}),
         seriesByID: history,
         fxHistory: FXHistory.empty,

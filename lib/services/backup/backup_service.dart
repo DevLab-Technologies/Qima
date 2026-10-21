@@ -12,6 +12,7 @@ import '../../models/backup.dart';
 import '../../models/chart_range.dart';
 import '../../models/custom_instrument.dart';
 import '../../models/holding.dart';
+import '../../models/holding_transaction.dart';
 import '../../models/price_alert.dart';
 import '../../models/syncable.dart';
 import '../../models/watch_card.dart';
@@ -21,6 +22,7 @@ import '../custom_instrument_store.dart';
 import '../holdings_store.dart';
 import '../preferences.dart';
 import '../synced_store.dart';
+import '../transactions_store.dart';
 import '../watchlist_store.dart';
 import 'backup_codec.dart';
 import 'holdings_csv.dart';
@@ -61,7 +63,9 @@ class BackupPreview {
 
   int get cardCount => payload.watchcards.length;
 
-  int get lotCount => payload.holdings.length;
+  /// Ledger rows in the file — or, for a backup from before the ledger,
+  /// its lots, each of which restores as a buy.
+  int get transactionCount => payload.transactions?.length ?? payload.holdings.length;
 
   int get customTickerCount => payload.customInstruments.length;
 }
@@ -85,6 +89,7 @@ enum BackupImportMode { merge, replace }
 class BackupService {
   final WatchlistStore watchlistStore;
   final HoldingsStore holdingsStore;
+  final TransactionsStore transactionsStore;
   final CustomInstrumentStore customInstrumentStore;
   final AlertsStore alertsStore;
   final Preferences preferences;
@@ -92,10 +97,11 @@ class BackupService {
   BackupService({
     required this.watchlistStore,
     required this.holdingsStore,
+    TransactionsStore? transactionsStore,
     required this.customInstrumentStore,
     required this.alertsStore,
     required this.preferences,
-  });
+  }) : transactionsStore = transactionsStore ?? TransactionsStore(legacyLots: holdingsStore);
 
   static const String _lastBackupAtKey = 'backup.lastBackupAt';
   static const String _reminderEnabledKey = 'backup.reminderEnabled';
@@ -129,6 +135,7 @@ class BackupService {
   Future<BackupPayload> buildPayload() async {
     final cardsRecords = await watchlistStore.exportRecords();
     final lotsRecords = await holdingsStore.exportRecords();
+    final transactionRecords = await transactionsStore.exportRecords();
     final customRecords = await customInstrumentStore.exportRecords();
     final alertsRecords = await alertsStore.exportRecords();
 
@@ -144,6 +151,7 @@ class BackupService {
     return BackupPayload(
       watchcards: cardsRecords.map((r) => r.toJson()).toList(),
       holdings: lotsRecords.map((r) => r.toJson()).toList(),
+      transactions: transactionRecords.map((r) => r.toJson()).toList(),
       customInstruments: customRecords.map((r) => r.toJson()).toList(),
       alerts: alertsRecords.map((r) => r.toJson()).toList(),
       settings: settings,
@@ -298,20 +306,20 @@ class BackupService {
     final payload = await BackupCodec.decodePayload(envelope, password: password);
 
     final cardRecords = _decodeRecords(payload.watchcards, WatchCard.fromJson);
-    final lotRecords = _decodeRecords(payload.holdings, HoldingLot.fromJson);
+    final transactionRecords = _transactionRecords(payload);
     final customRecords = _decodeRecords(payload.customInstruments, CustomInstrument.fromJson);
     final alertRecords = _decodeRecords(payload.alerts, PriceAlert.fromJson);
 
     final mergeDiff = await _diff(
       cardRecords: cardRecords,
-      lotRecords: lotRecords,
+      transactionRecords: transactionRecords,
       customRecords: customRecords,
       alertRecords: alertRecords,
       mode: BackupImportMode.merge,
     );
     final replaceDiff = await _diff(
       cardRecords: cardRecords,
-      lotRecords: lotRecords,
+      transactionRecords: transactionRecords,
       customRecords: customRecords,
       alertRecords: alertRecords,
       mode: BackupImportMode.replace,
@@ -331,20 +339,32 @@ class BackupService {
     }
   }
 
+  /// The ledger a payload restores: its own transactions, or for a backup
+  /// from before the ledger, its live lots as buys — the same conversion the
+  /// on-device migration makes, so the ids line up.
+  List<Record<HoldingTransaction>> _transactionRecords(BackupPayload payload) {
+    final transactions = payload.transactions;
+    if (transactions != null) return _decodeRecords(transactions, HoldingTransaction.fromJson);
+    return [
+      for (final r in _decodeRecords(payload.holdings, HoldingLot.fromJson))
+        if (!r.deleted) Record<HoldingTransaction>(item: HoldingTransaction.fromLot(r.item), order: r.order, updatedAt: r.updatedAt),
+    ];
+  }
+
   Future<BackupDiff> _diff({
     required List<Record<WatchCard>> cardRecords,
-    required List<Record<HoldingLot>> lotRecords,
+    required List<Record<HoldingTransaction>> transactionRecords,
     required List<Record<CustomInstrument>> customRecords,
     required List<Record<PriceAlert>> alertRecords,
     required BackupImportMode mode,
   }) async {
     final cards = await watchlistStore.exportRecords();
-    final lots = await holdingsStore.exportRecords();
+    final transactions = await transactionsStore.exportRecords();
     final customs = await customInstrumentStore.exportRecords();
     final alerts = await alertsStore.exportRecords();
 
     return _diffRecords(cards, cardRecords, mode) +
-        _diffRecords(lots, lotRecords, mode) +
+        _diffRecords(transactions, transactionRecords, mode) +
         _diffRecords(customs, customRecords, mode) +
         _diffRecords(alerts, alertRecords, mode);
   }
@@ -413,11 +433,15 @@ class BackupService {
 
     final cardRecords = _decodeRecords(payload.watchcards, WatchCard.fromJson);
     final lotRecords = _decodeRecords(payload.holdings, HoldingLot.fromJson);
+    final transactionRecords = _transactionRecords(payload);
     final customRecords = _decodeRecords(payload.customInstruments, CustomInstrument.fromJson);
     final alertRecords = _decodeRecords(payload.alerts, PriceAlert.fromJson);
 
     await watchlistStore.importRecords(cardRecords, replace: replace);
+    // The legacy lots first: importing the ledger afterwards means a lot a
+    // replace just tombstoned can't be migrated back in.
     await holdingsStore.importRecords(lotRecords, replace: replace);
+    await transactionsStore.importRecords(transactionRecords, replace: replace);
     await customInstrumentStore.importRecords(customRecords, replace: replace);
     await alertsStore.importRecords(alertRecords, replace: replace);
 

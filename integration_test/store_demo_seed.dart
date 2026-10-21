@@ -5,6 +5,7 @@ import 'package:qima/blocs/app_cubit.dart';
 import 'package:qima/models/asset.dart';
 import 'package:qima/models/chart_range.dart';
 import 'package:qima/models/holding.dart';
+import 'package:qima/models/holding_transaction.dart';
 import 'package:qima/models/metal_breakdown.dart';
 import 'package:qima/models/watch_card.dart';
 import 'package:qima/services/preferences.dart';
@@ -88,7 +89,7 @@ Future<void> seedStoreDemo(AppCubit cubit, {AppLanguage language = AppLanguage.e
     ),
   ];
   for (final lot in lots) {
-    await cubit.saveLot(lot);
+    await cubit.saveTransaction(HoldingTransaction.fromLot(lot));
   }
   await cubit.refreshAll();
   await cubit.backfillHistoryIfNeeded();

@@ -321,7 +321,7 @@ abstract class AppLocalizations {
   /// No description provided for @holdingsEmpty.
   ///
   /// In en, this message translates to:
-  /// **'Add your first lot to start tracking this holding.'**
+  /// **'No transactions yet. Add a buy to start tracking this holding.'**
   String get holdingsEmpty;
 
   /// No description provided for @holdingsValue.
@@ -348,18 +348,6 @@ abstract class AppLocalizations {
   /// **'Gain %'**
   String get holdingsGainPercent;
 
-  /// No description provided for @holdingsNew.
-  ///
-  /// In en, this message translates to:
-  /// **'New lot'**
-  String get holdingsNew;
-
-  /// No description provided for @holdingsEdit.
-  ///
-  /// In en, this message translates to:
-  /// **'Edit lot'**
-  String get holdingsEdit;
-
   /// No description provided for @holdingsQuantity.
   ///
   /// In en, this message translates to:
@@ -378,41 +366,11 @@ abstract class AppLocalizations {
   /// **'Total'**
   String get holdingsCostModeTotal;
 
-  /// No description provided for @holdingsUnitCost.
-  ///
-  /// In en, this message translates to:
-  /// **'Unit cost'**
-  String get holdingsUnitCost;
-
-  /// No description provided for @holdingsUnitCostWithUnit.
-  ///
-  /// In en, this message translates to:
-  /// **'Unit cost (per {unit})'**
-  String holdingsUnitCostWithUnit(String unit);
-
-  /// No description provided for @holdingsUnitCostWithKarat.
-  ///
-  /// In en, this message translates to:
-  /// **'Unit cost (per {unit} · {karat})'**
-  String holdingsUnitCostWithKarat(String unit, String karat);
-
-  /// No description provided for @holdingsUnitCostPreview.
-  ///
-  /// In en, this message translates to:
-  /// **'Per unit: {value}'**
-  String holdingsUnitCostPreview(String value);
-
   /// No description provided for @holdingsTotalCost.
   ///
   /// In en, this message translates to:
   /// **'Total cost'**
   String get holdingsTotalCost;
-
-  /// No description provided for @holdingsTotalCostPreview.
-  ///
-  /// In en, this message translates to:
-  /// **'Total: {value}'**
-  String holdingsTotalCostPreview(String value);
 
   /// No description provided for @holdingsDate.
   ///
@@ -437,22 +395,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Average cost'**
   String get holdingsAverageCost;
-
-  /// No description provided for @holdingsAverageCostPerUnit.
-  ///
-  /// In en, this message translates to:
-  /// **'{value} per {unit}'**
-  String holdingsAverageCostPerUnit(String value, String unit);
-
-  /// No description provided for @holdingsAverageCostPerUnitKarat.
-  ///
-  /// In en, this message translates to:
-  /// **'{value} per {unit} · {karat}'**
-  String holdingsAverageCostPerUnitKarat(
-    String value,
-    String unit,
-    String karat,
-  );
 
   /// No description provided for @holdingsMixedNote.
   ///
@@ -501,12 +443,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Add a holding lot to see your portfolio chart'**
   String get portfolioNoHistory;
-
-  /// No description provided for @portfolioLotCount.
-  ///
-  /// In en, this message translates to:
-  /// **'{count, plural, =1{1 lot} other{{count} lots}}'**
-  String portfolioLotCount(num count);
 
   /// No description provided for @settingsTitle.
   ///
@@ -1174,18 +1110,6 @@ abstract class AppLocalizations {
   /// **'Your holdings for this asset are kept.'**
   String get confirmRemoveCardMessage;
 
-  /// No description provided for @confirmDeleteLotTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Delete this lot?'**
-  String get confirmDeleteLotTitle;
-
-  /// No description provided for @confirmDeleteLotMessage.
-  ///
-  /// In en, this message translates to:
-  /// **'{details}. This can\'t be undone.'**
-  String confirmDeleteLotMessage(String details);
-
   /// No description provided for @confirmRemoveTickerTitle.
   ///
   /// In en, this message translates to:
@@ -1848,12 +1772,6 @@ abstract class AppLocalizations {
   /// **'Watchlist cards'**
   String get backupImportCountCards;
 
-  /// No description provided for @backupImportCountLots.
-  ///
-  /// In en, this message translates to:
-  /// **'Lots'**
-  String get backupImportCountLots;
-
   /// No description provided for @backupImportCountCustomTickers.
   ///
   /// In en, this message translates to:
@@ -2487,25 +2405,25 @@ abstract class AppLocalizations {
   /// Lot editor help topic title.
   ///
   /// In en, this message translates to:
-  /// **'Lot editor'**
+  /// **'Transaction'**
   String get helpLotEditorTitle;
 
   /// Lot editor help topic summary line.
   ///
   /// In en, this message translates to:
-  /// **'Record one purchase so Qima can work out what you hold, your average cost and your gain.'**
+  /// **'Record one buy, sell, transfer or fee. Your holding, average cost and gains are worked out from these.'**
   String get helpLotEditorSummary;
 
   /// Lot editor help step 1 title.
   ///
   /// In en, this message translates to:
-  /// **'Quantity and unit'**
+  /// **'Type'**
   String get helpLotEditorStep1Title;
 
   /// Lot editor help step 1 body.
   ///
   /// In en, this message translates to:
-  /// **'Enter how much you bought, in troy ounces, grams or kilograms.'**
+  /// **'Buy adds at a cost. Sell removes and realises a gain or loss. Transfer moves quantity in or out. Fee records a charge.'**
   String get helpLotEditorStep1Body;
 
   /// Lot editor help step 2 title.
@@ -2517,19 +2435,19 @@ abstract class AppLocalizations {
   /// Lot editor help step 2 body.
   ///
   /// In en, this message translates to:
-  /// **'For gold by gram or kilogram, pick 24K, 22K, 21K or 18K. It starts at the card\'s karat.'**
+  /// **'For gold by gram or kilogram, pick 24K, 22K, 21K or 18K. Everything is counted by gold content, so karats mix correctly.'**
   String get helpLotEditorStep2Body;
 
   /// Lot editor help step 3 title.
   ///
   /// In en, this message translates to:
-  /// **'What you paid'**
+  /// **'Price and fee'**
   String get helpLotEditorStep3Title;
 
   /// Lot editor help step 3 body.
   ///
   /// In en, this message translates to:
-  /// **'Enter the cost per unit or the total, in the currency you paid in.'**
+  /// **'Enter the price per unit or the total, and any commission. A sell shows what it realises before you save.'**
   String get helpLotEditorStep3Body;
 
   /// Lot editor help step 4 title.
@@ -2541,7 +2459,7 @@ abstract class AppLocalizations {
   /// Lot editor help step 4 body.
   ///
   /// In en, this message translates to:
-  /// **'The day you bought it.'**
+  /// **'The day it happened. A sale can’t be dated before you held enough.'**
   String get helpLotEditorStep4Body;
 
   /// Lot editor help step 5 title.
@@ -2553,7 +2471,7 @@ abstract class AppLocalizations {
   /// Lot editor help step 5 body.
   ///
   /// In en, this message translates to:
-  /// **'Edit or delete a lot any time from Holdings.'**
+  /// **'Edit or delete a transaction any time from the holding’s ledger.'**
   String get helpLotEditorStep5Body;
 
   /// Add asset help topic title.
@@ -2967,7 +2885,7 @@ abstract class AppLocalizations {
   /// Holdings list help topic summary line.
   ///
   /// In en, this message translates to:
-  /// **'Every lot you bought of this asset, and what they add up to.'**
+  /// **'Every transaction for this asset — buys, sells, transfers and fees — and what they add up to.'**
   String get helpHoldingsSummary;
 
   /// Holdings list help step 1 title.
@@ -2979,31 +2897,31 @@ abstract class AppLocalizations {
   /// Holdings list help step 1 body.
   ///
   /// In en, this message translates to:
-  /// **'Quantity, average cost, current value and gain across every lot.'**
+  /// **'What you hold, your average cost, its value and gain, plus what sales have realised.'**
   String get helpHoldingsStep1Body;
 
   /// Holdings list help step 2 title.
   ///
   /// In en, this message translates to:
-  /// **'Add a lot'**
+  /// **'Add a transaction'**
   String get helpHoldingsStep2Title;
 
   /// Holdings list help step 2 body.
   ///
   /// In en, this message translates to:
-  /// **'Tap + to record another purchase.'**
+  /// **'Tap Add to record a buy, a sell, a transfer or a fee.'**
   String get helpHoldingsStep2Body;
 
   /// Holdings list help step 3 title.
   ///
   /// In en, this message translates to:
-  /// **'Edit or delete a lot'**
+  /// **'Edit or delete one'**
   String get helpHoldingsStep3Title;
 
   /// Holdings list help step 3 body.
   ///
   /// In en, this message translates to:
-  /// **'Tap a lot to change it, or swipe to delete.'**
+  /// **'Tap a row to change it, or swipe to delete. Qima won’t let a change leave a sale selling more than you held.'**
   String get helpHoldingsStep3Body;
 
   /// Card config help topic title.
@@ -3881,6 +3799,348 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'All in {group}'**
   String allocationSingleGroup(String group);
+
+  /// No description provided for @backupImportCountTransactions.
+  ///
+  /// In en, this message translates to:
+  /// **'Transactions'**
+  String get backupImportCountTransactions;
+
+  /// No description provided for @portfolioTransactionCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 transaction} other{{count} transactions}}'**
+  String portfolioTransactionCount(int count);
+
+  /// No description provided for @portfolioClosedPositions.
+  ///
+  /// In en, this message translates to:
+  /// **'Closed positions'**
+  String get portfolioClosedPositions;
+
+  /// No description provided for @ledgerTitleWithKarat.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} · {karat}'**
+  String ledgerTitleWithKarat(String name, String karat);
+
+  /// No description provided for @ledgerAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get ledgerAdd;
+
+  /// No description provided for @ledgerAddFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a transaction'**
+  String get ledgerAddFirst;
+
+  /// No description provided for @ledgerHolding.
+  ///
+  /// In en, this message translates to:
+  /// **'Holding'**
+  String get ledgerHolding;
+
+  /// No description provided for @ledgerNothingHeld.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing held now'**
+  String get ledgerNothingHeld;
+
+  /// No description provided for @ledgerPerUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} / {unit}'**
+  String ledgerPerUnit(String amount, String unit);
+
+  /// No description provided for @ledgerMarketValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Market value'**
+  String get ledgerMarketValue;
+
+  /// No description provided for @ledgerUnrealised.
+  ///
+  /// In en, this message translates to:
+  /// **'Unrealised'**
+  String get ledgerUnrealised;
+
+  /// No description provided for @ledgerRealised.
+  ///
+  /// In en, this message translates to:
+  /// **'Realised'**
+  String get ledgerRealised;
+
+  /// No description provided for @ledgerGainWithPercent.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} ({percent})'**
+  String ledgerGainWithPercent(String amount, String percent);
+
+  /// No description provided for @ledgerDetail.
+  ///
+  /// In en, this message translates to:
+  /// **'{date} · {detail}'**
+  String ledgerDetail(String date, String detail);
+
+  /// No description provided for @ledgerDetailWithFee.
+  ///
+  /// In en, this message translates to:
+  /// **'{date} · {price} · fee {fee}'**
+  String ledgerDetailWithFee(String date, String price, String fee);
+
+  /// No description provided for @ledgerNoCostBasis.
+  ///
+  /// In en, this message translates to:
+  /// **'no cost basis'**
+  String get ledgerNoCostBasis;
+
+  /// No description provided for @ledgerCostCarried.
+  ///
+  /// In en, this message translates to:
+  /// **'cost carried over'**
+  String get ledgerCostCarried;
+
+  /// No description provided for @ledgerFootnote.
+  ///
+  /// In en, this message translates to:
+  /// **'Cost basis is worked out from this ledger, not stored. Editing any row re-derives the holding.'**
+  String get ledgerFootnote;
+
+  /// No description provided for @ledgerOverdrawnBanner.
+  ///
+  /// In en, this message translates to:
+  /// **'A sale here sells more than was held on its date — usually from editing on two devices at once. It counts as selling what was left; edit or delete it to fix the totals.'**
+  String get ledgerOverdrawnBanner;
+
+  /// No description provided for @ledgerClosedLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing held now · realised {amount}'**
+  String ledgerClosedLine(String amount);
+
+  /// No description provided for @ledgerConflictSaveTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'That would oversell'**
+  String get ledgerConflictSaveTitle;
+
+  /// No description provided for @ledgerConflictDeleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Can’t delete this yet'**
+  String get ledgerConflictDeleteTitle;
+
+  /// No description provided for @ledgerConflictMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'The {kind} on {date} would then sell more than was held. Edit or delete that one first.'**
+  String ledgerConflictMessage(String kind, String date);
+
+  /// No description provided for @confirmDeleteTransactionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this transaction?'**
+  String get confirmDeleteTransactionTitle;
+
+  /// No description provided for @confirmDeleteTransactionMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'{details}. The holding is worked out again without it. This can’t be undone.'**
+  String confirmDeleteTransactionMessage(String details);
+
+  /// No description provided for @transactionNewTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'New transaction'**
+  String get transactionNewTitle;
+
+  /// No description provided for @transactionEditTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit transaction'**
+  String get transactionEditTitle;
+
+  /// No description provided for @transactionKindBuy.
+  ///
+  /// In en, this message translates to:
+  /// **'Buy'**
+  String get transactionKindBuy;
+
+  /// No description provided for @transactionKindSell.
+  ///
+  /// In en, this message translates to:
+  /// **'Sell'**
+  String get transactionKindSell;
+
+  /// No description provided for @transactionKindTransfer.
+  ///
+  /// In en, this message translates to:
+  /// **'Transfer'**
+  String get transactionKindTransfer;
+
+  /// No description provided for @transactionKindTransferIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Transfer in'**
+  String get transactionKindTransferIn;
+
+  /// No description provided for @transactionKindTransferOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Transfer out'**
+  String get transactionKindTransferOut;
+
+  /// No description provided for @transactionKindFee.
+  ///
+  /// In en, this message translates to:
+  /// **'Fee'**
+  String get transactionKindFee;
+
+  /// No description provided for @transactionTransferInLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'In'**
+  String get transactionTransferInLabel;
+
+  /// No description provided for @transactionTransferOutLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Out'**
+  String get transactionTransferOutLabel;
+
+  /// No description provided for @transactionFineHint.
+  ///
+  /// In en, this message translates to:
+  /// **'= {quantity} of fine gold'**
+  String transactionFineHint(String quantity);
+
+  /// No description provided for @transactionPerUnitKarat.
+  ///
+  /// In en, this message translates to:
+  /// **'{unit} · {karat}'**
+  String transactionPerUnitKarat(String unit, String karat);
+
+  /// No description provided for @transactionBuyPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Price paid (per {unit})'**
+  String transactionBuyPrice(String unit);
+
+  /// No description provided for @transactionSalePrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Sale price (per {unit})'**
+  String transactionSalePrice(String unit);
+
+  /// No description provided for @transactionCarriedCost.
+  ///
+  /// In en, this message translates to:
+  /// **'Original cost (per {unit}, optional)'**
+  String transactionCarriedCost(String unit);
+
+  /// No description provided for @transactionTotalProceeds.
+  ///
+  /// In en, this message translates to:
+  /// **'Total sale amount'**
+  String get transactionTotalProceeds;
+
+  /// No description provided for @transactionTotalCarriedCost.
+  ///
+  /// In en, this message translates to:
+  /// **'Original total cost (optional)'**
+  String get transactionTotalCarriedCost;
+
+  /// No description provided for @transactionTransferCostHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'What it originally cost, if you know it. Left empty, it joins with no cost basis.'**
+  String get transactionTransferCostHelper;
+
+  /// No description provided for @transactionFee.
+  ///
+  /// In en, this message translates to:
+  /// **'Fee (optional)'**
+  String get transactionFee;
+
+  /// No description provided for @transactionFeeAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Fee amount'**
+  String get transactionFeeAmount;
+
+  /// No description provided for @transactionFeeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'What it was for (optional)'**
+  String get transactionFeeLabel;
+
+  /// No description provided for @transactionNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Note (optional)'**
+  String get transactionNote;
+
+  /// No description provided for @transactionNeedsQuantity.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a quantity.'**
+  String get transactionNeedsQuantity;
+
+  /// No description provided for @transactionNeedsPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a price.'**
+  String get transactionNeedsPrice;
+
+  /// No description provided for @transactionNeedsFee.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the fee amount.'**
+  String get transactionNeedsFee;
+
+  /// No description provided for @transactionMoreThanHeld.
+  ///
+  /// In en, this message translates to:
+  /// **'That’s more than you held on that date ({held}).'**
+  String transactionMoreThanHeld(String held);
+
+  /// No description provided for @transactionPreviewTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Realised gain preview'**
+  String get transactionPreviewTitle;
+
+  /// No description provided for @transactionProceeds.
+  ///
+  /// In en, this message translates to:
+  /// **'Proceeds'**
+  String get transactionProceeds;
+
+  /// No description provided for @transactionBasisReleased.
+  ///
+  /// In en, this message translates to:
+  /// **'Cost basis released'**
+  String get transactionBasisReleased;
+
+  /// No description provided for @transactionRealisedGain.
+  ///
+  /// In en, this message translates to:
+  /// **'Realised gain'**
+  String get transactionRealisedGain;
+
+  /// No description provided for @transactionPreviewRemaining.
+  ///
+  /// In en, this message translates to:
+  /// **'Weighted average basis. Still held after this: {quantity} at {average}.'**
+  String transactionPreviewRemaining(String quantity, String average);
+
+  /// No description provided for @transactionPreviewClosesPosition.
+  ///
+  /// In en, this message translates to:
+  /// **'Weighted average basis. This sells everything you hold.'**
+  String get transactionPreviewClosesPosition;
 }
 
 class _AppLocalizationsDelegate

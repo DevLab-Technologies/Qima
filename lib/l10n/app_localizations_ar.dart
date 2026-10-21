@@ -137,7 +137,8 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get holdingsEmpty => 'أضف أول دفعة لبدء تتبع هذه المقتنيات.';
+  String get holdingsEmpty =>
+      'لا توجد معاملات بعد. أضف عملية شراء لتبدأ تتبّع هذه الحيازة.';
 
   @override
   String get holdingsValue => 'القيمة';
@@ -152,12 +153,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get holdingsGainPercent => 'نسبة الربح';
 
   @override
-  String get holdingsNew => 'دفعة جديدة';
-
-  @override
-  String get holdingsEdit => 'تعديل الدفعة';
-
-  @override
   String get holdingsQuantity => 'الكمية';
 
   @override
@@ -167,30 +162,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get holdingsCostModeTotal => 'الإجمالي';
 
   @override
-  String get holdingsUnitCost => 'تكلفة الوحدة';
-
-  @override
-  String holdingsUnitCostWithUnit(String unit) {
-    return 'تكلفة الوحدة (لكل $unit)';
-  }
-
-  @override
-  String holdingsUnitCostWithKarat(String unit, String karat) {
-    return 'تكلفة الوحدة (لكل $unit · $karat)';
-  }
-
-  @override
-  String holdingsUnitCostPreview(String value) {
-    return 'لكل وحدة: $value';
-  }
-
-  @override
   String get holdingsTotalCost => 'التكلفة الإجمالية';
-
-  @override
-  String holdingsTotalCostPreview(String value) {
-    return 'الإجمالي: $value';
-  }
 
   @override
   String get holdingsDate => 'التاريخ';
@@ -203,20 +175,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get holdingsAverageCost => 'متوسط التكلفة';
-
-  @override
-  String holdingsAverageCostPerUnit(String value, String unit) {
-    return '$value لكل $unit';
-  }
-
-  @override
-  String holdingsAverageCostPerUnitKarat(
-    String value,
-    String unit,
-    String karat,
-  ) {
-    return '$value لكل $unit · $karat';
-  }
 
   @override
   String holdingsMixedNote(String karat) {
@@ -248,20 +206,6 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get portfolioNoHistory =>
       'أضف دفعة مقتنيات لعرض الرسم البياني لمحفظتك';
-
-  @override
-  String portfolioLotCount(num count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count دفعة',
-      many: '$count دفعة',
-      few: '$count دفعات',
-      two: 'دفعتان',
-      one: 'دفعة واحدة',
-    );
-    return '$_temp0';
-  }
 
   @override
   String get settingsTitle => 'الإعدادات';
@@ -603,14 +547,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get confirmRemoveCardMessage => 'ستبقى مقتنياتك من هذا الأصل محفوظة.';
-
-  @override
-  String get confirmDeleteLotTitle => 'حذف هذه الدفعة؟';
-
-  @override
-  String confirmDeleteLotMessage(String details) {
-    return '$details. لا يمكن التراجع عن ذلك.';
-  }
 
   @override
   String confirmRemoveTickerTitle(String symbol) {
@@ -1014,9 +950,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get backupImportCountCards => 'بطاقات المتابعة';
 
   @override
-  String get backupImportCountLots => 'الدفعات';
-
-  @override
   String get backupImportCountCustomTickers => 'الرموز المخصصة';
 
   @override
@@ -1377,45 +1310,46 @@ class AppLocalizationsAr extends AppLocalizations {
       'فعّل إخفاء الأرصدة في الإعدادات لإخفاء كل القيم.';
 
   @override
-  String get helpLotEditorTitle => 'محرر الدفعة';
+  String get helpLotEditorTitle => 'المعاملة';
 
   @override
   String get helpLotEditorSummary =>
-      'سجّل عملية شراء واحدة ليتمكن Qima من حساب ما تملكه ومتوسط تكلفتك وأرباحك.';
+      'سجّل شراء أو بيعًا أو تحويلًا أو رسومًا. تُحسب حيازتك ومتوسط تكلفتك وأرباحك منها.';
 
   @override
-  String get helpLotEditorStep1Title => 'الكمية والوحدة';
+  String get helpLotEditorStep1Title => 'النوع';
 
   @override
   String get helpLotEditorStep1Body =>
-      'أدخل الكمية التي اشتريتها، بالأونصة التروي أو الجرام أو الكيلوغرام.';
+      'الشراء يضيف بتكلفة، والبيع يُنقص ويحقق ربحًا أو خسارة، والتحويل ينقل كمية للداخل أو الخارج، والرسوم تسجّل تكلفة.';
 
   @override
   String get helpLotEditorStep2Title => 'العيار';
 
   @override
   String get helpLotEditorStep2Body =>
-      'للذهب بالجرام أو الكيلوغرام، اختر عيار 24 أو 22 أو 21 أو 18. يبدأ عند عيار البطاقة.';
+      'للذهب بالغرام أو الكيلوغرام اختر 24 أو 22 أو 21 أو 18 قيراطًا. يُحتسب كل شيء بمحتوى الذهب، فتختلط الأعيرة بشكل صحيح.';
 
   @override
-  String get helpLotEditorStep3Title => 'ما دفعته';
+  String get helpLotEditorStep3Title => 'السعر والرسوم';
 
   @override
   String get helpLotEditorStep3Body =>
-      'أدخل التكلفة لكل وحدة أو التكلفة الإجمالية، بالعملة التي دفعت بها.';
+      'أدخل السعر لكل وحدة أو الإجمالي وأي عمولة. يعرض البيع ما سيحققه قبل الحفظ.';
 
   @override
   String get helpLotEditorStep4Title => 'التاريخ';
 
   @override
-  String get helpLotEditorStep4Body => 'يوم الشراء.';
+  String get helpLotEditorStep4Body =>
+      'يوم حدوثها. لا يمكن تأريخ بيع قبل أن تملك ما يكفي.';
 
   @override
   String get helpLotEditorStep5Title => 'احفظ';
 
   @override
   String get helpLotEditorStep5Body =>
-      'يمكنك تعديل الدفعة أو حذفها في أي وقت من الممتلكات.';
+      'عدّل أي معاملة أو احذفها في أي وقت من سجل الحيازة.';
 
   @override
   String get helpAddAssetTitle => 'إضافة أصل';
@@ -1650,26 +1584,29 @@ class AppLocalizationsAr extends AppLocalizations {
   String get helpHoldingsTitle => 'الممتلكات';
 
   @override
-  String get helpHoldingsSummary => 'كل دفعة اشتريتها من هذا الأصل، ومجموعها.';
+  String get helpHoldingsSummary =>
+      'كل معاملات هذا الأصل، من شراء وبيع وتحويل ورسوم، وما تصل إليه مجتمعة.';
 
   @override
   String get helpHoldingsStep1Title => 'اقرأ الإجماليات';
 
   @override
   String get helpHoldingsStep1Body =>
-      'الكمية ومتوسط التكلفة والقيمة الحالية والأرباح عبر كل الدفعات.';
+      'ما تملكه ومتوسط تكلفته وقيمته وربحه، إضافة إلى ما حققته المبيعات.';
 
   @override
-  String get helpHoldingsStep2Title => 'أضف دفعة';
+  String get helpHoldingsStep2Title => 'أضف معاملة';
 
   @override
-  String get helpHoldingsStep2Body => 'اضغط على + لتسجيل عملية شراء أخرى.';
+  String get helpHoldingsStep2Body =>
+      'اضغط إضافة لتسجيل شراء أو بيع أو تحويل أو رسوم.';
 
   @override
-  String get helpHoldingsStep3Title => 'عدّل دفعة أو احذفها';
+  String get helpHoldingsStep3Title => 'عدّل أو احذف';
 
   @override
-  String get helpHoldingsStep3Body => 'اضغط على دفعة لتعديلها، أو مرر لحذفها.';
+  String get helpHoldingsStep3Body =>
+      'اضغط صفًا لتعديله أو اسحبه لحذفه. لن يسمح Qima بتغيير يجعل بيعًا يتجاوز ما كنت تملكه.';
 
   @override
   String get helpCardConfigTitle => 'إعدادات الأصل';
@@ -2206,4 +2143,220 @@ class AppLocalizationsAr extends AppLocalizations {
   String allocationSingleGroup(String group) {
     return 'الكل في $group';
   }
+
+  @override
+  String get backupImportCountTransactions => 'المعاملات';
+
+  @override
+  String portfolioTransactionCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count معاملة',
+      many: '$count معاملة',
+      few: '$count معاملات',
+      two: 'معاملتان',
+      one: 'معاملة واحدة',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get portfolioClosedPositions => 'مراكز مُغلقة';
+
+  @override
+  String ledgerTitleWithKarat(String name, String karat) {
+    return '$name · $karat';
+  }
+
+  @override
+  String get ledgerAdd => 'إضافة';
+
+  @override
+  String get ledgerAddFirst => 'أضف معاملة';
+
+  @override
+  String get ledgerHolding => 'الحيازة';
+
+  @override
+  String get ledgerNothingHeld => 'لا شيء محتفظ به الآن';
+
+  @override
+  String ledgerPerUnit(String amount, String unit) {
+    return '$amount / $unit';
+  }
+
+  @override
+  String get ledgerMarketValue => 'القيمة السوقية';
+
+  @override
+  String get ledgerUnrealised => 'غير محقق';
+
+  @override
+  String get ledgerRealised => 'محقق';
+
+  @override
+  String ledgerGainWithPercent(String amount, String percent) {
+    return '$amount ($percent)';
+  }
+
+  @override
+  String ledgerDetail(String date, String detail) {
+    return '$date · $detail';
+  }
+
+  @override
+  String ledgerDetailWithFee(String date, String price, String fee) {
+    return '$date · $price · رسوم $fee';
+  }
+
+  @override
+  String get ledgerNoCostBasis => 'بلا أساس تكلفة';
+
+  @override
+  String get ledgerCostCarried => 'بتكلفة منقولة';
+
+  @override
+  String get ledgerFootnote =>
+      'يُحسب أساس التكلفة من هذا السجل ولا يُخزَّن، وتعديل أي صف يعيد حساب الحيازة.';
+
+  @override
+  String get ledgerOverdrawnBanner =>
+      'هناك عملية بيع تتجاوز ما كان محتفظًا به في تاريخها، غالبًا بسبب التعديل على جهازين معًا. تُحتسب كبيع ما تبقى؛ عدّلها أو احذفها لتصحيح الإجماليات.';
+
+  @override
+  String ledgerClosedLine(String amount) {
+    return 'لا شيء محتفظ به الآن · محقق $amount';
+  }
+
+  @override
+  String get ledgerConflictSaveTitle => 'هذا سيتجاوز الكمية';
+
+  @override
+  String get ledgerConflictDeleteTitle => 'لا يمكن الحذف الآن';
+
+  @override
+  String ledgerConflictMessage(String kind, String date) {
+    return 'عندها ستتجاوز عملية $kind بتاريخ $date ما كان محتفظًا به. عدّلها أو احذفها أولًا.';
+  }
+
+  @override
+  String get confirmDeleteTransactionTitle => 'حذف هذه المعاملة؟';
+
+  @override
+  String confirmDeleteTransactionMessage(String details) {
+    return '$details. ستُحسب الحيازة من جديد بدونها، ولا يمكن التراجع عن ذلك.';
+  }
+
+  @override
+  String get transactionNewTitle => 'معاملة جديدة';
+
+  @override
+  String get transactionEditTitle => 'تعديل المعاملة';
+
+  @override
+  String get transactionKindBuy => 'شراء';
+
+  @override
+  String get transactionKindSell => 'بيع';
+
+  @override
+  String get transactionKindTransfer => 'تحويل';
+
+  @override
+  String get transactionKindTransferIn => 'تحويل وارد';
+
+  @override
+  String get transactionKindTransferOut => 'تحويل صادر';
+
+  @override
+  String get transactionKindFee => 'رسوم';
+
+  @override
+  String get transactionTransferInLabel => 'وارد';
+
+  @override
+  String get transactionTransferOutLabel => 'صادر';
+
+  @override
+  String transactionFineHint(String quantity) {
+    return '= $quantity من الذهب الخالص';
+  }
+
+  @override
+  String transactionPerUnitKarat(String unit, String karat) {
+    return '$unit · $karat';
+  }
+
+  @override
+  String transactionBuyPrice(String unit) {
+    return 'السعر المدفوع (لكل $unit)';
+  }
+
+  @override
+  String transactionSalePrice(String unit) {
+    return 'سعر البيع (لكل $unit)';
+  }
+
+  @override
+  String transactionCarriedCost(String unit) {
+    return 'التكلفة الأصلية (لكل $unit، اختياري)';
+  }
+
+  @override
+  String get transactionTotalProceeds => 'إجمالي مبلغ البيع';
+
+  @override
+  String get transactionTotalCarriedCost => 'إجمالي التكلفة الأصلية (اختياري)';
+
+  @override
+  String get transactionTransferCostHelper =>
+      'تكلفتها الأصلية إن كنت تعرفها. إن تُركت فارغة تُضاف بلا أساس تكلفة.';
+
+  @override
+  String get transactionFee => 'الرسوم (اختياري)';
+
+  @override
+  String get transactionFeeAmount => 'قيمة الرسوم';
+
+  @override
+  String get transactionFeeLabel => 'سببها (اختياري)';
+
+  @override
+  String get transactionNote => 'ملاحظة (اختياري)';
+
+  @override
+  String get transactionNeedsQuantity => 'أدخل الكمية.';
+
+  @override
+  String get transactionNeedsPrice => 'أدخل السعر.';
+
+  @override
+  String get transactionNeedsFee => 'أدخل قيمة الرسوم.';
+
+  @override
+  String transactionMoreThanHeld(String held) {
+    return 'هذا أكثر مما كنت تملكه في ذلك التاريخ ($held).';
+  }
+
+  @override
+  String get transactionPreviewTitle => 'معاينة الربح المحقق';
+
+  @override
+  String get transactionProceeds => 'العائد';
+
+  @override
+  String get transactionBasisReleased => 'أساس التكلفة المُحرَّر';
+
+  @override
+  String get transactionRealisedGain => 'الربح المحقق';
+
+  @override
+  String transactionPreviewRemaining(String quantity, String average) {
+    return 'على أساس المتوسط المرجّح. المتبقي بعدها: $quantity بمتوسط $average.';
+  }
+
+  @override
+  String get transactionPreviewClosesPosition =>
+      'على أساس المتوسط المرجّح. هذا يبيع كل ما تملكه.';
 }

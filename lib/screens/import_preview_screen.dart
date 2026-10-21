@@ -231,7 +231,7 @@ class _ImportPreviewScreenState extends State<ImportPreviewScreen> {
             childAspectRatio: 2.6,
             children: [
               _countTile(colors, l10n.backupImportCountCards, '${preview.cardCount}'),
-              _countTile(colors, l10n.backupImportCountLots, '${preview.lotCount}'),
+              _countTile(colors, l10n.backupImportCountTransactions, '${preview.transactionCount}'),
               _countTile(colors, l10n.backupImportCountCustomTickers, '${preview.customTickerCount}'),
               _countTile(colors, l10n.backupImportCountSettings, '✓'),
             ],

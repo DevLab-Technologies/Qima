@@ -11,6 +11,8 @@ import '../models/backup.dart';
 import '../models/custom_instrument.dart';
 import '../models/fx_history.dart';
 import '../models/holding.dart';
+import '../models/holding_transaction.dart';
+import '../models/ledger.dart';
 import '../models/holding_totals.dart';
 import '../models/instrument_catalog.dart';
 import '../models/instrument_presentation.dart';
@@ -30,6 +32,7 @@ import '../services/backup/backup_service.dart';
 import '../services/cloud_kv_store.dart';
 import '../services/custom_instrument_store.dart';
 import '../services/holdings_store.dart';
+import '../services/transactions_store.dart';
 import '../services/notification_service.dart';
 import '../services/preferences.dart';
 import '../services/home_widget_service.dart';
@@ -50,6 +53,7 @@ class AppCubit extends Cubit<AppState> {
   final PriceRepository repository;
   final WatchlistStore watchlistStore;
   final HoldingsStore holdingsStore;
+  final TransactionsStore transactionsStore;
   final CustomInstrumentStore customInstrumentStore;
   final AppLockService appLockService;
   final AlertsStore alertsStore;
@@ -87,6 +91,7 @@ class AppCubit extends Cubit<AppState> {
     PriceRepository? repository,
     WatchlistStore? watchlistStore,
     HoldingsStore? holdingsStore,
+    TransactionsStore? transactionsStore,
     CustomInstrumentStore? customInstrumentStore,
     AppLockService? appLockService,
     AlertsStore? alertsStore,
@@ -98,10 +103,13 @@ class AppCubit extends Cubit<AppState> {
     // Built once up front so every default-constructed store below shares
     // the exact same backend — see [cloudStore]'s doc comment.
     final resolvedCloudStore = cloudStore ?? SwitchableCloudKVStore();
+    final resolvedHoldingsStore = holdingsStore ?? HoldingsStore(cloud: resolvedCloudStore);
     return AppCubit._(
       repository: repository ?? PriceRepository(),
       watchlistStore: watchlistStore ?? WatchlistStore(cloud: resolvedCloudStore),
-      holdingsStore: holdingsStore ?? HoldingsStore(cloud: resolvedCloudStore),
+      holdingsStore: resolvedHoldingsStore,
+      transactionsStore:
+          transactionsStore ?? TransactionsStore(legacyLots: resolvedHoldingsStore, cloud: resolvedCloudStore),
       customInstrumentStore: customInstrumentStore ?? CustomInstrumentStore(cloud: resolvedCloudStore),
       appLockService: appLockService ?? AppLockService(),
       alertsStore: alertsStore ?? AlertsStore(cloud: resolvedCloudStore),
@@ -116,6 +124,7 @@ class AppCubit extends Cubit<AppState> {
     required this.repository,
     required this.watchlistStore,
     required this.holdingsStore,
+    required this.transactionsStore,
     required this.customInstrumentStore,
     required this.appLockService,
     required this.alertsStore,
@@ -135,6 +144,7 @@ class AppCubit extends Cubit<AppState> {
     backupService = BackupService(
       watchlistStore: watchlistStore,
       holdingsStore: holdingsStore,
+      transactionsStore: transactionsStore,
       customInstrumentStore: customInstrumentStore,
       alertsStore: alertsStore,
       preferences: preferences,
@@ -178,12 +188,12 @@ class AppCubit extends Cubit<AppState> {
     final cards = await _loadCardsSeeding(watchlistStore, seedCards);
     final alerts = await alertsStore.load();
 
-    final lots = await holdingsStore.load();
+    final transactions = await transactionsStore.load();
     final rates = await repository.cachedRates();
     final fxHistory = await repository.cachedFXHistory();
 
     final seriesByID = <String, QuoteSeries>{};
-    for (final instrument in _trackedInstrumentsFor(cards, lots)) {
+    for (final instrument in _trackedInstrumentsFor(cards, transactions)) {
       seriesByID[instrument.id] = await repository.cachedSeries(instrument);
     }
 
@@ -198,7 +208,7 @@ class AppCubit extends Cubit<AppState> {
     // from-scratch install only ever has the seeded default watchlist (spec
     // Phase 1 seeding, `InstrumentCatalog.defaultWatchlist`) and no
     // lots/alerts yet, so that combination is what "no data" means here.
-    final shouldShowOnboarding = !preferences.onboardingCompleted && !_hasExistingUserData(cards, lots, alerts);
+    final shouldShowOnboarding = !preferences.onboardingCompleted && !_hasExistingUserData(cards, transactions, alerts);
 
     // Onboarding step 5's "Base currency" row prefills from the device
     // region (spec "prefilled from the device region if it maps to a
@@ -217,7 +227,7 @@ class AppCubit extends Cubit<AppState> {
     _pipeline = RefreshPipeline(
       repository: repository,
       watchlistStore: watchlistStore,
-      holdingsStore: holdingsStore,
+      transactionsStore: transactionsStore,
       customInstrumentStore: customInstrumentStore,
       alertsStore: alertsStore,
       alertRuntimeStore: alertRuntimeStore,
@@ -243,7 +253,7 @@ class AppCubit extends Cubit<AppState> {
       preferredChartRange: preferredChartRange,
       preferredPortfolioRange: preferredPortfolioRange,
       cards: cards,
-      lots: lots,
+      transactions: transactions,
       rates: rates,
       fxHistory: fxHistory,
       seriesByID: seriesByID,
@@ -283,8 +293,8 @@ class AppCubit extends Cubit<AppState> {
   /// price alert. A brand-new install only ever has
   /// [InstrumentCatalog.defaultWatchlist]'s seeded cards and nothing else at
   /// this point in [init], so it reads as "no data" and the tour shows.
-  bool _hasExistingUserData(List<WatchCard> cards, List<HoldingLot> lots, List<PriceAlert> alerts) {
-    if (lots.isNotEmpty || alerts.isNotEmpty) return true;
+  bool _hasExistingUserData(List<WatchCard> cards, List<HoldingTransaction> transactions, List<PriceAlert> alerts) {
+    if (transactions.isNotEmpty || alerts.isNotEmpty) return true;
     final defaultIDs = InstrumentCatalog.defaultWatchlist.toSet();
     if (cards.length != defaultIDs.length) return true;
     return cards.any((card) => !defaultIDs.contains(card.instrumentID));
@@ -385,7 +395,9 @@ class AppCubit extends Cubit<AppState> {
   void startSync() {
     _reloadByCloudKey = {
       'watchcards.records': () => _reloadWatchlist(),
+      // A lot arriving from a device still on 2.x is migrated on reload.
       'holdings.records': () => _reloadHoldings(),
+      TransactionsStore.cloudKey: () => _reloadHoldings(),
       'custominstruments.records': () => _reloadCustomInstruments(),
       'alerts.records': () => _reloadAlerts(),
       'zakatSettings': () => _reloadZakatSettings(),
@@ -499,8 +511,8 @@ class AppCubit extends Cubit<AppState> {
   }
 
   Future<void> _reloadHoldings() async {
-    final lots = await holdingsStore.load();
-    if (!isClosed && lots != state.lots) emit(state.copyWith(lots: lots));
+    final transactions = await transactionsStore.load();
+    if (!isClosed && transactions != state.transactions) emit(state.copyWith(transactions: transactions));
   }
 
   Future<void> _reloadCustomInstruments() async {
@@ -566,16 +578,17 @@ class AppCubit extends Cubit<AppState> {
 
   List<Instrument> get watchInstruments => _watchInstrumentsFor(state.cards);
 
-  /// Union of watchlist instruments and instruments that have holding lots.
-  /// Holdings can reference an instrument the user removed (or never added)
-  /// to the watchlist, and without this union those lots would be silently
-  /// excluded from refresh/backfill and therefore from portfolio valuation.
-  List<Instrument> _trackedInstrumentsFor(List<WatchCard> cards, List<HoldingLot> lots) {
+  /// Union of watchlist instruments and every instrument with transactions —
+  /// including ones sold off entirely, whose prices the portfolio history
+  /// still needs for the days they were held. Holdings can reference an
+  /// instrument the user removed (or never added) to the watchlist, and
+  /// without this union they'd be left out of refresh and backfill.
+  List<Instrument> _trackedInstrumentsFor(List<WatchCard> cards, List<HoldingTransaction> transactions) {
     final result = _watchInstrumentsFor(cards);
     final seen = result.map((i) => i.id).toSet();
-    for (final lot in lots) {
-      if (seen.contains(lot.instrumentID)) continue;
-      final instrument = InstrumentCatalog.instrument(lot.instrumentID);
+    for (final transaction in transactions) {
+      if (seen.contains(transaction.instrumentID)) continue;
+      final instrument = InstrumentCatalog.instrument(transaction.instrumentID);
       if (instrument == null) continue;
       seen.add(instrument.id);
       result.add(instrument);
@@ -583,7 +596,7 @@ class AppCubit extends Cubit<AppState> {
     return result;
   }
 
-  List<Instrument> get trackedInstruments => _trackedInstrumentsFor(state.cards, state.lots);
+  List<Instrument> get trackedInstruments => _trackedInstrumentsFor(state.cards, state.transactions);
 
   InstrumentPresentation presentation(WatchCard card) {
     final instrument = card.instrument ?? InstrumentCatalog.all.first;
@@ -1004,10 +1017,37 @@ class AppCubit extends Cubit<AppState> {
       result.add(HeldInstrument(
         instrument: instrument,
         valuation: valuation,
-        lotCount: lotsFor(instrument).length,
+        transactionCount: state.transactions.where((t) => t.instrumentID == instrument.id).length,
       ));
     }
     result.sort((a, b) => b.valuation.value.amount.compareTo(a.valuation.value.amount));
+    return result;
+  }
+
+  /// Gain realised across the whole ledger, in the base currency — null
+  /// when nothing has been sold or charged yet.
+  Money? get portfolioRealised {
+    var total = CurrencyAmounts.zero;
+    var any = false;
+    for (final p in state.ledger.positions.values) {
+      if (p.disposals.isEmpty && p.realised.isZero) continue;
+      any = true;
+      total = total.add(p.realised);
+    }
+    return any ? total.inCurrency(state.baseCurrency, state.rates) : null;
+  }
+
+  /// Instruments with transactions but nothing left held — sold or moved
+  /// out entirely — with what they realised, largest result first.
+  List<({Instrument instrument, Money realised})> get closedPositions {
+    final result = <({Instrument instrument, Money realised})>[];
+    for (final p in state.ledger.positions.values) {
+      if (p.openLots.isNotEmpty) continue;
+      final instrument = InstrumentCatalog.instrument(p.instrumentID);
+      if (instrument == null) continue;
+      result.add((instrument: instrument, realised: p.realised.inCurrency(state.baseCurrency, state.rates)));
+    }
+    result.sort((a, b) => b.realised.amount.compareTo(a.realised.amount));
     return result;
   }
 
@@ -1042,16 +1082,50 @@ class AppCubit extends Cubit<AppState> {
     );
   }
 
-  Future<void> saveLot(HoldingLot lot) async {
-    final lots = await holdingsStore.upsert(lot);
-    emit(state.copyWith(lots: lots));
+  /// Every transaction for [instrument], newest first.
+  List<HoldingTransaction> transactionsFor(Instrument instrument) =>
+      Ledger.ordered(state.transactions.where((t) => t.instrumentID == instrument.id)).reversed.toList();
+
+  /// The sale [transaction] would leave selling more than was held, or null
+  /// when it's safe to save. Checked against the whole ledger: back-dating a
+  /// sell, shrinking a buy or moving a buy later can all break a sale that
+  /// comes after it.
+  HoldingTransaction? conflictForSave(HoldingTransaction transaction) => Ledger.conflict(
+        state.transactions,
+        [...state.transactions.where((t) => t.id != transaction.id), transaction],
+      );
+
+  /// The sale deleting [transaction] would break, or null when it's safe.
+  HoldingTransaction? conflictForDelete(HoldingTransaction transaction) => Ledger.conflict(
+        state.transactions,
+        state.transactions.where((t) => t.id != transaction.id),
+      );
+
+  /// Saves [transaction] unless it would break a sale; returns that sale
+  /// instead of saving when it would.
+  Future<HoldingTransaction?> saveTransaction(HoldingTransaction transaction) async {
+    final conflict = conflictForSave(transaction);
+    if (conflict != null) return conflict;
+    final isNewInstrument = !trackedInstruments.any((i) => i.id == transaction.instrumentID);
+    final transactions = await transactionsStore.upsert(transaction);
+    emit(state.copyWith(transactions: transactions));
     unawaited(_markDataChanged());
+    if (isNewInstrument) {
+      final instrument = InstrumentCatalog.instrument(transaction.instrumentID);
+      if (instrument != null) unawaited(refresh(instrument));
+    }
+    return null;
   }
 
-  Future<void> deleteLot(HoldingLot lot) async {
-    final lots = await holdingsStore.delete(lot.id);
-    emit(state.copyWith(lots: lots));
+  /// Deletes [transaction] unless that would break a sale; returns that sale
+  /// instead of deleting when it would.
+  Future<HoldingTransaction?> deleteTransaction(HoldingTransaction transaction) async {
+    final conflict = conflictForDelete(transaction);
+    if (conflict != null) return conflict;
+    final transactions = await transactionsStore.delete(transaction.id);
+    emit(state.copyWith(transactions: transactions));
     unawaited(_markDataChanged());
+    return null;
   }
 
   // ---------------------------------------------------------------------
@@ -1189,7 +1263,7 @@ class AppCubit extends Cubit<AppState> {
     InstrumentCatalog.reloadCustom(customs.map((c) => c.instrument).toList());
 
     final cards = await watchlistStore.load();
-    final lots = await holdingsStore.load();
+    final transactions = await transactionsStore.load();
     final alerts = await alertsStore.load();
     final baseCurrency = await preferences.baseCurrency;
     final appLanguage = await preferences.appLanguage;
@@ -1199,14 +1273,14 @@ class AppCubit extends Cubit<AppState> {
     final zakatSettings = await preferences.zakatSettings;
 
     final seriesByID = <String, QuoteSeries>{...state.seriesByID};
-    for (final instrument in _trackedInstrumentsFor(cards, lots)) {
+    for (final instrument in _trackedInstrumentsFor(cards, transactions)) {
       if (seriesByID.containsKey(instrument.id)) continue;
       seriesByID[instrument.id] = await repository.cachedSeries(instrument);
     }
 
     emit(state.copyWith(
       cards: cards,
-      lots: lots,
+      transactions: transactions,
       alerts: alerts,
       baseCurrency: baseCurrency,
       appLanguage: appLanguage,
@@ -1229,29 +1303,29 @@ class AppCubit extends Cubit<AppState> {
   /// inputs that can change its output. [PortfolioHistory.build] walks every
   /// tracked lot's full quote/FX series, which is too expensive to redo on
   /// every `build()` (e.g. every scrub-driven rebuild of the hero chart) —
-  /// so this cubit computes it once per distinct (range, lots, seriesByID,
+  /// so this cubit computes it once per distinct (range, ledger, seriesByID,
   /// fxHistory, baseCurrency) tuple and reuses the result until one of those
   /// actually changes. [AppState] fields are immutable/structurally-equal
   /// (`Equatable`/unmodifiable lists), so identity/equality checks here are
   /// cheap and correct.
   ChartRange? _historyCacheRange;
-  List<HoldingLot>? _historyCacheLots;
+  Ledger? _historyCacheLedger;
   Map<String, QuoteSeries>? _historyCacheSeries;
   FXHistory? _historyCacheFxHistory;
   String? _historyCacheBaseCurrency;
   DateTime? _historyCacheDay;
   List<PortfolioHistoryPoint>? _historyCacheResult;
 
-  /// Day-by-day portfolio value/cost for [range], computed fresh from lots
+  /// Day-by-day portfolio value/cost for [range], computed fresh from the ledger
   /// and quote/FX history (never snapshotted — see `portfolio_history.dart`).
-  /// Cheap to call repeatedly: results are memoized until lots, prices, FX
+  /// Cheap to call repeatedly: results are memoized until holdings, prices, FX
   /// history or the base currency actually change, or a new calendar day
   /// starts (so "All"/"1Y" etc. extend to include today).
   List<PortfolioHistoryPoint> portfolioHistory(ChartRange range) {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     if (_historyCacheRange == range &&
-        identical(_historyCacheLots, state.lots) &&
+        identical(_historyCacheLedger, state.ledger) &&
         identical(_historyCacheSeries, state.seriesByID) &&
         identical(_historyCacheFxHistory, state.fxHistory) &&
         _historyCacheBaseCurrency == state.baseCurrency &&
@@ -1260,7 +1334,7 @@ class AppCubit extends Cubit<AppState> {
     }
 
     final result = PortfolioHistory.build(
-      lots: state.lots,
+      ledger: state.ledger,
       seriesByID: state.seriesByID,
       rates: state.rates,
       fxHistory: state.fxHistory,
@@ -1270,7 +1344,7 @@ class AppCubit extends Cubit<AppState> {
     );
 
     _historyCacheRange = range;
-    _historyCacheLots = state.lots;
+    _historyCacheLedger = state.ledger;
     _historyCacheSeries = state.seriesByID;
     _historyCacheFxHistory = state.fxHistory;
     _historyCacheBaseCurrency = state.baseCurrency;

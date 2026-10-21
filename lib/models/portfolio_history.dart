@@ -2,23 +2,28 @@ import 'package:equatable/equatable.dart';
 
 import 'chart_range.dart';
 import 'fx_history.dart';
-import 'holding.dart';
+import 'ledger.dart';
 import 'money.dart';
 import 'quote.dart';
 
-/// A single day's portfolio value/cost sample, both expressed in the base
-/// currency.
+/// A single day's portfolio sample, all in the base currency.
 class PortfolioHistoryPoint extends Equatable {
   final DateTime date;
   final double value;
+
+  /// Cost basis of what was held that day.
   final double cost;
 
-  const PortfolioHistoryPoint({required this.date, required this.value, required this.cost});
+  /// Gain or loss realised by sells and fees up to that day. Part of the
+  /// gain, so selling at a profit never reads as a drop.
+  final double realised;
 
-  double get gain => value - cost;
+  const PortfolioHistoryPoint({required this.date, required this.value, required this.cost, this.realised = 0});
+
+  double get gain => value - cost + realised;
 
   @override
-  List<Object?> get props => [date, value, cost];
+  List<Object?> get props => [date, value, cost, realised];
 }
 
 /// A range-scoped headline for the portfolio hero chart. [gainDelta] is the
@@ -73,27 +78,25 @@ class PortfolioRangeChange extends Equatable {
 
 /// Computed (never snapshotted) day-by-day portfolio value across a range.
 ///
-/// For each day `d`, `value(d)` sums, over every lot dated on or before `d`,
-/// `fineOunces (quantity * unit.multiplier * karat purity) * instrument's
-/// last known USD price on/before d * base-currency FX rate on d`. `cost(d)`
-/// follows the same
-/// lots-dated-on-or-before-`d` rule but reuses [HoldingValuation.aggregate]'s
-/// exact (live-FX, not historical) currency conversion, so a day's cost
-/// figure always matches what the Holdings screen would show if you looked
-/// at it that day with today's rates.
+/// For each day `d` and each instrument, the ledger's position as it stood at
+/// the end of `d` (see [InstrumentPosition.stateAt]) is valued at the
+/// instrument's last known USD price on or before `d` and the base
+/// currency's FX rate on `d`. A sale therefore lowers the value from its
+/// date on, and what it realised moves into [PortfolioHistoryPoint.realised]
+/// so the gain line stays continuous. Cost and realised amounts use today's
+/// rates — the same rule as [HoldingValuation.aggregate] — so a day's cost
+/// matches what the holdings screen would show for it today.
 ///
-/// The walk is a single ascending pass per instrument/currency (a cursor,
-/// like [PriceConverter.points]), not a lookup-per-day, so this stays cheap
-/// even for a multi-year "All" range with a large history.
+/// The walk is one ascending pass per instrument (cursors over quotes and
+/// ledger states), not a lookup per day, so a multi-year "All" stays cheap.
 class PortfolioHistory {
   PortfolioHistory._();
 
-  /// Builds the series for [range]. [lots] need not be sorted. [seriesByID]
-  /// must contain an entry (possibly empty) for every instrument referenced
-  /// by a lot; a missing entry means that lot is skipped for every day (no
-  /// price to value it at). [now] is the last day plotted.
+  /// Builds the series for [range]. [seriesByID] may lack an instrument; it
+  /// then contributes cost but no value until a price exists. [now] is the
+  /// last day plotted.
   static List<PortfolioHistoryPoint> build({
-    required List<HoldingLot> lots,
+    required Ledger ledger,
     required Map<String, QuoteSeries> seriesByID,
     required FXRates rates,
     required FXHistory fxHistory,
@@ -101,100 +104,56 @@ class PortfolioHistory {
     required ChartRange range,
     required DateTime now,
   }) {
-    if (lots.isEmpty) return const [];
+    final firstDate = ledger.firstDate;
+    if (firstDate == null) return const [];
 
     final today = _dayStart(now);
-    final startDate = range == ChartRange.all
-        ? _dayStart(lots.map((l) => l.date).reduce((a, b) => a.isBefore(b) ? a : b))
-        : _dayStart(range.startDate(now) ?? today);
+    final startDate = range == ChartRange.all ? _dayStart(firstDate) : _dayStart(range.startDate(now) ?? today);
     if (startDate.isAfter(today)) return const [];
 
-    // One ascending-quote cursor per instrument referenced by a lot, plus a
-    // running "last known USD price on/before day d" for each.
-    final lotsByInstrument = <String, List<HoldingLot>>{};
-    for (final lot in lots) {
-      (lotsByInstrument[lot.instrumentID] ??= []).add(lot);
-    }
-    for (final list in lotsByInstrument.values) {
-      list.sort((a, b) => a.date.compareTo(b.date));
-    }
-
-    final quoteCursors = <String, _QuoteCursor>{
-      for (final id in lotsByInstrument.keys) id: _QuoteCursor(seriesByID[id]?.quotes ?? const []),
-    };
-
-    // One ascending FX cursor for the base currency (identical rule to
-    // FXHistory.rate, walked forward instead of re-scanned per day).
+    final positions = ledger.positions.values.where((p) => p.timeline.isNotEmpty).toList();
+    final quoteCursors = [for (final p in positions) _QuoteCursor(seriesByID[p.instrumentID]?.quotes ?? const [])];
+    final stateIndex = List<int>.filled(positions.length, -1);
     final baseFxCursor = _FxCursor(fxHistory.points(baseCurrency));
 
-    // Cost uses HoldingValuation's rule: live rate only, never historical —
-    // so it's identical for every day and can be precomputed per lot once.
-    final liveCostToDisplay = <String, double>{};
-    double liveCostFor(HoldingLot lot) {
-      final cached = liveCostToDisplay[lot.id];
-      if (cached != null) return cached;
-      final costToUSD = rates.rate(lot.costCurrency) ?? 1;
-      final toDisplay = rates.rate(baseCurrency) ?? 1;
-      final costUSD = lot.totalCost / costToUSD;
-      final value = costUSD * toDisplay;
-      liveCostToDisplay[lot.id] = value;
-      return value;
-    }
+    // Each ledger state's cost and realised amounts in the base currency,
+    // converted once (live rates don't change across the walk).
+    final converted = <PositionState, (double, double)>{};
+    (double, double) inBase(PositionState state) => converted.putIfAbsent(
+          state,
+          () => (state.basis.inCurrency(baseCurrency, rates).amount, state.realised.inCurrency(baseCurrency, rates).amount),
+        );
 
     final points = <PortfolioHistoryPoint>[];
     var cursor = startDate;
-    // Lots are re-partitioned "included as of day d" via each per-instrument
-    // list's own position — advanced alongside the day loop rather than
-    // re-filtered per day, so a long lot history stays O(days + lots).
-    final includedUpTo = <String, int>{for (final id in lotsByInstrument.keys) id: 0};
-
     while (!cursor.isAfter(today)) {
-      // Query instant is the last microsecond of calendar day [cursor] (NOT
-      // the next midnight, which would also swallow a sample timestamped at
-      // the very start of day d+1) so a lot dated, or a quote/FX sample
-      // timestamped, anytime during day [cursor] itself is included in that
-      // day's point — not just samples exactly at local midnight.
-      final endOfDay = cursor.add(const Duration(days: 1)).subtract(const Duration(microseconds: 1));
+      // The last microsecond of the day (not the next midnight, which would
+      // also swallow a sample stamped at the very start of the next day).
+      final endOfDay = DateTime(cursor.year, cursor.month, cursor.day + 1).subtract(const Duration(microseconds: 1));
       final fxRate = baseCurrency == 'USD' ? 1.0 : (baseFxCursor.rateOnOrBefore(endOfDay) ?? rates.rate(baseCurrency) ?? 1);
 
       double valueUSD = 0;
-      double costDisplay = 0;
-
-      for (final entry in lotsByInstrument.entries) {
-        final instrumentID = entry.key;
-        final instrumentLots = entry.value;
-        final quoteCursor = quoteCursors[instrumentID]!;
-        final priceUSD = quoteCursor.priceOnOrBefore(endOfDay);
-
-        var includedCount = includedUpTo[instrumentID]!;
-        while (includedCount < instrumentLots.length && instrumentLots[includedCount].date.isBefore(endOfDay)) {
-          includedCount += 1;
+      double cost = 0;
+      double realised = 0;
+      for (var i = 0; i < positions.length; i++) {
+        final timeline = positions[i].timeline;
+        while (stateIndex[i] + 1 < timeline.length && !timeline[stateIndex[i] + 1].date.isAfter(endOfDay)) {
+          stateIndex[i] += 1;
         }
-        includedUpTo[instrumentID] = includedCount;
-
-        if (priceUSD == null) {
-          // No price known yet on/before this day: every lot of this
-          // instrument contributes 0 value (but still its live cost) until
-          // a price becomes available.
-          for (var i = 0; i < includedCount; i++) {
-            costDisplay += liveCostFor(instrumentLots[i]);
-          }
-          continue;
-        }
-
-        for (var i = 0; i < includedCount; i++) {
-          final lot = instrumentLots[i];
-          // fineOunces already folds in unit.multiplier and the lot's own
-          // karat purity — see HoldingLot.fineOunces.
-          valueUSD += lot.fineOunces * priceUSD;
-          costDisplay += liveCostFor(lot);
-        }
+        final price = quoteCursors[i].priceOnOrBefore(endOfDay);
+        if (stateIndex[i] < 0) continue;
+        final state = timeline[stateIndex[i]];
+        final (stateCost, stateRealised) = inBase(state);
+        cost += stateCost;
+        realised += stateRealised;
+        // No price known yet on/before this day: the holding still carries
+        // its cost, but no value until a price becomes available.
+        if (price != null) valueUSD += state.fineOunces * price;
       }
 
-      points.add(PortfolioHistoryPoint(date: cursor, value: valueUSD * fxRate, cost: costDisplay));
-      cursor = cursor.add(const Duration(days: 1));
+      points.add(PortfolioHistoryPoint(date: cursor, value: valueUSD * fxRate, cost: cost, realised: realised));
+      cursor = DateTime(cursor.year, cursor.month, cursor.day + 1);
     }
-
     return points;
   }
 
