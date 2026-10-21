@@ -18,6 +18,8 @@ class PriceRepository {
   static const Duration fxTailMaxAge = Duration(hours: 12);
   static const Duration fxRetryBackoff = Duration(minutes: 10);
   static const Duration fxFullPullInterval = Duration(hours: 12);
+  static const Duration quoteTailRefreshInterval = Duration(hours: 12);
+  static const Duration quoteRetryBackoff = Duration(minutes: 10);
 
   static const Map<String, String> metalHistorySymbols = {
     'XAU': 'GC=F',
@@ -257,7 +259,37 @@ class PriceRepository {
         .toList();
   }
 
+  /// The newest sample older than the intraday window — i.e. the last daily
+  /// close the series holds. Live quotes from today don't count, or a
+  /// series with a months-long hole would look current the moment one
+  /// live price landed.
+  DateTime? _lastDailyClose(QuoteSeries series, DateTime now) {
+    final intradayCutoff = now.subtract(const Duration(days: 2));
+    for (final quote in series.quotes.reversed) {
+      if (quote.timestamp.isBefore(intradayCutoff)) return quote.timestamp;
+    }
+    return null;
+  }
+
+  /// The smallest Yahoo range that reaches back to [since].
+  String _tailRange(DateTime? since, DateTime now) {
+    if (since == null) return '5y';
+    final days = now.difference(since).inDays;
+    if (days <= 28) return '1mo';
+    if (days <= 88) return '3mo';
+    if (days <= 180) return '6mo';
+    if (days <= 360) return '1y';
+    if (days <= 720) return '2y';
+    return '5y';
+  }
+
   /// Backfills quote history for [instruments], per spec §2.2.
+  ///
+  /// A series without [backfillMinSpanDays] of history gets the full pull.
+  /// A series that already has it gets a tail refresh at most every
+  /// [quoteTailRefreshInterval], reaching back to its last daily close —
+  /// otherwise a gap opened while the app was closed (or while live quotes
+  /// were failing) would never be filled.
   Future<Map<String, QuoteSeries>> backfillInstruments(
     List<Instrument> instruments,
     FXHistory fxHistory, {
@@ -267,12 +299,20 @@ class PriceRepository {
     final effectiveNow = now ?? DateTime.now();
     final cutoff = effectiveNow.subtract(const Duration(days: backfillMinSpanDays));
     final rates = await cachedRates();
+    final prefs = await prefsProvider();
     final result = <String, QuoteSeries>{};
 
     for (final instrument in instruments) {
       final existing = await quoteHistoryStore.load(instrument.id);
       final deep = _isDeepQuotes(existing, cutoff);
-      if (!force && deep) continue;
+
+      final tailKey = 'quoteTailRefreshedAt.${instrument.id}';
+      final attemptedKey = 'quoteFetchAttemptedAt.${instrument.id}';
+      final doTail = !force &&
+          deep &&
+          _dueSince(await _attemptedAt(prefs, tailKey), quoteTailRefreshInterval, effectiveNow) &&
+          _dueSince(await _attemptedAt(prefs, attemptedKey), quoteRetryBackoff, effectiveNow);
+      if (!force && deep && !doTail) continue;
 
       List<Quote> newQuotes;
       if (instrument.assetClass == AssetClass.fiat) {
@@ -280,7 +320,11 @@ class PriceRepository {
       } else {
         final symbol = _historySymbol(instrument);
         if (symbol == null) continue;
-        final bars = await historyProvider.bars(symbol);
+        if (doTail) await _stamp(prefs, attemptedKey, effectiveNow);
+        final bars = await historyProvider.bars(
+          symbol,
+          range: doTail ? _tailRange(_lastDailyClose(existing, effectiveNow), effectiveNow) : '5y',
+        );
         newQuotes = [
           for (final bar in bars)
             Quote(
@@ -299,8 +343,9 @@ class PriceRepository {
 
       if (newQuotes.isEmpty) continue;
       final merged = existing.merging(newQuotes, effectiveNow);
-      await quoteHistoryStore.save(merged);
+      final persisted = await quoteHistoryStore.save(merged);
       result[instrument.id] = merged;
+      if (doTail && persisted) await _stamp(prefs, tailKey, effectiveNow);
     }
 
     if (result.isNotEmpty) _maybeReloadWidgets();
