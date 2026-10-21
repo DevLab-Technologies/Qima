@@ -1947,16 +1947,16 @@ class AppLocalizationsAr extends AppLocalizations {
       'Qima يحسب ولا يُفتي. الأساس وما يُحتسب قرارك أنت، فاسأل عالمًا تثق به عند الشك.';
 
   @override
-  String get zakatClassMetals => 'المعادن';
+  String get assetGroupMetals => 'المعادن';
 
   @override
-  String get zakatClassCrypto => 'العملات المشفرة';
+  String get assetGroupCrypto => 'العملات المشفرة';
 
   @override
-  String get zakatClassEquities => 'الأسهم';
+  String get assetGroupEquities => 'الأسهم';
 
   @override
-  String get zakatClassCash => 'النقد والعملات';
+  String get assetGroupCash => 'النقد والعملات';
 
   @override
   String get zakatClassMetalsSubtitle => 'الذهب والفضة والبلاتين والبلاديوم';
@@ -2159,4 +2159,51 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get helpZakatStep4Body =>
       'يختلف العلماء في الأساس وفي الأسهم والحُلي. كل خيار افتراضي هنا قابل للتغيير، فاسأل عالمًا تثق به عند الشك.';
+
+  @override
+  String get allocationTitle => 'التوزيع';
+
+  @override
+  String get allocationDetails => 'التفاصيل';
+
+  @override
+  String get allocationByGroup => 'حسب الفئة';
+
+  @override
+  String get allocationMetalsByForm => 'المعادن · حسب العيار والنوع';
+
+  @override
+  String allocationMetalForm(String metal, String karat) {
+    return '$metal $karat';
+  }
+
+  @override
+  String get allocationDriftTitle => 'التحوّل';
+
+  @override
+  String allocationDriftSince(String date) {
+    return 'التحوّل · منذ $date';
+  }
+
+  @override
+  String allocationDriftChange(String from, String to) {
+    return '$from ← $to';
+  }
+
+  @override
+  String get allocationDriftPendingTitle => 'قبل أن يتوفر سجل';
+
+  @override
+  String allocationDriftPending(String date) {
+    return 'يظهر تحوّل توزيعك بمرور الوقت عندما يمضي على ممتلكاتك 14 يومًا، في $date. حتى ذلك الحين هذا هو توزيع اليوم، دون اختلاق أي اتجاه.';
+  }
+
+  @override
+  String get allocationDriftNoHistory =>
+      'لا توجد أسعار محفوظة كافية بعد لمعرفة توزيعك في ذلك الوقت، وسيكتمل مع تحميل سجل الأسعار.';
+
+  @override
+  String allocationSingleGroup(String group) {
+    return 'الكل في $group';
+  }
 }

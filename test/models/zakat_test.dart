@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:qima/models/asset.dart';
+import 'package:qima/models/asset_group.dart';
 import 'package:qima/models/hijri_date.dart';
 import 'package:qima/models/holding.dart';
 import 'package:qima/models/instrument_catalog.dart';
@@ -145,12 +146,12 @@ void main() {
     });
 
     test('indices count as equities', () {
-      expect(ZakatClass.of(AssetClass.indices), ZakatClass.equities);
-      expect(ZakatClass.of(AssetClass.fiat), ZakatClass.cash);
+      expect(AssetGroup.of(AssetClass.indices), AssetGroup.equities);
+      expect(AssetGroup.of(AssetClass.fiat), AssetGroup.cash);
     });
 
     test('switching a class on includes it', () {
-      final settings = const ZakatSettings().toggleClass(ZakatClass.equities);
+      final settings = const ZakatSettings().toggleClass(AssetGroup.equities);
       final a = assess([lot('stock.AAPL', 10)], settings: settings);
       expect(a.base.amount, closeTo(2000, 1e-6));
     });
@@ -174,7 +175,7 @@ void main() {
     test('an override survives its class being toggled off and on', () {
       final apple = InstrumentCatalog.instrument('stock.AAPL')!;
       var settings = const ZakatSettings().toggleHolding(apple); // forced in
-      settings = settings.toggleClass(ZakatClass.equities); // class on
+      settings = settings.toggleClass(AssetGroup.equities); // class on
       expect(settings.includes(apple), isTrue);
     });
 
@@ -213,7 +214,7 @@ void main() {
     test('round-trips', () {
       final settings = ZakatSettings(
         basis: NisabBasis.silver,
-        includedClasses: const {ZakatClass.metals, ZakatClass.equities},
+        includedClasses: const {AssetGroup.metals, AssetGroup.equities},
         holdingOverrides: const {'metal.XAU': false},
         calendar: HawlCalendar.gregorian,
         hawlStart: DateTime(2025, 3, 12),
@@ -241,7 +242,7 @@ void main() {
         'remind': 'true',
       });
       expect(s.basis, NisabBasis.gold);
-      expect(s.includedClasses, {ZakatClass.metals});
+      expect(s.includedClasses, {AssetGroup.metals});
       expect(s.holdingOverrides, {'crypto.BTC': false});
       expect(s.calendar, HawlCalendar.hijri);
       expect(s.hawlStart, isNull);

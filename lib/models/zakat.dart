@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 
 import 'asset.dart';
+import 'asset_group.dart';
 import 'hijri_date.dart';
 import 'holding.dart';
 import 'money.dart';
@@ -21,37 +22,6 @@ enum NisabBasis {
 
   static NisabBasis fromName(String? name) =>
       NisabBasis.values.firstWhere((b) => b.name == name, orElse: () => ZakatSettings.defaultBasis);
-}
-
-/// The groups a user switches on or off as zakatable. Coarser than
-/// [AssetClass] on purpose: stocks and indices are one "equities" decision,
-/// and fiat currency pairs are "cash".
-enum ZakatClass {
-  metals,
-  crypto,
-  equities,
-  cash;
-
-  static ZakatClass of(AssetClass assetClass) {
-    switch (assetClass) {
-      case AssetClass.metal:
-        return ZakatClass.metals;
-      case AssetClass.crypto:
-        return ZakatClass.crypto;
-      case AssetClass.stock:
-      case AssetClass.indices:
-        return ZakatClass.equities;
-      case AssetClass.fiat:
-        return ZakatClass.cash;
-    }
-  }
-
-  static ZakatClass? fromName(String name) {
-    for (final c in ZakatClass.values) {
-      if (c.name == name) return c;
-    }
-    return null;
-  }
 }
 
 /// Which calendar the hawl (the zakat year) is counted in. Hijri is the
@@ -76,10 +46,10 @@ class ZakatSettings extends Equatable {
   /// Metals, crypto and cash count by default. Equities are off: whether a
   /// long-term shareholding is zakatable on its full market value, on its
   /// zakatable assets only, or not at all differs between scholars.
-  static const Set<ZakatClass> defaultClasses = {ZakatClass.metals, ZakatClass.crypto, ZakatClass.cash};
+  static const Set<AssetGroup> defaultClasses = {AssetGroup.metals, AssetGroup.crypto, AssetGroup.cash};
 
   final NisabBasis basis;
-  final Set<ZakatClass> includedClasses;
+  final Set<AssetGroup> includedClasses;
 
   /// Per-asset exceptions to [includedClasses], keyed by instrument id:
   /// `true` forces an asset in, `false` leaves it out (e.g. gold jewelry
@@ -105,11 +75,11 @@ class ZakatSettings extends Equatable {
   });
 
   bool includes(Instrument instrument) =>
-      holdingOverrides[instrument.id] ?? includedClasses.contains(ZakatClass.of(instrument.assetClass));
+      holdingOverrides[instrument.id] ?? includedClasses.contains(AssetGroup.of(instrument.assetClass));
 
   ZakatSettings copyWith({
     NisabBasis? basis,
-    Set<ZakatClass>? includedClasses,
+    Set<AssetGroup>? includedClasses,
     Map<String, bool>? holdingOverrides,
     HawlCalendar? calendar,
     DateTime? hawlStart,
@@ -131,7 +101,7 @@ class ZakatSettings extends Equatable {
   /// real exceptions and a later class toggle still applies to it.
   ZakatSettings toggleHolding(Instrument instrument) {
     final next = !includes(instrument);
-    final classDefault = includedClasses.contains(ZakatClass.of(instrument.assetClass));
+    final classDefault = includedClasses.contains(AssetGroup.of(instrument.assetClass));
     final overrides = Map<String, bool>.of(holdingOverrides);
     if (next == classDefault) {
       overrides.remove(instrument.id);
@@ -141,15 +111,15 @@ class ZakatSettings extends Equatable {
     return copyWith(holdingOverrides: overrides);
   }
 
-  ZakatSettings toggleClass(ZakatClass zakatClass) {
-    final classes = Set<ZakatClass>.of(includedClasses);
-    if (!classes.remove(zakatClass)) classes.add(zakatClass);
+  ZakatSettings toggleClass(AssetGroup assetGroup) {
+    final classes = Set<AssetGroup>.of(includedClasses);
+    if (!classes.remove(assetGroup)) classes.add(assetGroup);
     return copyWith(includedClasses: classes);
   }
 
   Map<String, dynamic> toJson() => {
         'basis': basis.name,
-        'classes': [for (final c in ZakatClass.values) if (includedClasses.contains(c)) c.name],
+        'classes': [for (final c in AssetGroup.values) if (includedClasses.contains(c)) c.name],
         'overrides': holdingOverrides,
         'calendar': calendar.name,
         if (hawlStart != null) 'hawlStart': _dayString(hawlStart!),
@@ -162,7 +132,7 @@ class ZakatSettings extends Equatable {
   factory ZakatSettings.fromJson(Map<String, dynamic> json) {
     final rawClasses = json['classes'];
     final classes = rawClasses is List
-        ? rawClasses.whereType<String>().map(ZakatClass.fromName).whereType<ZakatClass>().toSet()
+        ? rawClasses.whereType<String>().map(AssetGroup.fromName).whereType<AssetGroup>().toSet()
         : defaultClasses;
     final rawOverrides = json['overrides'];
     final overrides = <String, bool>{};
@@ -273,7 +243,7 @@ enum ZakatExclusion {
 /// One held asset as the zakat screen lists it.
 class ZakatLine extends Equatable {
   final Instrument instrument;
-  final ZakatClass zakatClass;
+  final AssetGroup assetGroup;
 
   /// Market value in the base currency; null when there is no price yet.
   final Money? value;
@@ -284,7 +254,7 @@ class ZakatLine extends Equatable {
 
   const ZakatLine({
     required this.instrument,
-    required this.zakatClass,
+    required this.assetGroup,
     required this.value,
     required this.exclusion,
     required this.lots,
@@ -293,7 +263,7 @@ class ZakatLine extends Equatable {
   bool get counts => exclusion == null;
 
   @override
-  List<Object?> get props => [instrument, zakatClass, value, exclusion, lots];
+  List<Object?> get props => [instrument, assetGroup, value, exclusion, lots];
 }
 
 enum NisabStatus {
@@ -377,7 +347,7 @@ class ZakatAssessment extends Equatable {
       }
       lines.add(ZakatLine(
         instrument: instrument,
-        zakatClass: ZakatClass.of(instrument.assetClass),
+        assetGroup: AssetGroup.of(instrument.assetClass),
         value: valuation?.value,
         exclusion: exclusion,
         lots: entry.value,

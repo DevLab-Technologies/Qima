@@ -3450,29 +3450,29 @@ abstract class AppLocalizations {
   /// **'Qima computes; it does not rule. The basis and what counts are yours to set — ask a scholar you trust when unsure.'**
   String get zakatDisclaimer;
 
-  /// No description provided for @zakatClassMetals.
+  /// No description provided for @assetGroupMetals.
   ///
   /// In en, this message translates to:
   /// **'Metals'**
-  String get zakatClassMetals;
+  String get assetGroupMetals;
 
-  /// No description provided for @zakatClassCrypto.
+  /// No description provided for @assetGroupCrypto.
   ///
   /// In en, this message translates to:
   /// **'Crypto'**
-  String get zakatClassCrypto;
+  String get assetGroupCrypto;
 
-  /// No description provided for @zakatClassEquities.
+  /// No description provided for @assetGroupEquities.
   ///
   /// In en, this message translates to:
   /// **'Equities'**
-  String get zakatClassEquities;
+  String get assetGroupEquities;
 
-  /// No description provided for @zakatClassCash.
+  /// No description provided for @assetGroupCash.
   ///
   /// In en, this message translates to:
   /// **'Cash & currencies'**
-  String get zakatClassCash;
+  String get assetGroupCash;
 
   /// No description provided for @zakatClassMetalsSubtitle.
   ///
@@ -3809,6 +3809,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Scholars differ on the basis, on equities and on jewelry. Every default here can be changed — when unsure, ask a scholar you trust.'**
   String get helpZakatStep4Body;
+
+  /// No description provided for @allocationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Allocation'**
+  String get allocationTitle;
+
+  /// No description provided for @allocationDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Details'**
+  String get allocationDetails;
+
+  /// No description provided for @allocationByGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'By group'**
+  String get allocationByGroup;
+
+  /// No description provided for @allocationMetalsByForm.
+  ///
+  /// In en, this message translates to:
+  /// **'Metals · by karat and form'**
+  String get allocationMetalsByForm;
+
+  /// No description provided for @allocationMetalForm.
+  ///
+  /// In en, this message translates to:
+  /// **'{metal} {karat}'**
+  String allocationMetalForm(String metal, String karat);
+
+  /// No description provided for @allocationDriftTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Drift'**
+  String get allocationDriftTitle;
+
+  /// No description provided for @allocationDriftSince.
+  ///
+  /// In en, this message translates to:
+  /// **'Drift · since {date}'**
+  String allocationDriftSince(String date);
+
+  /// No description provided for @allocationDriftChange.
+  ///
+  /// In en, this message translates to:
+  /// **'{from} → {to}'**
+  String allocationDriftChange(String from, String to);
+
+  /// No description provided for @allocationDriftPendingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Before there is history'**
+  String get allocationDriftPendingTitle;
+
+  /// No description provided for @allocationDriftPending.
+  ///
+  /// In en, this message translates to:
+  /// **'How your split moves over time appears once your holdings are 14 days old, on {date}. Until then, this is today’s allocation — no trend is invented.'**
+  String allocationDriftPending(String date);
+
+  /// No description provided for @allocationDriftNoHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'There aren’t enough stored prices yet to know how your allocation looked back then. It fills in as price history loads.'**
+  String get allocationDriftNoHistory;
+
+  /// No description provided for @allocationSingleGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'All in {group}'**
+  String allocationSingleGroup(String group);
 }
 
 class _AppLocalizationsDelegate

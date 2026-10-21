@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 
 import '../l10n/app_localizations.dart';
+import '../models/asset_group.dart';
 import '../models/hijri_date.dart';
 
 /// Resolves the model layer's dotted localization keys (e.g. `asset.gold`,
@@ -267,3 +268,17 @@ String percentLabel(BuildContext context, double percent) {
 /// stay Western in Arabic, matching the amounts and Hijri dates beside it.
 String dateWithYear(BuildContext context, DateTime date) =>
     (DateFormat.yMMMd(Localizations.localeOf(context).toString())..useNativeDigits = false).format(date);
+
+/// "Metals", "Cash & currencies" — the label for an [AssetGroup].
+String assetGroupLabel(AppLocalizations l10n, AssetGroup assetGroup) {
+  switch (assetGroup) {
+    case AssetGroup.metals:
+      return l10n.assetGroupMetals;
+    case AssetGroup.crypto:
+      return l10n.assetGroupCrypto;
+    case AssetGroup.equities:
+      return l10n.assetGroupEquities;
+    case AssetGroup.cash:
+      return l10n.assetGroupCash;
+  }
+}
