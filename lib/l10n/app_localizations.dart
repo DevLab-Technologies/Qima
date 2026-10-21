@@ -429,7 +429,7 @@ abstract class AppLocalizations {
   /// No description provided for @portfolioEmpty.
   ///
   /// In en, this message translates to:
-  /// **'No portfolio value yet — add a holding lot to get started.'**
+  /// **'No portfolio value yet — add a buy to any asset to get started.'**
   String get portfolioEmpty;
 
   /// No description provided for @portfolioNoChange.
@@ -441,7 +441,7 @@ abstract class AppLocalizations {
   /// No description provided for @portfolioNoHistory.
   ///
   /// In en, this message translates to:
-  /// **'Add a holding lot to see your portfolio chart'**
+  /// **'Add a buy to see your portfolio chart'**
   String get portfolioNoHistory;
 
   /// No description provided for @settingsTitle.
@@ -561,7 +561,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsHideBalancesFooter.
   ///
   /// In en, this message translates to:
-  /// **'Mask portfolio, holdings and lot amounts throughout the app.'**
+  /// **'Mask portfolio, holdings and transaction amounts throughout the app.'**
   String get settingsHideBalancesFooter;
 
   /// No description provided for @settingsAppLock.
@@ -1483,8 +1483,8 @@ abstract class AppLocalizations {
   /// No description provided for @settingsBackupSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Last backup {date} · {instruments} assets, {lots} lots'**
-  String settingsBackupSubtitle(String date, int instruments, int lots);
+  /// **'Last backup {date} · {instruments} assets, {transactions, plural, =1{1 transaction} other{{transactions} transactions}}'**
+  String settingsBackupSubtitle(String date, int instruments, int transactions);
 
   /// No description provided for @settingsICloudSync.
   ///
@@ -1681,10 +1681,10 @@ abstract class AppLocalizations {
   /// No description provided for @backupExportSheetContentsSummary.
   ///
   /// In en, this message translates to:
-  /// **'{cards} watchlist cards · {lots} lots · {customTickers} custom tickers'**
+  /// **'{cards} watchlist cards · {transactions, plural, =1{1 transaction} other{{transactions} transactions}} · {customTickers} custom tickers'**
   String backupExportSheetContentsSummary(
     int cards,
-    int lots,
+    int transactions,
     int customTickers,
   );
 
@@ -2327,7 +2327,7 @@ abstract class AppLocalizations {
   /// Asset detail help step 5 body.
   ///
   /// In en, this message translates to:
-  /// **'Tap Holdings to see your lots or add a purchase.'**
+  /// **'Tap Holdings to see your transactions or add a buy or sale.'**
   String get helpAssetDetailStep5Body;
 
   /// Portfolio help topic title.
@@ -2363,7 +2363,7 @@ abstract class AppLocalizations {
   /// Portfolio help step 2 body.
   ///
   /// In en, this message translates to:
-  /// **'Tap a row to see its lots, average cost and gain.'**
+  /// **'Tap a row to see its transactions, average cost and gain.'**
   String get helpPortfolioStep2Body;
 
   /// Portfolio help step 3 title.
@@ -3191,7 +3191,7 @@ abstract class AppLocalizations {
   /// No description provided for @zakatEmptyMessage.
   ///
   /// In en, this message translates to:
-  /// **'Zakat is worked out from your holdings. Add a lot to any asset and it appears here, with what counts toward nisab.'**
+  /// **'Zakat is worked out from your holdings. Add a buy to any asset and it appears here, with what counts toward nisab.'**
   String get zakatEmptyMessage;
 
   /// No description provided for @zakatNisabSection.
@@ -4507,6 +4507,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'already in Qima'**
   String get csvProblemDuplicate;
+
+  /// No description provided for @transactionBuyPricePlain.
+  ///
+  /// In en, this message translates to:
+  /// **'Price paid'**
+  String get transactionBuyPricePlain;
+
+  /// No description provided for @transactionSalePricePlain.
+  ///
+  /// In en, this message translates to:
+  /// **'Sale price'**
+  String get transactionSalePricePlain;
+
+  /// No description provided for @transactionCarriedCostPlain.
+  ///
+  /// In en, this message translates to:
+  /// **'Original cost (optional)'**
+  String get transactionCarriedCostPlain;
 }
 
 class _AppLocalizationsDelegate

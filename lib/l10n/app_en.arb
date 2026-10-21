@@ -126,9 +126,9 @@
   },
   "portfolioTitle": "Portfolio",
   "portfolioValue": "Total value",
-  "portfolioEmpty": "No portfolio value yet — add a holding lot to get started.",
+  "portfolioEmpty": "No portfolio value yet — add a buy to any asset to get started.",
   "portfolioNoChange": "Not enough history for this range yet",
-  "portfolioNoHistory": "Add a holding lot to see your portfolio chart",
+  "portfolioNoHistory": "Add a buy to see your portfolio chart",
   "settingsTitle": "Settings",
   "settingsAppearance": "Appearance",
   "settingsAppearanceSystem": "System",
@@ -148,7 +148,7 @@
   "settingsDataSource": "finance.yahoo.com · gold-api.com · er-api.com",
   "settingsPrivacy": "Privacy & security",
   "settingsHideBalances": "Hide balances",
-  "settingsHideBalancesFooter": "Mask portfolio, holdings and lot amounts throughout the app.",
+  "settingsHideBalancesFooter": "Mask portfolio, holdings and transaction amounts throughout the app.",
   "settingsAppLock": "App lock",
   "settingsAppLockFooter": "Require Face ID, Touch ID or your device passcode to open Qima.",
   "settingsAppLockUnavailable": "Set up Face ID, Touch ID or a device passcode first.",
@@ -426,7 +426,7 @@
   },
   "settingsBackup": "Backup & restore",
   "settingsBackupSubtitleNever": "Never backed up",
-  "settingsBackupSubtitle": "Last backup {date} · {instruments} assets, {lots} lots",
+  "settingsBackupSubtitle": "Last backup {date} · {instruments} assets, {transactions, plural, =1{1 transaction} other{{transactions} transactions}}",
   "@settingsBackupSubtitle": {
     "placeholders": {
       "date": {
@@ -435,7 +435,7 @@
       "instruments": {
         "type": "int"
       },
-      "lots": {
+      "transactions": {
         "type": "int"
       }
     }
@@ -486,13 +486,13 @@
   "backupExportSheetFileName": "File name",
   "backupExportSheetFileSize": "Size",
   "backupExportSheetFileContents": "Contents",
-  "backupExportSheetContentsSummary": "{cards} watchlist cards · {lots} lots · {customTickers} custom tickers",
+  "backupExportSheetContentsSummary": "{cards} watchlist cards · {transactions, plural, =1{1 transaction} other{{transactions} transactions}} · {customTickers} custom tickers",
   "@backupExportSheetContentsSummary": {
     "placeholders": {
       "cards": {
         "type": "int"
       },
-      "lots": {
+      "transactions": {
         "type": "int"
       },
       "customTickers": {
@@ -818,7 +818,7 @@
   "@helpAssetDetailStep5Title": {
     "description": "Asset detail help step 5 title."
   },
-  "helpAssetDetailStep5Body": "Tap Holdings to see your lots or add a purchase.",
+  "helpAssetDetailStep5Body": "Tap Holdings to see your transactions or add a buy or sale.",
   "@helpAssetDetailStep5Body": {
     "description": "Asset detail help step 5 body."
   },
@@ -842,7 +842,7 @@
   "@helpPortfolioStep2Title": {
     "description": "Portfolio help step 2 title."
   },
-  "helpPortfolioStep2Body": "Tap a row to see its lots, average cost and gain.",
+  "helpPortfolioStep2Body": "Tap a row to see its transactions, average cost and gain.",
   "@helpPortfolioStep2Body": {
     "description": "Portfolio help step 2 body."
   },
@@ -1382,7 +1382,7 @@
   "zakatSettingsTitle": "Zakat settings",
   "settingsZakatSubtitle": "Nisab basis, what counts, hawl date and reminder",
   "zakatEmptyTitle": "Nothing to assess yet",
-  "zakatEmptyMessage": "Zakat is worked out from your holdings. Add a lot to any asset and it appears here, with what counts toward nisab.",
+  "zakatEmptyMessage": "Zakat is worked out from your holdings. Add a buy to any asset and it appears here, with what counts toward nisab.",
   "zakatNisabSection": "Nisab",
   "zakatWhatCountsSection": "What counts",
   "zakatStatusAbove": "Above nisab",
@@ -1969,5 +1969,8 @@
   "csvProblemUnsupportedUnit": "unit doesn’t fit this asset",
   "csvProblemUnsupportedKarat": "karat doesn’t fit this asset",
   "csvProblemOversell": "sells more than was held",
-  "csvProblemDuplicate": "already in Qima"
+  "csvProblemDuplicate": "already in Qima",
+  "transactionBuyPricePlain": "Price paid",
+  "transactionSalePricePlain": "Sale price",
+  "transactionCarriedCostPlain": "Original cost (optional)"
 }

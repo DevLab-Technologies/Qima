@@ -198,7 +198,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get portfolioEmpty =>
-      'Aucune valeur de portefeuille pour l\'instant — ajoutez un lot pour commencer.';
+      'Aucune valeur de portefeuille pour l’instant — ajoutez un achat à un actif pour commencer.';
 
   @override
   String get portfolioNoChange =>
@@ -206,7 +206,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get portfolioNoHistory =>
-      'Ajoutez une position pour voir le graphique de votre portefeuille';
+      'Ajoutez un achat pour voir le graphique de votre portefeuille';
 
   @override
   String get settingsTitle => 'Réglages';
@@ -271,7 +271,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get settingsHideBalancesFooter =>
-      'Masque les montants du portefeuille, des positions et des lots dans toute l\'app.';
+      'Masque les montants du portefeuille, des positions et des transactions dans toute l’app.';
 
   @override
   String get settingsAppLock => 'Verrouillage de l\'app';
@@ -785,8 +785,18 @@ class AppLocalizationsFr extends AppLocalizations {
   String get settingsBackupSubtitleNever => 'Aucune sauvegarde effectuée';
 
   @override
-  String settingsBackupSubtitle(String date, int instruments, int lots) {
-    return 'Dernière sauvegarde $date · $instruments actifs, $lots lots';
+  String settingsBackupSubtitle(
+    String date,
+    int instruments,
+    int transactions,
+  ) {
+    String _temp0 = intl.Intl.pluralLogic(
+      transactions,
+      locale: localeName,
+      other: '$transactions transactions',
+      one: '1 transaction',
+    );
+    return 'Dernière sauvegarde $date · $instruments actifs, $_temp0';
   }
 
   @override
@@ -901,10 +911,16 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String backupExportSheetContentsSummary(
     int cards,
-    int lots,
+    int transactions,
     int customTickers,
   ) {
-    return '$cards cartes de suivi · $lots lots · $customTickers tickers personnalisés';
+    String _temp0 = intl.Intl.pluralLogic(
+      transactions,
+      locale: localeName,
+      other: '$transactions transactions',
+      one: '1 transaction',
+    );
+    return '$cards cartes de suivi · $_temp0 · $customTickers tickers personnalisés';
   }
 
   @override
@@ -1286,7 +1302,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get helpAssetDetailStep5Body =>
-      'Appuyez sur Avoirs pour voir vos lots ou ajouter un achat.';
+      'Appuyez sur Positions pour voir vos transactions ou ajouter un achat ou une vente.';
 
   @override
   String get helpPortfolioTitle => 'Portefeuille';
@@ -1307,7 +1323,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get helpPortfolioStep2Body =>
-      'Appuyez sur une ligne pour voir ses lots, son coût moyen et son gain.';
+      'Appuyez sur une ligne pour voir ses transactions, son coût moyen et son gain.';
 
   @override
   String get helpPortfolioStep3Title => 'Ajoutez un achat';
@@ -1788,7 +1804,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get zakatEmptyMessage =>
-      'La zakat se calcule à partir de vos avoirs. Ajoutez un lot à un actif : il apparaîtra ici, avec ce qui compte pour le nisab.';
+      'La zakat se calcule à partir de vos avoirs. Ajoutez un achat à un actif : il apparaîtra ici, avec ce qui compte pour le nisab.';
 
   @override
   String get zakatNisabSection => 'Nisab';
@@ -2607,4 +2623,13 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get csvProblemDuplicate => 'déjà dans Qima';
+
+  @override
+  String get transactionBuyPricePlain => 'Prix payé';
+
+  @override
+  String get transactionSalePricePlain => 'Prix de vente';
+
+  @override
+  String get transactionCarriedCostPlain => 'Coût d’origine (facultatif)';
 }

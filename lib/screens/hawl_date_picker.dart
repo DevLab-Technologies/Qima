@@ -134,6 +134,7 @@ class _HijriPickerDialogState extends State<_HijriPickerDialog> {
       actions: [
         TextButton(onPressed: () => Navigator.of(context).pop(), child: Text(l10n.commonCancel)),
         FilledButton(
+          style: FilledButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: DS.spaceLG, vertical: 14)),
           onPressed: _isFuture || gregorian == null ? null : () => Navigator.of(context).pop(gregorian),
           child: Text(l10n.commonDone),
         ),

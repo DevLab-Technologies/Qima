@@ -552,7 +552,7 @@ class _BackupSection extends StatelessWidget {
             : l10n.settingsBackupSubtitle(
                 MaterialLocalizations.of(context).formatMediumDate(lastBackupAt),
                 instrumentCount,
-                state.lots.length,
+                state.transactions.length,
               );
         return DSCard(
           padding: EdgeInsets.zero,
