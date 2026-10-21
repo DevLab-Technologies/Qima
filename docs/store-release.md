@@ -16,9 +16,12 @@ version and build on every platform (iOS, macOS, Android, Windows, Linux). The
 build restarts at 1 for each new version: `2.1.1+1`, `2.1.1+2`, then `2.1.2+1`.
 The tag must match it exactly, or the workflow fails before building.
 
-- **Apple** accepts a build number again under a new version, so it restarts
+- **iOS** accepts a build number again under a new version, so it restarts
   at 1. The lanes check TestFlight first and fail with the next free number
   if the build is already taken.
+- **macOS** rejects any build number that isn't above every earlier upload,
+  whatever the version, so the lane derives it the way Android does
+  (`2.2.1+1` → `2020101`).
 - **Google Play** needs `versionCode` to rise across every version, so the
   lane derives it: major, then minor, patch and build at two digits each
   (`2.1.1+1` → `2010101`). Minor, patch and build must stay below 100.
