@@ -1581,10 +1581,10 @@
     }
   },
   "zakatDisclaimer": "Qima computes; it does not rule. The basis and what counts are yours to set — ask a scholar you trust when unsure.",
-  "zakatClassMetals": "Metals",
-  "zakatClassCrypto": "Crypto",
-  "zakatClassEquities": "Equities",
-  "zakatClassCash": "Cash & currencies",
+  "assetGroupMetals": "Metals",
+  "assetGroupCrypto": "Crypto",
+  "assetGroupEquities": "Equities",
+  "assetGroupCash": "Cash & currencies",
   "zakatClassMetalsSubtitle": "Gold, silver, platinum, palladium",
   "zakatClassCryptoSubtitle": "Treated as a tradeable asset",
   "zakatClassEquitiesSubtitle": "Off by default — views on long-term shareholdings differ",
@@ -1709,6 +1709,59 @@
         "type": "String"
       },
       "rate": {
+        "type": "String"
+      }
+    }
+  },
+  "allocationTitle": "Allocation",
+  "allocationDetails": "Details",
+  "allocationByGroup": "By group",
+  "allocationMetalsByForm": "Metals · by karat and form",
+  "allocationMetalForm": "{metal} {karat}",
+  "@allocationMetalForm": {
+    "placeholders": {
+      "metal": {
+        "type": "String"
+      },
+      "karat": {
+        "type": "String"
+      }
+    }
+  },
+  "allocationDriftTitle": "Drift",
+  "allocationDriftSince": "Drift · since {date}",
+  "@allocationDriftSince": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "allocationDriftChange": "{from} → {to}",
+  "@allocationDriftChange": {
+    "placeholders": {
+      "from": {
+        "type": "String"
+      },
+      "to": {
+        "type": "String"
+      }
+    }
+  },
+  "allocationDriftPendingTitle": "Before there is history",
+  "allocationDriftPending": "How your split moves over time appears once your holdings are 14 days old, on {date}. Until then, this is today’s allocation — no trend is invented.",
+  "@allocationDriftPending": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "allocationDriftNoHistory": "There aren’t enough stored prices yet to know how your allocation looked back then. It fills in as price history loads.",
+  "allocationSingleGroup": "All in {group}",
+  "@allocationSingleGroup": {
+    "placeholders": {
+      "group": {
         "type": "String"
       }
     }

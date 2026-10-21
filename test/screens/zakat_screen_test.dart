@@ -6,6 +6,7 @@ import 'package:qima/l10n/app_localizations.dart';
 import 'package:qima/l10n/app_localizations_ar.dart';
 import 'package:qima/l10n/app_localizations_en.dart';
 import 'package:qima/models/asset.dart';
+import 'package:qima/models/asset_group.dart';
 import 'package:qima/models/fx_history.dart';
 import 'package:qima/models/hijri_date.dart';
 import 'package:qima/models/holding.dart';
@@ -200,9 +201,9 @@ void main() {
       final cubit = await cubitWith([lot('crypto.BTC', 1), lot('stock.AAPL', 10)]);
       await tester.pumpWidget(harness(cubit, const ZakatScreen()));
       await tester.pumpAndSettle();
-      await tester.dragUntilVisible(find.textContaining(en.zakatExcludedClass(en.zakatClassEquities)), find.byType(ListView), const Offset(0, -150));
+      await tester.dragUntilVisible(find.textContaining(en.zakatExcludedClass(en.assetGroupEquities)), find.byType(ListView), const Offset(0, -150));
       await tester.pumpAndSettle();
-      expect(find.textContaining(en.zakatExcludedClass(en.zakatClassEquities)), findsOneWidget);
+      expect(find.textContaining(en.zakatExcludedClass(en.assetGroupEquities)), findsOneWidget);
     });
 
     testWidgets('without a gold price the status is unknown and offers a retry', (tester) async {
@@ -292,9 +293,9 @@ void main() {
       final cubit = await cubitWith([lot('stock.AAPL', 10)]);
       await tester.pumpWidget(harness(cubit, const ZakatSettingsScreen()));
       await tester.pumpAndSettle();
-      await tester.tap(find.widgetWithText(SwitchListTile, en.zakatClassEquities));
+      await tester.tap(find.widgetWithText(SwitchListTile, en.assetGroupEquities));
       await tester.pumpAndSettle();
-      expect(cubit.state.zakatSettings.includedClasses, contains(ZakatClass.equities));
+      expect(cubit.state.zakatSettings.includedClasses, contains(AssetGroup.equities));
       expect(cubit.zakatAssessment.base.amount, closeTo(2000, 1e-6));
     });
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/asset.dart';
+import '../models/asset_group.dart';
 import 'qima_colors.dart';
 
 /// Per-asset-class accent colors, ported from `Theme.swift` (spec §3.2).
@@ -99,6 +100,21 @@ class InstrumentTheme {
         return colors.accentStock;
       case AssetClass.indices:
         return colors.accentIndex;
+    }
+  }
+
+  /// The accent for a whole [AssetGroup] in allocation breakdowns: the
+  /// accent of the group's most typical instrument.
+  static Color groupColor(AssetGroup group, QimaColors colors) {
+    switch (group) {
+      case AssetGroup.metals:
+        return colors.accentGold;
+      case AssetGroup.crypto:
+        return colors.accentCrypto;
+      case AssetGroup.equities:
+        return colors.accentStock;
+      case AssetGroup.cash:
+        return colors.accentFiat;
     }
   }
 }

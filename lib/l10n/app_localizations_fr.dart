@@ -1974,16 +1974,16 @@ class AppLocalizationsFr extends AppLocalizations {
       'Qima calcule, il ne rend pas d’avis. La base et ce qui compte sont à vous de fixer : en cas de doute, consultez un savant de confiance.';
 
   @override
-  String get zakatClassMetals => 'Métaux';
+  String get assetGroupMetals => 'Métaux';
 
   @override
-  String get zakatClassCrypto => 'Crypto';
+  String get assetGroupCrypto => 'Crypto';
 
   @override
-  String get zakatClassEquities => 'Actions';
+  String get assetGroupEquities => 'Actions';
 
   @override
-  String get zakatClassCash => 'Liquidités et devises';
+  String get assetGroupCash => 'Liquidités et devises';
 
   @override
   String get zakatClassMetalsSubtitle => 'Or, argent, platine, palladium';
@@ -2186,4 +2186,51 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get helpZakatStep4Body =>
       'Les savants divergent sur la base, les actions et les bijoux. Chaque réglage par défaut peut être modifié ; en cas de doute, consultez un savant de confiance.';
+
+  @override
+  String get allocationTitle => 'Répartition';
+
+  @override
+  String get allocationDetails => 'Détails';
+
+  @override
+  String get allocationByGroup => 'Par catégorie';
+
+  @override
+  String get allocationMetalsByForm => 'Métaux · par carat et type';
+
+  @override
+  String allocationMetalForm(String metal, String karat) {
+    return '$metal $karat';
+  }
+
+  @override
+  String get allocationDriftTitle => 'Évolution';
+
+  @override
+  String allocationDriftSince(String date) {
+    return 'Évolution · depuis le $date';
+  }
+
+  @override
+  String allocationDriftChange(String from, String to) {
+    return '$from → $to';
+  }
+
+  @override
+  String get allocationDriftPendingTitle => 'Avant d’avoir un historique';
+
+  @override
+  String allocationDriftPending(String date) {
+    return 'L’évolution de votre répartition apparaîtra quand vos avoirs auront 14 jours, le $date. D’ici là, voici la répartition du jour : aucune tendance n’est inventée.';
+  }
+
+  @override
+  String get allocationDriftNoHistory =>
+      'Il n’y a pas encore assez de cours enregistrés pour connaître votre répartition à cette date. Elle se complétera au fil du chargement de l’historique.';
+
+  @override
+  String allocationSingleGroup(String group) {
+    return 'Tout en $group';
+  }
 }

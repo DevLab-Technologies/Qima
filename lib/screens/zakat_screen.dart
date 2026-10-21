@@ -417,7 +417,7 @@ class _LineRow extends StatelessWidget {
     final String? reason;
     switch (line.exclusion) {
       case ZakatExclusion.classOff:
-        reason = l10n.zakatExcludedClass(zakatClassLabel(l10n, line.zakatClass));
+        reason = l10n.zakatExcludedClass(assetGroupLabel(l10n, line.assetGroup));
       case ZakatExclusion.holdingOff:
         reason = l10n.zakatExcludedHolding;
       case ZakatExclusion.noPrice:
@@ -477,16 +477,3 @@ class _Disclaimer extends StatelessWidget {
 String _metalNameKey(NisabBasis basis) => basis == NisabBasis.gold ? 'asset.gold' : 'asset.silver';
 
 String _grams(double grams) => grams == grams.roundToDouble() ? grams.toStringAsFixed(0) : grams.toString();
-
-String zakatClassLabel(AppLocalizations l10n, ZakatClass zakatClass) {
-  switch (zakatClass) {
-    case ZakatClass.metals:
-      return l10n.zakatClassMetals;
-    case ZakatClass.crypto:
-      return l10n.zakatClassCrypto;
-    case ZakatClass.equities:
-      return l10n.zakatClassEquities;
-    case ZakatClass.cash:
-      return l10n.zakatClassCash;
-  }
-}

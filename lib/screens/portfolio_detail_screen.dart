@@ -4,6 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../blocs/app_cubit.dart';
 import '../blocs/app_state.dart';
 import '../l10n/app_localizations.dart';
+import '../models/allocation.dart';
+import '../models/asset_group.dart';
 import '../models/holding.dart';
 import '../models/zakat.dart';
 import '../theme/design_system.dart';
@@ -14,6 +16,7 @@ import '../theme/strings.dart';
 import '../widgets/allocation_donut.dart';
 import '../widgets/help_button.dart';
 import '../widgets/instrument_icon.dart';
+import 'allocation_screen.dart';
 import 'instrument_detail_screen.dart';
 import 'zakat_screen.dart';
 
@@ -119,6 +122,13 @@ class PortfolioDetailScreen extends StatelessWidget {
                   const SizedBox(height: DS.spaceSM),
                   _ZakatEntry(assessment: cubit.zakatAssessment, hidden: hidden),
                 ],
+                if (heldInstruments.isNotEmpty) ...[
+                  const SizedBox(height: DS.spaceSM),
+                  _AllocationCard(
+                    groups: Allocation.byGroup(heldInstruments, state.baseCurrency),
+                    hidden: hidden,
+                  ),
+                ],
                 const SizedBox(height: DS.spaceLG),
                 for (final held in heldInstruments)
                   Padding(
@@ -156,6 +166,54 @@ class PortfolioDetailScreen extends StatelessWidget {
           const SizedBox(height: 2),
           Text(value, style: TextStyle(color: tint ?? colors.textPrimary, fontWeight: FontWeight.w700)),
         ],
+      ),
+    );
+  }
+}
+
+/// Split by group (v3, Figma "Portfolio · value over time" allocation
+/// card); the card opens the full allocation detail.
+class _AllocationCard extends StatelessWidget {
+  final List<AllocationShare<AssetGroup>> groups;
+  final bool hidden;
+
+  const _AllocationCard({required this.groups, required this.hidden});
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final colors = context.colors;
+    return DSCard(
+      child: InkWell(
+        borderRadius: BorderRadius.circular(DS.radiusCard),
+        onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const AllocationScreen())),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    l10n.allocationTitle.toUpperCase(),
+                    style: TextStyle(color: colors.textTertiary, fontSize: 12, fontWeight: FontWeight.w600, letterSpacing: 0.5),
+                  ),
+                ),
+                Text(l10n.allocationDetails, style: TextStyle(color: colors.brandText, fontSize: 13)),
+                Icon(Icons.chevron_right, size: 18, color: colors.brandText),
+              ],
+            ),
+            const SizedBox(height: DS.spaceSM),
+            // A single group would only repeat the total above at 100%;
+            // the card stays as the way into the karat breakdown.
+            if (groups.length == 1)
+              Text(
+                l10n.allocationSingleGroup(assetGroupLabel(l10n, groups.single.key)),
+                style: TextStyle(color: colors.textSecondary),
+              )
+            else
+              groupBars(context, groups, hidden: hidden),
+          ],
+        ),
       ),
     );
   }
