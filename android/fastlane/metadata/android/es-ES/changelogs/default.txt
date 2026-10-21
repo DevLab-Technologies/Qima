@@ -1,10 +1,2 @@
-Qima 2.2.0
-• Nuevo diseño: pestañas Seguimiento, Cartera y Ajustes, con el gráfico de tu cartera en directo
-• Filtra tu lista por metales, cripto, acciones, índices o divisas
-• Alertas de precio con notificaciones
-• Widgets configurables: elige activo, unidad, quilates, divisa y periodo
-• Bloqueo con huella o rostro, y opción para ocultar saldos
-• Tema claro
-• Copia de seguridad cifrada y restauración
-• Recorrido inicial y ayuda en cada pantalla
-• Corregido: precio del oro sin actualizar
+Qima 2.2.1
+• Corregido: faltaban días o semanas de precios en los gráficos tras tener la app cerrada un tiempo, o mientras el oro, la plata y las cripto no se actualizaban. El historial que falta ahora se completa solo.

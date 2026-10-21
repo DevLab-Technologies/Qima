@@ -1,11 +1,2 @@
-Qima 2.2.0
-• New layout: Watchlist, Portfolio and Settings tabs, with a live portfolio chart up front
-• Filter your watchlist by metals, crypto, stocks, indices or currencies
-• Price alerts with notifications
-• Home Screen and Mac widgets for prices, your portfolio and your watchlist, each set up the way you want
-• iCloud sync between your iPhone, iPad and Mac
-• Face ID lock and a hide-balances switch
-• Light theme
-• Encrypted backup and restore
-• A first-run tour, and a help button on every screen
-• Fixed: gold, silver and crypto prices not updating; "Updated" now shows the date when prices aren't from today
+Qima 2.2.1
+• Fixed: charts missing days or weeks of prices after the app was closed for a while, or while gold, silver and crypto prices weren't updating. Missing history now fills in on its own.
