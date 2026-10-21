@@ -179,12 +179,12 @@ class HoldingValuation extends Equatable {
 class HeldInstrument extends Equatable {
   final Instrument instrument;
   final HoldingValuation valuation;
-  final int lotCount;
+  final int transactionCount;
 
-  const HeldInstrument({required this.instrument, required this.valuation, required this.lotCount});
+  const HeldInstrument({required this.instrument, required this.valuation, required this.transactionCount});
 
   String get id => instrument.id;
 
   @override
-  List<Object?> get props => [instrument, valuation, lotCount];
+  List<Object?> get props => [instrument, valuation, transactionCount];
 }

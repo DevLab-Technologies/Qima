@@ -6,6 +6,7 @@ import '../blocs/app_state.dart';
 import '../l10n/app_localizations.dart';
 import '../models/allocation.dart';
 import '../models/asset_group.dart';
+import '../models/asset.dart';
 import '../models/holding.dart';
 import '../models/zakat.dart';
 import '../theme/design_system.dart';
@@ -16,7 +17,9 @@ import '../theme/strings.dart';
 import '../widgets/allocation_donut.dart';
 import '../widgets/help_button.dart';
 import '../widgets/instrument_icon.dart';
+import '../widgets/section_header.dart';
 import 'allocation_screen.dart';
+import 'holdings_screen.dart';
 import 'instrument_detail_screen.dart';
 import 'zakat_screen.dart';
 
@@ -71,6 +74,18 @@ class PortfolioDetailScreen extends StatelessWidget {
             final heldInstruments = cubit.heldInstruments;
             final slices = resolveAllocation(heldInstruments, colors);
             final sliceByID = {for (final s in slices) s.holding.id: s};
+            final realised = cubit.portfolioRealised;
+            final closed = cubit.closedPositions;
+
+            void openHolding(Instrument instrument) {
+              final card = cubit.firstCard(instrument);
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (_) => card != null
+                    ? InstrumentDetailScreen(card: card)
+                    // Not on the watchlist: straight to its ledger.
+                    : HoldingsScreen(instrument: instrument, displayCurrency: state.baseCurrency),
+              ));
+            }
 
             return ListView(
               controller: scrollController,
@@ -107,6 +122,15 @@ class PortfolioDetailScreen extends StatelessWidget {
                               ),
                               const SizedBox(height: DS.spaceXS),
                               _metricTile(colors, l10n.holdingsCost, Masking.amount(valuation.cost, hidden: hidden)),
+                              if (realised != null) ...[
+                                const SizedBox(height: DS.spaceXS),
+                                _metricTile(
+                                  colors,
+                                  l10n.ledgerRealised,
+                                  Masking.signedAmount(realised, hidden: hidden, isUp: realised.amount >= 0),
+                                  tint: QimaColors.trendColor(realised.amount >= 0, colors),
+                                ),
+                              ],
                             ],
                           ),
                         ),
@@ -138,16 +162,35 @@ class PortfolioDetailScreen extends StatelessWidget {
                       color: sliceByID[held.id]?.color ?? colors.brand,
                       fraction: sliceByID[held.id]?.fraction ?? 0,
                       hidden: hidden,
-                      onTap: () {
-                        final card = cubit.firstCard(held.instrument);
-                        if (card != null) {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(builder: (_) => InstrumentDetailScreen(card: card)),
-                          );
-                        }
-                      },
+                      onTap: () => openHolding(held.instrument),
                     ),
                   ),
+                if (closed.isNotEmpty) ...[
+                  const SizedBox(height: DS.spaceSM),
+                  SectionHeader(l10n.portfolioClosedPositions),
+                  DSCard(
+                    padding: const EdgeInsets.symmetric(horizontal: DS.spaceMD, vertical: DS.spaceXS),
+                    child: Column(
+                      children: [
+                        for (final c in closed)
+                          ListTile(
+                            contentPadding: EdgeInsets.zero,
+                            leading: InstrumentIcon(instrument: c.instrument, size: 32),
+                            title: Text(displayLabel(context, c.instrument.nameKey), style: TextStyle(color: colors.textPrimary)),
+                            subtitle: Text(l10n.ledgerRealised, style: TextStyle(color: colors.textTertiary, fontSize: 12)),
+                            trailing: Text(
+                              Masking.signedAmount(c.realised, hidden: hidden, isUp: c.realised.amount >= 0),
+                              style: TextStyle(
+                                color: QimaColors.trendColor(c.realised.amount >= 0, colors),
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            onTap: () => openHolding(c.instrument),
+                          ),
+                      ],
+                    ),
+                  ),
+                ],
               ],
             );
           },
@@ -294,7 +337,7 @@ class _HoldingRow extends StatelessWidget {
                       Text(displayLabel(context, held.instrument.nameKey),
                           style: TextStyle(color: colors.textPrimary, fontWeight: FontWeight.w600)),
                       Text(
-                        '${l10n.portfolioLotCount(held.lotCount)} · $weightPercent%',
+                        '${l10n.portfolioTransactionCount(held.transactionCount)} · $weightPercent%',
                         style: TextStyle(color: colors.textTertiary, fontSize: 12),
                       ),
                     ],

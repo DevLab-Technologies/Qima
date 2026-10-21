@@ -154,7 +154,7 @@ class WidgetSnapshot {
     if (!valued) return {'available': false};
 
     final holdings = byInstrument.entries.toList()..sort((a, b) => b.value[0].compareTo(a.value[0]));
-    final earliestLot = lots.map((l) => l.date).reduce((a, b) => a.isBefore(b) ? a : b);
+    final firstTransaction = state.ledger.firstDate!;
 
     return {
       'available': true,
@@ -164,17 +164,17 @@ class WidgetSnapshot {
         for (final e in holdings) {'instrumentID': e.key, 'valueUSD': e.value[0], 'costUSD': e.value[1]},
       ],
       'series': {
-        for (final entry in ranges.entries) entry.key: _portfolioSeries(state, entry.value, earliestLot, now),
+        for (final entry in ranges.entries) entry.key: _portfolioSeries(state, entry.value, firstTransaction, now),
       },
     };
   }
 
   /// `[time, valueUSD, costUSD]` at [maxPoints] evenly spaced instants from
-  /// the range start (the first lot's date for "All", so the first point
-  /// already holds it) to [now]. A lot counts from its own date on; an
-  /// instrument with no price yet at an instant adds cost but no value.
-  static List<List<num>> _portfolioSeries(AppState state, ChartRange range, DateTime earliestLot, DateTime now) {
-    final start = range.startDate(now) ?? earliestLot;
+  /// the range start (the first transaction for "All", so the first point
+  /// already holds it) to [now]. Each instrument counts what the ledger held
+  /// at that instant; one with no price yet adds cost but no value.
+  static List<List<num>> _portfolioSeries(AppState state, ChartRange range, DateTime firstTransaction, DateTime now) {
+    final start = range.startDate(now) ?? firstTransaction;
     if (!start.isBefore(now)) return const [];
 
     final span = now.difference(start).inMilliseconds;
@@ -183,9 +183,9 @@ class WidgetSnapshot {
     ];
     // One forward walk per instrument over the ascending sample times,
     // instead of rescanning every quote for every lot and instant.
+    final positions = state.ledger.positions.values.toList();
     final pricesByInstrument = <String, List<double?>>{
-      for (final id in state.lots.map((l) => l.instrumentID).toSet())
-        id: _pricesAt(state.seriesByID[id]?.quotes ?? const [], times),
+      for (final p in positions) p.instrumentID: _pricesAt(state.seriesByID[p.instrumentID]?.quotes ?? const [], times),
     };
 
     return [
@@ -193,11 +193,12 @@ class WidgetSnapshot {
         () {
           double value = 0;
           double cost = 0;
-          for (final lot in state.lots) {
-            if (lot.date.isAfter(times[i])) continue;
-            cost += lot.totalCost / (state.rates.rate(lot.costCurrency) ?? 1);
-            final price = pricesByInstrument[lot.instrumentID]![i];
-            if (price != null) value += lot.fineOunces * price;
+          for (final position in positions) {
+            final held = position.stateAt(times[i]);
+            if (held == null) continue;
+            cost += held.basis.inCurrency('USD', state.rates).amount;
+            final price = pricesByInstrument[position.instrumentID]![i];
+            if (price != null) value += held.fineOunces * price;
           }
           return <num>[times[i].millisecondsSinceEpoch, value, cost];
         }(),

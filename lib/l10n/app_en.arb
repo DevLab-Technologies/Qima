@@ -91,82 +91,19 @@
       }
     }
   },
-  "holdingsEmpty": "Add your first lot to start tracking this holding.",
+  "holdingsEmpty": "No transactions yet. Add a buy to start tracking this holding.",
   "holdingsValue": "Value",
   "holdingsCost": "Cost",
   "holdingsGain": "Gain",
   "holdingsGainPercent": "Gain %",
-  "holdingsNew": "New lot",
-  "holdingsEdit": "Edit lot",
   "holdingsQuantity": "Quantity",
   "holdingsCostModePerUnit": "Per unit",
   "holdingsCostModeTotal": "Total",
-  "holdingsUnitCost": "Unit cost",
-  "holdingsUnitCostWithUnit": "Unit cost (per {unit})",
-  "@holdingsUnitCostWithUnit": {
-    "placeholders": {
-      "unit": {
-        "type": "String"
-      }
-    }
-  },
-  "holdingsUnitCostWithKarat": "Unit cost (per {unit} · {karat})",
-  "@holdingsUnitCostWithKarat": {
-    "placeholders": {
-      "unit": {
-        "type": "String"
-      },
-      "karat": {
-        "type": "String"
-      }
-    }
-  },
-  "holdingsUnitCostPreview": "Per unit: {value}",
-  "@holdingsUnitCostPreview": {
-    "placeholders": {
-      "value": {
-        "type": "String"
-      }
-    }
-  },
   "holdingsTotalCost": "Total cost",
-  "holdingsTotalCostPreview": "Total: {value}",
-  "@holdingsTotalCostPreview": {
-    "placeholders": {
-      "value": {
-        "type": "String"
-      }
-    }
-  },
   "holdingsDate": "Date",
   "holdingsSave": "Save",
   "holdingsTotalHeld": "Total held",
   "holdingsAverageCost": "Average cost",
-  "holdingsAverageCostPerUnit": "{value} per {unit}",
-  "@holdingsAverageCostPerUnit": {
-    "placeholders": {
-      "value": {
-        "type": "String"
-      },
-      "unit": {
-        "type": "String"
-      }
-    }
-  },
-  "holdingsAverageCostPerUnitKarat": "{value} per {unit} · {karat}",
-  "@holdingsAverageCostPerUnitKarat": {
-    "placeholders": {
-      "value": {
-        "type": "String"
-      },
-      "unit": {
-        "type": "String"
-      },
-      "karat": {
-        "type": "String"
-      }
-    }
-  },
   "holdingsMixedNote": "Mixed karats counted by gold content, shown as {karat}.",
   "@holdingsMixedNote": {
     "placeholders": {
@@ -192,14 +129,6 @@
   "portfolioEmpty": "No portfolio value yet — add a holding lot to get started.",
   "portfolioNoChange": "Not enough history for this range yet",
   "portfolioNoHistory": "Add a holding lot to see your portfolio chart",
-  "portfolioLotCount": "{count, plural, =1{1 lot} other{{count} lots}}",
-  "@portfolioLotCount": {
-    "placeholders": {
-      "count": {
-        "type": "num"
-      }
-    }
-  },
   "settingsTitle": "Settings",
   "settingsAppearance": "Appearance",
   "settingsAppearanceSystem": "System",
@@ -318,15 +247,6 @@
     }
   },
   "confirmRemoveCardMessage": "Your holdings for this asset are kept.",
-  "confirmDeleteLotTitle": "Delete this lot?",
-  "confirmDeleteLotMessage": "{details}. This can't be undone.",
-  "@confirmDeleteLotMessage": {
-    "placeholders": {
-      "details": {
-        "type": "String"
-      }
-    }
-  },
   "confirmRemoveTickerTitle": "Remove custom ticker {symbol}?",
   "@confirmRemoveTickerTitle": {
     "placeholders": {
@@ -608,7 +528,6 @@
     }
   },
   "backupImportCountCards": "Watchlist cards",
-  "backupImportCountLots": "Lots",
   "backupImportCountCustomTickers": "Custom tickers",
   "backupImportCountSettings": "Settings included",
   "backupImportPasswordPrompt": "This backup is protected. Enter the password to continue.",
@@ -951,19 +870,19 @@
   "@helpPortfolioStep5Body": {
     "description": "Portfolio help step 5 body."
   },
-  "helpLotEditorTitle": "Lot editor",
+  "helpLotEditorTitle": "Transaction",
   "@helpLotEditorTitle": {
     "description": "Lot editor help topic title."
   },
-  "helpLotEditorSummary": "Record one purchase so Qima can work out what you hold, your average cost and your gain.",
+  "helpLotEditorSummary": "Record one buy, sell, transfer or fee. Your holding, average cost and gains are worked out from these.",
   "@helpLotEditorSummary": {
     "description": "Lot editor help topic summary line."
   },
-  "helpLotEditorStep1Title": "Quantity and unit",
+  "helpLotEditorStep1Title": "Type",
   "@helpLotEditorStep1Title": {
     "description": "Lot editor help step 1 title."
   },
-  "helpLotEditorStep1Body": "Enter how much you bought, in troy ounces, grams or kilograms.",
+  "helpLotEditorStep1Body": "Buy adds at a cost. Sell removes and realises a gain or loss. Transfer moves quantity in or out. Fee records a charge.",
   "@helpLotEditorStep1Body": {
     "description": "Lot editor help step 1 body."
   },
@@ -971,15 +890,15 @@
   "@helpLotEditorStep2Title": {
     "description": "Lot editor help step 2 title."
   },
-  "helpLotEditorStep2Body": "For gold by gram or kilogram, pick 24K, 22K, 21K or 18K. It starts at the card's karat.",
+  "helpLotEditorStep2Body": "For gold by gram or kilogram, pick 24K, 22K, 21K or 18K. Everything is counted by gold content, so karats mix correctly.",
   "@helpLotEditorStep2Body": {
     "description": "Lot editor help step 2 body."
   },
-  "helpLotEditorStep3Title": "What you paid",
+  "helpLotEditorStep3Title": "Price and fee",
   "@helpLotEditorStep3Title": {
     "description": "Lot editor help step 3 title."
   },
-  "helpLotEditorStep3Body": "Enter the cost per unit or the total, in the currency you paid in.",
+  "helpLotEditorStep3Body": "Enter the price per unit or the total, and any commission. A sell shows what it realises before you save.",
   "@helpLotEditorStep3Body": {
     "description": "Lot editor help step 3 body."
   },
@@ -987,7 +906,7 @@
   "@helpLotEditorStep4Title": {
     "description": "Lot editor help step 4 title."
   },
-  "helpLotEditorStep4Body": "The day you bought it.",
+  "helpLotEditorStep4Body": "The day it happened. A sale can’t be dated before you held enough.",
   "@helpLotEditorStep4Body": {
     "description": "Lot editor help step 4 body."
   },
@@ -995,7 +914,7 @@
   "@helpLotEditorStep5Title": {
     "description": "Lot editor help step 5 title."
   },
-  "helpLotEditorStep5Body": "Edit or delete a lot any time from Holdings.",
+  "helpLotEditorStep5Body": "Edit or delete a transaction any time from the holding’s ledger.",
   "@helpLotEditorStep5Body": {
     "description": "Lot editor help step 5 body."
   },
@@ -1271,7 +1190,7 @@
   "@helpHoldingsTitle": {
     "description": "Holdings list help topic title."
   },
-  "helpHoldingsSummary": "Every lot you bought of this asset, and what they add up to.",
+  "helpHoldingsSummary": "Every transaction for this asset — buys, sells, transfers and fees — and what they add up to.",
   "@helpHoldingsSummary": {
     "description": "Holdings list help topic summary line."
   },
@@ -1279,23 +1198,23 @@
   "@helpHoldingsStep1Title": {
     "description": "Holdings list help step 1 title."
   },
-  "helpHoldingsStep1Body": "Quantity, average cost, current value and gain across every lot.",
+  "helpHoldingsStep1Body": "What you hold, your average cost, its value and gain, plus what sales have realised.",
   "@helpHoldingsStep1Body": {
     "description": "Holdings list help step 1 body."
   },
-  "helpHoldingsStep2Title": "Add a lot",
+  "helpHoldingsStep2Title": "Add a transaction",
   "@helpHoldingsStep2Title": {
     "description": "Holdings list help step 2 title."
   },
-  "helpHoldingsStep2Body": "Tap + to record another purchase.",
+  "helpHoldingsStep2Body": "Tap Add to record a buy, a sell, a transfer or a fee.",
   "@helpHoldingsStep2Body": {
     "description": "Holdings list help step 2 body."
   },
-  "helpHoldingsStep3Title": "Edit or delete a lot",
+  "helpHoldingsStep3Title": "Edit or delete one",
   "@helpHoldingsStep3Title": {
     "description": "Holdings list help step 3 title."
   },
-  "helpHoldingsStep3Body": "Tap a lot to change it, or swipe to delete.",
+  "helpHoldingsStep3Body": "Tap a row to change it, or swipe to delete. Qima won’t let a change leave a sale selling more than you held.",
   "@helpHoldingsStep3Body": {
     "description": "Holdings list help step 3 body."
   },
@@ -1765,5 +1684,201 @@
         "type": "String"
       }
     }
-  }
+  },
+  "backupImportCountTransactions": "Transactions",
+  "portfolioTransactionCount": "{count, plural, =1{1 transaction} other{{count} transactions}}",
+  "@portfolioTransactionCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "portfolioClosedPositions": "Closed positions",
+  "ledgerTitleWithKarat": "{name} · {karat}",
+  "@ledgerTitleWithKarat": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "karat": {
+        "type": "String"
+      }
+    }
+  },
+  "ledgerAdd": "Add",
+  "ledgerAddFirst": "Add a transaction",
+  "ledgerHolding": "Holding",
+  "ledgerNothingHeld": "Nothing held now",
+  "ledgerPerUnit": "{amount} / {unit}",
+  "@ledgerPerUnit": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "ledgerMarketValue": "Market value",
+  "ledgerUnrealised": "Unrealised",
+  "ledgerRealised": "Realised",
+  "ledgerGainWithPercent": "{amount} ({percent})",
+  "@ledgerGainWithPercent": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "ledgerDetail": "{date} · {detail}",
+  "@ledgerDetail": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "ledgerDetailWithFee": "{date} · {price} · fee {fee}",
+  "@ledgerDetailWithFee": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "price": {
+        "type": "String"
+      },
+      "fee": {
+        "type": "String"
+      }
+    }
+  },
+  "ledgerNoCostBasis": "no cost basis",
+  "ledgerCostCarried": "cost carried over",
+  "ledgerFootnote": "Cost basis is worked out from this ledger, not stored. Editing any row re-derives the holding.",
+  "ledgerOverdrawnBanner": "A sale here sells more than was held on its date — usually from editing on two devices at once. It counts as selling what was left; edit or delete it to fix the totals.",
+  "ledgerClosedLine": "Nothing held now · realised {amount}",
+  "@ledgerClosedLine": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "ledgerConflictSaveTitle": "That would oversell",
+  "ledgerConflictDeleteTitle": "Can’t delete this yet",
+  "ledgerConflictMessage": "The {kind} on {date} would then sell more than was held. Edit or delete that one first.",
+  "@ledgerConflictMessage": {
+    "placeholders": {
+      "kind": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "confirmDeleteTransactionTitle": "Delete this transaction?",
+  "confirmDeleteTransactionMessage": "{details}. The holding is worked out again without it. This can’t be undone.",
+  "@confirmDeleteTransactionMessage": {
+    "placeholders": {
+      "details": {
+        "type": "String"
+      }
+    }
+  },
+  "transactionNewTitle": "New transaction",
+  "transactionEditTitle": "Edit transaction",
+  "transactionKindBuy": "Buy",
+  "transactionKindSell": "Sell",
+  "transactionKindTransfer": "Transfer",
+  "transactionKindTransferIn": "Transfer in",
+  "transactionKindTransferOut": "Transfer out",
+  "transactionKindFee": "Fee",
+  "transactionTransferInLabel": "In",
+  "transactionTransferOutLabel": "Out",
+  "transactionFineHint": "= {quantity} of fine gold",
+  "@transactionFineHint": {
+    "placeholders": {
+      "quantity": {
+        "type": "String"
+      }
+    }
+  },
+  "transactionPerUnitKarat": "{unit} · {karat}",
+  "@transactionPerUnitKarat": {
+    "placeholders": {
+      "unit": {
+        "type": "String"
+      },
+      "karat": {
+        "type": "String"
+      }
+    }
+  },
+  "transactionBuyPrice": "Price paid (per {unit})",
+  "@transactionBuyPrice": {
+    "placeholders": {
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "transactionSalePrice": "Sale price (per {unit})",
+  "@transactionSalePrice": {
+    "placeholders": {
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "transactionCarriedCost": "Original cost (per {unit}, optional)",
+  "@transactionCarriedCost": {
+    "placeholders": {
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "transactionTotalProceeds": "Total sale amount",
+  "transactionTotalCarriedCost": "Original total cost (optional)",
+  "transactionTransferCostHelper": "What it originally cost, if you know it. Left empty, it joins with no cost basis.",
+  "transactionFee": "Fee (optional)",
+  "transactionFeeAmount": "Fee amount",
+  "transactionFeeLabel": "What it was for (optional)",
+  "transactionNote": "Note (optional)",
+  "transactionNeedsQuantity": "Enter a quantity.",
+  "transactionNeedsPrice": "Enter a price.",
+  "transactionNeedsFee": "Enter the fee amount.",
+  "transactionMoreThanHeld": "That’s more than you held on that date ({held}).",
+  "@transactionMoreThanHeld": {
+    "placeholders": {
+      "held": {
+        "type": "String"
+      }
+    }
+  },
+  "transactionPreviewTitle": "Realised gain preview",
+  "transactionProceeds": "Proceeds",
+  "transactionBasisReleased": "Cost basis released",
+  "transactionRealisedGain": "Realised gain",
+  "transactionPreviewRemaining": "Weighted average basis. Still held after this: {quantity} at {average}.",
+  "@transactionPreviewRemaining": {
+    "placeholders": {
+      "quantity": {
+        "type": "String"
+      },
+      "average": {
+        "type": "String"
+      }
+    }
+  },
+  "transactionPreviewClosesPosition": "Weighted average basis. This sells everything you hold."
 }

@@ -7,12 +7,13 @@ import 'package:qima/l10n/app_localizations_en.dart';
 import 'package:qima/models/asset.dart';
 import 'package:qima/models/fx_history.dart';
 import 'package:qima/models/holding.dart';
+import 'package:qima/models/holding_transaction.dart';
 import 'package:qima/models/instrument_catalog.dart';
 import 'package:qima/models/metal_breakdown.dart';
 import 'package:qima/models/money.dart';
 import 'package:qima/models/quote.dart';
 import 'package:qima/screens/holdings_screen.dart';
-import 'package:qima/screens/lot_editor_screen.dart';
+import 'package:qima/screens/transaction_editor_screen.dart';
 import 'package:qima/services/preferences.dart';
 import 'package:qima/theme/app_theme.dart';
 import 'package:qima/theme/masking.dart';
@@ -64,11 +65,11 @@ void main() {
     );
   }
 
-  group('LotEditorScreen karat selector', () {
+  group('TransactionEditorScreen karat selector', () {
     testWidgets('is shown for gold priced by gram, defaulting to the originating card\'s karat', (tester) async {
       final cubit = await emptyCubit();
       await tester.pumpWidget(harness(
-        home: LotEditorScreen(
+        home: TransactionEditorScreen(
           instrument: gold,
           defaultCurrency: 'USD',
           defaultUnit: PriceUnit.gram,
@@ -88,7 +89,7 @@ void main() {
     testWidgets('is hidden for troy ounce (fine weight) and clears karat when switching to it', (tester) async {
       final cubit = await emptyCubit();
       await tester.pumpWidget(harness(
-        home: LotEditorScreen(
+        home: TransactionEditorScreen(
           instrument: gold,
           defaultCurrency: 'USD',
           defaultUnit: PriceUnit.gram,
@@ -111,7 +112,7 @@ void main() {
     testWidgets('is never shown for a non-gold instrument', (tester) async {
       final cubit = await emptyCubit();
       await tester.pumpWidget(harness(
-        home: LotEditorScreen(instrument: silver, defaultCurrency: 'USD'),
+        home: TransactionEditorScreen(instrument: silver, defaultCurrency: 'USD'),
         cubit: cubit,
       ));
       await tester.pump();
@@ -133,12 +134,12 @@ void main() {
         karat: GoldKarat.k18,
       );
       await tester.pumpWidget(harness(
-        home: LotEditorScreen(
+        home: TransactionEditorScreen(
           instrument: gold,
           defaultCurrency: 'USD',
           defaultUnit: PriceUnit.troyOunce, // different card default unit/karat than the lot
           defaultKarat: GoldKarat.k21,
-          existing: existing,
+          existing: HoldingTransaction.fromLot(existing),
         ),
         cubit: cubit,
       ));
@@ -169,9 +170,10 @@ void main() {
       ));
       await tester.pump();
 
-      expect(find.text(l10n.holdingsTotalHeld.toUpperCase()), findsOneWidget);
-      expect(find.text(l10n.holdingsAverageCost.toUpperCase()), findsOneWidget);
-      expect(find.textContaining('100'), findsWidgets);
+      expect(find.text(l10n.ledgerHolding.toUpperCase()), findsOneWidget);
+      expect(find.text(l10n.holdingsAverageCost), findsOneWidget);
+      expect(find.text(l10n.ledgerPerUnit(r'$50.00', l10n.unitAbbrGram)), findsOneWidget);
+      expect(find.text('100 g'), findsWidgets);
     });
 
     testWidgets('masks Total held (a quantity) when balances are hidden, but not Average cost', (tester) async {
@@ -194,18 +196,15 @@ void main() {
       ));
       await tester.pump();
 
-      // Total held is a bare quantity that reveals wealth, so it's masked
-      // exactly like a money amount would be.
-      final totalHeldLabel = find.text(l10n.holdingsTotalHeld.toUpperCase());
-      final totalHeldTile = find.ancestor(of: totalHeldLabel, matching: find.byType(Column)).first;
-      expect(find.descendant(of: totalHeldTile, matching: find.text(Masking.mask)), findsOneWidget);
-      expect(find.descendant(of: totalHeldTile, matching: find.textContaining('100')), findsNothing);
+      // The total held is a bare quantity that reveals wealth, so it's
+      // masked exactly like a money amount would be.
+      final summary = find.ancestor(of: find.text(l10n.ledgerHolding.toUpperCase()), matching: find.byType(Column)).first;
+      expect(find.descendant(of: summary, matching: find.text(Masking.mask)), findsWidgets);
+      expect(find.descendant(of: summary, matching: find.text('100 g')), findsNothing);
 
       // Average cost is a PRICE, not an amount held — it stays visible even
       // while balances are hidden.
-      final averageLabel = find.text(l10n.holdingsAverageCost.toUpperCase());
-      final averageTile = find.ancestor(of: averageLabel, matching: find.byType(Column)).first;
-      expect(find.descendant(of: averageTile, matching: find.text(Masking.mask)), findsNothing);
+      expect(find.text(l10n.ledgerPerUnit(r'$50.00', l10n.unitAbbrGram)), findsOneWidget);
     });
 
     testWidgets('shows a mixed-karat note when lots have different karats', (tester) async {
