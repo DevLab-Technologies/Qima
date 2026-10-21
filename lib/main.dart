@@ -14,9 +14,11 @@ import 'screens/home_shell.dart';
 import 'screens/instrument_detail_screen.dart';
 import 'screens/onboarding_tour_screen.dart';
 import 'screens/watch_watchlist_screen.dart';
+import 'screens/zakat_screen.dart';
 import 'services/backup/backup_reminder_notifier.dart';
 import 'services/notification_service.dart';
 import 'services/preferences.dart';
+import 'services/zakat_reminder_notifier.dart';
 import 'theme/app_theme.dart';
 import 'widgets/lock_gate.dart';
 
@@ -92,12 +94,13 @@ class _QimaAppState extends State<QimaApp> {
   }
 
   /// [payload] is either a `WatchCard.id` (a price alert notification, set
-  /// in `RefreshPipeline._notify`) or [backupReminderNotificationPayload]
+  /// in `RefreshPipeline._notify`), [backupReminderNotificationPayload]
   /// (the Phase 6 backup-reminder notification, set in
-  /// `BackupReminderNotifier`). Waits for the cubit to finish initializing
-  /// (a cold start's tap can arrive before `init()` has loaded the
-  /// watchlist) and silently does nothing if a referenced card was since
-  /// removed.
+  /// `BackupReminderNotifier`) or [zakatReminderNotificationPayload] (the
+  /// hawl reminder, set in `ZakatReminderNotifier`). Waits for the cubit to
+  /// finish initializing (a cold start's tap can arrive before `init()` has
+  /// loaded the watchlist) and silently does nothing if a referenced card
+  /// was since removed.
   void _handleNotificationTap(String payload) {
     unawaited(() async {
       while (!_cubit.state.initialized) {
@@ -108,6 +111,10 @@ class _QimaAppState extends State<QimaApp> {
 
       if (payload == backupReminderNotificationPayload) {
         navigator.push(MaterialPageRoute(builder: (_) => const BackupScreen()));
+        return;
+      }
+      if (payload == zakatReminderNotificationPayload) {
+        navigator.push(MaterialPageRoute(builder: (_) => const ZakatScreen()));
         return;
       }
 

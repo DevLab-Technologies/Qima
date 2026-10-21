@@ -15,6 +15,7 @@ import '../../models/holding.dart';
 import '../../models/price_alert.dart';
 import '../../models/syncable.dart';
 import '../../models/watch_card.dart';
+import '../../models/zakat.dart';
 import '../alerts_store.dart';
 import '../custom_instrument_store.dart';
 import '../holdings_store.dart';
@@ -137,6 +138,7 @@ class BackupService {
       appearance: (await preferences.appearance).name,
       preferredChartRange: preferences.preferredChartRange.name,
       widgetRefreshInterval: (await preferences.widgetRefreshInterval).rawValue,
+      zakat: (await preferences.zakatSettings).toJson(),
     );
 
     return BackupPayload(
@@ -442,6 +444,8 @@ class BackupService {
     }
     final interval = WidgetRefreshInterval.fromRawValue(settings.widgetRefreshInterval);
     await preferences.setWidgetRefreshInterval(interval);
+    final zakat = settings.zakat;
+    if (zakat != null) await preferences.setZakatSettings(ZakatSettings.fromJson(zakat));
   }
 
   // -------------------------------------------------------------------

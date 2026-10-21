@@ -125,12 +125,18 @@ class BackupSettings extends Equatable {
   final String preferredChartRange;
   final int widgetRefreshInterval;
 
+  /// `ZakatSettings.toJson()` (v3). Optional: backups written before zakat
+  /// existed have none, and restoring one of those leaves the current zakat
+  /// settings untouched.
+  final Map<String, dynamic>? zakat;
+
   const BackupSettings({
     required this.baseCurrency,
     required this.appLanguage,
     required this.appearance,
     required this.preferredChartRange,
     required this.widgetRefreshInterval,
+    this.zakat,
   });
 
   Map<String, dynamic> toJson() => {
@@ -139,6 +145,7 @@ class BackupSettings extends Equatable {
         'appearance': appearance,
         'preferredChartRange': preferredChartRange,
         'widgetRefreshInterval': widgetRefreshInterval,
+        if (zakat != null) 'zakat': zakat,
       };
 
   factory BackupSettings.fromJson(Map<String, dynamic> json) {
@@ -147,6 +154,7 @@ class BackupSettings extends Equatable {
     final appearance = json['appearance'];
     final preferredChartRange = json['preferredChartRange'];
     final widgetRefreshInterval = json['widgetRefreshInterval'];
+    final zakat = json['zakat'];
     if (baseCurrency is! String ||
         appLanguage is! String ||
         appearance is! String ||
@@ -160,11 +168,12 @@ class BackupSettings extends Equatable {
       appearance: appearance,
       preferredChartRange: preferredChartRange,
       widgetRefreshInterval: widgetRefreshInterval,
+      zakat: zakat is Map<String, dynamic> ? zakat : null,
     );
   }
 
   @override
-  List<Object?> get props => [baseCurrency, appLanguage, appearance, preferredChartRange, widgetRefreshInterval];
+  List<Object?> get props => [baseCurrency, appLanguage, appearance, preferredChartRange, widgetRefreshInterval, zakat];
 }
 
 /// The plain (unencrypted) payload contents — raw `SyncedStore` records for
