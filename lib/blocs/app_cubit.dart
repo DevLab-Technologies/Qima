@@ -1117,6 +1117,33 @@ class AppCubit extends Cubit<AppState> {
     return null;
   }
 
+  /// Adds a batch of already-validated rows (a CSV import) and starts
+  /// tracking any asset that's new to the app. Returns their ids, for undo.
+  Future<List<String>> importTransactions(List<HoldingTransaction> transactions) async {
+    if (transactions.isEmpty) return const [];
+    final trackedBefore = trackedInstruments.map((i) => i.id).toSet();
+    final all = await transactionsStore.addAll(transactions);
+    emit(state.copyWith(transactions: all));
+    unawaited(_markDataChanged());
+    final added = {for (final t in transactions) t.instrumentID}.difference(trackedBefore);
+    if (added.isNotEmpty) {
+      for (final id in added) {
+        final instrument = InstrumentCatalog.instrument(id);
+        if (instrument == null) continue;
+        emit(state.copyWith(seriesByID: {...state.seriesByID, id: await repository.cachedSeries(instrument)}));
+      }
+      unawaited(refreshAll(silent: true));
+    }
+    return [for (final t in transactions) t.id];
+  }
+
+  /// Removes everything one import added.
+  Future<void> undoImport(List<String> ids) async {
+    final all = await transactionsStore.deleteAll(ids);
+    emit(state.copyWith(transactions: all));
+    unawaited(_markDataChanged());
+  }
+
   /// Deletes [transaction] unless that would break a sale; returns that sale
   /// instead of deleting when it would.
   Future<HoldingTransaction?> deleteTransaction(HoldingTransaction transaction) async {

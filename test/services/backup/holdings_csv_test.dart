@@ -5,11 +5,13 @@ import 'package:qima/l10n/app_localizations_en.dart';
 import 'package:qima/models/asset.dart';
 import 'package:qima/models/custom_instrument.dart';
 import 'package:qima/models/holding.dart';
+import 'package:qima/models/holding_transaction.dart';
 import 'package:qima/models/instrument_catalog.dart';
 import 'package:qima/models/metal_breakdown.dart';
 import 'package:qima/services/backup/holdings_csv.dart';
 
-HoldingLot _lot({
+/// A plain buy, built from a lot so the cases read like before the ledger.
+HoldingTransaction _lot({
   String instrumentID = 'metal.XAU',
   double quantity = 1,
   PriceUnit unit = PriceUnit.troyOunce,
@@ -18,7 +20,7 @@ HoldingLot _lot({
   DateTime? date,
   GoldKarat? karat,
 }) {
-  return HoldingLot(
+  return HoldingTransaction.fromLot(HoldingLot(
     id: 'lot-1',
     instrumentID: instrumentID,
     quantity: quantity,
@@ -27,7 +29,7 @@ HoldingLot _lot({
     costCurrency: costCurrency,
     date: date ?? DateTime(2026, 1, 15),
     karat: karat,
-  );
+  ));
 }
 
 void main() {
@@ -48,7 +50,8 @@ void main() {
     final text = HoldingsCsv.build([_lot()], l10n);
     final lines = text.split('\r\n')..removeWhere((l) => l.isEmpty);
     expect(lines, hasLength(2));
-    expect(lines[0].split(','), hasLength(9));
+    expect(lines[0].split(','), hasLength(12));
+    expect(lines[1], startsWith(l10n.transactionKindBuy));
     expect(lines[1], contains('XAU'));
     expect(lines[1], contains('1900'));
     expect(lines[1], contains('2026-01-15'));
@@ -127,8 +130,8 @@ void main() {
         final lot = _lot(instrumentID: 'stock.INJ');
         final text = HoldingsCsv.build([lot], l10n);
         final dataLine = text.split('\r\n')[1];
-        final firstCell = dataLine.split(',').first;
-        expect(firstCell, startsWith("'$prefix"));
+        final nameCell = dataLine.split(',')[1];
+        expect(nameCell, startsWith("'$prefix"));
       });
     }
 
@@ -137,11 +140,11 @@ void main() {
       final lot = _lot(instrumentID: 'stock.SAFE');
       final text = HoldingsCsv.build([lot], l10n);
       final dataLine = text.split('\r\n')[1];
-      expect(dataLine, startsWith('Safe Co'));
+      expect(dataLine.split(',')[1], 'Safe Co');
     });
   });
 
-  test('multiple lots each get their own row, in the order given', () {
+  test('multiple transactions each get their own row', () {
     final lots = [
       _lot(quantity: 1),
       _lot(instrumentID: 'metal.XAG', quantity: 2),
@@ -156,5 +159,15 @@ void main() {
     final dataLine = text.split('\r\n')[1];
     expect(dataLine, contains(',5,'));
     expect(dataLine, contains(',100,'));
+  });
+
+  test('rows come out oldest first, whatever order they are given in', () {
+    final text = HoldingsCsv.build([
+      _lot(date: DateTime(2026, 3, 1), quantity: 2),
+      _lot(date: DateTime(2026, 1, 1), quantity: 1),
+    ], l10n);
+    final lines = text.split('\r\n')..removeWhere((l) => l.isEmpty);
+    expect(lines[1], contains('2026-01-01'));
+    expect(lines[2], contains('2026-03-01'));
   });
 }

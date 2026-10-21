@@ -1615,7 +1615,7 @@ abstract class AppLocalizations {
   /// No description provided for @backupExportCsvSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Your lots as a spreadsheet, for your records (.csv)'**
+  /// **'Every transaction as a spreadsheet (.csv) — it imports back too'**
   String get backupExportCsvSubtitle;
 
   /// No description provided for @backupRestoreSection.
@@ -1883,7 +1883,7 @@ abstract class AppLocalizations {
   /// No description provided for @backupImportCsvErrorMessage.
   ///
   /// In en, this message translates to:
-  /// **'A holdings spreadsheet (.csv) only has your lots, and can\'t be restored. Choose a full backup file (.json) instead.'**
+  /// **'This is a spreadsheet, not a Qima backup. You can import its rows as transactions instead.'**
   String get backupImportCsvErrorMessage;
 
   /// No description provided for @backupErrorNotQimaFile.
@@ -1943,19 +1943,19 @@ abstract class AppLocalizations {
   /// No description provided for @backupCsvHeaderUnitCost.
   ///
   /// In en, this message translates to:
-  /// **'Unit cost'**
+  /// **'Price per unit'**
   String get backupCsvHeaderUnitCost;
 
   /// No description provided for @backupCsvHeaderCostCurrency.
   ///
   /// In en, this message translates to:
-  /// **'Cost currency'**
+  /// **'Currency'**
   String get backupCsvHeaderCostCurrency;
 
   /// No description provided for @backupCsvHeaderTotalCost.
   ///
   /// In en, this message translates to:
-  /// **'Total cost'**
+  /// **'Total'**
   String get backupCsvHeaderTotalCost;
 
   /// No description provided for @backupCsvHeaderDate.
@@ -2801,13 +2801,13 @@ abstract class AppLocalizations {
   /// Backup & restore help step 5 title.
   ///
   /// In en, this message translates to:
-  /// **'Holdings spreadsheet'**
+  /// **'Spreadsheets'**
   String get helpBackupStep5Title;
 
   /// Backup & restore help step 5 body.
   ///
   /// In en, this message translates to:
-  /// **'A .csv for accounting. It can\'t be restored.'**
+  /// **'Export every transaction as a .csv, or import one — from Qima, a spreadsheet or a broker. It adds transactions; it doesn’t restore settings.'**
   String get helpBackupStep5Body;
 
   /// Widgets help topic title (iOS only).
@@ -3089,7 +3089,7 @@ abstract class AppLocalizations {
   /// Import preview help step 1 body.
   ///
   /// In en, this message translates to:
-  /// **'See how many cards, lots and alerts the file contains before restoring.'**
+  /// **'See how many cards, transactions and alerts the file contains before restoring.'**
   String get helpImportPreviewStep1Body;
 
   /// Import preview help step 2 title.
@@ -4141,6 +4141,372 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Weighted average basis. This sells everything you hold.'**
   String get transactionPreviewClosesPosition;
+
+  /// No description provided for @backupCsvHeaderType.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get backupCsvHeaderType;
+
+  /// No description provided for @backupCsvHeaderFee.
+  ///
+  /// In en, this message translates to:
+  /// **'Fee'**
+  String get backupCsvHeaderFee;
+
+  /// No description provided for @backupCsvHeaderNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Note'**
+  String get backupCsvHeaderNote;
+
+  /// No description provided for @csvImportTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Import from a spreadsheet'**
+  String get csvImportTitle;
+
+  /// No description provided for @csvImportEntryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Import transactions from CSV'**
+  String get csvImportEntryTitle;
+
+  /// No description provided for @csvImportEntrySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'From a spreadsheet, a broker export or another app'**
+  String get csvImportEntrySubtitle;
+
+  /// No description provided for @csvImportFromBackupError.
+  ///
+  /// In en, this message translates to:
+  /// **'Import these as transactions'**
+  String get csvImportFromBackupError;
+
+  /// No description provided for @csvImportRowCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 row} other{{count} rows}}'**
+  String csvImportRowCount(int count);
+
+  /// No description provided for @csvImportEmptyFile.
+  ///
+  /// In en, this message translates to:
+  /// **'This file has a header row but no data under it.'**
+  String get csvImportEmptyFile;
+
+  /// No description provided for @csvImportColumnsSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Columns'**
+  String get csvImportColumnsSection;
+
+  /// No description provided for @csvImportColumnsFooter.
+  ///
+  /// In en, this message translates to:
+  /// **'Matched from the header row where Qima could. A price or a total will do; the asset can be a symbol or a name. * needed.'**
+  String get csvImportColumnsFooter;
+
+  /// No description provided for @csvImportNotInFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Not in file'**
+  String get csvImportNotInFile;
+
+  /// No description provided for @csvImportOptionsSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Reading the file'**
+  String get csvImportOptionsSection;
+
+  /// No description provided for @csvImportFallbackCurrency.
+  ///
+  /// In en, this message translates to:
+  /// **'Currency'**
+  String get csvImportFallbackCurrency;
+
+  /// No description provided for @csvImportFallbackCurrencySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'For rows that don’t name one'**
+  String get csvImportFallbackCurrencySubtitle;
+
+  /// No description provided for @csvImportDateOrder.
+  ///
+  /// In en, this message translates to:
+  /// **'Dates like 03/04/2026 mean'**
+  String get csvImportDateOrder;
+
+  /// No description provided for @csvImportDayFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'3 April'**
+  String get csvImportDayFirst;
+
+  /// No description provided for @csvImportMonthFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'March 4'**
+  String get csvImportMonthFirst;
+
+  /// No description provided for @csvImportDecimalComma.
+  ///
+  /// In en, this message translates to:
+  /// **'Comma is the decimal mark'**
+  String get csvImportDecimalComma;
+
+  /// No description provided for @csvImportDecimalCommaSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Read 1.234,56 as one thousand two hundred…'**
+  String get csvImportDecimalCommaSubtitle;
+
+  /// No description provided for @csvImportNeedsColumns.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose at least the asset, the date and the quantity.'**
+  String get csvImportNeedsColumns;
+
+  /// No description provided for @csvImportReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Review rows'**
+  String get csvImportReview;
+
+  /// No description provided for @csvImportReadyCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready'**
+  String get csvImportReadyCount;
+
+  /// No description provided for @csvImportDuplicateCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Already in Qima'**
+  String get csvImportDuplicateCount;
+
+  /// No description provided for @csvImportProblemCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Can’t import'**
+  String get csvImportProblemCount;
+
+  /// No description provided for @csvImportSkipNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Rows that can’t be read, or are already in Qima, are skipped. Nothing is guessed.'**
+  String get csvImportSkipNote;
+
+  /// No description provided for @csvImportShowAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All rows'**
+  String get csvImportShowAll;
+
+  /// No description provided for @csvImportShowProblems.
+  ///
+  /// In en, this message translates to:
+  /// **'Skipped only'**
+  String get csvImportShowProblems;
+
+  /// No description provided for @csvImportSkipped.
+  ///
+  /// In en, this message translates to:
+  /// **'Skipped'**
+  String get csvImportSkipped;
+
+  /// No description provided for @csvImportDuplicate.
+  ///
+  /// In en, this message translates to:
+  /// **'Duplicate'**
+  String get csvImportDuplicate;
+
+  /// No description provided for @csvImportBackToColumns.
+  ///
+  /// In en, this message translates to:
+  /// **'Columns'**
+  String get csvImportBackToColumns;
+
+  /// No description provided for @csvImportConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{Nothing to import} =1{Import 1 transaction} other{Import {count} transactions}}'**
+  String csvImportConfirm(int count);
+
+  /// No description provided for @csvImportDoneTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 transaction imported} other{{count} transactions imported}}'**
+  String csvImportDoneTitle(int count);
+
+  /// No description provided for @csvImportDoneMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'They’re in each asset’s ledger now. If something looks off, undo removes exactly what this import added.'**
+  String get csvImportDoneMessage;
+
+  /// No description provided for @csvImportUndo.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo this import'**
+  String get csvImportUndo;
+
+  /// No description provided for @csvImportUndone.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Removed 1 imported transaction} other{Removed {count} imported transactions}}'**
+  String csvImportUndone(int count);
+
+  /// No description provided for @csvFieldType.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get csvFieldType;
+
+  /// No description provided for @csvFieldAsset.
+  ///
+  /// In en, this message translates to:
+  /// **'Asset name'**
+  String get csvFieldAsset;
+
+  /// No description provided for @csvFieldSymbol.
+  ///
+  /// In en, this message translates to:
+  /// **'Symbol'**
+  String get csvFieldSymbol;
+
+  /// No description provided for @csvFieldQuantity.
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity'**
+  String get csvFieldQuantity;
+
+  /// No description provided for @csvFieldUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'Unit'**
+  String get csvFieldUnit;
+
+  /// No description provided for @csvFieldKarat.
+  ///
+  /// In en, this message translates to:
+  /// **'Karat'**
+  String get csvFieldKarat;
+
+  /// No description provided for @csvFieldUnitPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Price per unit'**
+  String get csvFieldUnitPrice;
+
+  /// No description provided for @csvFieldTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Total'**
+  String get csvFieldTotal;
+
+  /// No description provided for @csvFieldFee.
+  ///
+  /// In en, this message translates to:
+  /// **'Fee'**
+  String get csvFieldFee;
+
+  /// No description provided for @csvFieldCurrency.
+  ///
+  /// In en, this message translates to:
+  /// **'Currency'**
+  String get csvFieldCurrency;
+
+  /// No description provided for @csvFieldDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get csvFieldDate;
+
+  /// No description provided for @csvFieldNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Note'**
+  String get csvFieldNote;
+
+  /// No description provided for @csvProblemUnknownAsset.
+  ///
+  /// In en, this message translates to:
+  /// **'unknown asset'**
+  String get csvProblemUnknownAsset;
+
+  /// No description provided for @csvProblemMissingQuantity.
+  ///
+  /// In en, this message translates to:
+  /// **'no quantity'**
+  String get csvProblemMissingQuantity;
+
+  /// No description provided for @csvProblemBadNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'a number can’t be read'**
+  String get csvProblemBadNumber;
+
+  /// No description provided for @csvProblemMissingPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'no price'**
+  String get csvProblemMissingPrice;
+
+  /// No description provided for @csvProblemMissingDate.
+  ///
+  /// In en, this message translates to:
+  /// **'no date'**
+  String get csvProblemMissingDate;
+
+  /// No description provided for @csvProblemBadDate.
+  ///
+  /// In en, this message translates to:
+  /// **'date can’t be read'**
+  String get csvProblemBadDate;
+
+  /// No description provided for @csvProblemFutureDate.
+  ///
+  /// In en, this message translates to:
+  /// **'date in the future'**
+  String get csvProblemFutureDate;
+
+  /// No description provided for @csvProblemUnknownType.
+  ///
+  /// In en, this message translates to:
+  /// **'unknown type'**
+  String get csvProblemUnknownType;
+
+  /// No description provided for @csvProblemUnknownCurrency.
+  ///
+  /// In en, this message translates to:
+  /// **'unknown currency'**
+  String get csvProblemUnknownCurrency;
+
+  /// No description provided for @csvProblemUnsupportedUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'unit doesn’t fit this asset'**
+  String get csvProblemUnsupportedUnit;
+
+  /// No description provided for @csvProblemUnsupportedKarat.
+  ///
+  /// In en, this message translates to:
+  /// **'karat doesn’t fit this asset'**
+  String get csvProblemUnsupportedKarat;
+
+  /// No description provided for @csvProblemOversell.
+  ///
+  /// In en, this message translates to:
+  /// **'sells more than was held'**
+  String get csvProblemOversell;
+
+  /// No description provided for @csvProblemDuplicate.
+  ///
+  /// In en, this message translates to:
+  /// **'already in Qima'**
+  String get csvProblemDuplicate;
 }
 
 class _AppLocalizationsDelegate

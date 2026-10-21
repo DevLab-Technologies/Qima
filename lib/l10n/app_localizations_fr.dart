@@ -864,7 +864,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get backupExportCsvSubtitle =>
-      'Vos lots sous forme de tableur, pour vos archives (.csv)';
+      'Toutes les transactions dans un tableur (.csv), réimportable';
 
   @override
   String get backupRestoreSection => 'Restaurer';
@@ -1032,7 +1032,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get backupImportCsvErrorMessage =>
-      'Un tableur de positions (.csv) ne contient que vos lots et ne peut pas être restauré. Choisissez plutôt un fichier de sauvegarde complète (.json).';
+      'C’est un tableur, pas une sauvegarde Qima. Vous pouvez importer ses lignes comme transactions.';
 
   @override
   String get backupErrorNotQimaFile =>
@@ -1065,13 +1065,13 @@ class AppLocalizationsFr extends AppLocalizations {
   String get backupCsvHeaderKarat => 'Carat';
 
   @override
-  String get backupCsvHeaderUnitCost => 'Coût unitaire';
+  String get backupCsvHeaderUnitCost => 'Prix unitaire';
 
   @override
-  String get backupCsvHeaderCostCurrency => 'Devise du coût';
+  String get backupCsvHeaderCostCurrency => 'Devise';
 
   @override
-  String get backupCsvHeaderTotalCost => 'Coût total';
+  String get backupCsvHeaderTotalCost => 'Total';
 
   @override
   String get backupCsvHeaderDate => 'Date';
@@ -1560,11 +1560,11 @@ class AppLocalizationsFr extends AppLocalizations {
       'Importez une sauvegarde .json. Fusionner ajoute ce qui manque et ne supprime rien ; Remplacer échange tout contre le fichier.';
 
   @override
-  String get helpBackupStep5Title => 'Feuille de calcul des avoirs';
+  String get helpBackupStep5Title => 'Tableurs';
 
   @override
   String get helpBackupStep5Body =>
-      'Un .csv pour la comptabilité. Il ne peut pas être restauré.';
+      'Exportez toutes les transactions en .csv ou importez-en un depuis Qima, un tableur ou un courtier. Cela ajoute des transactions, sans restaurer les réglages.';
 
   @override
   String get helpWidgetsTitle => 'Widgets';
@@ -1730,7 +1730,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get helpImportPreviewStep1Body =>
-      'Vérifiez le nombre de cartes, lots et alertes contenus dans le fichier avant de restaurer.';
+      'Voyez combien de cartes, transactions et alertes contient le fichier avant de restaurer.';
 
   @override
   String get helpImportPreviewStep2Title => 'Fusionner ou Remplacer';
@@ -2383,4 +2383,228 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get transactionPreviewClosesPosition =>
       'Base du coût moyen pondéré. Cela vend tout ce que vous détenez.';
+
+  @override
+  String get backupCsvHeaderType => 'Type';
+
+  @override
+  String get backupCsvHeaderFee => 'Frais';
+
+  @override
+  String get backupCsvHeaderNote => 'Note';
+
+  @override
+  String get csvImportTitle => 'Importer depuis un tableur';
+
+  @override
+  String get csvImportEntryTitle => 'Importer des transactions depuis un CSV';
+
+  @override
+  String get csvImportEntrySubtitle =>
+      'Depuis un tableur, un courtier ou une autre app';
+
+  @override
+  String get csvImportFromBackupError => 'Les importer comme transactions';
+
+  @override
+  String csvImportRowCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count lignes',
+      one: '1 ligne',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get csvImportEmptyFile =>
+      'Ce fichier a une ligne d’en-tête mais aucune donnée.';
+
+  @override
+  String get csvImportColumnsSection => 'Colonnes';
+
+  @override
+  String get csvImportColumnsFooter =>
+      'Associées depuis la ligne d’en-tête quand c’était possible. Un prix ou un total suffit ; l’actif peut être un symbole ou un nom. * requis.';
+
+  @override
+  String get csvImportNotInFile => 'Absent du fichier';
+
+  @override
+  String get csvImportOptionsSection => 'Lecture du fichier';
+
+  @override
+  String get csvImportFallbackCurrency => 'Devise';
+
+  @override
+  String get csvImportFallbackCurrencySubtitle =>
+      'Pour les lignes qui n’en indiquent pas';
+
+  @override
+  String get csvImportDateOrder => 'Les dates comme 03/04/2026 signifient';
+
+  @override
+  String get csvImportDayFirst => '3 avril';
+
+  @override
+  String get csvImportMonthFirst => '4 mars';
+
+  @override
+  String get csvImportDecimalComma => 'La virgule est le séparateur décimal';
+
+  @override
+  String get csvImportDecimalCommaSubtitle =>
+      'Lire 1.234,56 comme mille deux cents…';
+
+  @override
+  String get csvImportNeedsColumns =>
+      'Choisissez au moins l’actif, la date et la quantité.';
+
+  @override
+  String get csvImportReview => 'Vérifier les lignes';
+
+  @override
+  String get csvImportReadyCount => 'Prêtes';
+
+  @override
+  String get csvImportDuplicateCount => 'Déjà dans Qima';
+
+  @override
+  String get csvImportProblemCount => 'Non importables';
+
+  @override
+  String get csvImportSkipNote =>
+      'Les lignes illisibles ou déjà dans Qima sont ignorées. Rien n’est deviné.';
+
+  @override
+  String get csvImportShowAll => 'Toutes';
+
+  @override
+  String get csvImportShowProblems => 'Ignorées seulement';
+
+  @override
+  String get csvImportSkipped => 'Ignorée';
+
+  @override
+  String get csvImportDuplicate => 'Doublon';
+
+  @override
+  String get csvImportBackToColumns => 'Colonnes';
+
+  @override
+  String csvImportConfirm(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Importer $count transactions',
+      one: 'Importer 1 transaction',
+      zero: 'Rien à importer',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String csvImportDoneTitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count transactions importées',
+      one: '1 transaction importée',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get csvImportDoneMessage =>
+      'Elles sont dans le registre de chaque actif. Si quelque chose cloche, annuler retire exactement ce que cet import a ajouté.';
+
+  @override
+  String get csvImportUndo => 'Annuler cet import';
+
+  @override
+  String csvImportUndone(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count transactions importées supprimées',
+      one: '1 transaction importée supprimée',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get csvFieldType => 'Type';
+
+  @override
+  String get csvFieldAsset => 'Nom de l’actif';
+
+  @override
+  String get csvFieldSymbol => 'Symbole';
+
+  @override
+  String get csvFieldQuantity => 'Quantité';
+
+  @override
+  String get csvFieldUnit => 'Unité';
+
+  @override
+  String get csvFieldKarat => 'Carats';
+
+  @override
+  String get csvFieldUnitPrice => 'Prix unitaire';
+
+  @override
+  String get csvFieldTotal => 'Total';
+
+  @override
+  String get csvFieldFee => 'Frais';
+
+  @override
+  String get csvFieldCurrency => 'Devise';
+
+  @override
+  String get csvFieldDate => 'Date';
+
+  @override
+  String get csvFieldNote => 'Note';
+
+  @override
+  String get csvProblemUnknownAsset => 'actif inconnu';
+
+  @override
+  String get csvProblemMissingQuantity => 'pas de quantité';
+
+  @override
+  String get csvProblemBadNumber => 'un nombre est illisible';
+
+  @override
+  String get csvProblemMissingPrice => 'pas de prix';
+
+  @override
+  String get csvProblemMissingDate => 'pas de date';
+
+  @override
+  String get csvProblemBadDate => 'date illisible';
+
+  @override
+  String get csvProblemFutureDate => 'date dans le futur';
+
+  @override
+  String get csvProblemUnknownType => 'type inconnu';
+
+  @override
+  String get csvProblemUnknownCurrency => 'devise inconnue';
+
+  @override
+  String get csvProblemUnsupportedUnit => 'unité inadaptée à cet actif';
+
+  @override
+  String get csvProblemUnsupportedKarat => 'carats inadaptés à cet actif';
+
+  @override
+  String get csvProblemOversell => 'vend plus que ce qui était détenu';
+
+  @override
+  String get csvProblemDuplicate => 'déjà dans Qima';
 }
