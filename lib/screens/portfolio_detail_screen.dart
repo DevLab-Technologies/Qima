@@ -5,6 +5,7 @@ import '../blocs/app_cubit.dart';
 import '../blocs/app_state.dart';
 import '../l10n/app_localizations.dart';
 import '../models/holding.dart';
+import '../models/zakat.dart';
 import '../theme/design_system.dart';
 import '../theme/help_topics.dart';
 import '../theme/masking.dart';
@@ -14,6 +15,7 @@ import '../widgets/allocation_donut.dart';
 import '../widgets/help_button.dart';
 import '../widgets/instrument_icon.dart';
 import 'instrument_detail_screen.dart';
+import 'zakat_screen.dart';
 
 /// Portfolio breakdown: an allocation-donut hero (total value, gain, cost)
 /// plus one row per held instrument — name, lot count/weight, value, gain,
@@ -113,6 +115,10 @@ class PortfolioDetailScreen extends StatelessWidget {
                     child: Text(l10n.portfolioEmpty,
                         style: TextStyle(color: colors.textTertiary)),
                   ),
+                if (state.lots.isNotEmpty) ...[
+                  const SizedBox(height: DS.spaceSM),
+                  _ZakatEntry(assessment: cubit.zakatAssessment, hidden: hidden),
+                ],
                 const SizedBox(height: DS.spaceLG),
                 for (final held in heldInstruments)
                   Padding(
@@ -150,6 +156,42 @@ class PortfolioDetailScreen extends StatelessWidget {
           const SizedBox(height: 2),
           Text(value, style: TextStyle(color: tint ?? colors.textPrimary, fontWeight: FontWeight.w700)),
         ],
+      ),
+    );
+  }
+}
+
+/// One-line doorway to the zakat screen under the portfolio hero (v3):
+/// what's due when above nisab, otherwise where the user stands.
+class _ZakatEntry extends StatelessWidget {
+  final ZakatAssessment assessment;
+  final bool hidden;
+
+  const _ZakatEntry({required this.assessment, required this.hidden});
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final colors = context.colors;
+    final String subtitle;
+    switch (assessment.status) {
+      case NisabStatus.above:
+        subtitle = l10n.zakatEntryDue(Masking.amount(assessment.due, hidden: hidden));
+      case NisabStatus.below:
+        subtitle = l10n.zakatStatusBelow;
+      case NisabStatus.thresholdUnknown:
+      case NisabStatus.noHoldings:
+        subtitle = l10n.zakatEntryCalculate;
+    }
+    return DSCard(
+      padding: EdgeInsets.zero,
+      child: ListTile(
+        contentPadding: const EdgeInsets.symmetric(horizontal: DS.spaceMD, vertical: 2),
+        leading: Icon(Icons.volunteer_activism_outlined, color: colors.brandText),
+        title: Text(l10n.zakatTitle, style: TextStyle(color: colors.textPrimary, fontWeight: FontWeight.w600)),
+        subtitle: Text(subtitle, style: TextStyle(color: colors.textTertiary, fontSize: 12)),
+        trailing: Icon(Icons.chevron_right, color: colors.textTertiary),
+        onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ZakatScreen())),
       ),
     );
   }

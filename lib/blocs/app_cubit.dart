@@ -20,6 +20,7 @@ import '../models/portfolio_history.dart';
 import '../models/price_alert.dart';
 import '../models/quote.dart';
 import '../models/watch_card.dart';
+import '../models/zakat.dart';
 import '../models/chart_range.dart';
 import '../services/alert_runtime_store.dart';
 import '../services/alerts_store.dart';
@@ -37,6 +38,7 @@ import '../services/price_repository.dart';
 import '../services/refresh_pipeline.dart';
 import '../services/switchable_cloud_kv_store.dart';
 import '../services/watchlist_store.dart';
+import '../services/zakat_reminder_notifier.dart';
 import 'app_state.dart';
 
 /// Central state container mirroring `AppModel.swift` (spec §4.1). Wires the
@@ -170,6 +172,7 @@ class AppCubit extends Cubit<AppState> {
     final appLockEnabled = preferences.appLockEnabled;
     final lockGrace = preferences.lockGrace;
     final deliverAlertsOnThisDevice = preferences.deliverAlertsOnThisDevice;
+    final zakatSettings = await preferences.zakatSettings;
 
     final seedCards = await preferences.seedWatchcards();
     final cards = await _loadCardsSeeding(watchlistStore, seedCards);
@@ -257,6 +260,7 @@ class AppCubit extends Cubit<AppState> {
       ),
       lastCloudSyncAt: cloudEnabledAtStartup ? DateTime.now() : null,
       shouldShowOnboarding: shouldShowOnboarding,
+      zakatSettings: zakatSettings,
     ));
 
     startSync();
@@ -384,6 +388,7 @@ class AppCubit extends Cubit<AppState> {
       'holdings.records': () => _reloadHoldings(),
       'custominstruments.records': () => _reloadCustomInstruments(),
       'alerts.records': () => _reloadAlerts(),
+      'zakatSettings': () => _reloadZakatSettings(),
     };
 
     if (!platformSupportsICloud) return;
@@ -508,6 +513,11 @@ class AppCubit extends Cubit<AppState> {
     if (!isClosed && alerts != state.alerts) emit(state.copyWith(alerts: alerts));
   }
 
+  Future<void> _reloadZakatSettings() async {
+    final settings = await preferences.zakatSettings;
+    if (!isClosed && settings != state.zakatSettings) emit(state.copyWith(zakatSettings: settings));
+  }
+
   /// Runs a full first-enable/merge pass across every synced store — each
   /// store's `load()` merges local+cloud last-write-wins-per-item (spec
   /// Phase 7 "first-enable on a device that already has local data"), so
@@ -521,6 +531,7 @@ class AppCubit extends Cubit<AppState> {
     await _reloadHoldings();
     await _reloadCustomInstruments();
     await _reloadAlerts();
+    await _reloadZakatSettings();
     if (isClosed) return;
     emit(state.copyWith(cloudSyncStatus: CloudSyncStatus.upToDate, lastCloudSyncAt: DateTime.now()));
   }
@@ -630,6 +641,21 @@ class AppCubit extends Cubit<AppState> {
     }
     // Fire-and-forget: history is larger and shouldn't block live prices.
     unawaited(backfillHistoryIfNeeded());
+    unawaited(_notifyZakatIfDue());
+  }
+
+  /// The foreground half of the hawl reminder; the background task runs the
+  /// same notifier from `RefreshPipeline.run`. Once per completion per
+  /// device either way (see [ZakatReminderNotifier]).
+  Future<void> _notifyZakatIfDue() async {
+    // [preferences] is `late` like [backupService] and assigned just before
+    // it in [init], so the same readiness check covers both.
+    if (!_backupServiceReady || !state.zakatSettings.remind) return;
+    try {
+      await ZakatReminderNotifier(preferences: preferences, notificationService: notificationService).notifyIfDue();
+    } catch (e, st) {
+      debugPrint('AppCubit: zakat reminder failed: $e\n$st');
+    }
   }
 
   /// Runs alert evaluation for the alerts currently in state against a
@@ -1029,6 +1055,61 @@ class AppCubit extends Cubit<AppState> {
   }
 
   // ---------------------------------------------------------------------
+  // Zakat (v3)
+  // ---------------------------------------------------------------------
+
+  /// Today's zakat calculation over every held lot. Pure and cheap (one
+  /// valuation per held asset), so screens call it on every rebuild.
+  ZakatAssessment get zakatAssessment => ZakatAssessment.compute(
+        lots: state.lots,
+        settings: state.zakatSettings,
+        rates: state.rates,
+        baseCurrency: state.baseCurrency,
+        latestUSD: latestUSD,
+        resolve: InstrumentCatalog.instrument,
+      );
+
+  /// Applies [change] to the settings as they are now, so callers never
+  /// write back a stale copy captured at build time.
+  Future<void> updateZakatSettings(ZakatSettings Function(ZakatSettings current) change) =>
+      setZakatSettings(change(state.zakatSettings));
+
+  Future<void> setZakatSettings(ZakatSettings settings) async {
+    if (settings == state.zakatSettings) return;
+    final turnedOnReminder = settings.remind && !state.zakatSettings.remind;
+    emit(state.copyWith(zakatSettings: settings));
+    await preferences.setZakatSettings(settings);
+    unawaited(_markDataChanged());
+    if (turnedOnReminder) {
+      await requestNotificationPermission();
+      unawaited(_notifyZakatIfDue());
+    }
+  }
+
+  /// The nisab is priced off gold and silver even for someone who holds
+  /// and watches neither, so the zakat screen fetches whichever of the two
+  /// isn't already part of the regular refresh. Quiet: never touches
+  /// [AppState.phase] or the refresh error banner.
+  Future<void> ensureNisabPrices() async {
+    final tracked = trackedInstruments.map((i) => i.id).toSet();
+    for (final basis in NisabBasis.values) {
+      if (tracked.contains(basis.instrumentID) && latestUSD(basis.instrumentID) != null) continue;
+      final instrument = InstrumentCatalog.instrument(basis.instrumentID);
+      if (instrument == null) continue;
+      QuoteSeries series;
+      try {
+        series = await repository.refresh(instrument);
+      } catch (e) {
+        // Offline: the last cached price still beats an unknown threshold.
+        debugPrint('AppCubit: nisab price for ${instrument.id} failed: $e');
+        series = await repository.cachedSeries(instrument);
+      }
+      if (isClosed) return;
+      emit(state.copyWith(seriesByID: {...state.seriesByID, instrument.id: series}));
+    }
+  }
+
+  // ---------------------------------------------------------------------
   // Price alerts
   // ---------------------------------------------------------------------
 
@@ -1115,6 +1196,7 @@ class AppCubit extends Cubit<AppState> {
     final appearance = await preferences.appearance;
     final preferredChartRange = preferences.preferredChartRange;
     final widgetRefreshInterval = await preferences.widgetRefreshInterval;
+    final zakatSettings = await preferences.zakatSettings;
 
     final seriesByID = <String, QuoteSeries>{...state.seriesByID};
     for (final instrument in _trackedInstrumentsFor(cards, lots)) {
@@ -1131,6 +1213,7 @@ class AppCubit extends Cubit<AppState> {
       appearance: appearance,
       preferredChartRange: preferredChartRange,
       widgetRefreshInterval: widgetRefreshInterval,
+      zakatSettings: zakatSettings,
       seriesByID: seriesByID,
     ));
 

@@ -3239,6 +3239,576 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Home Screen and Lock Screen'**
   String get settingsHelpAddWidgetSubtitle;
+
+  /// No description provided for @commonDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get commonDone;
+
+  /// Zakat screen title, portfolio entry row and settings section header.
+  ///
+  /// In en, this message translates to:
+  /// **'Zakat'**
+  String get zakatTitle;
+
+  /// No description provided for @zakatSettingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Zakat settings'**
+  String get zakatSettingsTitle;
+
+  /// No description provided for @settingsZakatSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Nisab basis, what counts, hawl date and reminder'**
+  String get settingsZakatSubtitle;
+
+  /// No description provided for @zakatEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing to assess yet'**
+  String get zakatEmptyTitle;
+
+  /// No description provided for @zakatEmptyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Zakat is worked out from your holdings. Add a lot to any asset and it appears here, with what counts toward nisab.'**
+  String get zakatEmptyMessage;
+
+  /// No description provided for @zakatNisabSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Nisab'**
+  String get zakatNisabSection;
+
+  /// No description provided for @zakatWhatCountsSection.
+  ///
+  /// In en, this message translates to:
+  /// **'What counts'**
+  String get zakatWhatCountsSection;
+
+  /// No description provided for @zakatStatusAbove.
+  ///
+  /// In en, this message translates to:
+  /// **'Above nisab'**
+  String get zakatStatusAbove;
+
+  /// No description provided for @zakatStatusBelow.
+  ///
+  /// In en, this message translates to:
+  /// **'Below nisab'**
+  String get zakatStatusBelow;
+
+  /// No description provided for @zakatStatusUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Nisab not priced yet'**
+  String get zakatStatusUnknown;
+
+  /// No description provided for @zakatDueLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Zakat due · {rate}'**
+  String zakatDueLabel(String rate);
+
+  /// No description provided for @zakatExplainAboveNoHawl.
+  ///
+  /// In en, this message translates to:
+  /// **'On a zakatable base of {base}. Set your hawl date to know when it falls due.'**
+  String zakatExplainAboveNoHawl(String base);
+
+  /// No description provided for @zakatExplainAboveToday.
+  ///
+  /// In en, this message translates to:
+  /// **'On a zakatable base of {base}. Your hawl completes today.'**
+  String zakatExplainAboveToday(String base);
+
+  /// No description provided for @zakatExplainAboveUpcoming.
+  ///
+  /// In en, this message translates to:
+  /// **'On a zakatable base of {base}. Due when your hawl completes on {date} ({days, plural, =1{in 1 day} other{in {days} days}}), if your wealth is still above nisab then.'**
+  String zakatExplainAboveUpcoming(String base, String date, int days);
+
+  /// No description provided for @zakatExplainBelow.
+  ///
+  /// In en, this message translates to:
+  /// **'Your zakatable base of {base} is below today’s nisab of {threshold}, so no zakat is due.'**
+  String zakatExplainBelow(String base, String threshold);
+
+  /// No description provided for @zakatExplainUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Today’s {metal} price hasn’t loaded, so the nisab threshold can’t be checked yet.'**
+  String zakatExplainUnknown(String metal);
+
+  /// No description provided for @zakatRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get zakatRetry;
+
+  /// No description provided for @zakatUnpricedNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Some assets have no price yet and aren’t counted. They count as soon as their price loads.'**
+  String get zakatUnpricedNote;
+
+  /// No description provided for @zakatBasisRow.
+  ///
+  /// In en, this message translates to:
+  /// **'Basis'**
+  String get zakatBasisRow;
+
+  /// No description provided for @zakatBasisValue.
+  ///
+  /// In en, this message translates to:
+  /// **'{metal} · {grams} g'**
+  String zakatBasisValue(String metal, String grams);
+
+  /// No description provided for @zakatOtherBasisLine.
+  ///
+  /// In en, this message translates to:
+  /// **'{metal} basis would be {amount}'**
+  String zakatOtherBasisLine(String metal, String amount);
+
+  /// No description provided for @zakatThresholdToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Threshold today'**
+  String get zakatThresholdToday;
+
+  /// No description provided for @zakatYourBase.
+  ///
+  /// In en, this message translates to:
+  /// **'Your zakatable base'**
+  String get zakatYourBase;
+
+  /// No description provided for @zakatHawlStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Hawl start'**
+  String get zakatHawlStart;
+
+  /// No description provided for @zakatHawlSet.
+  ///
+  /// In en, this message translates to:
+  /// **'Set date'**
+  String get zakatHawlSet;
+
+  /// No description provided for @zakatHawlNotSetSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'The day your wealth first reached nisab'**
+  String get zakatHawlNotSetSubtitle;
+
+  /// No description provided for @zakatHawlCompletesToday.
+  ///
+  /// In en, this message translates to:
+  /// **'completes today'**
+  String get zakatHawlCompletesToday;
+
+  /// No description provided for @zakatHawlNext.
+  ///
+  /// In en, this message translates to:
+  /// **'next completes {date}'**
+  String zakatHawlNext(String date);
+
+  /// No description provided for @zakatWhatCountsFooter.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch an asset off to leave it out — for example jewelry worn every day, if you follow the view that it is exempt.'**
+  String get zakatWhatCountsFooter;
+
+  /// No description provided for @zakatExcludedClass.
+  ///
+  /// In en, this message translates to:
+  /// **'{cls} switched off'**
+  String zakatExcludedClass(String cls);
+
+  /// No description provided for @zakatExcludedHolding.
+  ///
+  /// In en, this message translates to:
+  /// **'left out'**
+  String get zakatExcludedHolding;
+
+  /// No description provided for @zakatExcludedNoPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'no price yet'**
+  String get zakatExcludedNoPrice;
+
+  /// No description provided for @zakatLineTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} · {quantity}'**
+  String zakatLineTitle(String name, String quantity);
+
+  /// No description provided for @zakatDisclaimer.
+  ///
+  /// In en, this message translates to:
+  /// **'Qima computes; it does not rule. The basis and what counts are yours to set — ask a scholar you trust when unsure.'**
+  String get zakatDisclaimer;
+
+  /// No description provided for @zakatClassMetals.
+  ///
+  /// In en, this message translates to:
+  /// **'Metals'**
+  String get zakatClassMetals;
+
+  /// No description provided for @zakatClassCrypto.
+  ///
+  /// In en, this message translates to:
+  /// **'Crypto'**
+  String get zakatClassCrypto;
+
+  /// No description provided for @zakatClassEquities.
+  ///
+  /// In en, this message translates to:
+  /// **'Equities'**
+  String get zakatClassEquities;
+
+  /// No description provided for @zakatClassCash.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash & currencies'**
+  String get zakatClassCash;
+
+  /// No description provided for @zakatClassMetalsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Gold, silver, platinum, palladium'**
+  String get zakatClassMetalsSubtitle;
+
+  /// No description provided for @zakatClassCryptoSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Treated as a tradeable asset'**
+  String get zakatClassCryptoSubtitle;
+
+  /// No description provided for @zakatClassEquitiesSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Off by default — views on long-term shareholdings differ'**
+  String get zakatClassEquitiesSubtitle;
+
+  /// No description provided for @zakatClassCashSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Currencies you hold'**
+  String get zakatClassCashSubtitle;
+
+  /// No description provided for @zakatOverridesCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 asset set individually} other{{count} assets set individually}}'**
+  String zakatOverridesCount(int count);
+
+  /// No description provided for @zakatOverridesSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Chosen on the zakat screen, overriding their class'**
+  String get zakatOverridesSubtitle;
+
+  /// No description provided for @zakatOverridesReset.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset'**
+  String get zakatOverridesReset;
+
+  /// No description provided for @zakatNisabBasisSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Nisab basis'**
+  String get zakatNisabBasisSection;
+
+  /// No description provided for @zakatClassesSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Zakatable classes'**
+  String get zakatClassesSection;
+
+  /// No description provided for @zakatHawlSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Hawl'**
+  String get zakatHawlSection;
+
+  /// No description provided for @zakatBasisPriceMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'Price not loaded yet'**
+  String get zakatBasisPriceMissing;
+
+  /// No description provided for @zakatBasisToday.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} today'**
+  String zakatBasisToday(String amount);
+
+  /// No description provided for @zakatBasisHigher.
+  ///
+  /// In en, this message translates to:
+  /// **'Higher threshold · {amount} today'**
+  String zakatBasisHigher(String amount);
+
+  /// No description provided for @zakatBasisLower.
+  ///
+  /// In en, this message translates to:
+  /// **'Lower threshold · {amount} today · more people owe'**
+  String zakatBasisLower(String amount);
+
+  /// No description provided for @zakatCalendar.
+  ///
+  /// In en, this message translates to:
+  /// **'Calendar'**
+  String get zakatCalendar;
+
+  /// No description provided for @zakatCalendarHijri.
+  ///
+  /// In en, this message translates to:
+  /// **'Hijri'**
+  String get zakatCalendarHijri;
+
+  /// No description provided for @zakatCalendarGregorian.
+  ///
+  /// In en, this message translates to:
+  /// **'Gregorian'**
+  String get zakatCalendarGregorian;
+
+  /// No description provided for @zakatGregorianNote.
+  ///
+  /// In en, this message translates to:
+  /// **'A Gregorian year is about 11 days longer than a lunar one. Some scholars raise the rate to {solarRate} to account for it; Qima keeps {rate}.'**
+  String zakatGregorianNote(String solarRate, String rate);
+
+  /// No description provided for @zakatHawlClear.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear hawl date'**
+  String get zakatHawlClear;
+
+  /// No description provided for @zakatRemind.
+  ///
+  /// In en, this message translates to:
+  /// **'Remind me'**
+  String get zakatRemind;
+
+  /// No description provided for @zakatRemindSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'A notification on the day your hawl completes'**
+  String get zakatRemindSubtitle;
+
+  /// No description provided for @zakatRemindNeedsStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Set a hawl start date first'**
+  String get zakatRemindNeedsStart;
+
+  /// No description provided for @zakatRemindNotificationsOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications are off for Qima — turn them on in system settings to get this reminder'**
+  String get zakatRemindNotificationsOff;
+
+  /// No description provided for @zakatHawlPickerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Hawl start'**
+  String get zakatHawlPickerTitle;
+
+  /// No description provided for @zakatHawlPickerDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Day'**
+  String get zakatHawlPickerDay;
+
+  /// No description provided for @zakatHawlPickerMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Month'**
+  String get zakatHawlPickerMonth;
+
+  /// No description provided for @zakatHawlPickerYear.
+  ///
+  /// In en, this message translates to:
+  /// **'Year'**
+  String get zakatHawlPickerYear;
+
+  /// No description provided for @zakatHawlPickerFuture.
+  ///
+  /// In en, this message translates to:
+  /// **'A hawl can’t start in the future'**
+  String get zakatHawlPickerFuture;
+
+  /// No description provided for @zakatHawlPickerGregorian.
+  ///
+  /// In en, this message translates to:
+  /// **'Gregorian: {date}'**
+  String zakatHawlPickerGregorian(String date);
+
+  /// No description provided for @zakatEntryDue.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} due · above nisab'**
+  String zakatEntryDue(String amount);
+
+  /// No description provided for @zakatEntryCalculate.
+  ///
+  /// In en, this message translates to:
+  /// **'See what’s due'**
+  String get zakatEntryCalculate;
+
+  /// No description provided for @zakatReminderNotificationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your hawl is complete'**
+  String get zakatReminderNotificationTitle;
+
+  /// No description provided for @zakatReminderNotificationBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your zakat year completed today. Open Qima to see what’s due.'**
+  String get zakatReminderNotificationBody;
+
+  /// No description provided for @hijriMonth1.
+  ///
+  /// In en, this message translates to:
+  /// **'Muharram'**
+  String get hijriMonth1;
+
+  /// No description provided for @hijriMonth2.
+  ///
+  /// In en, this message translates to:
+  /// **'Safar'**
+  String get hijriMonth2;
+
+  /// No description provided for @hijriMonth3.
+  ///
+  /// In en, this message translates to:
+  /// **'Rabi al-Awwal'**
+  String get hijriMonth3;
+
+  /// No description provided for @hijriMonth4.
+  ///
+  /// In en, this message translates to:
+  /// **'Rabi al-Thani'**
+  String get hijriMonth4;
+
+  /// No description provided for @hijriMonth5.
+  ///
+  /// In en, this message translates to:
+  /// **'Jumada al-Ula'**
+  String get hijriMonth5;
+
+  /// No description provided for @hijriMonth6.
+  ///
+  /// In en, this message translates to:
+  /// **'Jumada al-Akhirah'**
+  String get hijriMonth6;
+
+  /// No description provided for @hijriMonth7.
+  ///
+  /// In en, this message translates to:
+  /// **'Rajab'**
+  String get hijriMonth7;
+
+  /// No description provided for @hijriMonth8.
+  ///
+  /// In en, this message translates to:
+  /// **'Shaban'**
+  String get hijriMonth8;
+
+  /// No description provided for @hijriMonth9.
+  ///
+  /// In en, this message translates to:
+  /// **'Ramadan'**
+  String get hijriMonth9;
+
+  /// No description provided for @hijriMonth10.
+  ///
+  /// In en, this message translates to:
+  /// **'Shawwal'**
+  String get hijriMonth10;
+
+  /// No description provided for @hijriMonth11.
+  ///
+  /// In en, this message translates to:
+  /// **'Dhu al-Qadah'**
+  String get hijriMonth11;
+
+  /// No description provided for @hijriMonth12.
+  ///
+  /// In en, this message translates to:
+  /// **'Dhu al-Hijjah'**
+  String get hijriMonth12;
+
+  /// No description provided for @hijriDate.
+  ///
+  /// In en, this message translates to:
+  /// **'{day} {month} {year} AH'**
+  String hijriDate(int day, String month, int year);
+
+  /// No description provided for @helpZakatTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Zakat'**
+  String get helpZakatTitle;
+
+  /// No description provided for @helpZakatSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Qima works out zakat from your holdings at today’s prices. It calculates; the choices behind the calculation are yours.'**
+  String get helpZakatSummary;
+
+  /// No description provided for @helpZakatStep1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Nisab'**
+  String get helpZakatStep1Title;
+
+  /// No description provided for @helpZakatStep1Body.
+  ///
+  /// In en, this message translates to:
+  /// **'The threshold is 85 g of fine gold or 595 g of silver, priced live. Pick the basis in Zakat settings; silver is lower, so more people owe.'**
+  String get helpZakatStep1Body;
+
+  /// No description provided for @helpZakatStep2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'What counts'**
+  String get helpZakatStep2Title;
+
+  /// No description provided for @helpZakatStep2Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Metals, crypto and cash count by default; equities don’t. Karat gold counts by its gold content. Switch any single asset off on the zakat screen.'**
+  String get helpZakatStep2Body;
+
+  /// No description provided for @helpZakatStep3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Hawl'**
+  String get helpZakatStep3Title;
+
+  /// No description provided for @helpZakatStep3Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Set the day your wealth first reached nisab. Zakat falls due each lunar year after it, and Qima can remind you on the day.'**
+  String get helpZakatStep3Body;
+
+  /// No description provided for @helpZakatStep4Title.
+  ///
+  /// In en, this message translates to:
+  /// **'A calculator, not a fatwa'**
+  String get helpZakatStep4Title;
+
+  /// No description provided for @helpZakatStep4Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Scholars differ on the basis, on equities and on jewelry. Every default here can be changed — when unsure, ask a scholar you trust.'**
+  String get helpZakatStep4Body;
 }
 
 class _AppLocalizationsDelegate

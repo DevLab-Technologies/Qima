@@ -6,6 +6,7 @@ import '../models/money.dart';
 import '../models/price_alert.dart';
 import '../models/quote.dart';
 import '../models/watch_card.dart';
+import '../models/zakat.dart';
 import '../models/chart_range.dart';
 import '../services/preferences.dart';
 
@@ -108,6 +109,10 @@ class AppState extends Equatable {
   /// flashing the tour on for a frame before init resolves.
   final bool shouldShowOnboarding;
 
+  /// Zakat choices (v3) — synced like [baseCurrency], see
+  /// `Preferences.zakatSettings`.
+  final ZakatSettings zakatSettings;
+
   AppState({
     this.initialized = false,
     Map<String, QuoteSeries>? seriesByID,
@@ -138,6 +143,7 @@ class AppState extends Equatable {
     this.cloudSyncStatus = CloudSyncStatus.disabled,
     this.lastCloudSyncAt,
     this.shouldShowOnboarding = false,
+    this.zakatSettings = const ZakatSettings(),
   })  : seriesByID = seriesByID ?? const {},
         rates = rates ?? FXRates.usdIdentity;
 
@@ -173,6 +179,7 @@ class AppState extends Equatable {
     DateTime? lastCloudSyncAt,
     bool clearLastCloudSyncAt = false,
     bool? shouldShowOnboarding,
+    ZakatSettings? zakatSettings,
   }) {
     return AppState(
       initialized: initialized ?? this.initialized,
@@ -204,6 +211,7 @@ class AppState extends Equatable {
       cloudSyncStatus: cloudSyncStatus ?? this.cloudSyncStatus,
       lastCloudSyncAt: clearLastCloudSyncAt ? null : (lastCloudSyncAt ?? this.lastCloudSyncAt),
       shouldShowOnboarding: shouldShowOnboarding ?? this.shouldShowOnboarding,
+      zakatSettings: zakatSettings ?? this.zakatSettings,
     );
   }
 
@@ -238,5 +246,6 @@ class AppState extends Equatable {
         cloudSyncStatus,
         lastCloudSyncAt,
         shouldShowOnboarding,
+        zakatSettings,
       ];
 }

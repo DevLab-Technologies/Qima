@@ -21,6 +21,7 @@ enum HelpTopicId {
   currencyPicker,
   priceAlerts,
   alertEditor,
+  zakat,
   settings,
   backup,
   importPreview,
@@ -166,6 +167,17 @@ HelpTopic helpTopicFor(BuildContext context, HelpTopicId id) {
           HelpStep(icon: Icons.notifications_outlined, title: l10n.helpSettingsStep3Title, body: l10n.helpSettingsStep3Body),
           HelpStep(icon: Icons.backup_outlined, title: l10n.helpSettingsStep4Title, body: l10n.helpSettingsStep4Body),
           HelpStep(icon: Icons.tune, title: l10n.helpSettingsStep5Title, body: l10n.helpSettingsStep5Body),
+        ],
+      );
+    case HelpTopicId.zakat:
+      return HelpTopic(
+        title: l10n.helpZakatTitle,
+        summary: l10n.helpZakatSummary,
+        steps: [
+          HelpStep(icon: Icons.scale_outlined, title: l10n.helpZakatStep1Title, body: l10n.helpZakatStep1Body),
+          HelpStep(icon: Icons.checklist_outlined, title: l10n.helpZakatStep2Title, body: l10n.helpZakatStep2Body),
+          HelpStep(icon: Icons.event_outlined, title: l10n.helpZakatStep3Title, body: l10n.helpZakatStep3Body),
+          HelpStep(icon: Icons.balance_outlined, title: l10n.helpZakatStep4Title, body: l10n.helpZakatStep4Body),
         ],
       );
     case HelpTopicId.backup:
