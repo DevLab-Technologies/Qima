@@ -1,11 +1,2 @@
-Qima 2.2.0
-• Nuevo diseño: pestañas Seguimiento, Cartera y Ajustes, con tu cartera en directo al frente
-• Filtra tu lista por metales, cripto, acciones, índices o divisas
-• Alertas de precio con notificaciones
-• Widgets para la pantalla de inicio y el Mac: precios, cartera y lista de seguimiento, cada uno a tu manera
-• Sincronización con iCloud entre iPhone, iPad y Mac
-• Bloqueo con Face ID y opción para ocultar saldos
-• Tema claro
-• Copia de seguridad cifrada y restauración
-• Recorrido inicial y ayuda en cada pantalla
-• Corregido: los precios del oro, la plata y las cripto no se actualizaban; «Actualizado» ahora muestra la fecha si no son de hoy
+Qima 2.2.1
+• Corregido: faltaban días o semanas de precios en los gráficos tras tener la app cerrada un tiempo, o mientras el oro, la plata y las cripto no se actualizaban. El historial que falta ahora se completa solo.
