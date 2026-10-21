@@ -1953,16 +1953,16 @@ class AppLocalizationsEn extends AppLocalizations {
       'Qima computes; it does not rule. The basis and what counts are yours to set — ask a scholar you trust when unsure.';
 
   @override
-  String get zakatClassMetals => 'Metals';
+  String get assetGroupMetals => 'Metals';
 
   @override
-  String get zakatClassCrypto => 'Crypto';
+  String get assetGroupCrypto => 'Crypto';
 
   @override
-  String get zakatClassEquities => 'Equities';
+  String get assetGroupEquities => 'Equities';
 
   @override
-  String get zakatClassCash => 'Cash & currencies';
+  String get assetGroupCash => 'Cash & currencies';
 
   @override
   String get zakatClassMetalsSubtitle => 'Gold, silver, platinum, palladium';
@@ -2163,4 +2163,51 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get helpZakatStep4Body =>
       'Scholars differ on the basis, on equities and on jewelry. Every default here can be changed — when unsure, ask a scholar you trust.';
+
+  @override
+  String get allocationTitle => 'Allocation';
+
+  @override
+  String get allocationDetails => 'Details';
+
+  @override
+  String get allocationByGroup => 'By group';
+
+  @override
+  String get allocationMetalsByForm => 'Metals · by karat and form';
+
+  @override
+  String allocationMetalForm(String metal, String karat) {
+    return '$metal $karat';
+  }
+
+  @override
+  String get allocationDriftTitle => 'Drift';
+
+  @override
+  String allocationDriftSince(String date) {
+    return 'Drift · since $date';
+  }
+
+  @override
+  String allocationDriftChange(String from, String to) {
+    return '$from → $to';
+  }
+
+  @override
+  String get allocationDriftPendingTitle => 'Before there is history';
+
+  @override
+  String allocationDriftPending(String date) {
+    return 'How your split moves over time appears once your holdings are 14 days old, on $date. Until then, this is today’s allocation — no trend is invented.';
+  }
+
+  @override
+  String get allocationDriftNoHistory =>
+      'There aren’t enough stored prices yet to know how your allocation looked back then. It fills in as price history loads.';
+
+  @override
+  String allocationSingleGroup(String group) {
+    return 'All in $group';
+  }
 }

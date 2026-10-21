@@ -1970,16 +1970,16 @@ class AppLocalizationsEs extends AppLocalizations {
       'Qima calcula; no dictamina. La base y lo que cuenta los decides tú; consulta a un sabio de confianza si tienes dudas.';
 
   @override
-  String get zakatClassMetals => 'Metales';
+  String get assetGroupMetals => 'Metales';
 
   @override
-  String get zakatClassCrypto => 'Cripto';
+  String get assetGroupCrypto => 'Cripto';
 
   @override
-  String get zakatClassEquities => 'Acciones';
+  String get assetGroupEquities => 'Acciones';
 
   @override
-  String get zakatClassCash => 'Efectivo y divisas';
+  String get assetGroupCash => 'Efectivo y divisas';
 
   @override
   String get zakatClassMetalsSubtitle => 'Oro, plata, platino, paladio';
@@ -2181,4 +2181,51 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get helpZakatStep4Body =>
       'Los sabios difieren sobre la base, las acciones y las joyas. Todo valor por defecto se puede cambiar; si dudas, consulta a un sabio de confianza.';
+
+  @override
+  String get allocationTitle => 'Distribución';
+
+  @override
+  String get allocationDetails => 'Detalles';
+
+  @override
+  String get allocationByGroup => 'Por grupo';
+
+  @override
+  String get allocationMetalsByForm => 'Metales · por quilate y tipo';
+
+  @override
+  String allocationMetalForm(String metal, String karat) {
+    return '$metal $karat';
+  }
+
+  @override
+  String get allocationDriftTitle => 'Variación';
+
+  @override
+  String allocationDriftSince(String date) {
+    return 'Variación · desde el $date';
+  }
+
+  @override
+  String allocationDriftChange(String from, String to) {
+    return '$from → $to';
+  }
+
+  @override
+  String get allocationDriftPendingTitle => 'Antes de tener historial';
+
+  @override
+  String allocationDriftPending(String date) {
+    return 'La evolución de tu distribución aparecerá cuando tus tenencias tengan 14 días, el $date. Hasta entonces, esta es la distribución de hoy; no se inventa ninguna tendencia.';
+  }
+
+  @override
+  String get allocationDriftNoHistory =>
+      'Aún no hay suficientes precios guardados para saber cómo era tu distribución entonces. Se completará a medida que cargue el historial de precios.';
+
+  @override
+  String allocationSingleGroup(String group) {
+    return 'Todo en $group';
+  }
 }

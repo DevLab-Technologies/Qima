@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../blocs/app_cubit.dart';
 import '../blocs/app_state.dart';
 import '../l10n/app_localizations.dart';
+import '../models/asset_group.dart';
 import '../models/hijri_date.dart';
 import '../models/zakat.dart';
 import '../theme/design_system.dart';
@@ -15,7 +16,6 @@ import '../widgets/help_button.dart';
 import '../widgets/section_header.dart';
 import '../services/system_settings.dart';
 import 'hawl_date_picker.dart';
-import 'zakat_screen.dart' show zakatClassLabel;
 
 /// Zakat settings (v3, Figma "Zakat · Settings"): nisab basis, which asset
 /// classes count, the hawl calendar and start date, and the reminder. Every
@@ -133,16 +133,16 @@ class _ZakatSettingsScreenState extends State<ZakatSettingsScreen> with WidgetsB
                 DSCard(
                   child: Column(
                     children: [
-                      for (final zakatClass in ZakatClass.values)
+                      for (final assetGroup in AssetGroup.values)
                         SwitchListTile(
                           contentPadding: EdgeInsets.zero,
-                          title: Text(zakatClassLabel(l10n, zakatClass), style: TextStyle(color: colors.textPrimary)),
-                          subtitle: Text(_classSubtitle(l10n, zakatClass),
+                          title: Text(assetGroupLabel(l10n, assetGroup), style: TextStyle(color: colors.textPrimary)),
+                          subtitle: Text(_classSubtitle(l10n, assetGroup),
                               style: TextStyle(color: colors.textTertiary, fontSize: 12)),
-                          value: settings.includedClasses.contains(zakatClass),
+                          value: settings.includedClasses.contains(assetGroup),
                           activeThumbColor: colors.onBrand,
                           activeTrackColor: colors.brand,
-                          onChanged: (_) => update((s) => s.toggleClass(zakatClass)),
+                          onChanged: (_) => update((s) => s.toggleClass(assetGroup)),
                         ),
                       if (settings.holdingOverrides.isNotEmpty) ...[
                         Divider(color: colors.hairline),
@@ -249,15 +249,15 @@ class _ZakatSettingsScreenState extends State<ZakatSettingsScreen> with WidgetsB
     );
   }
 
-  String _classSubtitle(AppLocalizations l10n, ZakatClass zakatClass) {
-    switch (zakatClass) {
-      case ZakatClass.metals:
+  String _classSubtitle(AppLocalizations l10n, AssetGroup assetGroup) {
+    switch (assetGroup) {
+      case AssetGroup.metals:
         return l10n.zakatClassMetalsSubtitle;
-      case ZakatClass.crypto:
+      case AssetGroup.crypto:
         return l10n.zakatClassCryptoSubtitle;
-      case ZakatClass.equities:
+      case AssetGroup.equities:
         return l10n.zakatClassEquitiesSubtitle;
-      case ZakatClass.cash:
+      case AssetGroup.cash:
         return l10n.zakatClassCashSubtitle;
     }
   }
