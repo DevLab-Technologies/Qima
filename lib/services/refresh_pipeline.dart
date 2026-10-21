@@ -5,7 +5,7 @@ import '../l10n/app_localizations.dart';
 import '../models/alert_evaluation.dart';
 import '../models/asset.dart';
 import '../models/fx_history.dart';
-import '../models/holding.dart';
+import '../models/holding_transaction.dart';
 import '../models/instrument_catalog.dart';
 import '../models/money.dart';
 import '../models/price_alert.dart';
@@ -18,13 +18,14 @@ import 'alerts_store.dart';
 import 'backup/backup_reminder_notifier.dart';
 import 'backup/backup_service.dart';
 import 'custom_instrument_store.dart';
-import 'holdings_store.dart';
 import 'home_widget_service.dart';
 import 'notification_service.dart';
 import 'preferences.dart';
 import 'price_converter.dart';
 import 'price_repository.dart';
+import 'transactions_store.dart';
 import 'watchlist_store.dart';
+import 'zakat_reminder_notifier.dart';
 
 /// The single place a price refresh, alert evaluation, notification and
 /// widget publish all happen together — used by BOTH the foreground
@@ -43,7 +44,7 @@ import 'watchlist_store.dart';
 class RefreshPipeline {
   final PriceRepository repository;
   final WatchlistStore watchlistStore;
-  final HoldingsStore holdingsStore;
+  final TransactionsStore transactionsStore;
   final CustomInstrumentStore customInstrumentStore;
   final AlertsStore alertsStore;
   final AlertRuntimeStore alertRuntimeStore;
@@ -55,7 +56,7 @@ class RefreshPipeline {
   RefreshPipeline({
     required this.repository,
     required this.watchlistStore,
-    required this.holdingsStore,
+    required this.transactionsStore,
     required this.customInstrumentStore,
     required this.alertsStore,
     required this.alertRuntimeStore,
@@ -67,7 +68,8 @@ class RefreshPipeline {
         backupService = backupService ??
             BackupService(
               watchlistStore: watchlistStore,
-              holdingsStore: holdingsStore,
+              holdingsStore: transactionsStore.legacyLots,
+              transactionsStore: transactionsStore,
               customInstrumentStore: customInstrumentStore,
               alertsStore: alertsStore,
               preferences: preferences,
@@ -98,7 +100,7 @@ class RefreshPipeline {
     return now.difference(last) < overlapGuard;
   }
 
-  /// Runs one full HEADLESS pass: loads cards/lots/alerts fresh from disk,
+  /// Runs one full HEADLESS pass: loads cards/holdings/alerts fresh from disk,
   /// refreshes prices for every watched/held instrument, evaluates alerts,
   /// notifies for anything that fired, and republishes the home-screen
   /// widgets. This is what the background task calls (spec Phase 5) — it has
@@ -127,16 +129,20 @@ class RefreshPipeline {
     // the background task post one notification at most once per 30 days").
     await BackupReminderNotifier(backupService: backupService, notificationService: notificationService)
         .notifyIfDue(now: effectiveNow, l10n: l10n);
+    // Date-driven like the backup reminder, so it also runs before the
+    // early returns below: a hawl completes whether or not prices moved.
+    await ZakatReminderNotifier(preferences: preferences, notificationService: notificationService)
+        .notifyIfDue(now: effectiveNow, l10n: l10n);
 
     final customs = await customInstrumentStore.load();
     InstrumentCatalog.reloadCustom(customs.map((c) => c.instrument).toList());
 
     final cards = await watchlistStore.load();
-    final lots = await holdingsStore.load();
+    final transactions = await transactionsStore.load();
     final alerts = await alertsStore.load();
     final baseCurrency = await preferences.baseCurrency;
 
-    final instruments = _trackedInstruments(cards, lots);
+    final instruments = _trackedInstruments(cards, transactions);
     if (instruments.isEmpty) return;
 
     final updatedSeries = await repository.refreshAll(instruments, now: effectiveNow);
@@ -157,7 +163,7 @@ class RefreshPipeline {
 
     await _publishWidgets(
       cards: cards,
-      lots: lots,
+      transactions: transactions,
       seriesByID: updatedSeries,
       rates: rates,
       fxHistory: fxHistory,
@@ -199,7 +205,7 @@ class RefreshPipeline {
     await alertRuntimeStore.pruneMissing(alerts.map((a) => a.id).toSet());
   }
 
-  List<Instrument> _trackedInstruments(List<WatchCard> cards, List<HoldingLot> lots) {
+  List<Instrument> _trackedInstruments(List<WatchCard> cards, List<HoldingTransaction> transactions) {
     final seen = <String>{};
     final result = <Instrument>[];
     for (final card in cards) {
@@ -208,9 +214,9 @@ class RefreshPipeline {
       seen.add(instrument.id);
       result.add(instrument);
     }
-    for (final lot in lots) {
-      if (seen.contains(lot.instrumentID)) continue;
-      final instrument = InstrumentCatalog.instrument(lot.instrumentID);
+    for (final transaction in transactions) {
+      if (seen.contains(transaction.instrumentID)) continue;
+      final instrument = InstrumentCatalog.instrument(transaction.instrumentID);
       if (instrument == null) continue;
       seen.add(instrument.id);
       result.add(instrument);
@@ -327,7 +333,7 @@ class RefreshPipeline {
 
   Future<void> _publishWidgets({
     required List<WatchCard> cards,
-    required List<HoldingLot> lots,
+    required List<HoldingTransaction> transactions,
     required Map<String, QuoteSeries> seriesByID,
     required FXRates rates,
     required FXHistory fxHistory,
@@ -337,7 +343,7 @@ class RefreshPipeline {
     final state = AppState(
       initialized: true,
       cards: cards,
-      lots: lots,
+      transactions: transactions,
       seriesByID: seriesByID,
       rates: rates,
       fxHistory: fxHistory,

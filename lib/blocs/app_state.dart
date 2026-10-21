@@ -2,10 +2,13 @@ import 'package:equatable/equatable.dart';
 
 import '../models/fx_history.dart';
 import '../models/holding.dart';
+import '../models/holding_transaction.dart';
+import '../models/ledger.dart';
 import '../models/money.dart';
 import '../models/price_alert.dart';
 import '../models/quote.dart';
 import '../models/watch_card.dart';
+import '../models/zakat.dart';
 import '../models/chart_range.dart';
 import '../services/preferences.dart';
 
@@ -42,7 +45,13 @@ class AppState extends Equatable {
 
   /// Localization key (resolved with `displayLabel`), never raw exception text.
   final String? errorMessage;
-  final List<HoldingLot> lots;
+
+  /// The holdings ledger (v3) — the source of truth for everything held.
+  final List<HoldingTransaction> transactions;
+
+  /// Positions derived from [transactions]; re-derived only when they
+  /// change, never on a price tick.
+  final Ledger ledger;
   final List<WatchCard> cards;
   final String baseCurrency;
   final WidgetRefreshInterval widgetRefreshInterval;
@@ -108,6 +117,10 @@ class AppState extends Equatable {
   /// flashing the tour on for a frame before init resolves.
   final bool shouldShowOnboarding;
 
+  /// Zakat choices (v3) — synced like [baseCurrency], see
+  /// `Preferences.zakatSettings`.
+  final ZakatSettings zakatSettings;
+
   AppState({
     this.initialized = false,
     Map<String, QuoteSeries>? seriesByID,
@@ -115,7 +128,10 @@ class AppState extends Equatable {
     this.fxHistory = FXHistory.empty,
     this.phase = RefreshPhase.idle,
     this.errorMessage,
-    this.lots = const [],
+    List<HoldingTransaction>? transactions,
+    // Shorthand for a ledger of plain buys, one per lot.
+    List<HoldingLot>? lots,
+    Ledger? ledger,
     this.cards = const [],
     this.baseCurrency = 'USD',
     this.widgetRefreshInterval = WidgetRefreshInterval.defaultValue,
@@ -138,8 +154,19 @@ class AppState extends Equatable {
     this.cloudSyncStatus = CloudSyncStatus.disabled,
     this.lastCloudSyncAt,
     this.shouldShowOnboarding = false,
+    this.zakatSettings = const ZakatSettings(),
   })  : seriesByID = seriesByID ?? const {},
-        rates = rates ?? FXRates.usdIdentity;
+        rates = rates ?? FXRates.usdIdentity,
+        transactions = transactions ?? _buys(lots),
+        ledger = ledger ?? Ledger.derive(transactions ?? _buys(lots));
+
+  static List<HoldingTransaction> _buys(List<HoldingLot>? lots) =>
+      lots == null ? const [] : [for (final lot in lots) HoldingTransaction.fromLot(lot)];
+
+  /// What's held now, as lots — every acquisition scaled down by the
+  /// disposals after it (see [Ledger]). Everything that values holdings
+  /// reads this.
+  List<HoldingLot> get lots => ledger.openLots;
 
   AppState copyWith({
     bool? initialized,
@@ -149,6 +176,8 @@ class AppState extends Equatable {
     RefreshPhase? phase,
     String? errorMessage,
     bool clearError = false,
+    List<HoldingTransaction>? transactions,
+    // Shorthand for a ledger of plain buys, one per lot.
     List<HoldingLot>? lots,
     List<WatchCard>? cards,
     String? baseCurrency,
@@ -173,7 +202,9 @@ class AppState extends Equatable {
     DateTime? lastCloudSyncAt,
     bool clearLastCloudSyncAt = false,
     bool? shouldShowOnboarding,
+    ZakatSettings? zakatSettings,
   }) {
+    final nextTransactions = transactions ?? (lots == null ? null : _buys(lots));
     return AppState(
       initialized: initialized ?? this.initialized,
       seriesByID: seriesByID ?? this.seriesByID,
@@ -181,7 +212,8 @@ class AppState extends Equatable {
       fxHistory: fxHistory ?? this.fxHistory,
       phase: phase ?? this.phase,
       errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
-      lots: lots ?? this.lots,
+      transactions: nextTransactions ?? this.transactions,
+      ledger: nextTransactions == null ? ledger : null,
       cards: cards ?? this.cards,
       baseCurrency: baseCurrency ?? this.baseCurrency,
       widgetRefreshInterval: widgetRefreshInterval ?? this.widgetRefreshInterval,
@@ -204,6 +236,7 @@ class AppState extends Equatable {
       cloudSyncStatus: cloudSyncStatus ?? this.cloudSyncStatus,
       lastCloudSyncAt: clearLastCloudSyncAt ? null : (lastCloudSyncAt ?? this.lastCloudSyncAt),
       shouldShowOnboarding: shouldShowOnboarding ?? this.shouldShowOnboarding,
+      zakatSettings: zakatSettings ?? this.zakatSettings,
     );
   }
 
@@ -215,7 +248,7 @@ class AppState extends Equatable {
         fxHistory,
         phase,
         errorMessage,
-        lots,
+        transactions,
         cards,
         baseCurrency,
         widgetRefreshInterval,
@@ -238,5 +271,6 @@ class AppState extends Equatable {
         cloudSyncStatus,
         lastCloudSyncAt,
         shouldShowOnboarding,
+        zakatSettings,
       ];
 }

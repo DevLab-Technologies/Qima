@@ -4,7 +4,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:qima/models/asset.dart';
 import 'package:qima/models/backup.dart';
 import 'package:qima/models/holding.dart';
+import 'package:qima/models/holding_transaction.dart';
 import 'package:qima/models/watch_card.dart';
+import 'package:qima/models/zakat.dart';
 import 'package:qima/services/alerts_store.dart';
 import 'package:qima/services/backup/backup_codec.dart';
 import 'package:qima/services/backup/backup_service.dart';
@@ -13,6 +15,7 @@ import 'package:qima/services/custom_instrument_store.dart';
 import 'package:qima/services/holdings_store.dart';
 import 'package:qima/services/local_file_store.dart';
 import 'package:qima/services/preferences.dart';
+import 'package:qima/services/synced_store.dart' show Record;
 import 'package:qima/services/watchlist_store.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -177,6 +180,85 @@ void main() {
       );
 
       expect(await service.preferences.baseCurrency, 'EGP');
+    });
+
+    test('carries zakat settings and restores them on replace', () async {
+      final source = await makeService();
+      final zakat = ZakatSettings(basis: NisabBasis.silver, hawlStart: DateTime(2025, 3, 12), remind: true);
+      await source.preferences.setZakatSettings(zakat);
+      final payload = await source.buildPayload();
+      expect(payload.settings.zakat, zakat.toJson());
+
+      await source.preferences.setZakatSettings(const ZakatSettings());
+      await source.import(payload, mode: BackupImportMode.replace);
+      expect(await source.preferences.zakatSettings, zakat);
+    });
+
+    test('a backup from before zakat leaves current zakat settings alone', () async {
+      final service = await makeService();
+      final mine = ZakatSettings(hawlStart: DateTime(2024, 1, 1));
+      await service.preferences.setZakatSettings(mine);
+      final payload = await service.buildPayload();
+      final legacy = payload.settings.copyWithBaseCurrency('USD'); // drops `zakat`
+      expect(legacy.zakat, isNull);
+
+      await service.import(BackupPayloadBuilder.fromRecords(settings: legacy), mode: BackupImportMode.replace);
+      expect(await service.preferences.zakatSettings, mine);
+    });
+  });
+
+  group('ledger (v3)', () {
+    test('a backup carries the ledger, including sales, and restores it', () async {
+      final source = await makeService();
+      await source.transactionsStore.upsert(HoldingTransaction.fromLot(_lot('b1', quantity: 10)));
+      await source.transactionsStore.upsert(HoldingTransaction(
+        id: 's1',
+        instrumentID: 'metal.XAU',
+        kind: TransactionKind.sell,
+        quantity: 4,
+        unit: PriceUnit.troyOunce,
+        unitPrice: 2500,
+        currency: 'USD',
+        date: DateTime(2026, 2, 1),
+      ));
+      final payload = await source.buildPayload();
+      expect(payload.transactions, hasLength(2));
+
+      final restored = await withSeparateLocalStore(tempDir, () async {
+        final target = await makeService();
+        await target.import(payload, mode: BackupImportMode.replace);
+        return target.transactionsStore.load();
+      });
+      expect(restored.map((t) => t.kind), unorderedEquals([TransactionKind.buy, TransactionKind.sell]));
+    });
+
+    test('a backup from before the ledger restores its lots as buys', () async {
+      final legacy = BackupPayloadBuilder.fromRecords(holdings: [
+        Record<HoldingLot>(item: _lot('old-1', quantity: 3), order: 0, updatedAt: DateTime.utc(2025)),
+      ]);
+      expect(legacy.transactions, isNull);
+
+      final service = await makeService();
+      final envelope = service.parseEnvelope(BackupCodec.encodePlain(payload: legacy, app: const BackupAppInfo(version: '2.2.0', build: '1')));
+      final preview = await service.preview(envelope);
+      expect(preview.transactionCount, 1);
+      expect(preview.mergeDiff.added, 1);
+
+      await service.import(legacy, mode: BackupImportMode.merge);
+      final ledger = await service.transactionsStore.load();
+      expect(ledger.single.id, 'old-1');
+      expect(ledger.single.kind, TransactionKind.buy);
+      expect(ledger.single.quantity, 3);
+    });
+
+    test('replace removes ledger rows the backup doesn\'t have, and they stay gone', () async {
+      final service = await makeService();
+      await service.holdingsStore.upsert(_lot('local-lot'));
+      await service.transactionsStore.load(); // migrates it
+      final empty = BackupPayloadBuilder.fromRecords(transactions: const []);
+
+      await service.import(empty, mode: BackupImportMode.replace);
+      expect(await service.transactionsStore.load(), isEmpty, reason: 'the source lot was tombstoned too');
     });
   });
 
@@ -343,6 +425,8 @@ extension BackupPayloadBuilder on BackupPayload {
   static BackupPayload fromRecords({
     List<dynamic> watchcards = const [],
     List<dynamic> holdings = const [],
+    // Null leaves the payload as a pre-ledger (v2.x) backup would be.
+    List<dynamic>? transactions,
     List<dynamic> customInstruments = const [],
     List<dynamic> alerts = const [],
     BackupSettings? settings,
@@ -350,6 +434,7 @@ extension BackupPayloadBuilder on BackupPayload {
     return BackupPayload(
       watchcards: watchcards.map((r) => (r as dynamic).toJson() as Map<String, dynamic>).toList(),
       holdings: holdings.map((r) => (r as dynamic).toJson() as Map<String, dynamic>).toList(),
+      transactions: transactions?.map((r) => (r as dynamic).toJson() as Map<String, dynamic>).toList(),
       customInstruments: customInstruments.map((r) => (r as dynamic).toJson() as Map<String, dynamic>).toList(),
       alerts: alerts.map((r) => (r as dynamic).toJson() as Map<String, dynamic>).toList(),
       settings: settings ??

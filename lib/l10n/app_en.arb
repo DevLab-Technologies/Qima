@@ -91,82 +91,19 @@
       }
     }
   },
-  "holdingsEmpty": "Add your first lot to start tracking this holding.",
+  "holdingsEmpty": "No transactions yet. Add a buy to start tracking this holding.",
   "holdingsValue": "Value",
   "holdingsCost": "Cost",
   "holdingsGain": "Gain",
   "holdingsGainPercent": "Gain %",
-  "holdingsNew": "New lot",
-  "holdingsEdit": "Edit lot",
   "holdingsQuantity": "Quantity",
   "holdingsCostModePerUnit": "Per unit",
   "holdingsCostModeTotal": "Total",
-  "holdingsUnitCost": "Unit cost",
-  "holdingsUnitCostWithUnit": "Unit cost (per {unit})",
-  "@holdingsUnitCostWithUnit": {
-    "placeholders": {
-      "unit": {
-        "type": "String"
-      }
-    }
-  },
-  "holdingsUnitCostWithKarat": "Unit cost (per {unit} · {karat})",
-  "@holdingsUnitCostWithKarat": {
-    "placeholders": {
-      "unit": {
-        "type": "String"
-      },
-      "karat": {
-        "type": "String"
-      }
-    }
-  },
-  "holdingsUnitCostPreview": "Per unit: {value}",
-  "@holdingsUnitCostPreview": {
-    "placeholders": {
-      "value": {
-        "type": "String"
-      }
-    }
-  },
   "holdingsTotalCost": "Total cost",
-  "holdingsTotalCostPreview": "Total: {value}",
-  "@holdingsTotalCostPreview": {
-    "placeholders": {
-      "value": {
-        "type": "String"
-      }
-    }
-  },
   "holdingsDate": "Date",
   "holdingsSave": "Save",
   "holdingsTotalHeld": "Total held",
   "holdingsAverageCost": "Average cost",
-  "holdingsAverageCostPerUnit": "{value} per {unit}",
-  "@holdingsAverageCostPerUnit": {
-    "placeholders": {
-      "value": {
-        "type": "String"
-      },
-      "unit": {
-        "type": "String"
-      }
-    }
-  },
-  "holdingsAverageCostPerUnitKarat": "{value} per {unit} · {karat}",
-  "@holdingsAverageCostPerUnitKarat": {
-    "placeholders": {
-      "value": {
-        "type": "String"
-      },
-      "unit": {
-        "type": "String"
-      },
-      "karat": {
-        "type": "String"
-      }
-    }
-  },
   "holdingsMixedNote": "Mixed karats counted by gold content, shown as {karat}.",
   "@holdingsMixedNote": {
     "placeholders": {
@@ -189,17 +126,9 @@
   },
   "portfolioTitle": "Portfolio",
   "portfolioValue": "Total value",
-  "portfolioEmpty": "No portfolio value yet — add a holding lot to get started.",
+  "portfolioEmpty": "No portfolio value yet — add a buy to any asset to get started.",
   "portfolioNoChange": "Not enough history for this range yet",
-  "portfolioNoHistory": "Add a holding lot to see your portfolio chart",
-  "portfolioLotCount": "{count, plural, =1{1 lot} other{{count} lots}}",
-  "@portfolioLotCount": {
-    "placeholders": {
-      "count": {
-        "type": "num"
-      }
-    }
-  },
+  "portfolioNoHistory": "Add a buy to see your portfolio chart",
   "settingsTitle": "Settings",
   "settingsAppearance": "Appearance",
   "settingsAppearanceSystem": "System",
@@ -219,7 +148,7 @@
   "settingsDataSource": "finance.yahoo.com · gold-api.com · er-api.com",
   "settingsPrivacy": "Privacy & security",
   "settingsHideBalances": "Hide balances",
-  "settingsHideBalancesFooter": "Mask portfolio, holdings and lot amounts throughout the app.",
+  "settingsHideBalancesFooter": "Mask portfolio, holdings and transaction amounts throughout the app.",
   "settingsAppLock": "App lock",
   "settingsAppLockFooter": "Require Face ID, Touch ID or your device passcode to open Qima.",
   "settingsAppLockUnavailable": "Set up Face ID, Touch ID or a device passcode first.",
@@ -318,15 +247,6 @@
     }
   },
   "confirmRemoveCardMessage": "Your holdings for this asset are kept.",
-  "confirmDeleteLotTitle": "Delete this lot?",
-  "confirmDeleteLotMessage": "{details}. This can't be undone.",
-  "@confirmDeleteLotMessage": {
-    "placeholders": {
-      "details": {
-        "type": "String"
-      }
-    }
-  },
   "confirmRemoveTickerTitle": "Remove custom ticker {symbol}?",
   "@confirmRemoveTickerTitle": {
     "placeholders": {
@@ -506,7 +426,7 @@
   },
   "settingsBackup": "Backup & restore",
   "settingsBackupSubtitleNever": "Never backed up",
-  "settingsBackupSubtitle": "Last backup {date} · {instruments} assets, {lots} lots",
+  "settingsBackupSubtitle": "Last backup {date} · {instruments} assets, {transactions, plural, =1{1 transaction} other{{transactions} transactions}}",
   "@settingsBackupSubtitle": {
     "placeholders": {
       "date": {
@@ -515,7 +435,7 @@
       "instruments": {
         "type": "int"
       },
-      "lots": {
+      "transactions": {
         "type": "int"
       }
     }
@@ -555,7 +475,7 @@
   "backupExportFullTitle": "Full backup",
   "backupExportFullSubtitle": "Watchlist, holdings, custom tickers, alerts and settings (.json)",
   "backupExportCsvTitle": "Holdings spreadsheet",
-  "backupExportCsvSubtitle": "Your lots as a spreadsheet, for your records (.csv)",
+  "backupExportCsvSubtitle": "Every transaction as a spreadsheet (.csv) — it imports back too",
   "backupRestoreSection": "Restore",
   "backupRestoreTitle": "Import a backup",
   "backupRestoreSubtitle": "Restore from a full backup file (.json)",
@@ -566,13 +486,13 @@
   "backupExportSheetFileName": "File name",
   "backupExportSheetFileSize": "Size",
   "backupExportSheetFileContents": "Contents",
-  "backupExportSheetContentsSummary": "{cards} watchlist cards · {lots} lots · {customTickers} custom tickers",
+  "backupExportSheetContentsSummary": "{cards} watchlist cards · {transactions, plural, =1{1 transaction} other{{transactions} transactions}} · {customTickers} custom tickers",
   "@backupExportSheetContentsSummary": {
     "placeholders": {
       "cards": {
         "type": "int"
       },
-      "lots": {
+      "transactions": {
         "type": "int"
       },
       "customTickers": {
@@ -608,7 +528,6 @@
     }
   },
   "backupImportCountCards": "Watchlist cards",
-  "backupImportCountLots": "Lots",
   "backupImportCountCustomTickers": "Custom tickers",
   "backupImportCountSettings": "Settings included",
   "backupImportPasswordPrompt": "This backup is protected. Enter the password to continue.",
@@ -640,7 +559,7 @@
   "backupImportSuccessSnackbar": "Backup restored",
   "backupImportFailedTitle": "Couldn't restore this backup",
   "backupImportCsvErrorTitle": "This is a spreadsheet, not a backup",
-  "backupImportCsvErrorMessage": "A holdings spreadsheet (.csv) only has your lots, and can't be restored. Choose a full backup file (.json) instead.",
+  "backupImportCsvErrorMessage": "This is a spreadsheet, not a Qima backup. You can import its rows as transactions instead.",
   "backupErrorNotQimaFile": "This doesn't look like a Qima backup file.",
   "backupErrorNewerVersion": "This backup was made with a newer version of Qima. Update the app to restore it.",
   "backupErrorWrongPassword": "That password didn't work.",
@@ -650,9 +569,9 @@
   "backupCsvHeaderQuantity": "Quantity",
   "backupCsvHeaderUnit": "Unit",
   "backupCsvHeaderKarat": "Karat",
-  "backupCsvHeaderUnitCost": "Unit cost",
-  "backupCsvHeaderCostCurrency": "Cost currency",
-  "backupCsvHeaderTotalCost": "Total cost",
+  "backupCsvHeaderUnitCost": "Price per unit",
+  "backupCsvHeaderCostCurrency": "Currency",
+  "backupCsvHeaderTotalCost": "Total",
   "backupCsvHeaderDate": "Date",
   "commonContinue": "Continue",
   "onboardingNext": "Next",
@@ -899,7 +818,7 @@
   "@helpAssetDetailStep5Title": {
     "description": "Asset detail help step 5 title."
   },
-  "helpAssetDetailStep5Body": "Tap Holdings to see your lots or add a purchase.",
+  "helpAssetDetailStep5Body": "Tap Holdings to see your transactions or add a buy or sale.",
   "@helpAssetDetailStep5Body": {
     "description": "Asset detail help step 5 body."
   },
@@ -923,7 +842,7 @@
   "@helpPortfolioStep2Title": {
     "description": "Portfolio help step 2 title."
   },
-  "helpPortfolioStep2Body": "Tap a row to see its lots, average cost and gain.",
+  "helpPortfolioStep2Body": "Tap a row to see its transactions, average cost and gain.",
   "@helpPortfolioStep2Body": {
     "description": "Portfolio help step 2 body."
   },
@@ -951,19 +870,19 @@
   "@helpPortfolioStep5Body": {
     "description": "Portfolio help step 5 body."
   },
-  "helpLotEditorTitle": "Lot editor",
+  "helpLotEditorTitle": "Transaction",
   "@helpLotEditorTitle": {
     "description": "Lot editor help topic title."
   },
-  "helpLotEditorSummary": "Record one purchase so Qima can work out what you hold, your average cost and your gain.",
+  "helpLotEditorSummary": "Record one buy, sell, transfer or fee. Your holding, average cost and gains are worked out from these.",
   "@helpLotEditorSummary": {
     "description": "Lot editor help topic summary line."
   },
-  "helpLotEditorStep1Title": "Quantity and unit",
+  "helpLotEditorStep1Title": "Type",
   "@helpLotEditorStep1Title": {
     "description": "Lot editor help step 1 title."
   },
-  "helpLotEditorStep1Body": "Enter how much you bought, in troy ounces, grams or kilograms.",
+  "helpLotEditorStep1Body": "Buy adds at a cost. Sell removes and realises a gain or loss. Transfer moves quantity in or out. Fee records a charge.",
   "@helpLotEditorStep1Body": {
     "description": "Lot editor help step 1 body."
   },
@@ -971,15 +890,15 @@
   "@helpLotEditorStep2Title": {
     "description": "Lot editor help step 2 title."
   },
-  "helpLotEditorStep2Body": "For gold by gram or kilogram, pick 24K, 22K, 21K or 18K. It starts at the card's karat.",
+  "helpLotEditorStep2Body": "For gold by gram or kilogram, pick 24K, 22K, 21K or 18K. Everything is counted by gold content, so karats mix correctly.",
   "@helpLotEditorStep2Body": {
     "description": "Lot editor help step 2 body."
   },
-  "helpLotEditorStep3Title": "What you paid",
+  "helpLotEditorStep3Title": "Price and fee",
   "@helpLotEditorStep3Title": {
     "description": "Lot editor help step 3 title."
   },
-  "helpLotEditorStep3Body": "Enter the cost per unit or the total, in the currency you paid in.",
+  "helpLotEditorStep3Body": "Enter the price per unit or the total, and any commission. A sell shows what it realises before you save.",
   "@helpLotEditorStep3Body": {
     "description": "Lot editor help step 3 body."
   },
@@ -987,7 +906,7 @@
   "@helpLotEditorStep4Title": {
     "description": "Lot editor help step 4 title."
   },
-  "helpLotEditorStep4Body": "The day you bought it.",
+  "helpLotEditorStep4Body": "The day it happened. A sale can’t be dated before you held enough.",
   "@helpLotEditorStep4Body": {
     "description": "Lot editor help step 4 body."
   },
@@ -995,7 +914,7 @@
   "@helpLotEditorStep5Title": {
     "description": "Lot editor help step 5 title."
   },
-  "helpLotEditorStep5Body": "Edit or delete a lot any time from Holdings.",
+  "helpLotEditorStep5Body": "Edit or delete a transaction any time from the holding’s ledger.",
   "@helpLotEditorStep5Body": {
     "description": "Lot editor help step 5 body."
   },
@@ -1215,11 +1134,11 @@
   "@helpBackupStep4Body": {
     "description": "Backup & restore help step 4 body."
   },
-  "helpBackupStep5Title": "Holdings spreadsheet",
+  "helpBackupStep5Title": "Spreadsheets",
   "@helpBackupStep5Title": {
     "description": "Backup & restore help step 5 title."
   },
-  "helpBackupStep5Body": "A .csv for accounting. It can't be restored.",
+  "helpBackupStep5Body": "Export every transaction as a .csv, or import one — from Qima, a spreadsheet or a broker. It adds transactions; it doesn’t restore settings.",
   "@helpBackupStep5Body": {
     "description": "Backup & restore help step 5 body."
   },
@@ -1271,7 +1190,7 @@
   "@helpHoldingsTitle": {
     "description": "Holdings list help topic title."
   },
-  "helpHoldingsSummary": "Every lot you bought of this asset, and what they add up to.",
+  "helpHoldingsSummary": "Every transaction for this asset — buys, sells, transfers and fees — and what they add up to.",
   "@helpHoldingsSummary": {
     "description": "Holdings list help topic summary line."
   },
@@ -1279,23 +1198,23 @@
   "@helpHoldingsStep1Title": {
     "description": "Holdings list help step 1 title."
   },
-  "helpHoldingsStep1Body": "Quantity, average cost, current value and gain across every lot.",
+  "helpHoldingsStep1Body": "What you hold, your average cost, its value and gain, plus what sales have realised.",
   "@helpHoldingsStep1Body": {
     "description": "Holdings list help step 1 body."
   },
-  "helpHoldingsStep2Title": "Add a lot",
+  "helpHoldingsStep2Title": "Add a transaction",
   "@helpHoldingsStep2Title": {
     "description": "Holdings list help step 2 title."
   },
-  "helpHoldingsStep2Body": "Tap + to record another purchase.",
+  "helpHoldingsStep2Body": "Tap Add to record a buy, a sell, a transfer or a fee.",
   "@helpHoldingsStep2Body": {
     "description": "Holdings list help step 2 body."
   },
-  "helpHoldingsStep3Title": "Edit or delete a lot",
+  "helpHoldingsStep3Title": "Edit or delete one",
   "@helpHoldingsStep3Title": {
     "description": "Holdings list help step 3 title."
   },
-  "helpHoldingsStep3Body": "Tap a lot to change it, or swipe to delete.",
+  "helpHoldingsStep3Body": "Tap a row to change it, or swipe to delete. Qima won’t let a change leave a sale selling more than you held.",
   "@helpHoldingsStep3Body": {
     "description": "Holdings list help step 3 body."
   },
@@ -1407,7 +1326,7 @@
   "@helpImportPreviewStep1Title": {
     "description": "Import preview help step 1 title."
   },
-  "helpImportPreviewStep1Body": "See how many cards, lots and alerts the file contains before restoring.",
+  "helpImportPreviewStep1Body": "See how many cards, transactions and alerts the file contains before restoring.",
   "@helpImportPreviewStep1Body": {
     "description": "Import preview help step 1 body."
   },
@@ -1454,5 +1373,604 @@
   "settingsHelpAddWidgetSubtitle": "Home Screen and Lock Screen",
   "@settingsHelpAddWidgetSubtitle": {
     "description": "Settings Help group row subtitle (iOS only)."
-  }
+  },
+  "commonDone": "Done",
+  "zakatTitle": "Zakat",
+  "@zakatTitle": {
+    "description": "Zakat screen title, portfolio entry row and settings section header."
+  },
+  "zakatSettingsTitle": "Zakat settings",
+  "settingsZakatSubtitle": "Nisab basis, what counts, hawl date and reminder",
+  "zakatEmptyTitle": "Nothing to assess yet",
+  "zakatEmptyMessage": "Zakat is worked out from your holdings. Add a buy to any asset and it appears here, with what counts toward nisab.",
+  "zakatNisabSection": "Nisab",
+  "zakatWhatCountsSection": "What counts",
+  "zakatStatusAbove": "Above nisab",
+  "zakatStatusBelow": "Below nisab",
+  "zakatStatusUnknown": "Nisab not priced yet",
+  "zakatDueLabel": "Zakat due · {rate}",
+  "zakatExplainAboveNoHawl": "On a zakatable base of {base}. Set your hawl date to know when it falls due.",
+  "@zakatExplainAboveNoHawl": {
+    "placeholders": {
+      "base": {
+        "type": "String"
+      }
+    }
+  },
+  "zakatExplainAboveToday": "On a zakatable base of {base}. Your hawl completes today.",
+  "@zakatExplainAboveToday": {
+    "placeholders": {
+      "base": {
+        "type": "String"
+      }
+    }
+  },
+  "zakatExplainAboveUpcoming": "On a zakatable base of {base}. Due when your hawl completes on {date} ({days, plural, =1{in 1 day} other{in {days} days}}), if your wealth is still above nisab then.",
+  "@zakatExplainAboveUpcoming": {
+    "placeholders": {
+      "base": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      },
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "zakatExplainBelow": "Your zakatable base of {base} is below today’s nisab of {threshold}, so no zakat is due.",
+  "@zakatExplainBelow": {
+    "placeholders": {
+      "base": {
+        "type": "String"
+      },
+      "threshold": {
+        "type": "String"
+      }
+    }
+  },
+  "zakatExplainUnknown": "Today’s {metal} price hasn’t loaded, so the nisab threshold can’t be checked yet.",
+  "@zakatExplainUnknown": {
+    "placeholders": {
+      "metal": {
+        "type": "String"
+      }
+    }
+  },
+  "zakatRetry": "Try again",
+  "zakatUnpricedNote": "Some assets have no price yet and aren’t counted. They count as soon as their price loads.",
+  "zakatBasisRow": "Basis",
+  "zakatBasisValue": "{metal} · {grams} g",
+  "@zakatBasisValue": {
+    "placeholders": {
+      "metal": {
+        "type": "String"
+      },
+      "grams": {
+        "type": "String"
+      }
+    }
+  },
+  "zakatOtherBasisLine": "{metal} basis would be {amount}",
+  "@zakatOtherBasisLine": {
+    "placeholders": {
+      "metal": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "zakatThresholdToday": "Threshold today",
+  "zakatYourBase": "Your zakatable base",
+  "zakatHawlStart": "Hawl start",
+  "zakatHawlSet": "Set date",
+  "zakatHawlNotSetSubtitle": "The day your wealth first reached nisab",
+  "zakatHawlCompletesToday": "completes today",
+  "zakatHawlNext": "next completes {date}",
+  "@zakatHawlNext": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "zakatWhatCountsFooter": "Switch an asset off to leave it out — for example jewelry worn every day, if you follow the view that it is exempt.",
+  "zakatExcludedClass": "{cls} switched off",
+  "@zakatExcludedClass": {
+    "placeholders": {
+      "cls": {
+        "type": "String"
+      }
+    }
+  },
+  "zakatExcludedHolding": "left out",
+  "zakatExcludedNoPrice": "no price yet",
+  "zakatLineTitle": "{name} · {quantity}",
+  "@zakatLineTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "quantity": {
+        "type": "String"
+      }
+    }
+  },
+  "zakatDisclaimer": "Qima computes; it does not rule. The basis and what counts are yours to set — ask a scholar you trust when unsure.",
+  "assetGroupMetals": "Metals",
+  "assetGroupCrypto": "Crypto",
+  "assetGroupEquities": "Equities",
+  "assetGroupCash": "Cash & currencies",
+  "zakatClassMetalsSubtitle": "Gold, silver, platinum, palladium",
+  "zakatClassCryptoSubtitle": "Treated as a tradeable asset",
+  "zakatClassEquitiesSubtitle": "Off by default — views on long-term shareholdings differ",
+  "zakatClassCashSubtitle": "Currencies you hold",
+  "zakatOverridesCount": "{count, plural, =1{1 asset set individually} other{{count} assets set individually}}",
+  "@zakatOverridesCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "zakatOverridesSubtitle": "Chosen on the zakat screen, overriding their class",
+  "zakatOverridesReset": "Reset",
+  "zakatNisabBasisSection": "Nisab basis",
+  "zakatClassesSection": "Zakatable classes",
+  "zakatHawlSection": "Hawl",
+  "zakatBasisPriceMissing": "Price not loaded yet",
+  "zakatBasisToday": "{amount} today",
+  "@zakatBasisToday": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "zakatBasisHigher": "Higher threshold · {amount} today",
+  "@zakatBasisHigher": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "zakatBasisLower": "Lower threshold · {amount} today · more people owe",
+  "@zakatBasisLower": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "zakatCalendar": "Calendar",
+  "zakatCalendarHijri": "Hijri",
+  "zakatCalendarGregorian": "Gregorian",
+  "zakatGregorianNote": "A Gregorian year is about 11 days longer than a lunar one. Some scholars raise the rate to {solarRate} to account for it; Qima keeps {rate}.",
+  "zakatHawlClear": "Clear hawl date",
+  "zakatRemind": "Remind me",
+  "zakatRemindSubtitle": "A notification on the day your hawl completes",
+  "zakatRemindNeedsStart": "Set a hawl start date first",
+  "zakatRemindNotificationsOff": "Notifications are off for Qima — turn them on in system settings to get this reminder",
+  "zakatHawlPickerTitle": "Hawl start",
+  "zakatHawlPickerDay": "Day",
+  "zakatHawlPickerMonth": "Month",
+  "zakatHawlPickerYear": "Year",
+  "zakatHawlPickerFuture": "A hawl can’t start in the future",
+  "zakatHawlPickerGregorian": "Gregorian: {date}",
+  "@zakatHawlPickerGregorian": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "zakatEntryDue": "{amount} due · above nisab",
+  "@zakatEntryDue": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "zakatEntryCalculate": "See what’s due",
+  "zakatReminderNotificationTitle": "Your hawl is complete",
+  "zakatReminderNotificationBody": "Your zakat year completed today. Open Qima to see what’s due.",
+  "hijriMonth1": "Muharram",
+  "hijriMonth2": "Safar",
+  "hijriMonth3": "Rabi al-Awwal",
+  "hijriMonth4": "Rabi al-Thani",
+  "hijriMonth5": "Jumada al-Ula",
+  "hijriMonth6": "Jumada al-Akhirah",
+  "hijriMonth7": "Rajab",
+  "hijriMonth8": "Shaban",
+  "hijriMonth9": "Ramadan",
+  "hijriMonth10": "Shawwal",
+  "hijriMonth11": "Dhu al-Qadah",
+  "hijriMonth12": "Dhu al-Hijjah",
+  "hijriDate": "{day} {month} {year} AH",
+  "@hijriDate": {
+    "placeholders": {
+      "day": {
+        "type": "int"
+      },
+      "month": {
+        "type": "String"
+      },
+      "year": {
+        "type": "int"
+      }
+    }
+  },
+  "helpZakatTitle": "Zakat",
+  "helpZakatSummary": "Qima works out zakat from your holdings at today’s prices. It calculates; the choices behind the calculation are yours.",
+  "helpZakatStep1Title": "Nisab",
+  "helpZakatStep1Body": "The threshold is 85 g of fine gold or 595 g of silver, priced live. Pick the basis in Zakat settings; silver is lower, so more people owe.",
+  "helpZakatStep2Title": "What counts",
+  "helpZakatStep2Body": "Metals, crypto and cash count by default; equities don’t. Karat gold counts by its gold content. Switch any single asset off on the zakat screen.",
+  "helpZakatStep3Title": "Hawl",
+  "helpZakatStep3Body": "Set the day your wealth first reached nisab. Zakat falls due each lunar year after it, and Qima can remind you on the day.",
+  "helpZakatStep4Title": "A calculator, not a fatwa",
+  "helpZakatStep4Body": "Scholars differ on the basis, on equities and on jewelry. Every default here can be changed — when unsure, ask a scholar you trust.",
+  "@zakatDueLabel": {
+    "placeholders": {
+      "rate": {
+        "type": "String"
+      }
+    }
+  },
+  "@zakatGregorianNote": {
+    "placeholders": {
+      "solarRate": {
+        "type": "String"
+      },
+      "rate": {
+        "type": "String"
+      }
+    }
+  },
+  "allocationTitle": "Allocation",
+  "allocationDetails": "Details",
+  "allocationByGroup": "By group",
+  "allocationMetalsByForm": "Metals · by karat and form",
+  "allocationMetalForm": "{metal} {karat}",
+  "@allocationMetalForm": {
+    "placeholders": {
+      "metal": {
+        "type": "String"
+      },
+      "karat": {
+        "type": "String"
+      }
+    }
+  },
+  "allocationDriftTitle": "Drift",
+  "allocationDriftSince": "Drift · since {date}",
+  "@allocationDriftSince": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "allocationDriftChange": "{from} → {to}",
+  "@allocationDriftChange": {
+    "placeholders": {
+      "from": {
+        "type": "String"
+      },
+      "to": {
+        "type": "String"
+      }
+    }
+  },
+  "allocationDriftPendingTitle": "Before there is history",
+  "allocationDriftPending": "How your split moves over time appears once your holdings are 14 days old, on {date}. Until then, this is today’s allocation — no trend is invented.",
+  "@allocationDriftPending": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "allocationDriftNoHistory": "There aren’t enough stored prices yet to know how your allocation looked back then. It fills in as price history loads.",
+  "allocationSingleGroup": "All in {group}",
+  "@allocationSingleGroup": {
+    "placeholders": {
+      "group": {
+        "type": "String"
+      }
+    }
+  },
+  "backupImportCountTransactions": "Transactions",
+  "portfolioTransactionCount": "{count, plural, =1{1 transaction} other{{count} transactions}}",
+  "@portfolioTransactionCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "portfolioClosedPositions": "Closed positions",
+  "ledgerTitleWithKarat": "{name} · {karat}",
+  "@ledgerTitleWithKarat": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "karat": {
+        "type": "String"
+      }
+    }
+  },
+  "ledgerAdd": "Add",
+  "ledgerAddFirst": "Add a transaction",
+  "ledgerHolding": "Holding",
+  "ledgerNothingHeld": "Nothing held now",
+  "ledgerPerUnit": "{amount} / {unit}",
+  "@ledgerPerUnit": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "ledgerMarketValue": "Market value",
+  "ledgerUnrealised": "Unrealised",
+  "ledgerRealised": "Realised",
+  "ledgerGainWithPercent": "{amount} ({percent})",
+  "@ledgerGainWithPercent": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "ledgerDetail": "{date} · {detail}",
+  "@ledgerDetail": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "ledgerDetailWithFee": "{date} · {price} · fee {fee}",
+  "@ledgerDetailWithFee": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "price": {
+        "type": "String"
+      },
+      "fee": {
+        "type": "String"
+      }
+    }
+  },
+  "ledgerNoCostBasis": "no cost basis",
+  "ledgerCostCarried": "cost carried over",
+  "ledgerFootnote": "Cost basis is worked out from this ledger, not stored. Editing any row re-derives the holding.",
+  "ledgerOverdrawnBanner": "A sale here sells more than was held on its date — usually from editing on two devices at once. It counts as selling what was left; edit or delete it to fix the totals.",
+  "ledgerClosedLine": "Nothing held now · realised {amount}",
+  "@ledgerClosedLine": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "ledgerConflictSaveTitle": "That would oversell",
+  "ledgerConflictDeleteTitle": "Can’t delete this yet",
+  "ledgerConflictMessage": "The {kind} on {date} would then sell more than was held. Edit or delete that one first.",
+  "@ledgerConflictMessage": {
+    "placeholders": {
+      "kind": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "confirmDeleteTransactionTitle": "Delete this transaction?",
+  "confirmDeleteTransactionMessage": "{details}. The holding is worked out again without it. This can’t be undone.",
+  "@confirmDeleteTransactionMessage": {
+    "placeholders": {
+      "details": {
+        "type": "String"
+      }
+    }
+  },
+  "transactionNewTitle": "New transaction",
+  "transactionEditTitle": "Edit transaction",
+  "transactionKindBuy": "Buy",
+  "transactionKindSell": "Sell",
+  "transactionKindTransfer": "Transfer",
+  "transactionKindTransferIn": "Transfer in",
+  "transactionKindTransferOut": "Transfer out",
+  "transactionKindFee": "Fee",
+  "transactionTransferInLabel": "In",
+  "transactionTransferOutLabel": "Out",
+  "transactionFineHint": "= {quantity} of fine gold",
+  "@transactionFineHint": {
+    "placeholders": {
+      "quantity": {
+        "type": "String"
+      }
+    }
+  },
+  "transactionPerUnitKarat": "{unit} · {karat}",
+  "@transactionPerUnitKarat": {
+    "placeholders": {
+      "unit": {
+        "type": "String"
+      },
+      "karat": {
+        "type": "String"
+      }
+    }
+  },
+  "transactionBuyPrice": "Price paid (per {unit})",
+  "@transactionBuyPrice": {
+    "placeholders": {
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "transactionSalePrice": "Sale price (per {unit})",
+  "@transactionSalePrice": {
+    "placeholders": {
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "transactionCarriedCost": "Original cost (per {unit}, optional)",
+  "@transactionCarriedCost": {
+    "placeholders": {
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "transactionTotalProceeds": "Total sale amount",
+  "transactionTotalCarriedCost": "Original total cost (optional)",
+  "transactionTransferCostHelper": "What it originally cost, if you know it. Left empty, it joins with no cost basis.",
+  "transactionFee": "Fee (optional)",
+  "transactionFeeAmount": "Fee amount",
+  "transactionFeeLabel": "What it was for (optional)",
+  "transactionNote": "Note (optional)",
+  "transactionNeedsQuantity": "Enter a quantity.",
+  "transactionNeedsPrice": "Enter a price.",
+  "transactionNeedsFee": "Enter the fee amount.",
+  "transactionMoreThanHeld": "That’s more than you held on that date ({held}).",
+  "@transactionMoreThanHeld": {
+    "placeholders": {
+      "held": {
+        "type": "String"
+      }
+    }
+  },
+  "transactionPreviewTitle": "Realised gain preview",
+  "transactionProceeds": "Proceeds",
+  "transactionBasisReleased": "Cost basis released",
+  "transactionRealisedGain": "Realised gain",
+  "transactionPreviewRemaining": "Weighted average basis. Still held after this: {quantity} at {average}.",
+  "@transactionPreviewRemaining": {
+    "placeholders": {
+      "quantity": {
+        "type": "String"
+      },
+      "average": {
+        "type": "String"
+      }
+    }
+  },
+  "transactionPreviewClosesPosition": "Weighted average basis. This sells everything you hold.",
+  "backupCsvHeaderType": "Type",
+  "backupCsvHeaderFee": "Fee",
+  "backupCsvHeaderNote": "Note",
+  "csvImportTitle": "Import from a spreadsheet",
+  "csvImportEntryTitle": "Import transactions from CSV",
+  "csvImportEntrySubtitle": "From a spreadsheet, a broker export or another app",
+  "csvImportFromBackupError": "Import these as transactions",
+  "csvImportRowCount": "{count, plural, =1{1 row} other{{count} rows}}",
+  "@csvImportRowCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "csvImportEmptyFile": "This file has a header row but no data under it.",
+  "csvImportColumnsSection": "Columns",
+  "csvImportColumnsFooter": "Matched from the header row where Qima could. A price or a total will do; the asset can be a symbol or a name. * needed.",
+  "csvImportNotInFile": "Not in file",
+  "csvImportOptionsSection": "Reading the file",
+  "csvImportFallbackCurrency": "Currency",
+  "csvImportFallbackCurrencySubtitle": "For rows that don’t name one",
+  "csvImportDateOrder": "Dates like 03/04/2026 mean",
+  "csvImportDayFirst": "3 April",
+  "csvImportMonthFirst": "March 4",
+  "csvImportDecimalComma": "Comma is the decimal mark",
+  "csvImportDecimalCommaSubtitle": "Read 1.234,56 as one thousand two hundred…",
+  "csvImportNeedsColumns": "Choose at least the asset, the date and the quantity.",
+  "csvImportReview": "Review rows",
+  "csvImportReadyCount": "Ready",
+  "csvImportDuplicateCount": "Already in Qima",
+  "csvImportProblemCount": "Can’t import",
+  "csvImportSkipNote": "Rows that can’t be read, or are already in Qima, are skipped. Nothing is guessed.",
+  "csvImportShowAll": "All rows",
+  "csvImportShowProblems": "Skipped only",
+  "csvImportSkipped": "Skipped",
+  "csvImportDuplicate": "Duplicate",
+  "csvImportBackToColumns": "Columns",
+  "csvImportConfirm": "{count, plural, =0{Nothing to import} =1{Import 1 transaction} other{Import {count} transactions}}",
+  "@csvImportConfirm": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "csvImportDoneTitle": "{count, plural, =1{1 transaction imported} other{{count} transactions imported}}",
+  "@csvImportDoneTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "csvImportDoneMessage": "They’re in each asset’s ledger now. If something looks off, undo removes exactly what this import added.",
+  "csvImportUndo": "Undo this import",
+  "csvImportUndone": "{count, plural, =1{Removed 1 imported transaction} other{Removed {count} imported transactions}}",
+  "@csvImportUndone": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "csvFieldType": "Type",
+  "csvFieldAsset": "Asset name",
+  "csvFieldSymbol": "Symbol",
+  "csvFieldQuantity": "Quantity",
+  "csvFieldUnit": "Unit",
+  "csvFieldKarat": "Karat",
+  "csvFieldUnitPrice": "Price per unit",
+  "csvFieldTotal": "Total",
+  "csvFieldFee": "Fee",
+  "csvFieldCurrency": "Currency",
+  "csvFieldDate": "Date",
+  "csvFieldNote": "Note",
+  "csvProblemUnknownAsset": "unknown asset",
+  "csvProblemMissingQuantity": "no quantity",
+  "csvProblemBadNumber": "a number can’t be read",
+  "csvProblemMissingPrice": "no price",
+  "csvProblemMissingDate": "no date",
+  "csvProblemBadDate": "date can’t be read",
+  "csvProblemFutureDate": "date in the future",
+  "csvProblemUnknownType": "unknown type",
+  "csvProblemUnknownCurrency": "unknown currency",
+  "csvProblemUnsupportedUnit": "unit doesn’t fit this asset",
+  "csvProblemUnsupportedKarat": "karat doesn’t fit this asset",
+  "csvProblemOversell": "sells more than was held",
+  "csvProblemDuplicate": "already in Qima",
+  "transactionBuyPricePlain": "Price paid",
+  "transactionSalePricePlain": "Sale price",
+  "transactionCarriedCostPlain": "Original cost (optional)"
 }

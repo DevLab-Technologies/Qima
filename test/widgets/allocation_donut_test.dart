@@ -10,10 +10,10 @@ import 'package:qima/widgets/allocation_donut.dart';
 void main() {
   const colors = QimaColors.dark;
 
-  HeldInstrument heldOf(Instrument instrument, double value, {int lotCount = 1}) {
+  HeldInstrument heldOf(Instrument instrument, double value, {int transactionCount = 1}) {
     return HeldInstrument(
       instrument: instrument,
-      lotCount: lotCount,
+      transactionCount: transactionCount,
       valuation: HoldingValuation(
         value: Money(value, 'USD'),
         cost: Money(value, 'USD'),

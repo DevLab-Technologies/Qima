@@ -1,6 +1,9 @@
 import 'package:flutter/widgets.dart';
+import 'package:intl/intl.dart';
 
 import '../l10n/app_localizations.dart';
+import '../models/asset_group.dart';
+import '../models/hijri_date.dart';
 
 /// Resolves the model layer's dotted localization keys (e.g. `asset.gold`,
 /// `unit.troyOunce`) to real translated text via the generated
@@ -216,3 +219,66 @@ String? _resolve(AppLocalizations loc, String key) {
 /// left-to-right, so in Arabic the sign stays attached to the number instead
 /// of drifting to the far side ("67.05%+").
 String signedFigure(String value, {required bool isUp}) => '\u2066${isUp ? '+' : ''}$value\u2069';
+
+/// Localized name of Hijri [month] (1 = Muharram … 12 = Dhu al-Hijjah).
+String hijriMonthName(AppLocalizations loc, int month) {
+  switch (month) {
+    case 1:
+      return loc.hijriMonth1;
+    case 2:
+      return loc.hijriMonth2;
+    case 3:
+      return loc.hijriMonth3;
+    case 4:
+      return loc.hijriMonth4;
+    case 5:
+      return loc.hijriMonth5;
+    case 6:
+      return loc.hijriMonth6;
+    case 7:
+      return loc.hijriMonth7;
+    case 8:
+      return loc.hijriMonth8;
+    case 9:
+      return loc.hijriMonth9;
+    case 10:
+      return loc.hijriMonth10;
+    case 11:
+      return loc.hijriMonth11;
+    default:
+      return loc.hijriMonth12;
+  }
+}
+
+/// "12 Ramadan 1446 AH" in the app's own month names.
+String hijriDateLabel(AppLocalizations loc, HijriDate date) =>
+    loc.hijriDate(date.day, hijriMonthName(loc, date.month), date.year);
+
+/// A percentage such as 2.5 as "2.5%" in the app's locale (comma decimal in
+/// French and Spanish), isolated left-to-right so Arabic doesn't render it
+/// as "%2.5".
+String percentLabel(BuildContext context, double percent) {
+  final locale = Localizations.localeOf(context).toString();
+  final number = (NumberFormat.decimalPattern(locale)..maximumFractionDigits = 3).format(percent);
+  return '\u2066$number%\u2069';
+}
+
+/// "27 Feb 2026" in the app's locale. Unlike Material's `formatMediumDate`
+/// this always shows the year, which a hawl date one year out needs. Digits
+/// stay Western in Arabic, matching the amounts and Hijri dates beside it.
+String dateWithYear(BuildContext context, DateTime date) =>
+    (DateFormat.yMMMd(Localizations.localeOf(context).toString())..useNativeDigits = false).format(date);
+
+/// "Metals", "Cash & currencies" — the label for an [AssetGroup].
+String assetGroupLabel(AppLocalizations l10n, AssetGroup assetGroup) {
+  switch (assetGroup) {
+    case AssetGroup.metals:
+      return l10n.assetGroupMetals;
+    case AssetGroup.crypto:
+      return l10n.assetGroupCrypto;
+    case AssetGroup.equities:
+      return l10n.assetGroupEquities;
+    case AssetGroup.cash:
+      return l10n.assetGroupCash;
+  }
+}

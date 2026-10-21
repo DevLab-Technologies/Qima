@@ -34,7 +34,7 @@ List<AllocationSlice> resolveAllocation(List<HeldInstrument> holdings, QimaColor
     seenPerClass[classKey] = occurrence + 1;
 
     final base = InstrumentTheme.accentColor(holding.instrument, colors);
-    final color = _shaded(base, occurrence);
+    final color = shadeAccent(base, occurrence);
     final fraction = total > 0 ? holding.valuation.value.amount.abs() / total : 0.0;
     slices.add(AllocationSlice(holding: holding, fraction: fraction, color: color));
   }
@@ -45,7 +45,7 @@ List<AllocationSlice> resolveAllocation(List<HeldInstrument> holdings, QimaColor
 /// (occurrence 1) is lightened, 2nd (occurrence 2) darkened, 3rd lightened
 /// again (stronger), and so on — always at least a perceptible step so
 /// adjacent slices never look identical.
-Color _shaded(Color base, int occurrence) {
+Color shadeAccent(Color base, int occurrence) {
   if (occurrence == 0) return base;
   final step = ((occurrence + 1) ~/ 2) * 0.16;
   final amount = step.clamp(0.0, 0.6);

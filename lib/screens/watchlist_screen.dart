@@ -149,6 +149,11 @@ class _WatchlistScreenState extends State<WatchlistScreen> with WidgetsBindingOb
                       ),
                       const SizedBox(height: DS.spaceLG),
                       FilledButton(
+                        // Sized to its label in a centred column, so it
+                        // needs the side padding the theme leaves out.
+                        style: FilledButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(horizontal: DS.spaceXL, vertical: 14),
+                        ),
                         onPressed: () => Navigator.of(context).push(
                           MaterialPageRoute(builder: (_) => const AddInstrumentScreen()),
                         ),
