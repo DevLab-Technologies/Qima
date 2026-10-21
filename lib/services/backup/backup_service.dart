@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:typed_data';
 import 'dart:ui' show Rect;
 
@@ -210,12 +211,12 @@ class BackupService {
   /// Exports the holdings CSV (spec Phase 6) — export-only, never counted
   /// toward [lastBackupAt] (only a full JSON backup counts as "backed up").
   Future<bool> exportHoldingsCsv({
-    required List<HoldingLot> lots,
+    required List<HoldingTransaction> transactions,
     required AppLocalizations l10n,
     Rect? sharePositionOrigin,
   }) async {
     final now = DateTime.now();
-    final bytes = HoldingsCsv.bytes(lots, l10n);
+    final bytes = HoldingsCsv.bytes(transactions, l10n);
     final filename = _csvFilename(now);
     return _deliverFile(
       bytes: Uint8List.fromList(bytes),
@@ -290,6 +291,22 @@ class BackupService {
     if (file == null) return null;
     final raw = await file.readAsString();
     return PickedBackupFile(name: file.name, raw: raw);
+  }
+
+  /// Lets the user pick a spreadsheet to import transactions from.
+  Future<PickedBackupFile?> pickCsvFile() async {
+    final typeGroup = XTypeGroup(
+      label: 'CSV',
+      extensions: ['csv', 'txt'],
+      mimeTypes: ['text/csv', 'text/comma-separated-values', 'text/plain'],
+      uniformTypeIdentifiers: ['public.comma-separated-values-text', 'public.plain-text'],
+    );
+    final file = await openFile(acceptedTypeGroups: [typeGroup]);
+    if (file == null) return null;
+    final bytes = await file.readAsBytes();
+    // Spreadsheets save UTF-8 (often with a BOM); anything that isn't is
+    // read leniently rather than refused.
+    return PickedBackupFile(name: file.name, raw: utf8.decode(bytes, allowMalformed: true));
   }
 
   /// Parses [raw] into a [BackupEnvelope] — throws [BackupError] for a

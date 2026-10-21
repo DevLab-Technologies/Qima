@@ -475,7 +475,7 @@
   "backupExportFullTitle": "Full backup",
   "backupExportFullSubtitle": "Watchlist, holdings, custom tickers, alerts and settings (.json)",
   "backupExportCsvTitle": "Holdings spreadsheet",
-  "backupExportCsvSubtitle": "Your lots as a spreadsheet, for your records (.csv)",
+  "backupExportCsvSubtitle": "Every transaction as a spreadsheet (.csv) — it imports back too",
   "backupRestoreSection": "Restore",
   "backupRestoreTitle": "Import a backup",
   "backupRestoreSubtitle": "Restore from a full backup file (.json)",
@@ -559,7 +559,7 @@
   "backupImportSuccessSnackbar": "Backup restored",
   "backupImportFailedTitle": "Couldn't restore this backup",
   "backupImportCsvErrorTitle": "This is a spreadsheet, not a backup",
-  "backupImportCsvErrorMessage": "A holdings spreadsheet (.csv) only has your lots, and can't be restored. Choose a full backup file (.json) instead.",
+  "backupImportCsvErrorMessage": "This is a spreadsheet, not a Qima backup. You can import its rows as transactions instead.",
   "backupErrorNotQimaFile": "This doesn't look like a Qima backup file.",
   "backupErrorNewerVersion": "This backup was made with a newer version of Qima. Update the app to restore it.",
   "backupErrorWrongPassword": "That password didn't work.",
@@ -569,9 +569,9 @@
   "backupCsvHeaderQuantity": "Quantity",
   "backupCsvHeaderUnit": "Unit",
   "backupCsvHeaderKarat": "Karat",
-  "backupCsvHeaderUnitCost": "Unit cost",
-  "backupCsvHeaderCostCurrency": "Cost currency",
-  "backupCsvHeaderTotalCost": "Total cost",
+  "backupCsvHeaderUnitCost": "Price per unit",
+  "backupCsvHeaderCostCurrency": "Currency",
+  "backupCsvHeaderTotalCost": "Total",
   "backupCsvHeaderDate": "Date",
   "commonContinue": "Continue",
   "onboardingNext": "Next",
@@ -1134,11 +1134,11 @@
   "@helpBackupStep4Body": {
     "description": "Backup & restore help step 4 body."
   },
-  "helpBackupStep5Title": "Holdings spreadsheet",
+  "helpBackupStep5Title": "Spreadsheets",
   "@helpBackupStep5Title": {
     "description": "Backup & restore help step 5 title."
   },
-  "helpBackupStep5Body": "A .csv for accounting. It can't be restored.",
+  "helpBackupStep5Body": "Export every transaction as a .csv, or import one — from Qima, a spreadsheet or a broker. It adds transactions; it doesn’t restore settings.",
   "@helpBackupStep5Body": {
     "description": "Backup & restore help step 5 body."
   },
@@ -1326,7 +1326,7 @@
   "@helpImportPreviewStep1Title": {
     "description": "Import preview help step 1 title."
   },
-  "helpImportPreviewStep1Body": "See how many cards, lots and alerts the file contains before restoring.",
+  "helpImportPreviewStep1Body": "See how many cards, transactions and alerts the file contains before restoring.",
   "@helpImportPreviewStep1Body": {
     "description": "Import preview help step 1 body."
   },
@@ -1880,5 +1880,94 @@
       }
     }
   },
-  "transactionPreviewClosesPosition": "Weighted average basis. This sells everything you hold."
+  "transactionPreviewClosesPosition": "Weighted average basis. This sells everything you hold.",
+  "backupCsvHeaderType": "Type",
+  "backupCsvHeaderFee": "Fee",
+  "backupCsvHeaderNote": "Note",
+  "csvImportTitle": "Import from a spreadsheet",
+  "csvImportEntryTitle": "Import transactions from CSV",
+  "csvImportEntrySubtitle": "From a spreadsheet, a broker export or another app",
+  "csvImportFromBackupError": "Import these as transactions",
+  "csvImportRowCount": "{count, plural, =1{1 row} other{{count} rows}}",
+  "@csvImportRowCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "csvImportEmptyFile": "This file has a header row but no data under it.",
+  "csvImportColumnsSection": "Columns",
+  "csvImportColumnsFooter": "Matched from the header row where Qima could. A price or a total will do; the asset can be a symbol or a name. * needed.",
+  "csvImportNotInFile": "Not in file",
+  "csvImportOptionsSection": "Reading the file",
+  "csvImportFallbackCurrency": "Currency",
+  "csvImportFallbackCurrencySubtitle": "For rows that don’t name one",
+  "csvImportDateOrder": "Dates like 03/04/2026 mean",
+  "csvImportDayFirst": "3 April",
+  "csvImportMonthFirst": "March 4",
+  "csvImportDecimalComma": "Comma is the decimal mark",
+  "csvImportDecimalCommaSubtitle": "Read 1.234,56 as one thousand two hundred…",
+  "csvImportNeedsColumns": "Choose at least the asset, the date and the quantity.",
+  "csvImportReview": "Review rows",
+  "csvImportReadyCount": "Ready",
+  "csvImportDuplicateCount": "Already in Qima",
+  "csvImportProblemCount": "Can’t import",
+  "csvImportSkipNote": "Rows that can’t be read, or are already in Qima, are skipped. Nothing is guessed.",
+  "csvImportShowAll": "All rows",
+  "csvImportShowProblems": "Skipped only",
+  "csvImportSkipped": "Skipped",
+  "csvImportDuplicate": "Duplicate",
+  "csvImportBackToColumns": "Columns",
+  "csvImportConfirm": "{count, plural, =0{Nothing to import} =1{Import 1 transaction} other{Import {count} transactions}}",
+  "@csvImportConfirm": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "csvImportDoneTitle": "{count, plural, =1{1 transaction imported} other{{count} transactions imported}}",
+  "@csvImportDoneTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "csvImportDoneMessage": "They’re in each asset’s ledger now. If something looks off, undo removes exactly what this import added.",
+  "csvImportUndo": "Undo this import",
+  "csvImportUndone": "{count, plural, =1{Removed 1 imported transaction} other{Removed {count} imported transactions}}",
+  "@csvImportUndone": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "csvFieldType": "Type",
+  "csvFieldAsset": "Asset name",
+  "csvFieldSymbol": "Symbol",
+  "csvFieldQuantity": "Quantity",
+  "csvFieldUnit": "Unit",
+  "csvFieldKarat": "Karat",
+  "csvFieldUnitPrice": "Price per unit",
+  "csvFieldTotal": "Total",
+  "csvFieldFee": "Fee",
+  "csvFieldCurrency": "Currency",
+  "csvFieldDate": "Date",
+  "csvFieldNote": "Note",
+  "csvProblemUnknownAsset": "unknown asset",
+  "csvProblemMissingQuantity": "no quantity",
+  "csvProblemBadNumber": "a number can’t be read",
+  "csvProblemMissingPrice": "no price",
+  "csvProblemMissingDate": "no date",
+  "csvProblemBadDate": "date can’t be read",
+  "csvProblemFutureDate": "date in the future",
+  "csvProblemUnknownType": "unknown type",
+  "csvProblemUnknownCurrency": "unknown currency",
+  "csvProblemUnsupportedUnit": "unit doesn’t fit this asset",
+  "csvProblemUnsupportedKarat": "karat doesn’t fit this asset",
+  "csvProblemOversell": "sells more than was held",
+  "csvProblemDuplicate": "already in Qima"
 }

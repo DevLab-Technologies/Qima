@@ -10,6 +10,7 @@ import '../theme/design_system.dart';
 import '../theme/help_topics.dart';
 import '../theme/qima_colors.dart';
 import '../widgets/help_button.dart';
+import 'csv_import_screen.dart';
 import 'export_backup_sheet.dart';
 import 'import_preview_screen.dart';
 
@@ -116,6 +117,17 @@ class BackupScreen extends StatelessWidget {
                     onTap: () => _pickAndPreview(context),
                   ),
                 ),
+                const SizedBox(height: DS.spaceSM),
+                DSCard(
+                  padding: EdgeInsets.zero,
+                  child: ListTile(
+                    leading: Icon(Icons.table_chart_outlined, color: colors.brand),
+                    title: Text(l10n.csvImportEntryTitle, style: TextStyle(color: colors.textPrimary)),
+                    subtitle: Text(l10n.csvImportEntrySubtitle, style: TextStyle(color: colors.textTertiary, fontSize: 12)),
+                    trailing: Icon(Icons.chevron_right, color: colors.textTertiary),
+                    onTap: () => _pickCsv(context),
+                  ),
+                ),
                 const SizedBox(height: DS.spaceLG),
                 _SectionHeader(l10n.backupReminderSection),
                 const _ReminderToggleCard(),
@@ -136,7 +148,15 @@ class BackupScreen extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     final box = context.findRenderObject() as RenderBox?;
     final origin = box == null ? null : (box.localToGlobal(Offset.zero) & box.size);
-    await cubit.backupService.exportHoldingsCsv(lots: cubit.state.lots, l10n: l10n, sharePositionOrigin: origin);
+    await cubit.backupService.exportHoldingsCsv(transactions: cubit.state.transactions, l10n: l10n, sharePositionOrigin: origin);
+  }
+
+  Future<void> _pickCsv(BuildContext context) async {
+    final picked = await context.read<AppCubit>().backupService.pickCsvFile();
+    if (picked == null || !context.mounted) return;
+    await Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => CsvImportScreen(fileName: picked.name, text: picked.raw)),
+    );
   }
 
   Future<void> _pickAndPreview(BuildContext context) async {

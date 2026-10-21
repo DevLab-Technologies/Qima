@@ -211,6 +211,20 @@ class SyncedStore<T extends Syncable> {
     return missing.length;
   }
 
+  /// Tombstones every item in [ids] in one commit.
+  Future<List<T>> deleteAll(Iterable<String> ids) async {
+    final targets = ids.toSet();
+    final local = await _readLocal();
+    if (!local.any((r) => targets.contains(r.item.id) && !r.deleted)) return _liveSorted(local);
+    final now = DateTime.now();
+    final updated = [
+      for (final r in local)
+        targets.contains(r.item.id) && !r.deleted ? r.copyWith(deleted: true, updatedAt: now) : r,
+    ];
+    await _commit(updated);
+    return _liveSorted(await _readLocal());
+  }
+
   /// Reassigns order for each id in [orderedIds]; only bumps `updatedAt` for
   /// items whose order actually changed.
   Future<List<T>> setOrder(List<String> orderedIds) async {
