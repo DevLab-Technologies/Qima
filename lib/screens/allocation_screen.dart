@@ -49,7 +49,7 @@ class AllocationScreen extends StatelessWidget {
               resolve: InstrumentCatalog.instrument,
             );
             final drift = Allocation.drift(
-              lots: state.lots,
+              ledger: state.ledger,
               heldNow: held,
               seriesByID: state.seriesByID,
               fxHistory: state.fxHistory,

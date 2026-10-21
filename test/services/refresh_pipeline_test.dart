@@ -11,6 +11,7 @@ import 'package:qima/services/alerts_store.dart';
 import 'package:qima/services/cloud_kv_store.dart';
 import 'package:qima/services/custom_instrument_store.dart';
 import 'package:qima/services/holdings_store.dart';
+import 'package:qima/services/transactions_store.dart';
 import 'package:qima/services/local_file_store.dart';
 import 'package:qima/services/notification_service.dart';
 import 'package:qima/services/preferences.dart';
@@ -110,7 +111,7 @@ void main() {
     final pipeline = RefreshPipeline(
       repository: repository,
       watchlistStore: watchlistStore,
-      holdingsStore: HoldingsStore(cloud: cloud),
+      transactionsStore: TransactionsStore(legacyLots: HoldingsStore(cloud: cloud), cloud: cloud),
       customInstrumentStore: CustomInstrumentStore(cloud: cloud),
       alertsStore: alertsStore,
       alertRuntimeStore: runtimeStore,

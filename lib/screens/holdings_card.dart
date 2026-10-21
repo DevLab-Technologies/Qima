@@ -14,10 +14,11 @@ import '../theme/strings.dart';
 import '../widgets/stat_pill.dart';
 import 'holdings_screen.dart';
 
-/// Compact holdings summary card on the instrument detail screen: "N lots ›"
-/// plus Value/Gain/Gain % (spec §v2-A "Instrument detail"). Tapping it opens
-/// the full lot list on [HoldingsScreen]. Shows an "add first lot" prompt
-/// when the instrument has no lots yet.
+/// Compact holdings summary card on the instrument detail screen: "N
+/// transactions ›" plus Value/Gain/Gain % (spec §v2-A "Instrument detail").
+/// Tapping it opens the ledger on [HoldingsScreen]. Shows an "add your
+/// first" prompt with no transactions, and the realised result once a
+/// position has been sold off entirely.
 class HoldingsCard extends StatelessWidget {
   final Instrument instrument;
   final String displayCurrency;
@@ -45,13 +46,14 @@ class HoldingsCard extends StatelessWidget {
     final unit = refUnit ?? instrument.quotation.defaultUnit;
 
     return BlocBuilder<AppCubit, AppState>(
-      buildWhen: (previous, current) => previous.hideBalances != current.hideBalances || previous.lots != current.lots,
+      buildWhen: (previous, current) =>
+          previous.hideBalances != current.hideBalances || previous.ledger != current.ledger || previous.rates != current.rates,
       builder: (context, state) {
-        // Recomputed from `state.lots` on every rebuild (rather than hoisted
-        // above the BlocBuilder) so a saved/deleted lot is reflected
-        // immediately — [buildWhen] now rebuilds on `lots` changes too.
+        // Recomputed on every rebuild (rather than hoisted above the
+        // BlocBuilder) so a saved or deleted transaction shows at once.
         final lots = cubit.lotsFor(instrument);
-        final lotCount = lots.length;
+        final transactionCount = cubit.transactionsFor(instrument).length;
+        final position = state.ledger[instrument.id];
         final valuation = cubit.valuationFor(instrument, displayCurrency);
         final hidden = state.hideBalances;
         final held = HoldingTotals.totalHeld(lots: lots, refUnit: unit, refKarat: refKarat);
@@ -84,7 +86,7 @@ class HoldingsCard extends StatelessWidget {
                         style: TextStyle(color: colors.textPrimary, fontSize: 16, fontWeight: FontWeight.w700)),
                     const SizedBox(width: DS.spaceXS),
                     Text(
-                      l10n.portfolioLotCount(lotCount),
+                      l10n.portfolioTransactionCount(transactionCount),
                       style: TextStyle(color: colors.textTertiary, fontSize: 13),
                     ),
                     const Spacer(),
@@ -94,7 +96,16 @@ class HoldingsCard extends StatelessWidget {
                 if (valuation == null)
                   Padding(
                     padding: const EdgeInsets.only(top: DS.spaceSM),
-                    child: Text(l10n.holdingsEmpty, style: TextStyle(color: colors.textTertiary)),
+                    child: Text(
+                      transactionCount == 0 || position == null
+                          ? l10n.holdingsEmpty
+                          : l10n.ledgerClosedLine(Masking.signedAmount(
+                              position.realised.inCurrency(displayCurrency, state.rates),
+                              hidden: hidden,
+                              isUp: position.realised.inCurrency(displayCurrency, state.rates).amount >= 0,
+                            )),
+                      style: TextStyle(color: colors.textTertiary),
+                    ),
                   )
                 else ...[
                   if (averageCost != null) ...[

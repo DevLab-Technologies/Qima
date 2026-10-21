@@ -4,6 +4,7 @@ import 'asset.dart';
 import 'asset_group.dart';
 import 'fx_history.dart';
 import 'holding.dart';
+import 'ledger.dart';
 import 'metal_breakdown.dart';
 import 'money.dart';
 import 'quote.dart';
@@ -141,10 +142,10 @@ class Allocation {
   /// reaches back to the previous 1 January instead, so the card doesn't
   /// go blank every January.
   ///
-  /// The starting split values the lots held at the end of that day at
-  /// that day's stored prices and FX, like the portfolio history chart.
+  /// The starting split values what the ledger held at the end of that day
+  /// at that day's stored prices and FX, like the portfolio history chart.
   static DriftResult? drift({
-    required List<HoldingLot> lots,
+    required Ledger ledger,
     required List<HeldInstrument> heldNow,
     required Map<String, QuoteSeries> seriesByID,
     required FXHistory fxHistory,
@@ -153,9 +154,10 @@ class Allocation {
     required Instrument? Function(String instrumentID) resolve,
     required DateTime now,
   }) {
-    if (lots.isEmpty || heldNow.isEmpty) return null;
+    final firstDate = ledger.firstDate;
+    if (firstDate == null || heldNow.isEmpty) return null;
     final today = _day(now);
-    final firstHolding = _day(lots.map((l) => l.date).reduce((a, b) => a.isBefore(b) ? a : b));
+    final firstHolding = _day(firstDate);
 
     // Calendar-day arithmetic throughout: adding a Duration of days drifts
     // by an hour across a daylight-saving change.
@@ -169,14 +171,15 @@ class Allocation {
     final endOfDay = _plusDays(since, 1).subtract(const Duration(microseconds: 1));
     final fx = baseCurrency == 'USD' ? 1.0 : (fxHistory.rate(baseCurrency, endOfDay) ?? rates.rate(baseCurrency) ?? 1);
     final then = <AssetGroup, double>{};
-    for (final lot in lots) {
-      if (lot.date.isAfter(endOfDay)) continue;
-      final instrument = resolve(lot.instrumentID);
+    for (final position in ledger.positions.values) {
+      final held = position.fineOuncesOn(endOfDay);
+      if (held <= 0) continue;
+      final instrument = resolve(position.instrumentID);
       if (instrument == null) continue;
-      final price = _priceOnOrBefore(seriesByID[lot.instrumentID], endOfDay);
+      final price = _priceOnOrBefore(seriesByID[position.instrumentID], endOfDay);
       if (price == null) return const DriftNoPriceHistory();
       final group = AssetGroup.of(instrument.assetClass);
-      then[group] = (then[group] ?? 0) + lot.fineOunces * price * fx;
+      then[group] = (then[group] ?? 0) + held * price * fx;
     }
 
     final thenShares = {for (final s in _shares(then, baseCurrency)) s.key: s.fraction};

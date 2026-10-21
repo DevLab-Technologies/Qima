@@ -3,11 +3,15 @@ import 'package:qima/models/asset.dart';
 import 'package:qima/models/chart_range.dart';
 import 'package:qima/models/fx_history.dart';
 import 'package:qima/models/holding.dart';
+import 'package:qima/models/holding_transaction.dart';
+import 'package:qima/models/ledger.dart';
 import 'package:qima/models/instrument_catalog.dart';
 import 'package:qima/models/metal_breakdown.dart';
 import 'package:qima/models/money.dart';
 import 'package:qima/models/portfolio_history.dart';
 import 'package:qima/models/quote.dart';
+
+Ledger ledgerOf(List<HoldingLot> lots) => Ledger.derive(lots.map(HoldingTransaction.fromLot));
 
 void main() {
   final gold = InstrumentCatalog.instrument('metal.XAU')!;
@@ -24,7 +28,7 @@ void main() {
   group('PortfolioHistory.build — day walk correctness', () {
     test('empty portfolio (no lots) returns an empty series', () {
       final points = PortfolioHistory.build(
-        lots: const [],
+        ledger: ledgerOf(const []),
         seriesByID: const {},
         rates: usdRates,
         fxHistory: FXHistory.empty,
@@ -53,7 +57,7 @@ void main() {
       ]);
 
       final points = PortfolioHistory.build(
-        lots: [lot],
+        ledger: ledgerOf([lot]),
         seriesByID: {gold.id: series},
         rates: usdRates,
         fxHistory: FXHistory.empty,
@@ -88,7 +92,7 @@ void main() {
       final series = seriesOf(gold, [MapEntry(DateTime(2024, 6, 5), 2000)]);
 
       final points24 = PortfolioHistory.build(
-        lots: [k24],
+        ledger: ledgerOf([k24]),
         seriesByID: {gold.id: series},
         rates: usdRates,
         fxHistory: FXHistory.empty,
@@ -97,7 +101,7 @@ void main() {
         now: now,
       );
       final points21 = PortfolioHistory.build(
-        lots: [k21],
+        ledger: ledgerOf([k21]),
         seriesByID: {gold.id: series},
         rates: usdRates,
         fxHistory: FXHistory.empty,
@@ -130,7 +134,7 @@ void main() {
       final rates = FXRates(base: 'USD', rates: const {'USD': 1, 'EUR': 0.95}, updatedAt: DateTime(2024));
 
       final points = PortfolioHistory.build(
-        lots: [lot],
+        ledger: ledgerOf([lot]),
         seriesByID: {gold.id: series},
         rates: rates,
         fxHistory: fxHistory,
@@ -163,7 +167,7 @@ void main() {
       final series = seriesOf(gold, [MapEntry(DateTime(2024, 6, 4), 2000)]);
 
       final points = PortfolioHistory.build(
-        lots: [lot],
+        ledger: ledgerOf([lot]),
         seriesByID: {gold.id: series},
         rates: usdRates,
         fxHistory: FXHistory.empty,
@@ -209,7 +213,7 @@ void main() {
       };
 
       final points = PortfolioHistory.build(
-        lots: lots,
+        ledger: ledgerOf(lots),
         seriesByID: series,
         rates: rates,
         fxHistory: FXHistory.empty,
@@ -237,7 +241,7 @@ void main() {
       final series = seriesOf(gold, [MapEntry(DateTime(2023, 1, 15), 1500), MapEntry(now, 2000)]);
 
       final points = PortfolioHistory.build(
-        lots: [lot],
+        ledger: ledgerOf([lot]),
         seriesByID: {gold.id: series},
         rates: usdRates,
         fxHistory: FXHistory.empty,
@@ -265,7 +269,7 @@ void main() {
       // "All" starts at the (future) lot date, which is after `now` — must
       // return an empty series rather than looping backwards or throwing.
       final all = PortfolioHistory.build(
-        lots: [lot],
+        ledger: ledgerOf([lot]),
         seriesByID: {gold.id: seriesOf(gold, const [])},
         rates: usdRates,
         fxHistory: FXHistory.empty,
@@ -278,7 +282,7 @@ void main() {
       // A bounded range that starts before `now`: every day is valued at
       // zero since the only lot isn't dated yet.
       final month = PortfolioHistory.build(
-        lots: [lot],
+        ledger: ledgerOf([lot]),
         seriesByID: {gold.id: seriesOf(gold, const [])},
         rates: usdRates,
         fxHistory: FXHistory.empty,
@@ -321,7 +325,7 @@ void main() {
       final series = seriesOf(gold, [MapEntry(DateTime(2024, 6, 1), 2000)]);
 
       final points = PortfolioHistory.build(
-        lots: lots,
+        ledger: ledgerOf(lots),
         seriesByID: {gold.id: series},
         rates: usdRates,
         fxHistory: FXHistory.empty,
