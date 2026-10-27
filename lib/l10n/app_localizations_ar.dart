@@ -250,7 +250,7 @@ class AppLocalizationsAr extends AppLocalizations {
       'عدد مرات جلب الودجات في الخلفية للأسعار الجديدة.';
 
   @override
-  String get settingsAbout => 'حول';
+  String get settingsLanguage => 'اللغة';
 
   @override
   String get settingsLanguageSystem => 'اتباع لغة النظام';
@@ -468,25 +468,25 @@ class AppLocalizationsAr extends AppLocalizations {
   String get unitAbbrKilogram => 'كجم';
 
   @override
-  String get karatShort24 => '٢٤ قيراط';
+  String get karatShort24 => '24 قيراط';
 
   @override
-  String get karatShort22 => '٢٢ قيراط';
+  String get karatShort22 => '22 قيراط';
 
   @override
-  String get karatShort21 => '٢١ قيراط';
+  String get karatShort21 => '21 قيراط';
 
   @override
-  String get karatShort18 => '١٨ قيراط';
+  String get karatShort18 => '18 قيراط';
 
   @override
   String get range1D => 'يوم';
 
   @override
-  String get range3D => '٣ أيام';
+  String get range3D => '3 أيام';
 
   @override
-  String get range7D => '٧ أيام';
+  String get range7D => '7 أيام';
 
   @override
   String get range1W => 'أسبوع';
@@ -495,10 +495,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get range1M => 'شهر';
 
   @override
-  String get range3M => '٣ أشهر';
+  String get range3M => '3 أشهر';
 
   @override
-  String get range6M => '٦ أشهر';
+  String get range6M => '6 أشهر';
 
   @override
   String get rangeYtd => 'منذ بداية العام';
@@ -507,25 +507,25 @@ class AppLocalizationsAr extends AppLocalizations {
   String get range1Y => 'سنة';
 
   @override
-  String get range5Y => '٥ سنوات';
+  String get range5Y => '5 سنوات';
 
   @override
   String get rangeAll => 'الكل';
 
   @override
-  String get refresh15m => '١٥ دقيقة';
+  String get refresh15m => '15 دقيقة';
 
   @override
-  String get refresh30m => '٣٠ دقيقة';
+  String get refresh30m => '30 دقيقة';
 
   @override
   String get refresh1h => 'ساعة واحدة';
 
   @override
-  String get refresh3h => '٣ ساعات';
+  String get refresh3h => '3 ساعات';
 
   @override
-  String get refresh6h => '٦ ساعات';
+  String get refresh6h => '6 ساعات';
 
   @override
   String get commonCancel => 'إلغاء';
@@ -575,16 +575,16 @@ class AppLocalizationsAr extends AppLocalizations {
   String get alertDirectionEither => 'أي منهما';
 
   @override
-  String get alertWindowWithin24h => 'خلال ٢٤ ساعة';
+  String get alertWindowWithin24h => 'خلال 24 ساعة';
 
   @override
-  String get alertWindowWithin7d => 'خلال ٧ أيام';
+  String get alertWindowWithin7d => 'خلال 7 أيام';
 
   @override
-  String get alertWindow24h => '٢٤ ساعة';
+  String get alertWindow24h => '24 ساعة';
 
   @override
-  String get alertWindow7d => '٧ أيام';
+  String get alertWindow7d => '7 أيام';
 
   @override
   String get alertBellTooltip => 'تنبيهات السعر';
@@ -671,10 +671,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get alertsScreenTitle => 'التنبيهات';
-
-  @override
-  String get alertsScreenInfo =>
-      'تُفحص التنبيهات تقريبًا كل ١٥ دقيقة في الخلفية، وباستمرار أثناء فتح قيمة.';
 
   @override
   String get alertsScreenEmptyTitle => 'لا توجد تنبيهات بعد';
@@ -1281,7 +1277,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get helpAssetDetailStep4Body =>
-      'اضغط على الجرس لتصلك إشعارات عند تجاوز السعر لمستوى أو تحرّكه بنسبة مئوية.';
+      'اضغط على + في بطاقة التنبيهات لتصلك إشعارات عند تجاوز السعر لمستوى أو تحرّكه بنسبة مئوية.';
 
   @override
   String get helpAssetDetailStep5Title => 'تابع ما تملكه';

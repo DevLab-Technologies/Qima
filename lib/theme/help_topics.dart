@@ -55,7 +55,7 @@ HelpTopic helpTopicFor(BuildContext context, HelpTopicId id) {
           HelpStep(icon: Icons.date_range_outlined, title: l10n.helpAssetDetailStep1Title, body: l10n.helpAssetDetailStep1Body),
           HelpStep(icon: Icons.tune, title: l10n.helpAssetDetailStep2Title, body: l10n.helpAssetDetailStep2Body),
           HelpStep(icon: Icons.view_column_outlined, title: l10n.helpAssetDetailStep3Title, body: l10n.helpAssetDetailStep3Body),
-          HelpStep(icon: Icons.notifications_outlined, title: l10n.helpAssetDetailStep4Title, body: l10n.helpAssetDetailStep4Body),
+          HelpStep(icon: Icons.add_alert_outlined, title: l10n.helpAssetDetailStep4Title, body: l10n.helpAssetDetailStep4Body),
           HelpStep(icon: Icons.account_balance_wallet_outlined, title: l10n.helpAssetDetailStep5Title, body: l10n.helpAssetDetailStep5Body),
         ],
       );
@@ -80,6 +80,7 @@ HelpTopic helpTopicFor(BuildContext context, HelpTopicId id) {
           HelpStep(icon: Icons.add_circle_outline, title: l10n.helpHoldingsStep2Title, body: l10n.helpHoldingsStep2Body),
           HelpStep(icon: Icons.edit_outlined, title: l10n.helpHoldingsStep3Title, body: l10n.helpHoldingsStep3Body),
         ],
+        footnote: l10n.ledgerFootnote,
       );
     case HelpTopicId.lotEditor:
       return HelpTopic(
@@ -201,6 +202,7 @@ HelpTopic helpTopicFor(BuildContext context, HelpTopicId id) {
           HelpStep(icon: Icons.merge_type, title: l10n.helpImportPreviewStep2Title, body: l10n.helpImportPreviewStep2Body),
           HelpStep(icon: Icons.check_circle_outline, title: l10n.helpImportPreviewStep3Title, body: l10n.helpImportPreviewStep3Body),
         ],
+        footnote: l10n.csvImportSkipNote,
       );
     case HelpTopicId.widgets:
       return HelpTopic(

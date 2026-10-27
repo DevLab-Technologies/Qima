@@ -134,14 +134,12 @@ class _ZakatSettingsScreenState extends State<ZakatSettingsScreen> with WidgetsB
                   child: Column(
                     children: [
                       for (final assetGroup in AssetGroup.values)
-                        SwitchListTile(
+                        SwitchListTile.adaptive(
                           contentPadding: EdgeInsets.zero,
                           title: Text(assetGroupLabel(l10n, assetGroup), style: TextStyle(color: colors.textPrimary)),
                           subtitle: Text(_classSubtitle(l10n, assetGroup),
                               style: TextStyle(color: colors.textTertiary, fontSize: 12)),
                           value: settings.includedClasses.contains(assetGroup),
-                          activeThumbColor: colors.onBrand,
-                          activeTrackColor: colors.brand,
                           onChanged: (_) => update((s) => s.toggleClass(assetGroup)),
                         ),
                       if (settings.holdingOverrides.isNotEmpty) ...[
@@ -176,7 +174,7 @@ class _ZakatSettingsScreenState extends State<ZakatSettingsScreen> with WidgetsB
                         ],
                         selected: {settings.calendar},
                         onSelectionChanged: (s) => update((current) => current.copyWith(calendar: s.first)),
-                        style: DS.segmentedButtonStyle(colors, colors.brand),
+                        showSelectedIcon: false,
                       ),
                       if (settings.calendar == HawlCalendar.gregorian) ...[
                         const SizedBox(height: DS.spaceXS),
@@ -214,7 +212,7 @@ class _ZakatSettingsScreenState extends State<ZakatSettingsScreen> with WidgetsB
                           ),
                         ),
                       Divider(color: colors.hairline),
-                      SwitchListTile(
+                      SwitchListTile.adaptive(
                         contentPadding: EdgeInsets.zero,
                         title: Text(l10n.zakatRemind, style: TextStyle(color: colors.textPrimary)),
                         subtitle: Text(
@@ -226,8 +224,6 @@ class _ZakatSettingsScreenState extends State<ZakatSettingsScreen> with WidgetsB
                           style: TextStyle(color: colors.textTertiary, fontSize: 12),
                         ),
                         value: settings.remind && start != null,
-                        activeThumbColor: colors.onBrand,
-                        activeTrackColor: colors.brand,
                         onChanged: start == null ? null : (value) => update((s) => s.copyWith(remind: value)),
                       ),
                       if (start != null && settings.remind && !state.notificationsEnabled)

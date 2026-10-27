@@ -11,6 +11,7 @@ import '../theme/masking.dart';
 import '../theme/price_chart.dart';
 import '../theme/qima_colors.dart';
 import '../theme/strings.dart';
+import 'range_selector.dart';
 
 /// Watchlist portfolio hero card: value, a brand-gold portfolio chart (never
 /// trend-colored, per spec §v2-A), the range's gain-change headline, and
@@ -77,7 +78,7 @@ class PortfolioHero extends StatelessWidget {
               children: [
                 Text(
                   Masking.amount(valuation.value, hidden: hideBalances),
-                  style: TextStyle(color: colors.textPrimary, fontSize: 28, fontWeight: FontWeight.w800),
+                  style: TextStyle(color: colors.textPrimary, fontSize: DS.figureHero, fontWeight: FontWeight.w800),
                 ),
               ],
             ),
@@ -107,9 +108,11 @@ class PortfolioHero extends StatelessWidget {
                       points: points,
                       isTrendingUp: change?.isUp ?? true,
                       accent: colors.brand,
-                      lineColor: colors.brand,
+                      // accentGold is a deeper gold than the light-mode
+                      // brand, so the line stands out from the card's wash.
+                      lineColor: colors.accentGold,
                       showsAxes: false,
-                      lineWidth: 2,
+                      lineWidth: 2.25,
                       maskValues: hideBalances,
                     )
                   : Center(
@@ -122,22 +125,12 @@ class PortfolioHero extends StatelessWidget {
             // switching ranges).
             GestureDetector(
               onTap: () {},
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: [
-                    for (final range in ChartRange.portfolioSelectable)
-                      Padding(
-                        padding: const EdgeInsets.only(right: DS.spaceXS),
-                        child: DSChoiceChip(
-                          label: displayLabel(context, range.labelKey),
-                          selected: selectedRange == range,
-                          onSelected: (_) => onSelectRange(range),
-                          accent: colors.brand,
-                        ),
-                      ),
-                  ],
-                ),
+              child: RangeSelector(
+                ranges: ChartRange.portfolioSelectable,
+                selected: selectedRange,
+                onSelected: onSelectRange,
+                accent: colors.brand,
+                fill: true,
               ),
             ),
           ],

@@ -194,9 +194,11 @@ class _ReminderCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(l10n.backupReminderCardMessage, style: TextStyle(color: colors.textTertiary, fontSize: 12)),
-                const SizedBox(height: DS.spaceSM),
-                TextButton(
-                  style: TextButton.styleFrom(foregroundColor: colors.brand, padding: EdgeInsets.zero),
+                const SizedBox(height: DS.spaceMD),
+                FilledButton(
+                  style: FilledButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(horizontal: DS.spaceLG, vertical: DS.spaceSM),
+                  ),
                   onPressed: onBackUpNow,
                   child: Text(l10n.backupReminderCardAction),
                 ),
@@ -236,13 +238,11 @@ class _ReminderToggleCardState extends State<_ReminderToggleCard> {
     final l10n = AppLocalizations.of(context)!;
     final colors = context.colors;
     return DSCard(
-      child: SwitchListTile(
+      child: SwitchListTile.adaptive(
         contentPadding: EdgeInsets.zero,
         title: Text(l10n.backupReminderToggleTitle, style: TextStyle(color: colors.textPrimary)),
         subtitle: Text(l10n.backupReminderToggleSubtitle, style: TextStyle(color: colors.textTertiary, fontSize: 12)),
         value: _enabled,
-        activeThumbColor: colors.onBrand,
-        activeTrackColor: colors.brand,
         onChanged: (value) async {
           setState(() => _enabled = value);
           await context.read<AppCubit>().backupService.setReminderEnabled(value);
@@ -263,7 +263,7 @@ class _SectionHeader extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: DS.spaceXS, left: 4),
       child: Text(
         title.toUpperCase(),
-        style: TextStyle(color: context.colors.textTertiary, fontSize: 12, fontWeight: FontWeight.w600, letterSpacing: 0.5),
+        style: DS.overline(context, color: context.colors.textTertiary, fontSize: 12, fontWeight: FontWeight.w600),
       ),
     );
   }

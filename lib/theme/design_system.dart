@@ -19,6 +19,7 @@ class DS {
   static const double radiusPill = 100;
 
   // ---- Spacing ----
+  static const double space2XS = 4;
   static const double spaceXS = 6;
   static const double spaceSM = 10;
   static const double spaceMD = 16;
@@ -26,6 +27,15 @@ class DS {
   static const double spaceXL = 28;
 
   // ---- Typography ----
+  /// Big headline figures: the asset price on the detail screen, and the
+  /// portfolio/zakat totals on hero cards.
+  static const double figureDisplay = 40;
+  static const double figureHero = 30;
+
+  /// Arabic glyphs read smaller than Latin ones at the same point size, so
+  /// small Arabic labels (overlines, captions) get this many points more.
+  static const double arabicSmallTextBoost = 1.5;
+
   /// Primary family when the app runs in Arabic; it ships matching Latin
   /// glyphs, so digits and tickers sit evenly with the Arabic around them.
   static const String arabicFontFamily = 'Almarai';
@@ -39,6 +49,25 @@ class DS {
   /// (currency symbols, Arabic names) render in Almarai rather than the system's
   /// basic Arabic face, and the Saudi Riyal sign always has a glyph.
   static const List<String> fontFamilyFallback = [arabicFontFamily, 'Riyal'];
+
+  /// Small caption style for section headers and metric labels. Latin
+  /// overlines are letter-spaced; Arabic gets no letter spacing (it would
+  /// break the joins between letters) and [arabicSmallTextBoost] more points,
+  /// since Arabic glyphs read smaller at the same size.
+  static TextStyle overline(
+    BuildContext context, {
+    required Color color,
+    double fontSize = 12,
+    FontWeight fontWeight = FontWeight.w600,
+  }) {
+    final arabic = Localizations.maybeLocaleOf(context)?.languageCode == 'ar';
+    return TextStyle(
+      color: color,
+      fontSize: arabic ? fontSize + arabicSmallTextBoost : fontSize,
+      fontWeight: fontWeight,
+      letterSpacing: arabic ? 0 : 0.5,
+    );
+  }
 
   static LinearGradient cardFill(QimaColors colors) => LinearGradient(
         begin: Alignment.topCenter,
@@ -65,17 +94,17 @@ class DS {
       borderRadius: BorderRadius.circular(cornerRadius),
       border: Border.all(color: colors.hairline, width: 1),
       boxShadow: [
-        BoxShadow(color: colors.shadow, blurRadius: 18, offset: const Offset(0, 10)),
+        BoxShadow(color: colors.shadow, blurRadius: 10, offset: const Offset(0, 3)),
       ],
     );
   }
 
-  /// `.dsTile` — inset tile, no shadow.
+  /// `.dsTile` — a flat inset tile with no border or shadow, so a tile
+  /// inside a card reads as a quiet grouping rather than a second card.
   static BoxDecoration tile(QimaColors colors, {double cornerRadius = radiusTile}) {
     return BoxDecoration(
-      gradient: tileFill(colors),
+      color: colors.tileTop,
       borderRadius: BorderRadius.circular(cornerRadius),
-      border: Border.all(color: colors.hairline, width: 1),
     );
   }
 
@@ -86,8 +115,8 @@ class DS {
       gradient: cardFill(colors),
       borderRadius: BorderRadius.circular(cornerRadius),
       boxShadow: [
-        BoxShadow(color: accent.withValues(alpha: 0.18), blurRadius: 24, offset: const Offset(0, 12)),
-        BoxShadow(color: colors.shadow, blurRadius: 18, offset: const Offset(0, 10)),
+        BoxShadow(color: accent.withValues(alpha: 0.10), blurRadius: 20, offset: const Offset(0, 6)),
+        BoxShadow(color: colors.shadow, blurRadius: 10, offset: const Offset(0, 3)),
       ],
     );
   }
@@ -99,7 +128,7 @@ class DS {
     return LinearGradient(
       begin: Alignment.topRight,
       end: Alignment.bottomLeft,
-      colors: [accent.withValues(alpha: 0.55), colors.hairline],
+      colors: [accent.withValues(alpha: 0.30), colors.hairline],
     );
   }
 
@@ -107,34 +136,39 @@ class DS {
     return RadialGradient(
       center: Alignment.topRight,
       radius: 1.2,
-      colors: [accent.withValues(alpha: 0.32), accent.withValues(alpha: 0.0)],
+      colors: [accent.withValues(alpha: 0.20), accent.withValues(alpha: 0.0)],
     );
   }
 
-  /// Style for a [SegmentedButton] whose selected segment should be tinted
-  /// with [accent] instead of Material 3's auto-generated (and, for a gold
-  /// seed color, often blue/purple-looking) `secondaryContainer`. Pass the
-  /// current instrument's accent (`InstrumentTheme.accentColor`) wherever an
-  /// instrument is in scope, or `colors.brand` when it isn't (spec §3.1/§3.2).
-  /// The selected segment's fill is a brand-style accent, so its label uses
-  /// [QimaColors.onBrand] rather than a fixed dark color.
-  static ButtonStyle segmentedButtonStyle(QimaColors colors, Color accent) {
+  /// Style for every [SegmentedButton]: a sliding-control look — a grey
+  /// track with the selected segment raised as a [QimaColors.segmentThumb]
+  /// — instead of Material 3's outlined segments with a solid fill. The
+  /// border is drawn in the track's own color, so it reads as the gap that
+  /// insets the thumb rather than as an outline. Callers pass
+  /// `showSelectedIcon: false`; the thumb already marks the selection.
+  static ButtonStyle segmentedButtonStyle(QimaColors colors) {
     return SegmentedButton.styleFrom(
       backgroundColor: colors.tileTop,
       foregroundColor: colors.textSecondary,
-      selectedBackgroundColor: accent,
-      selectedForegroundColor: colors.onBrand,
-      side: BorderSide(color: colors.hairline),
+      selectedBackgroundColor: colors.segmentThumb,
+      selectedForegroundColor: colors.textPrimary,
+      side: BorderSide(color: colors.tileTop, width: 3),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(radiusPill)),
+      textStyle: const TextStyle(fontWeight: FontWeight.w600),
     );
   }
+
+  /// Fill of a selected chip: a soft wash of the accent rather than a solid
+  /// block, so solid gold stays reserved for the screen's main action.
+  /// The dark palette (light text) needs a slightly stronger wash to read.
+  static Color selectedTint(QimaColors colors, Color accent) =>
+      accent.withValues(alpha: colors.textPrimary.computeLuminance() > 0.5 ? 0.24 : 0.18);
 }
 
-/// A [ChoiceChip] pre-styled to pull its selected fill from [accent] (an
-/// instrument accent, or `context.colors.brand` by default) rather than
-/// Material 3's auto-generated secondary color, matching
-/// [DS.segmentedButtonStyle]'s intent for the chip widget family (spec
-/// §3.1/§3.2). The selected label uses [QimaColors.onBrand].
+/// A borderless [ChoiceChip]: grey when idle, a soft [DS.selectedTint] of
+/// [accent] (an instrument accent, or `context.colors.brand` by default)
+/// with a bold label when selected, rather than a solid fill. The selected
+/// label stays [QimaColors.textPrimary] so it keeps full contrast on the tint.
 class DSChoiceChip extends StatelessWidget {
   final String label;
   final bool selected;
@@ -159,13 +193,13 @@ class DSChoiceChip extends StatelessWidget {
       onSelected: onSelected,
       showCheckmark: false,
       backgroundColor: colors.tileTop,
-      selectedColor: resolvedAccent,
-      side: BorderSide(color: colors.hairline),
+      selectedColor: DS.selectedTint(colors, resolvedAccent),
+      side: BorderSide.none,
       shape: const StadiumBorder(),
       // A chip's label style replaces the ambient text style instead of
       // merging with it, so start from the theme's to keep the app font.
       labelStyle: Theme.of(context).textTheme.labelLarge?.copyWith(
-            color: selected ? colors.onBrand : colors.textSecondary,
+            color: selected ? colors.textPrimary : colors.textSecondary,
             fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
           ),
     );

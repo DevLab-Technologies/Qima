@@ -140,8 +140,6 @@ class HoldingsScreen extends StatelessWidget {
                     ],
                   ),
                 ),
-                const SizedBox(height: DS.spaceMD),
-                Text(l10n.ledgerFootnote, style: TextStyle(color: colors.textTertiary, fontSize: 12)),
               ],
             );
           },
@@ -208,7 +206,7 @@ class _Summary extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Text(l10n.ledgerHolding.toUpperCase(),
-            style: TextStyle(color: colors.textTertiary, fontSize: 11, fontWeight: FontWeight.w600, letterSpacing: 0.5)),
+            style: DS.overline(context, color: colors.textTertiary, fontSize: 11, fontWeight: FontWeight.w600)),
         const SizedBox(height: 4),
         if (lots.isEmpty)
           Text(l10n.ledgerNothingHeld, style: TextStyle(color: colors.textSecondary, fontSize: 20, fontWeight: FontWeight.w700))

@@ -135,7 +135,7 @@ class _AlertEditorSheetState extends State<AlertEditorSheet> {
                 ],
                 selected: {_type},
                 onSelectionChanged: (s) => setState(() => _type = s.first),
-                style: DS.segmentedButtonStyle(colors, colors.brand),
+                showSelectedIcon: false,
               ),
               const SizedBox(height: DS.spaceMD),
               if (_type == _AlertType.price)
@@ -143,13 +143,11 @@ class _AlertEditorSheetState extends State<AlertEditorSheet> {
               else
                 _percentForm(context, colors, l10n, currentPrice),
               const SizedBox(height: DS.spaceMD),
-              SwitchListTile(
+              SwitchListTile.adaptive(
                 contentPadding: EdgeInsets.zero,
                 title: Text(l10n.alertEditorRepeat, style: TextStyle(color: colors.textPrimary)),
                 subtitle: Text(l10n.alertEditorRepeatFooter, style: TextStyle(color: colors.textTertiary, fontSize: 12)),
                 value: _repeats,
-                activeThumbColor: colors.onBrand,
-                activeTrackColor: colors.brand,
                 onChanged: (value) => setState(() => _repeats = value),
               ),
               const SizedBox(height: DS.spaceSM),
@@ -194,7 +192,7 @@ class _AlertEditorSheetState extends State<AlertEditorSheet> {
           ],
           selected: {_priceKind},
           onSelectionChanged: (s) => setState(() => _priceKind = s.first),
-          style: DS.segmentedButtonStyle(colors, colors.brand),
+          showSelectedIcon: false,
         ),
         const SizedBox(height: DS.spaceSM),
         TextField(
@@ -248,7 +246,7 @@ class _AlertEditorSheetState extends State<AlertEditorSheet> {
           ],
           selected: {_direction},
           onSelectionChanged: (s) => setState(() => _direction = s.first),
-          style: DS.segmentedButtonStyle(colors, colors.brand),
+          showSelectedIcon: false,
         ),
         const SizedBox(height: DS.spaceSM),
         Wrap(
@@ -273,7 +271,7 @@ class _AlertEditorSheetState extends State<AlertEditorSheet> {
           ],
           selected: {_window},
           onSelectionChanged: (s) => setState(() => _window = s.first),
-          style: DS.segmentedButtonStyle(colors, colors.brand),
+          showSelectedIcon: false,
         ),
         const SizedBox(height: DS.spaceSM),
         Text(summary(), style: TextStyle(color: colors.textTertiary, fontSize: 12)),

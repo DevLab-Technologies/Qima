@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../l10n/app_localizations.dart';
 import '../models/display_point.dart';
 import '../theme/design_system.dart';
+import '../theme/instrument_theme.dart';
 import '../theme/price_chart.dart';
 import '../theme/qima_colors.dart';
 
@@ -36,18 +37,7 @@ class WelcomeIllustration extends StatelessWidget {
           borderRadius: BorderRadius.circular(DS.radiusCard),
           child: Image.asset('assets/icon/app_icon.png', width: 88, height: 88, fit: BoxFit.cover),
         ),
-        const SizedBox(height: DS.spaceLG),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            for (final color in [colors.accentGold, colors.accentSilver, colors.accentCrypto, colors.accentStock, colors.accentIndex, colors.accentFiat])
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 4),
-                child: CircleAvatar(radius: 14, backgroundColor: color),
-              ),
-          ],
-        ),
-        const SizedBox(height: DS.spaceLG),
+        const SizedBox(height: DS.spaceXL),
         DSHeroCard(
           accent: colors.brand,
           child: Column(
@@ -130,9 +120,15 @@ class _WatchRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final dark = Theme.of(context).brightness == Brightness.dark;
     return Row(
       children: [
-        CircleAvatar(radius: 16, backgroundColor: accent, child: Icon(icon, color: colors.onBrand, size: 16)),
+        // Same soft-wash style as InstrumentIcon.
+        CircleAvatar(
+          radius: 16,
+          backgroundColor: InstrumentTheme.iconWash(accent, dark: dark),
+          child: Icon(icon, color: InstrumentTheme.iconGlyph(accent, colors.surfaceTop, dark: dark), size: 16),
+        ),
         const SizedBox(width: DS.spaceSM),
         Expanded(
           flex: 3,
@@ -264,7 +260,7 @@ class AlertsWidgetsIllustration extends StatelessWidget {
                   ],
                 ),
               ),
-              Switch(value: true, onChanged: null, activeThumbColor: colors.onBrand, activeTrackColor: colors.brand),
+              IgnorePointer(child: Switch.adaptive(value: true, onChanged: (_) {})),
             ],
           ),
         ),

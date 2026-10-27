@@ -18,6 +18,7 @@ import '../widgets/allocation_donut.dart';
 import '../widgets/help_button.dart';
 import '../widgets/instrument_icon.dart';
 import '../widgets/section_header.dart';
+import '../widgets/stat_pill.dart';
 import 'allocation_screen.dart';
 import 'holdings_screen.dart';
 import 'instrument_detail_screen.dart';
@@ -94,45 +95,66 @@ class PortfolioDetailScreen extends StatelessWidget {
                 if (valuation != null)
                   DSHeroCard(
                     accent: colors.brand,
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        AllocationDonut(
-                          slices: slices,
-                          centerValue: Masking.compactAmount(valuation.value, hidden: hidden),
-                          centerLabel: l10n.portfolioValue,
-                        ),
-                        const SizedBox(width: DS.spaceLG),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(l10n.portfolioValue, style: TextStyle(color: colors.textTertiary, fontSize: 12)),
-                              const SizedBox(height: 4),
-                              Text(
-                                Masking.amount(valuation.value, hidden: hidden),
-                                style: TextStyle(color: colors.textPrimary, fontSize: 24, fontWeight: FontWeight.w800),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(l10n.portfolioValue, style: TextStyle(color: colors.textTertiary, fontSize: 12)),
+                                  const SizedBox(height: DS.space2XS),
+                                  FittedBox(
+                                    fit: BoxFit.scaleDown,
+                                    alignment: AlignmentDirectional.centerStart,
+                                    child: Text(
+                                      Masking.amount(valuation.value, hidden: hidden),
+                                      maxLines: 1,
+                                      style: TextStyle(
+                                        color: colors.textPrimary,
+                                        fontSize: DS.figureHero,
+                                        fontWeight: FontWeight.w800,
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
-                              const SizedBox(height: DS.spaceSM),
-                              _metricTile(
-                                colors,
-                                l10n.holdingsGain,
-                                Masking.signedAmount(valuation.gain, hidden: hidden, isUp: valuation.isUp),
+                            ),
+                            const SizedBox(width: DS.spaceMD),
+                            AllocationDonut(slices: slices, size: 64, strokeWidth: 10),
+                          ],
+                        ),
+                        const SizedBox(height: DS.spaceMD),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: StatPill(
+                                title: l10n.holdingsGain,
+                                value: Masking.signedAmount(valuation.gain, hidden: hidden, isUp: valuation.isUp),
                                 tint: QimaColors.trendColor(valuation.isUp, colors),
                               ),
-                              const SizedBox(height: DS.spaceXS),
-                              _metricTile(colors, l10n.holdingsCost, Masking.amount(valuation.cost, hidden: hidden)),
-                              if (realised != null) ...[
-                                const SizedBox(height: DS.spaceXS),
-                                _metricTile(
-                                  colors,
-                                  l10n.ledgerRealised,
-                                  Masking.signedAmount(realised, hidden: hidden, isUp: realised.amount >= 0),
+                            ),
+                            const SizedBox(width: DS.spaceMD),
+                            Expanded(
+                              child: StatPill(
+                                title: l10n.holdingsCost,
+                                value: Masking.amount(valuation.cost, hidden: hidden),
+                              ),
+                            ),
+                            if (realised != null) ...[
+                              const SizedBox(width: DS.spaceMD),
+                              Expanded(
+                                child: StatPill(
+                                  title: l10n.ledgerRealised,
+                                  value: Masking.signedAmount(realised, hidden: hidden, isUp: realised.amount >= 0),
                                   tint: QimaColors.trendColor(realised.amount >= 0, colors),
                                 ),
-                              ],
+                              ),
                             ],
-                          ),
+                          ],
                         ),
                       ],
                     ),
@@ -198,20 +220,6 @@ class PortfolioDetailScreen extends StatelessWidget {
       ),
     );
   }
-
-  Widget _metricTile(QimaColors colors, String label, String value, {Color? tint}) {
-    return DSTile(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(label.toUpperCase(), style: TextStyle(color: colors.textTertiary, fontSize: 10)),
-          const SizedBox(height: 2),
-          Text(value, style: TextStyle(color: tint ?? colors.textPrimary, fontWeight: FontWeight.w700)),
-        ],
-      ),
-    );
-  }
 }
 
 /// Split by group (v3, Figma "Portfolio · value over time" allocation
@@ -238,7 +246,7 @@ class _AllocationCard extends StatelessWidget {
                 Expanded(
                   child: Text(
                     l10n.allocationTitle.toUpperCase(),
-                    style: TextStyle(color: colors.textTertiary, fontSize: 12, fontWeight: FontWeight.w600, letterSpacing: 0.5),
+                    style: DS.overline(context, color: colors.textTertiary, fontSize: 12, fontWeight: FontWeight.w600),
                   ),
                 ),
                 Text(l10n.allocationDetails, style: TextStyle(color: colors.brandText, fontSize: 13)),
