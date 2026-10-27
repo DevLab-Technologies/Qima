@@ -1,2 +1,5 @@
-Qima 2.2.1
-• Fixed: charts missing days or weeks of prices after the app was closed for a while, or while gold, silver and crypto prices weren't updating. Missing history now fills in on its own.
+Qima 3.0.0
+• Zakat: see whether you're above nisab and what's due, with a hawl reminder on the Hijri or Gregorian calendar
+• Allocation: your portfolio by metals, crypto, stocks and cash, gold by karat, and how it's shifted since January
+• Record sells, transfers and fees, not just buys, with realised gains and closed positions
+• Import holdings from a CSV file; exports use the same columns
