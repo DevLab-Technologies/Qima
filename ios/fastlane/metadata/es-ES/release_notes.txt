@@ -1,2 +1,5 @@
-Qima 2.2.1
-• Corregido: faltaban días o semanas de precios en los gráficos tras tener la app cerrada un tiempo, o mientras el oro, la plata y las cripto no se actualizaban. El historial que falta ahora se completa solo.
+Qima 3.0.0
+• Zakat: comprueba si superas el nisab y cuánto corresponde, con un recordatorio del hawl en calendario hégira o gregoriano
+• Distribución: tu cartera por metales, cripto, acciones y efectivo, el oro por quilates y cómo ha cambiado desde enero
+• Registra ventas, transferencias y comisiones, no solo compras, con ganancias realizadas y posiciones cerradas
+• Importa tus posiciones desde un archivo CSV; la exportación usa las mismas columnas
