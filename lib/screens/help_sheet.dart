@@ -66,12 +66,7 @@ class HelpSheet extends StatelessWidget {
                       children: [
                         Text(
                           l10n.helpSheetAboutHeader,
-                          style: TextStyle(
-                            color: colors.textTertiary,
-                            fontSize: 11,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 0.6,
-                          ),
+                          style: DS.overline(context, color: colors.textTertiary, fontSize: 11, fontWeight: FontWeight.w700),
                         ),
                         Text(
                           topic.title,
@@ -92,12 +87,7 @@ class HelpSheet extends StatelessWidget {
               const SizedBox(height: DS.spaceLG),
               Text(
                 l10n.helpSheetHowToHeader,
-                style: TextStyle(
-                  color: colors.textTertiary,
-                  fontSize: 11,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 0.6,
-                ),
+                style: DS.overline(context, color: colors.textTertiary, fontSize: 11, fontWeight: FontWeight.w700),
               ),
               const SizedBox(height: DS.spaceSM),
               for (var i = 0; i < topic.steps.length; i++) ...[

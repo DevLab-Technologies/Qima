@@ -9,7 +9,6 @@ import '../models/metal_breakdown.dart';
 import '../models/watch_card.dart';
 import '../theme/design_system.dart';
 import '../theme/help_topics.dart';
-import '../theme/instrument_theme.dart';
 import '../theme/qima_colors.dart';
 import '../theme/strings.dart';
 import '../widgets/help_button.dart';
@@ -47,7 +46,6 @@ class _CardConfigScreenState extends State<CardConfigScreen> {
     final instrument = widget.instrument;
     final l10n = AppLocalizations.of(context)!;
     final colors = context.colors;
-    final accent = InstrumentTheme.accentColor(instrument, colors);
 
     return ScreenBackground(
       child: Scaffold(
@@ -88,7 +86,7 @@ class _CardConfigScreenState extends State<CardConfigScreen> {
                       ],
                       selected: {_unit},
                       onSelectionChanged: (s) => setState(() => _unit = s.first),
-                      style: DS.segmentedButtonStyle(colors, accent),
+                      showSelectedIcon: false,
                     ),
                   ],
                   if (instrument.supportedKarats.isNotEmpty) ...[
@@ -102,7 +100,7 @@ class _CardConfigScreenState extends State<CardConfigScreen> {
                       ],
                       selected: {_karat ?? instrument.supportedKarats.first},
                       onSelectionChanged: (s) => setState(() => _karat = s.first),
-                      style: DS.segmentedButtonStyle(colors, accent),
+                      showSelectedIcon: false,
                     ),
                   ],
                 ],

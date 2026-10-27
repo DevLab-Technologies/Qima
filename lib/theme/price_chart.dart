@@ -103,6 +103,14 @@ class _PriceChartViewState extends State<PriceChartView> {
     final span = points.last.date.difference(points.first.date);
     final granularity = AxisGranularity.forSpan(span);
 
+    // The range's high and low get a marker and a label on charts with
+    // axes, so the extremes can be read without scrubbing.
+    final showExtremes = widget.showsAxes && !widget.maskValues;
+    final high = points.reduce((a, b) => b.value > a.value ? b : a);
+    final low = points.reduce((a, b) => b.value < a.value ? b : a);
+    String valueLabel(double value) =>
+        widget.currencyCode != null ? Money(value, widget.currencyCode!).formatted() : value.toStringAsFixed(2);
+
     Widget chart = LayoutBuilder(
       builder: (context, constraints) {
         final size = Size(constraints.maxWidth, constraints.maxHeight);
@@ -127,7 +135,12 @@ class _PriceChartViewState extends State<PriceChartView> {
               domainHi: domainHi,
               color: widget.lineColor ?? QimaColors.trendColor(widget.isTrendingUp, colors),
               textTertiary: colors.textTertiary,
+              textSecondary: colors.textSecondary,
               showsAxes: widget.showsAxes && !widget.maskValues,
+              high: showExtremes ? high : null,
+              low: showExtremes ? low : null,
+              highLabel: showExtremes ? valueLabel(high.value) : null,
+              lowLabel: showExtremes ? valueLabel(low.value) : null,
               lineWidth: widget.lineWidth,
               granularity: granularity,
               scrubbed: _scrubbed,
@@ -246,7 +259,14 @@ class _PriceChartPainter extends CustomPainter {
   /// Axis tick label color — passed in rather than read from `DS` since a
   /// [CustomPainter] has no [BuildContext] to resolve the current theme.
   final Color textTertiary;
+
+  /// Scrub rule and high/low label color.
+  final Color textSecondary;
   final bool showsAxes;
+  final DisplayPoint? high;
+  final DisplayPoint? low;
+  final String? highLabel;
+  final String? lowLabel;
   final double lineWidth;
   final AxisGranularity granularity;
   final DisplayPoint? scrubbed;
@@ -259,7 +279,12 @@ class _PriceChartPainter extends CustomPainter {
     required this.domainHi,
     required this.color,
     required this.textTertiary,
+    required this.textSecondary,
     required this.showsAxes,
+    this.high,
+    this.low,
+    this.highLabel,
+    this.lowLabel,
     required this.lineWidth,
     required this.granularity,
     required this.scrubbed,
@@ -335,12 +360,19 @@ class _PriceChartPainter extends CustomPainter {
       }
     }
 
+    // High/low markers, hidden while scrubbing so they don't compete with
+    // the scrub callout.
+    if (scrubbed == null && high != null && low != null && high!.value != low!.value) {
+      _paintExtreme(canvas, size, high!, highLabel!, plotWidth, plotHeight, above: true);
+      _paintExtreme(canvas, size, low!, lowLabel!, plotWidth, plotHeight, above: false);
+    }
+
     // Scrub overlay: dashed vertical rule + point marker.
     if (scrubbed != null) {
       final sx = _x(scrubbed!.date, plotWidth);
       final sy = _y(scrubbed!.value, plotHeight);
       final dashPaint = Paint()
-        ..color = Colors.white.withValues(alpha: 0.25)
+        ..color = textSecondary.withValues(alpha: 0.5)
         ..strokeWidth = 1;
       const dashHeight = 4.0;
       const dashGap = 3.0;
@@ -359,6 +391,29 @@ class _PriceChartPainter extends CustomPainter {
           ..strokeWidth = 1.5,
       );
     }
+  }
+
+  void _paintExtreme(
+    Canvas canvas,
+    Size size,
+    DisplayPoint point,
+    String label,
+    double plotWidth,
+    double plotHeight, {
+    required bool above,
+  }) {
+    final center = Offset(_x(point.date, plotWidth), _y(point.value, plotHeight));
+    canvas.drawCircle(center, 3, Paint()..color = color);
+    final tp = TextPainter(
+      text: TextSpan(
+        text: label,
+        style: TextStyle(color: textSecondary, fontSize: 10, fontWeight: FontWeight.w600),
+      ),
+      textDirection: TextDirection.ltr,
+    )..layout();
+    final dx = (center.dx - tp.width / 2).clamp(0.0, size.width - tp.width);
+    final dy = above ? center.dy - tp.height - 4 : center.dy + 4;
+    tp.paint(canvas, Offset(dx, dy.clamp(0.0, plotHeight - tp.height)));
   }
 
   /// Builds a smooth path through [points] via cubic Bezier segments
@@ -389,6 +444,9 @@ class _PriceChartPainter extends CustomPainter {
         oldDelegate.domainHi != domainHi ||
         oldDelegate.color != color ||
         oldDelegate.textTertiary != textTertiary ||
+        oldDelegate.textSecondary != textSecondary ||
+        oldDelegate.highLabel != highLabel ||
+        oldDelegate.lowLabel != lowLabel ||
         oldDelegate.scrubbed != scrubbed;
   }
 }

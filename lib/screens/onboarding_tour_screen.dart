@@ -429,7 +429,9 @@ class _PrivacyRow extends StatelessWidget {
             ],
           ),
         ),
-        Switch(value: value, onChanged: null, activeThumbColor: colors.onBrand, activeTrackColor: colors.brand),
+        // Illustration only: enabled so it keeps full color (a disabled
+        // iOS switch is drawn at half opacity), but ignores touches.
+        IgnorePointer(child: Switch.adaptive(value: value, onChanged: (_) {})),
       ],
     );
   }

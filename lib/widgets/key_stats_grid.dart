@@ -32,12 +32,15 @@ class KeyStatsGrid extends StatelessWidget {
           const SizedBox(height: DS.spaceSM),
           GridView(
             shrinkWrap: true,
+            // Without this the grid inherits the screen's safe-area inset as
+            // bottom padding, leaving an empty band at the foot of the card.
+            padding: EdgeInsets.zero,
             physics: const NeverScrollableScrollPhysics(),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
-              mainAxisExtent: 62,
-              mainAxisSpacing: DS.spaceXS,
-              crossAxisSpacing: DS.spaceXS,
+              mainAxisExtent: 48,
+              mainAxisSpacing: DS.spaceSM,
+              crossAxisSpacing: DS.spaceMD,
             ),
             children: [
               StatPill(

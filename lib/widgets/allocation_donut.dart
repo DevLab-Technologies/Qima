@@ -58,19 +58,20 @@ Color shadeAccent(Color base, int occurrence) {
 }
 
 /// Portfolio allocation donut: one arc per holding, colored via
-/// [resolveAllocation], with the total value centered inside the ring.
+/// [resolveAllocation], optionally with a value and label centered inside
+/// the ring (a small donut beside a headline figure leaves them out).
 class AllocationDonut extends StatelessWidget {
   final List<AllocationSlice> slices;
-  final String centerValue;
-  final String centerLabel;
+  final String? centerValue;
+  final String? centerLabel;
   final double size;
   final double strokeWidth;
 
   const AllocationDonut({
     super.key,
     required this.slices,
-    required this.centerValue,
-    required this.centerLabel,
+    this.centerValue,
+    this.centerLabel,
     this.size = 140,
     this.strokeWidth = 18,
   });
@@ -88,23 +89,21 @@ class AllocationDonut extends StatelessWidget {
             size: Size(size, size),
             painter: _DonutPainter(slices: slices, strokeWidth: strokeWidth, trackColor: colors.hairline),
           ),
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                centerValue,
-                textAlign: TextAlign.center,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(color: colors.textPrimary, fontSize: 16, fontWeight: FontWeight.w800),
-              ),
-              const SizedBox(height: 2),
-              Text(
-                centerLabel,
-                style: TextStyle(color: colors.textTertiary, fontSize: 11),
-              ),
-            ],
-          ),
+          if (centerValue != null)
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  centerValue!,
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(color: colors.textPrimary, fontSize: 16, fontWeight: FontWeight.w800),
+                ),
+                const SizedBox(height: 2),
+                if (centerLabel != null) Text(centerLabel!, style: TextStyle(color: colors.textTertiary, fontSize: 11)),
+              ],
+            ),
         ],
       ),
     );
@@ -149,6 +148,8 @@ class _DonutPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant _DonutPainter oldDelegate) {
-    return oldDelegate.slices != slices || oldDelegate.strokeWidth != strokeWidth || oldDelegate.trackColor != trackColor;
+    return oldDelegate.slices != slices ||
+        oldDelegate.strokeWidth != strokeWidth ||
+        oldDelegate.trackColor != trackColor;
   }
 }

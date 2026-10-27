@@ -153,9 +153,15 @@ class _QimaAppState extends State<QimaApp> {
             // The theme depends on the resolved locale for its font (see
             // `buildTheme`), which is only known here.
             builder: (context, child) {
-              final content = Theme(
-                data: buildTheme(Theme.of(context).brightness, locale: Localizations.localeOf(context)),
-                child: child!,
+              final brightness = Theme.of(context).brightness;
+              // Screens without an app bar (onboarding, the lock screen)
+              // still get status-bar icons that suit the palette.
+              final content = AnnotatedRegion<SystemUiOverlayStyle>(
+                value: overlayStyleFor(brightness),
+                child: Theme(
+                  data: buildTheme(brightness, locale: Localizations.localeOf(context)),
+                  child: child!,
+                ),
               );
               // LockGate sits above the app's screens but below the root
               // ScaffoldMessenger/Navigator that `MaterialApp` itself

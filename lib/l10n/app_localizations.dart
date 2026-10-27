@@ -528,11 +528,11 @@ abstract class AppLocalizations {
   /// **'How often background widgets fetch new prices.'**
   String get settingsWidgetRefreshFooter;
 
-  /// No description provided for @settingsAbout.
+  /// No description provided for @settingsLanguage.
   ///
   /// In en, this message translates to:
-  /// **'About'**
-  String get settingsAbout;
+  /// **'Language'**
+  String get settingsLanguage;
 
   /// No description provided for @settingsLanguageSystem.
   ///
@@ -1331,12 +1331,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Alerts'**
   String get alertsScreenTitle;
-
-  /// No description provided for @alertsScreenInfo.
-  ///
-  /// In en, this message translates to:
-  /// **'Alerts are checked roughly every 15 minutes in the background, and live while Qima is open.'**
-  String get alertsScreenInfo;
 
   /// No description provided for @alertsScreenEmptyTitle.
   ///
@@ -2315,7 +2309,7 @@ abstract class AppLocalizations {
   /// Asset detail help step 4 body.
   ///
   /// In en, this message translates to:
-  /// **'Tap the bell to hear when the price crosses a level or moves by a percent.'**
+  /// **'Tap + on the Alerts card to hear when the price crosses a level or moves by a percent.'**
   String get helpAssetDetailStep4Body;
 
   /// Asset detail help step 5 title.

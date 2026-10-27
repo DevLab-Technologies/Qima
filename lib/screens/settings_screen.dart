@@ -70,7 +70,7 @@ class SettingsScreen extends StatelessWidget {
                     ],
                     selected: {state.appearance},
                     onSelectionChanged: (selection) => cubit.setAppearance(selection.first),
-                    style: DS.segmentedButtonStyle(colors, colors.brand),
+                    showSelectedIcon: false,
                   ),
                 ),
                 const SizedBox(height: DS.spaceLG),
@@ -178,44 +178,40 @@ class SettingsScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: DS.spaceLG),
-                SectionHeader(l10n.settingsAbout),
+                SectionHeader(l10n.settingsLanguage),
                 DSCard(
-                  child: Column(
-                    children: [
-                      RadioGroup<AppLanguage>(
-                        groupValue: state.appLanguage,
-                        onChanged: (value) {
-                          if (value != null) cubit.setAppLanguage(value);
-                        },
-                        child: Column(
-                          children: [
-                            for (final language in AppLanguage.values)
-                              RadioListTile<AppLanguage>(
-                                contentPadding: EdgeInsets.zero,
-                                title: Text(
-                                  language == AppLanguage.system ? l10n.settingsLanguageSystem : language.nativeName,
-                                  style: TextStyle(color: colors.textPrimary),
-                                ),
-                                value: language,
-                                activeColor: colors.brand,
-                              ),
-                          ],
-                        ),
-                      ),
-                      Divider(color: colors.hairline),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: DS.spaceSM),
-                        child: Text(
-                          l10n.settingsDataSource,
-                          style: TextStyle(color: colors.textTertiary, fontSize: 12),
-                        ),
-                      ),
-                    ],
+                  child: RadioGroup<AppLanguage>(
+                    groupValue: state.appLanguage,
+                    onChanged: (value) {
+                      if (value != null) cubit.setAppLanguage(value);
+                    },
+                    child: Column(
+                      children: [
+                        for (final language in AppLanguage.values)
+                          RadioListTile<AppLanguage>(
+                            contentPadding: EdgeInsets.zero,
+                            title: Text(
+                              language == AppLanguage.system ? l10n.settingsLanguageSystem : language.nativeName,
+                              style: TextStyle(color: colors.textPrimary),
+                            ),
+                            value: language,
+                            activeColor: colors.brand,
+                          ),
+                      ],
+                    ),
                   ),
                 ),
                 const SizedBox(height: DS.spaceLG),
                 SectionHeader(l10n.settingsHelpGroup),
                 const _HelpSection(),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: DS.spaceLG),
+                  child: Text(
+                    l10n.settingsDataSource,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: colors.textTertiary, fontSize: 12),
+                  ),
+                ),
               ],
             );
           },
@@ -264,7 +260,7 @@ class _AlertsSection extends StatelessWidget {
                 ),
               ),
               Divider(color: colors.hairline, height: DS.spaceLG),
-              SwitchListTile(
+              SwitchListTile.adaptive(
                 contentPadding: EdgeInsets.zero,
                 title: Text(l10n.settingsAlertsDeliverOnDevice, style: TextStyle(color: colors.textPrimary)),
                 subtitle: Text(
@@ -272,8 +268,6 @@ class _AlertsSection extends StatelessWidget {
                   style: TextStyle(color: colors.textTertiary, fontSize: 12),
                 ),
                 value: state.deliverAlertsOnThisDevice,
-                activeThumbColor: colors.onBrand,
-                activeTrackColor: colors.brand,
                 onChanged: (value) => cubit.setDeliverAlertsOnThisDevice(value),
               ),
             ],
@@ -348,19 +342,17 @@ class _PrivacySecuritySectionState extends State<_PrivacySecuritySection> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  SwitchListTile(
+                  SwitchListTile.adaptive(
                     contentPadding: EdgeInsets.zero,
                     title: Text(l10n.settingsHideBalances, style: TextStyle(color: colors.textPrimary)),
                     subtitle:
                         Text(l10n.settingsHideBalancesFooter, style: TextStyle(color: colors.textTertiary, fontSize: 12)),
                     value: state.hideBalances,
-                    activeThumbColor: colors.onBrand,
-                    activeTrackColor: colors.brand,
                     onChanged: (value) => cubit.setHideBalances(value),
                   ),
                   if (_appLockPlatformSupported) ...[
                     Divider(color: colors.hairline, height: DS.spaceLG),
-                    SwitchListTile(
+                    SwitchListTile.adaptive(
                       contentPadding: EdgeInsets.zero,
                       title: Text(l10n.settingsAppLock, style: TextStyle(color: colors.textPrimary)),
                       subtitle: Text(
@@ -368,8 +360,6 @@ class _PrivacySecuritySectionState extends State<_PrivacySecuritySection> {
                         style: TextStyle(color: colors.textTertiary, fontSize: 12),
                       ),
                       value: state.appLockEnabled,
-                      activeThumbColor: colors.onBrand,
-                      activeTrackColor: colors.brand,
                       onChanged: !checkDone || !lockSupported
                           ? null
                           : (value) async {
@@ -506,13 +496,11 @@ class _ICloudSyncSection extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              SwitchListTile(
+              SwitchListTile.adaptive(
                 contentPadding: EdgeInsets.zero,
                 title: Text(l10n.settingsICloudSyncSwitch, style: TextStyle(color: colors.textPrimary)),
                 subtitle: Text(l10n.settingsICloudSyncFooter, style: TextStyle(color: colors.textTertiary, fontSize: 12)),
                 value: state.iCloudSyncEnabled,
-                activeThumbColor: colors.onBrand,
-                activeTrackColor: colors.brand,
                 onChanged: (value) => cubit.setICloudSyncEnabled(value),
               ),
               if (state.iCloudSyncEnabled && statusText.isNotEmpty) ...[

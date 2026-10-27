@@ -183,7 +183,7 @@ class _DueHero extends StatelessWidget {
           ),
           const SizedBox(height: DS.spaceSM),
           Text(l10n.zakatDueLabel(percentLabel(context, ZakatAssessment.rate * 100)).toUpperCase(),
-              style: TextStyle(color: colors.textTertiary, fontSize: 11, fontWeight: FontWeight.w600, letterSpacing: 0.5)),
+              style: DS.overline(context, color: colors.textTertiary, fontSize: 11, fontWeight: FontWeight.w600)),
           const SizedBox(height: 4),
           FittedBox(
             fit: BoxFit.scaleDown,
@@ -428,7 +428,7 @@ class _LineRow extends StatelessWidget {
     final value = line.value;
     final valueText = value == null ? '—' : Masking.amount(value, hidden: hidden);
 
-    return SwitchListTile(
+    return SwitchListTile.adaptive(
       contentPadding: EdgeInsets.zero,
       secondary: InstrumentIcon(instrument: instrument, size: 32),
       title: Text(l10n.zakatLineTitle(name, quantity), style: TextStyle(color: colors.textPrimary)),
@@ -449,8 +449,6 @@ class _LineRow extends StatelessWidget {
       // An unpriced asset that's included still shows "on": it will count
       // as soon as its price loads.
       value: line.exclusion != ZakatExclusion.classOff && line.exclusion != ZakatExclusion.holdingOff,
-      activeThumbColor: colors.onBrand,
-      activeTrackColor: colors.brand,
       onChanged: (_) => onToggle(),
     );
   }
