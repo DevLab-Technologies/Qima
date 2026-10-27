@@ -321,7 +321,7 @@ abstract class AppLocalizations {
   /// No description provided for @holdingsEmpty.
   ///
   /// In en, this message translates to:
-  /// **'Add your first lot to start tracking this holding.'**
+  /// **'No transactions yet. Add a buy to start tracking this holding.'**
   String get holdingsEmpty;
 
   /// No description provided for @holdingsValue.
@@ -348,18 +348,6 @@ abstract class AppLocalizations {
   /// **'Gain %'**
   String get holdingsGainPercent;
 
-  /// No description provided for @holdingsNew.
-  ///
-  /// In en, this message translates to:
-  /// **'New lot'**
-  String get holdingsNew;
-
-  /// No description provided for @holdingsEdit.
-  ///
-  /// In en, this message translates to:
-  /// **'Edit lot'**
-  String get holdingsEdit;
-
   /// No description provided for @holdingsQuantity.
   ///
   /// In en, this message translates to:
@@ -378,41 +366,11 @@ abstract class AppLocalizations {
   /// **'Total'**
   String get holdingsCostModeTotal;
 
-  /// No description provided for @holdingsUnitCost.
-  ///
-  /// In en, this message translates to:
-  /// **'Unit cost'**
-  String get holdingsUnitCost;
-
-  /// No description provided for @holdingsUnitCostWithUnit.
-  ///
-  /// In en, this message translates to:
-  /// **'Unit cost (per {unit})'**
-  String holdingsUnitCostWithUnit(String unit);
-
-  /// No description provided for @holdingsUnitCostWithKarat.
-  ///
-  /// In en, this message translates to:
-  /// **'Unit cost (per {unit} · {karat})'**
-  String holdingsUnitCostWithKarat(String unit, String karat);
-
-  /// No description provided for @holdingsUnitCostPreview.
-  ///
-  /// In en, this message translates to:
-  /// **'Per unit: {value}'**
-  String holdingsUnitCostPreview(String value);
-
   /// No description provided for @holdingsTotalCost.
   ///
   /// In en, this message translates to:
   /// **'Total cost'**
   String get holdingsTotalCost;
-
-  /// No description provided for @holdingsTotalCostPreview.
-  ///
-  /// In en, this message translates to:
-  /// **'Total: {value}'**
-  String holdingsTotalCostPreview(String value);
 
   /// No description provided for @holdingsDate.
   ///
@@ -437,22 +395,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Average cost'**
   String get holdingsAverageCost;
-
-  /// No description provided for @holdingsAverageCostPerUnit.
-  ///
-  /// In en, this message translates to:
-  /// **'{value} per {unit}'**
-  String holdingsAverageCostPerUnit(String value, String unit);
-
-  /// No description provided for @holdingsAverageCostPerUnitKarat.
-  ///
-  /// In en, this message translates to:
-  /// **'{value} per {unit} · {karat}'**
-  String holdingsAverageCostPerUnitKarat(
-    String value,
-    String unit,
-    String karat,
-  );
 
   /// No description provided for @holdingsMixedNote.
   ///
@@ -487,7 +429,7 @@ abstract class AppLocalizations {
   /// No description provided for @portfolioEmpty.
   ///
   /// In en, this message translates to:
-  /// **'No portfolio value yet — add a holding lot to get started.'**
+  /// **'No portfolio value yet — add a buy to any asset to get started.'**
   String get portfolioEmpty;
 
   /// No description provided for @portfolioNoChange.
@@ -499,14 +441,8 @@ abstract class AppLocalizations {
   /// No description provided for @portfolioNoHistory.
   ///
   /// In en, this message translates to:
-  /// **'Add a holding lot to see your portfolio chart'**
+  /// **'Add a buy to see your portfolio chart'**
   String get portfolioNoHistory;
-
-  /// No description provided for @portfolioLotCount.
-  ///
-  /// In en, this message translates to:
-  /// **'{count, plural, =1{1 lot} other{{count} lots}}'**
-  String portfolioLotCount(num count);
 
   /// No description provided for @settingsTitle.
   ///
@@ -625,7 +561,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsHideBalancesFooter.
   ///
   /// In en, this message translates to:
-  /// **'Mask portfolio, holdings and lot amounts throughout the app.'**
+  /// **'Mask portfolio, holdings and transaction amounts throughout the app.'**
   String get settingsHideBalancesFooter;
 
   /// No description provided for @settingsAppLock.
@@ -1174,18 +1110,6 @@ abstract class AppLocalizations {
   /// **'Your holdings for this asset are kept.'**
   String get confirmRemoveCardMessage;
 
-  /// No description provided for @confirmDeleteLotTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Delete this lot?'**
-  String get confirmDeleteLotTitle;
-
-  /// No description provided for @confirmDeleteLotMessage.
-  ///
-  /// In en, this message translates to:
-  /// **'{details}. This can\'t be undone.'**
-  String confirmDeleteLotMessage(String details);
-
   /// No description provided for @confirmRemoveTickerTitle.
   ///
   /// In en, this message translates to:
@@ -1559,8 +1483,8 @@ abstract class AppLocalizations {
   /// No description provided for @settingsBackupSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Last backup {date} · {instruments} assets, {lots} lots'**
-  String settingsBackupSubtitle(String date, int instruments, int lots);
+  /// **'Last backup {date} · {instruments} assets, {transactions, plural, =1{1 transaction} other{{transactions} transactions}}'**
+  String settingsBackupSubtitle(String date, int instruments, int transactions);
 
   /// No description provided for @settingsICloudSync.
   ///
@@ -1691,7 +1615,7 @@ abstract class AppLocalizations {
   /// No description provided for @backupExportCsvSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Your lots as a spreadsheet, for your records (.csv)'**
+  /// **'Every transaction as a spreadsheet (.csv) — it imports back too'**
   String get backupExportCsvSubtitle;
 
   /// No description provided for @backupRestoreSection.
@@ -1757,10 +1681,10 @@ abstract class AppLocalizations {
   /// No description provided for @backupExportSheetContentsSummary.
   ///
   /// In en, this message translates to:
-  /// **'{cards} watchlist cards · {lots} lots · {customTickers} custom tickers'**
+  /// **'{cards} watchlist cards · {transactions, plural, =1{1 transaction} other{{transactions} transactions}} · {customTickers} custom tickers'**
   String backupExportSheetContentsSummary(
     int cards,
-    int lots,
+    int transactions,
     int customTickers,
   );
 
@@ -1847,12 +1771,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Watchlist cards'**
   String get backupImportCountCards;
-
-  /// No description provided for @backupImportCountLots.
-  ///
-  /// In en, this message translates to:
-  /// **'Lots'**
-  String get backupImportCountLots;
 
   /// No description provided for @backupImportCountCustomTickers.
   ///
@@ -1965,7 +1883,7 @@ abstract class AppLocalizations {
   /// No description provided for @backupImportCsvErrorMessage.
   ///
   /// In en, this message translates to:
-  /// **'A holdings spreadsheet (.csv) only has your lots, and can\'t be restored. Choose a full backup file (.json) instead.'**
+  /// **'This is a spreadsheet, not a Qima backup. You can import its rows as transactions instead.'**
   String get backupImportCsvErrorMessage;
 
   /// No description provided for @backupErrorNotQimaFile.
@@ -2025,19 +1943,19 @@ abstract class AppLocalizations {
   /// No description provided for @backupCsvHeaderUnitCost.
   ///
   /// In en, this message translates to:
-  /// **'Unit cost'**
+  /// **'Price per unit'**
   String get backupCsvHeaderUnitCost;
 
   /// No description provided for @backupCsvHeaderCostCurrency.
   ///
   /// In en, this message translates to:
-  /// **'Cost currency'**
+  /// **'Currency'**
   String get backupCsvHeaderCostCurrency;
 
   /// No description provided for @backupCsvHeaderTotalCost.
   ///
   /// In en, this message translates to:
-  /// **'Total cost'**
+  /// **'Total'**
   String get backupCsvHeaderTotalCost;
 
   /// No description provided for @backupCsvHeaderDate.
@@ -2409,7 +2327,7 @@ abstract class AppLocalizations {
   /// Asset detail help step 5 body.
   ///
   /// In en, this message translates to:
-  /// **'Tap Holdings to see your lots or add a purchase.'**
+  /// **'Tap Holdings to see your transactions or add a buy or sale.'**
   String get helpAssetDetailStep5Body;
 
   /// Portfolio help topic title.
@@ -2445,7 +2363,7 @@ abstract class AppLocalizations {
   /// Portfolio help step 2 body.
   ///
   /// In en, this message translates to:
-  /// **'Tap a row to see its lots, average cost and gain.'**
+  /// **'Tap a row to see its transactions, average cost and gain.'**
   String get helpPortfolioStep2Body;
 
   /// Portfolio help step 3 title.
@@ -2487,25 +2405,25 @@ abstract class AppLocalizations {
   /// Lot editor help topic title.
   ///
   /// In en, this message translates to:
-  /// **'Lot editor'**
+  /// **'Transaction'**
   String get helpLotEditorTitle;
 
   /// Lot editor help topic summary line.
   ///
   /// In en, this message translates to:
-  /// **'Record one purchase so Qima can work out what you hold, your average cost and your gain.'**
+  /// **'Record one buy, sell, transfer or fee. Your holding, average cost and gains are worked out from these.'**
   String get helpLotEditorSummary;
 
   /// Lot editor help step 1 title.
   ///
   /// In en, this message translates to:
-  /// **'Quantity and unit'**
+  /// **'Type'**
   String get helpLotEditorStep1Title;
 
   /// Lot editor help step 1 body.
   ///
   /// In en, this message translates to:
-  /// **'Enter how much you bought, in troy ounces, grams or kilograms.'**
+  /// **'Buy adds at a cost. Sell removes and realises a gain or loss. Transfer moves quantity in or out. Fee records a charge.'**
   String get helpLotEditorStep1Body;
 
   /// Lot editor help step 2 title.
@@ -2517,19 +2435,19 @@ abstract class AppLocalizations {
   /// Lot editor help step 2 body.
   ///
   /// In en, this message translates to:
-  /// **'For gold by gram or kilogram, pick 24K, 22K, 21K or 18K. It starts at the card\'s karat.'**
+  /// **'For gold by gram or kilogram, pick 24K, 22K, 21K or 18K. Everything is counted by gold content, so karats mix correctly.'**
   String get helpLotEditorStep2Body;
 
   /// Lot editor help step 3 title.
   ///
   /// In en, this message translates to:
-  /// **'What you paid'**
+  /// **'Price and fee'**
   String get helpLotEditorStep3Title;
 
   /// Lot editor help step 3 body.
   ///
   /// In en, this message translates to:
-  /// **'Enter the cost per unit or the total, in the currency you paid in.'**
+  /// **'Enter the price per unit or the total, and any commission. A sell shows what it realises before you save.'**
   String get helpLotEditorStep3Body;
 
   /// Lot editor help step 4 title.
@@ -2541,7 +2459,7 @@ abstract class AppLocalizations {
   /// Lot editor help step 4 body.
   ///
   /// In en, this message translates to:
-  /// **'The day you bought it.'**
+  /// **'The day it happened. A sale can’t be dated before you held enough.'**
   String get helpLotEditorStep4Body;
 
   /// Lot editor help step 5 title.
@@ -2553,7 +2471,7 @@ abstract class AppLocalizations {
   /// Lot editor help step 5 body.
   ///
   /// In en, this message translates to:
-  /// **'Edit or delete a lot any time from Holdings.'**
+  /// **'Edit or delete a transaction any time from the holding’s ledger.'**
   String get helpLotEditorStep5Body;
 
   /// Add asset help topic title.
@@ -2883,13 +2801,13 @@ abstract class AppLocalizations {
   /// Backup & restore help step 5 title.
   ///
   /// In en, this message translates to:
-  /// **'Holdings spreadsheet'**
+  /// **'Spreadsheets'**
   String get helpBackupStep5Title;
 
   /// Backup & restore help step 5 body.
   ///
   /// In en, this message translates to:
-  /// **'A .csv for accounting. It can\'t be restored.'**
+  /// **'Export every transaction as a .csv, or import one — from Qima, a spreadsheet or a broker. It adds transactions; it doesn’t restore settings.'**
   String get helpBackupStep5Body;
 
   /// Widgets help topic title (iOS only).
@@ -2967,7 +2885,7 @@ abstract class AppLocalizations {
   /// Holdings list help topic summary line.
   ///
   /// In en, this message translates to:
-  /// **'Every lot you bought of this asset, and what they add up to.'**
+  /// **'Every transaction for this asset — buys, sells, transfers and fees — and what they add up to.'**
   String get helpHoldingsSummary;
 
   /// Holdings list help step 1 title.
@@ -2979,31 +2897,31 @@ abstract class AppLocalizations {
   /// Holdings list help step 1 body.
   ///
   /// In en, this message translates to:
-  /// **'Quantity, average cost, current value and gain across every lot.'**
+  /// **'What you hold, your average cost, its value and gain, plus what sales have realised.'**
   String get helpHoldingsStep1Body;
 
   /// Holdings list help step 2 title.
   ///
   /// In en, this message translates to:
-  /// **'Add a lot'**
+  /// **'Add a transaction'**
   String get helpHoldingsStep2Title;
 
   /// Holdings list help step 2 body.
   ///
   /// In en, this message translates to:
-  /// **'Tap + to record another purchase.'**
+  /// **'Tap Add to record a buy, a sell, a transfer or a fee.'**
   String get helpHoldingsStep2Body;
 
   /// Holdings list help step 3 title.
   ///
   /// In en, this message translates to:
-  /// **'Edit or delete a lot'**
+  /// **'Edit or delete one'**
   String get helpHoldingsStep3Title;
 
   /// Holdings list help step 3 body.
   ///
   /// In en, this message translates to:
-  /// **'Tap a lot to change it, or swipe to delete.'**
+  /// **'Tap a row to change it, or swipe to delete. Qima won’t let a change leave a sale selling more than you held.'**
   String get helpHoldingsStep3Body;
 
   /// Card config help topic title.
@@ -3171,7 +3089,7 @@ abstract class AppLocalizations {
   /// Import preview help step 1 body.
   ///
   /// In en, this message translates to:
-  /// **'See how many cards, lots and alerts the file contains before restoring.'**
+  /// **'See how many cards, transactions and alerts the file contains before restoring.'**
   String get helpImportPreviewStep1Body;
 
   /// Import preview help step 2 title.
@@ -3239,6 +3157,1374 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Home Screen and Lock Screen'**
   String get settingsHelpAddWidgetSubtitle;
+
+  /// No description provided for @commonDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get commonDone;
+
+  /// Zakat screen title, portfolio entry row and settings section header.
+  ///
+  /// In en, this message translates to:
+  /// **'Zakat'**
+  String get zakatTitle;
+
+  /// No description provided for @zakatSettingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Zakat settings'**
+  String get zakatSettingsTitle;
+
+  /// No description provided for @settingsZakatSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Nisab basis, what counts, hawl date and reminder'**
+  String get settingsZakatSubtitle;
+
+  /// No description provided for @zakatEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing to assess yet'**
+  String get zakatEmptyTitle;
+
+  /// No description provided for @zakatEmptyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Zakat is worked out from your holdings. Add a buy to any asset and it appears here, with what counts toward nisab.'**
+  String get zakatEmptyMessage;
+
+  /// No description provided for @zakatNisabSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Nisab'**
+  String get zakatNisabSection;
+
+  /// No description provided for @zakatWhatCountsSection.
+  ///
+  /// In en, this message translates to:
+  /// **'What counts'**
+  String get zakatWhatCountsSection;
+
+  /// No description provided for @zakatStatusAbove.
+  ///
+  /// In en, this message translates to:
+  /// **'Above nisab'**
+  String get zakatStatusAbove;
+
+  /// No description provided for @zakatStatusBelow.
+  ///
+  /// In en, this message translates to:
+  /// **'Below nisab'**
+  String get zakatStatusBelow;
+
+  /// No description provided for @zakatStatusUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Nisab not priced yet'**
+  String get zakatStatusUnknown;
+
+  /// No description provided for @zakatDueLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Zakat due · {rate}'**
+  String zakatDueLabel(String rate);
+
+  /// No description provided for @zakatExplainAboveNoHawl.
+  ///
+  /// In en, this message translates to:
+  /// **'On a zakatable base of {base}. Set your hawl date to know when it falls due.'**
+  String zakatExplainAboveNoHawl(String base);
+
+  /// No description provided for @zakatExplainAboveToday.
+  ///
+  /// In en, this message translates to:
+  /// **'On a zakatable base of {base}. Your hawl completes today.'**
+  String zakatExplainAboveToday(String base);
+
+  /// No description provided for @zakatExplainAboveUpcoming.
+  ///
+  /// In en, this message translates to:
+  /// **'On a zakatable base of {base}. Due when your hawl completes on {date} ({days, plural, =1{in 1 day} other{in {days} days}}), if your wealth is still above nisab then.'**
+  String zakatExplainAboveUpcoming(String base, String date, int days);
+
+  /// No description provided for @zakatExplainBelow.
+  ///
+  /// In en, this message translates to:
+  /// **'Your zakatable base of {base} is below today’s nisab of {threshold}, so no zakat is due.'**
+  String zakatExplainBelow(String base, String threshold);
+
+  /// No description provided for @zakatExplainUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Today’s {metal} price hasn’t loaded, so the nisab threshold can’t be checked yet.'**
+  String zakatExplainUnknown(String metal);
+
+  /// No description provided for @zakatRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get zakatRetry;
+
+  /// No description provided for @zakatUnpricedNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Some assets have no price yet and aren’t counted. They count as soon as their price loads.'**
+  String get zakatUnpricedNote;
+
+  /// No description provided for @zakatBasisRow.
+  ///
+  /// In en, this message translates to:
+  /// **'Basis'**
+  String get zakatBasisRow;
+
+  /// No description provided for @zakatBasisValue.
+  ///
+  /// In en, this message translates to:
+  /// **'{metal} · {grams} g'**
+  String zakatBasisValue(String metal, String grams);
+
+  /// No description provided for @zakatOtherBasisLine.
+  ///
+  /// In en, this message translates to:
+  /// **'{metal} basis would be {amount}'**
+  String zakatOtherBasisLine(String metal, String amount);
+
+  /// No description provided for @zakatThresholdToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Threshold today'**
+  String get zakatThresholdToday;
+
+  /// No description provided for @zakatYourBase.
+  ///
+  /// In en, this message translates to:
+  /// **'Your zakatable base'**
+  String get zakatYourBase;
+
+  /// No description provided for @zakatHawlStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Hawl start'**
+  String get zakatHawlStart;
+
+  /// No description provided for @zakatHawlSet.
+  ///
+  /// In en, this message translates to:
+  /// **'Set date'**
+  String get zakatHawlSet;
+
+  /// No description provided for @zakatHawlNotSetSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'The day your wealth first reached nisab'**
+  String get zakatHawlNotSetSubtitle;
+
+  /// No description provided for @zakatHawlCompletesToday.
+  ///
+  /// In en, this message translates to:
+  /// **'completes today'**
+  String get zakatHawlCompletesToday;
+
+  /// No description provided for @zakatHawlNext.
+  ///
+  /// In en, this message translates to:
+  /// **'next completes {date}'**
+  String zakatHawlNext(String date);
+
+  /// No description provided for @zakatWhatCountsFooter.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch an asset off to leave it out — for example jewelry worn every day, if you follow the view that it is exempt.'**
+  String get zakatWhatCountsFooter;
+
+  /// No description provided for @zakatExcludedClass.
+  ///
+  /// In en, this message translates to:
+  /// **'{cls} switched off'**
+  String zakatExcludedClass(String cls);
+
+  /// No description provided for @zakatExcludedHolding.
+  ///
+  /// In en, this message translates to:
+  /// **'left out'**
+  String get zakatExcludedHolding;
+
+  /// No description provided for @zakatExcludedNoPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'no price yet'**
+  String get zakatExcludedNoPrice;
+
+  /// No description provided for @zakatLineTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} · {quantity}'**
+  String zakatLineTitle(String name, String quantity);
+
+  /// No description provided for @zakatDisclaimer.
+  ///
+  /// In en, this message translates to:
+  /// **'Qima computes; it does not rule. The basis and what counts are yours to set — ask a scholar you trust when unsure.'**
+  String get zakatDisclaimer;
+
+  /// No description provided for @assetGroupMetals.
+  ///
+  /// In en, this message translates to:
+  /// **'Metals'**
+  String get assetGroupMetals;
+
+  /// No description provided for @assetGroupCrypto.
+  ///
+  /// In en, this message translates to:
+  /// **'Crypto'**
+  String get assetGroupCrypto;
+
+  /// No description provided for @assetGroupEquities.
+  ///
+  /// In en, this message translates to:
+  /// **'Equities'**
+  String get assetGroupEquities;
+
+  /// No description provided for @assetGroupCash.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash & currencies'**
+  String get assetGroupCash;
+
+  /// No description provided for @zakatClassMetalsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Gold, silver, platinum, palladium'**
+  String get zakatClassMetalsSubtitle;
+
+  /// No description provided for @zakatClassCryptoSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Treated as a tradeable asset'**
+  String get zakatClassCryptoSubtitle;
+
+  /// No description provided for @zakatClassEquitiesSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Off by default — views on long-term shareholdings differ'**
+  String get zakatClassEquitiesSubtitle;
+
+  /// No description provided for @zakatClassCashSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Currencies you hold'**
+  String get zakatClassCashSubtitle;
+
+  /// No description provided for @zakatOverridesCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 asset set individually} other{{count} assets set individually}}'**
+  String zakatOverridesCount(int count);
+
+  /// No description provided for @zakatOverridesSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Chosen on the zakat screen, overriding their class'**
+  String get zakatOverridesSubtitle;
+
+  /// No description provided for @zakatOverridesReset.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset'**
+  String get zakatOverridesReset;
+
+  /// No description provided for @zakatNisabBasisSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Nisab basis'**
+  String get zakatNisabBasisSection;
+
+  /// No description provided for @zakatClassesSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Zakatable classes'**
+  String get zakatClassesSection;
+
+  /// No description provided for @zakatHawlSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Hawl'**
+  String get zakatHawlSection;
+
+  /// No description provided for @zakatBasisPriceMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'Price not loaded yet'**
+  String get zakatBasisPriceMissing;
+
+  /// No description provided for @zakatBasisToday.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} today'**
+  String zakatBasisToday(String amount);
+
+  /// No description provided for @zakatBasisHigher.
+  ///
+  /// In en, this message translates to:
+  /// **'Higher threshold · {amount} today'**
+  String zakatBasisHigher(String amount);
+
+  /// No description provided for @zakatBasisLower.
+  ///
+  /// In en, this message translates to:
+  /// **'Lower threshold · {amount} today · more people owe'**
+  String zakatBasisLower(String amount);
+
+  /// No description provided for @zakatCalendar.
+  ///
+  /// In en, this message translates to:
+  /// **'Calendar'**
+  String get zakatCalendar;
+
+  /// No description provided for @zakatCalendarHijri.
+  ///
+  /// In en, this message translates to:
+  /// **'Hijri'**
+  String get zakatCalendarHijri;
+
+  /// No description provided for @zakatCalendarGregorian.
+  ///
+  /// In en, this message translates to:
+  /// **'Gregorian'**
+  String get zakatCalendarGregorian;
+
+  /// No description provided for @zakatGregorianNote.
+  ///
+  /// In en, this message translates to:
+  /// **'A Gregorian year is about 11 days longer than a lunar one. Some scholars raise the rate to {solarRate} to account for it; Qima keeps {rate}.'**
+  String zakatGregorianNote(String solarRate, String rate);
+
+  /// No description provided for @zakatHawlClear.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear hawl date'**
+  String get zakatHawlClear;
+
+  /// No description provided for @zakatRemind.
+  ///
+  /// In en, this message translates to:
+  /// **'Remind me'**
+  String get zakatRemind;
+
+  /// No description provided for @zakatRemindSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'A notification on the day your hawl completes'**
+  String get zakatRemindSubtitle;
+
+  /// No description provided for @zakatRemindNeedsStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Set a hawl start date first'**
+  String get zakatRemindNeedsStart;
+
+  /// No description provided for @zakatRemindNotificationsOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications are off for Qima — turn them on in system settings to get this reminder'**
+  String get zakatRemindNotificationsOff;
+
+  /// No description provided for @zakatHawlPickerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Hawl start'**
+  String get zakatHawlPickerTitle;
+
+  /// No description provided for @zakatHawlPickerDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Day'**
+  String get zakatHawlPickerDay;
+
+  /// No description provided for @zakatHawlPickerMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Month'**
+  String get zakatHawlPickerMonth;
+
+  /// No description provided for @zakatHawlPickerYear.
+  ///
+  /// In en, this message translates to:
+  /// **'Year'**
+  String get zakatHawlPickerYear;
+
+  /// No description provided for @zakatHawlPickerFuture.
+  ///
+  /// In en, this message translates to:
+  /// **'A hawl can’t start in the future'**
+  String get zakatHawlPickerFuture;
+
+  /// No description provided for @zakatHawlPickerGregorian.
+  ///
+  /// In en, this message translates to:
+  /// **'Gregorian: {date}'**
+  String zakatHawlPickerGregorian(String date);
+
+  /// No description provided for @zakatEntryDue.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} due · above nisab'**
+  String zakatEntryDue(String amount);
+
+  /// No description provided for @zakatEntryCalculate.
+  ///
+  /// In en, this message translates to:
+  /// **'See what’s due'**
+  String get zakatEntryCalculate;
+
+  /// No description provided for @zakatReminderNotificationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your hawl is complete'**
+  String get zakatReminderNotificationTitle;
+
+  /// No description provided for @zakatReminderNotificationBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your zakat year completed today. Open Qima to see what’s due.'**
+  String get zakatReminderNotificationBody;
+
+  /// No description provided for @hijriMonth1.
+  ///
+  /// In en, this message translates to:
+  /// **'Muharram'**
+  String get hijriMonth1;
+
+  /// No description provided for @hijriMonth2.
+  ///
+  /// In en, this message translates to:
+  /// **'Safar'**
+  String get hijriMonth2;
+
+  /// No description provided for @hijriMonth3.
+  ///
+  /// In en, this message translates to:
+  /// **'Rabi al-Awwal'**
+  String get hijriMonth3;
+
+  /// No description provided for @hijriMonth4.
+  ///
+  /// In en, this message translates to:
+  /// **'Rabi al-Thani'**
+  String get hijriMonth4;
+
+  /// No description provided for @hijriMonth5.
+  ///
+  /// In en, this message translates to:
+  /// **'Jumada al-Ula'**
+  String get hijriMonth5;
+
+  /// No description provided for @hijriMonth6.
+  ///
+  /// In en, this message translates to:
+  /// **'Jumada al-Akhirah'**
+  String get hijriMonth6;
+
+  /// No description provided for @hijriMonth7.
+  ///
+  /// In en, this message translates to:
+  /// **'Rajab'**
+  String get hijriMonth7;
+
+  /// No description provided for @hijriMonth8.
+  ///
+  /// In en, this message translates to:
+  /// **'Shaban'**
+  String get hijriMonth8;
+
+  /// No description provided for @hijriMonth9.
+  ///
+  /// In en, this message translates to:
+  /// **'Ramadan'**
+  String get hijriMonth9;
+
+  /// No description provided for @hijriMonth10.
+  ///
+  /// In en, this message translates to:
+  /// **'Shawwal'**
+  String get hijriMonth10;
+
+  /// No description provided for @hijriMonth11.
+  ///
+  /// In en, this message translates to:
+  /// **'Dhu al-Qadah'**
+  String get hijriMonth11;
+
+  /// No description provided for @hijriMonth12.
+  ///
+  /// In en, this message translates to:
+  /// **'Dhu al-Hijjah'**
+  String get hijriMonth12;
+
+  /// No description provided for @hijriDate.
+  ///
+  /// In en, this message translates to:
+  /// **'{day} {month} {year} AH'**
+  String hijriDate(int day, String month, int year);
+
+  /// No description provided for @helpZakatTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Zakat'**
+  String get helpZakatTitle;
+
+  /// No description provided for @helpZakatSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Qima works out zakat from your holdings at today’s prices. It calculates; the choices behind the calculation are yours.'**
+  String get helpZakatSummary;
+
+  /// No description provided for @helpZakatStep1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Nisab'**
+  String get helpZakatStep1Title;
+
+  /// No description provided for @helpZakatStep1Body.
+  ///
+  /// In en, this message translates to:
+  /// **'The threshold is 85 g of fine gold or 595 g of silver, priced live. Pick the basis in Zakat settings; silver is lower, so more people owe.'**
+  String get helpZakatStep1Body;
+
+  /// No description provided for @helpZakatStep2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'What counts'**
+  String get helpZakatStep2Title;
+
+  /// No description provided for @helpZakatStep2Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Metals, crypto and cash count by default; equities don’t. Karat gold counts by its gold content. Switch any single asset off on the zakat screen.'**
+  String get helpZakatStep2Body;
+
+  /// No description provided for @helpZakatStep3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Hawl'**
+  String get helpZakatStep3Title;
+
+  /// No description provided for @helpZakatStep3Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Set the day your wealth first reached nisab. Zakat falls due each lunar year after it, and Qima can remind you on the day.'**
+  String get helpZakatStep3Body;
+
+  /// No description provided for @helpZakatStep4Title.
+  ///
+  /// In en, this message translates to:
+  /// **'A calculator, not a fatwa'**
+  String get helpZakatStep4Title;
+
+  /// No description provided for @helpZakatStep4Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Scholars differ on the basis, on equities and on jewelry. Every default here can be changed — when unsure, ask a scholar you trust.'**
+  String get helpZakatStep4Body;
+
+  /// No description provided for @allocationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Allocation'**
+  String get allocationTitle;
+
+  /// No description provided for @allocationDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Details'**
+  String get allocationDetails;
+
+  /// No description provided for @allocationByGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'By group'**
+  String get allocationByGroup;
+
+  /// No description provided for @allocationMetalsByForm.
+  ///
+  /// In en, this message translates to:
+  /// **'Metals · by karat and form'**
+  String get allocationMetalsByForm;
+
+  /// No description provided for @allocationMetalForm.
+  ///
+  /// In en, this message translates to:
+  /// **'{metal} {karat}'**
+  String allocationMetalForm(String metal, String karat);
+
+  /// No description provided for @allocationDriftTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Drift'**
+  String get allocationDriftTitle;
+
+  /// No description provided for @allocationDriftSince.
+  ///
+  /// In en, this message translates to:
+  /// **'Drift · since {date}'**
+  String allocationDriftSince(String date);
+
+  /// No description provided for @allocationDriftChange.
+  ///
+  /// In en, this message translates to:
+  /// **'{from} → {to}'**
+  String allocationDriftChange(String from, String to);
+
+  /// No description provided for @allocationDriftPendingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Before there is history'**
+  String get allocationDriftPendingTitle;
+
+  /// No description provided for @allocationDriftPending.
+  ///
+  /// In en, this message translates to:
+  /// **'How your split moves over time appears once your holdings are 14 days old, on {date}. Until then, this is today’s allocation — no trend is invented.'**
+  String allocationDriftPending(String date);
+
+  /// No description provided for @allocationDriftNoHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'There aren’t enough stored prices yet to know how your allocation looked back then. It fills in as price history loads.'**
+  String get allocationDriftNoHistory;
+
+  /// No description provided for @allocationSingleGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'All in {group}'**
+  String allocationSingleGroup(String group);
+
+  /// No description provided for @backupImportCountTransactions.
+  ///
+  /// In en, this message translates to:
+  /// **'Transactions'**
+  String get backupImportCountTransactions;
+
+  /// No description provided for @portfolioTransactionCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 transaction} other{{count} transactions}}'**
+  String portfolioTransactionCount(int count);
+
+  /// No description provided for @portfolioClosedPositions.
+  ///
+  /// In en, this message translates to:
+  /// **'Closed positions'**
+  String get portfolioClosedPositions;
+
+  /// No description provided for @ledgerTitleWithKarat.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} · {karat}'**
+  String ledgerTitleWithKarat(String name, String karat);
+
+  /// No description provided for @ledgerAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get ledgerAdd;
+
+  /// No description provided for @ledgerAddFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a transaction'**
+  String get ledgerAddFirst;
+
+  /// No description provided for @ledgerHolding.
+  ///
+  /// In en, this message translates to:
+  /// **'Holding'**
+  String get ledgerHolding;
+
+  /// No description provided for @ledgerNothingHeld.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing held now'**
+  String get ledgerNothingHeld;
+
+  /// No description provided for @ledgerPerUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} / {unit}'**
+  String ledgerPerUnit(String amount, String unit);
+
+  /// No description provided for @ledgerMarketValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Market value'**
+  String get ledgerMarketValue;
+
+  /// No description provided for @ledgerUnrealised.
+  ///
+  /// In en, this message translates to:
+  /// **'Unrealised'**
+  String get ledgerUnrealised;
+
+  /// No description provided for @ledgerRealised.
+  ///
+  /// In en, this message translates to:
+  /// **'Realised'**
+  String get ledgerRealised;
+
+  /// No description provided for @ledgerGainWithPercent.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} ({percent})'**
+  String ledgerGainWithPercent(String amount, String percent);
+
+  /// No description provided for @ledgerDetail.
+  ///
+  /// In en, this message translates to:
+  /// **'{date} · {detail}'**
+  String ledgerDetail(String date, String detail);
+
+  /// No description provided for @ledgerDetailWithFee.
+  ///
+  /// In en, this message translates to:
+  /// **'{date} · {price} · fee {fee}'**
+  String ledgerDetailWithFee(String date, String price, String fee);
+
+  /// No description provided for @ledgerNoCostBasis.
+  ///
+  /// In en, this message translates to:
+  /// **'no cost basis'**
+  String get ledgerNoCostBasis;
+
+  /// No description provided for @ledgerCostCarried.
+  ///
+  /// In en, this message translates to:
+  /// **'cost carried over'**
+  String get ledgerCostCarried;
+
+  /// No description provided for @ledgerFootnote.
+  ///
+  /// In en, this message translates to:
+  /// **'Cost basis is worked out from this ledger, not stored. Editing any row re-derives the holding.'**
+  String get ledgerFootnote;
+
+  /// No description provided for @ledgerOverdrawnBanner.
+  ///
+  /// In en, this message translates to:
+  /// **'A sale here sells more than was held on its date — usually from editing on two devices at once. It counts as selling what was left; edit or delete it to fix the totals.'**
+  String get ledgerOverdrawnBanner;
+
+  /// No description provided for @ledgerClosedLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing held now · realised {amount}'**
+  String ledgerClosedLine(String amount);
+
+  /// No description provided for @ledgerConflictSaveTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'That would oversell'**
+  String get ledgerConflictSaveTitle;
+
+  /// No description provided for @ledgerConflictDeleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Can’t delete this yet'**
+  String get ledgerConflictDeleteTitle;
+
+  /// No description provided for @ledgerConflictMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'The {kind} on {date} would then sell more than was held. Edit or delete that one first.'**
+  String ledgerConflictMessage(String kind, String date);
+
+  /// No description provided for @confirmDeleteTransactionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this transaction?'**
+  String get confirmDeleteTransactionTitle;
+
+  /// No description provided for @confirmDeleteTransactionMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'{details}. The holding is worked out again without it. This can’t be undone.'**
+  String confirmDeleteTransactionMessage(String details);
+
+  /// No description provided for @transactionNewTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'New transaction'**
+  String get transactionNewTitle;
+
+  /// No description provided for @transactionEditTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit transaction'**
+  String get transactionEditTitle;
+
+  /// No description provided for @transactionKindBuy.
+  ///
+  /// In en, this message translates to:
+  /// **'Buy'**
+  String get transactionKindBuy;
+
+  /// No description provided for @transactionKindSell.
+  ///
+  /// In en, this message translates to:
+  /// **'Sell'**
+  String get transactionKindSell;
+
+  /// No description provided for @transactionKindTransfer.
+  ///
+  /// In en, this message translates to:
+  /// **'Transfer'**
+  String get transactionKindTransfer;
+
+  /// No description provided for @transactionKindTransferIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Transfer in'**
+  String get transactionKindTransferIn;
+
+  /// No description provided for @transactionKindTransferOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Transfer out'**
+  String get transactionKindTransferOut;
+
+  /// No description provided for @transactionKindFee.
+  ///
+  /// In en, this message translates to:
+  /// **'Fee'**
+  String get transactionKindFee;
+
+  /// No description provided for @transactionTransferInLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'In'**
+  String get transactionTransferInLabel;
+
+  /// No description provided for @transactionTransferOutLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Out'**
+  String get transactionTransferOutLabel;
+
+  /// No description provided for @transactionFineHint.
+  ///
+  /// In en, this message translates to:
+  /// **'= {quantity} of fine gold'**
+  String transactionFineHint(String quantity);
+
+  /// No description provided for @transactionPerUnitKarat.
+  ///
+  /// In en, this message translates to:
+  /// **'{unit} · {karat}'**
+  String transactionPerUnitKarat(String unit, String karat);
+
+  /// No description provided for @transactionBuyPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Price paid (per {unit})'**
+  String transactionBuyPrice(String unit);
+
+  /// No description provided for @transactionSalePrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Sale price (per {unit})'**
+  String transactionSalePrice(String unit);
+
+  /// No description provided for @transactionCarriedCost.
+  ///
+  /// In en, this message translates to:
+  /// **'Original cost (per {unit}, optional)'**
+  String transactionCarriedCost(String unit);
+
+  /// No description provided for @transactionTotalProceeds.
+  ///
+  /// In en, this message translates to:
+  /// **'Total sale amount'**
+  String get transactionTotalProceeds;
+
+  /// No description provided for @transactionTotalCarriedCost.
+  ///
+  /// In en, this message translates to:
+  /// **'Original total cost (optional)'**
+  String get transactionTotalCarriedCost;
+
+  /// No description provided for @transactionTransferCostHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'What it originally cost, if you know it. Left empty, it joins with no cost basis.'**
+  String get transactionTransferCostHelper;
+
+  /// No description provided for @transactionFee.
+  ///
+  /// In en, this message translates to:
+  /// **'Fee (optional)'**
+  String get transactionFee;
+
+  /// No description provided for @transactionFeeAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Fee amount'**
+  String get transactionFeeAmount;
+
+  /// No description provided for @transactionFeeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'What it was for (optional)'**
+  String get transactionFeeLabel;
+
+  /// No description provided for @transactionNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Note (optional)'**
+  String get transactionNote;
+
+  /// No description provided for @transactionNeedsQuantity.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a quantity.'**
+  String get transactionNeedsQuantity;
+
+  /// No description provided for @transactionNeedsPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a price.'**
+  String get transactionNeedsPrice;
+
+  /// No description provided for @transactionNeedsFee.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the fee amount.'**
+  String get transactionNeedsFee;
+
+  /// No description provided for @transactionMoreThanHeld.
+  ///
+  /// In en, this message translates to:
+  /// **'That’s more than you held on that date ({held}).'**
+  String transactionMoreThanHeld(String held);
+
+  /// No description provided for @transactionPreviewTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Realised gain preview'**
+  String get transactionPreviewTitle;
+
+  /// No description provided for @transactionProceeds.
+  ///
+  /// In en, this message translates to:
+  /// **'Proceeds'**
+  String get transactionProceeds;
+
+  /// No description provided for @transactionBasisReleased.
+  ///
+  /// In en, this message translates to:
+  /// **'Cost basis released'**
+  String get transactionBasisReleased;
+
+  /// No description provided for @transactionRealisedGain.
+  ///
+  /// In en, this message translates to:
+  /// **'Realised gain'**
+  String get transactionRealisedGain;
+
+  /// No description provided for @transactionPreviewRemaining.
+  ///
+  /// In en, this message translates to:
+  /// **'Weighted average basis. Still held after this: {quantity} at {average}.'**
+  String transactionPreviewRemaining(String quantity, String average);
+
+  /// No description provided for @transactionPreviewClosesPosition.
+  ///
+  /// In en, this message translates to:
+  /// **'Weighted average basis. This sells everything you hold.'**
+  String get transactionPreviewClosesPosition;
+
+  /// No description provided for @backupCsvHeaderType.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get backupCsvHeaderType;
+
+  /// No description provided for @backupCsvHeaderFee.
+  ///
+  /// In en, this message translates to:
+  /// **'Fee'**
+  String get backupCsvHeaderFee;
+
+  /// No description provided for @backupCsvHeaderNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Note'**
+  String get backupCsvHeaderNote;
+
+  /// No description provided for @csvImportTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Import from a spreadsheet'**
+  String get csvImportTitle;
+
+  /// No description provided for @csvImportEntryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Import transactions from CSV'**
+  String get csvImportEntryTitle;
+
+  /// No description provided for @csvImportEntrySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'From a spreadsheet, a broker export or another app'**
+  String get csvImportEntrySubtitle;
+
+  /// No description provided for @csvImportFromBackupError.
+  ///
+  /// In en, this message translates to:
+  /// **'Import these as transactions'**
+  String get csvImportFromBackupError;
+
+  /// No description provided for @csvImportRowCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 row} other{{count} rows}}'**
+  String csvImportRowCount(int count);
+
+  /// No description provided for @csvImportEmptyFile.
+  ///
+  /// In en, this message translates to:
+  /// **'This file has a header row but no data under it.'**
+  String get csvImportEmptyFile;
+
+  /// No description provided for @csvImportColumnsSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Columns'**
+  String get csvImportColumnsSection;
+
+  /// No description provided for @csvImportColumnsFooter.
+  ///
+  /// In en, this message translates to:
+  /// **'Matched from the header row where Qima could. A price or a total will do; the asset can be a symbol or a name. * needed.'**
+  String get csvImportColumnsFooter;
+
+  /// No description provided for @csvImportNotInFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Not in file'**
+  String get csvImportNotInFile;
+
+  /// No description provided for @csvImportOptionsSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Reading the file'**
+  String get csvImportOptionsSection;
+
+  /// No description provided for @csvImportFallbackCurrency.
+  ///
+  /// In en, this message translates to:
+  /// **'Currency'**
+  String get csvImportFallbackCurrency;
+
+  /// No description provided for @csvImportFallbackCurrencySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'For rows that don’t name one'**
+  String get csvImportFallbackCurrencySubtitle;
+
+  /// No description provided for @csvImportDateOrder.
+  ///
+  /// In en, this message translates to:
+  /// **'Dates like 03/04/2026 mean'**
+  String get csvImportDateOrder;
+
+  /// No description provided for @csvImportDayFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'3 April'**
+  String get csvImportDayFirst;
+
+  /// No description provided for @csvImportMonthFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'March 4'**
+  String get csvImportMonthFirst;
+
+  /// No description provided for @csvImportDecimalComma.
+  ///
+  /// In en, this message translates to:
+  /// **'Comma is the decimal mark'**
+  String get csvImportDecimalComma;
+
+  /// No description provided for @csvImportDecimalCommaSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Read 1.234,56 as one thousand two hundred…'**
+  String get csvImportDecimalCommaSubtitle;
+
+  /// No description provided for @csvImportNeedsColumns.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose at least the asset, the date and the quantity.'**
+  String get csvImportNeedsColumns;
+
+  /// No description provided for @csvImportReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Review rows'**
+  String get csvImportReview;
+
+  /// No description provided for @csvImportReadyCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready'**
+  String get csvImportReadyCount;
+
+  /// No description provided for @csvImportDuplicateCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Already in Qima'**
+  String get csvImportDuplicateCount;
+
+  /// No description provided for @csvImportProblemCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Can’t import'**
+  String get csvImportProblemCount;
+
+  /// No description provided for @csvImportSkipNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Rows that can’t be read, or are already in Qima, are skipped. Nothing is guessed.'**
+  String get csvImportSkipNote;
+
+  /// No description provided for @csvImportShowAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All rows'**
+  String get csvImportShowAll;
+
+  /// No description provided for @csvImportShowProblems.
+  ///
+  /// In en, this message translates to:
+  /// **'Skipped only'**
+  String get csvImportShowProblems;
+
+  /// No description provided for @csvImportSkipped.
+  ///
+  /// In en, this message translates to:
+  /// **'Skipped'**
+  String get csvImportSkipped;
+
+  /// No description provided for @csvImportDuplicate.
+  ///
+  /// In en, this message translates to:
+  /// **'Duplicate'**
+  String get csvImportDuplicate;
+
+  /// No description provided for @csvImportBackToColumns.
+  ///
+  /// In en, this message translates to:
+  /// **'Columns'**
+  String get csvImportBackToColumns;
+
+  /// No description provided for @csvImportConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{Nothing to import} =1{Import 1 transaction} other{Import {count} transactions}}'**
+  String csvImportConfirm(int count);
+
+  /// No description provided for @csvImportDoneTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 transaction imported} other{{count} transactions imported}}'**
+  String csvImportDoneTitle(int count);
+
+  /// No description provided for @csvImportDoneMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'They’re in each asset’s ledger now. If something looks off, undo removes exactly what this import added.'**
+  String get csvImportDoneMessage;
+
+  /// No description provided for @csvImportUndo.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo this import'**
+  String get csvImportUndo;
+
+  /// No description provided for @csvImportUndone.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Removed 1 imported transaction} other{Removed {count} imported transactions}}'**
+  String csvImportUndone(int count);
+
+  /// No description provided for @csvFieldType.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get csvFieldType;
+
+  /// No description provided for @csvFieldAsset.
+  ///
+  /// In en, this message translates to:
+  /// **'Asset name'**
+  String get csvFieldAsset;
+
+  /// No description provided for @csvFieldSymbol.
+  ///
+  /// In en, this message translates to:
+  /// **'Symbol'**
+  String get csvFieldSymbol;
+
+  /// No description provided for @csvFieldQuantity.
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity'**
+  String get csvFieldQuantity;
+
+  /// No description provided for @csvFieldUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'Unit'**
+  String get csvFieldUnit;
+
+  /// No description provided for @csvFieldKarat.
+  ///
+  /// In en, this message translates to:
+  /// **'Karat'**
+  String get csvFieldKarat;
+
+  /// No description provided for @csvFieldUnitPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Price per unit'**
+  String get csvFieldUnitPrice;
+
+  /// No description provided for @csvFieldTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Total'**
+  String get csvFieldTotal;
+
+  /// No description provided for @csvFieldFee.
+  ///
+  /// In en, this message translates to:
+  /// **'Fee'**
+  String get csvFieldFee;
+
+  /// No description provided for @csvFieldCurrency.
+  ///
+  /// In en, this message translates to:
+  /// **'Currency'**
+  String get csvFieldCurrency;
+
+  /// No description provided for @csvFieldDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get csvFieldDate;
+
+  /// No description provided for @csvFieldNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Note'**
+  String get csvFieldNote;
+
+  /// No description provided for @csvProblemUnknownAsset.
+  ///
+  /// In en, this message translates to:
+  /// **'unknown asset'**
+  String get csvProblemUnknownAsset;
+
+  /// No description provided for @csvProblemMissingQuantity.
+  ///
+  /// In en, this message translates to:
+  /// **'no quantity'**
+  String get csvProblemMissingQuantity;
+
+  /// No description provided for @csvProblemBadNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'a number can’t be read'**
+  String get csvProblemBadNumber;
+
+  /// No description provided for @csvProblemMissingPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'no price'**
+  String get csvProblemMissingPrice;
+
+  /// No description provided for @csvProblemMissingDate.
+  ///
+  /// In en, this message translates to:
+  /// **'no date'**
+  String get csvProblemMissingDate;
+
+  /// No description provided for @csvProblemBadDate.
+  ///
+  /// In en, this message translates to:
+  /// **'date can’t be read'**
+  String get csvProblemBadDate;
+
+  /// No description provided for @csvProblemFutureDate.
+  ///
+  /// In en, this message translates to:
+  /// **'date in the future'**
+  String get csvProblemFutureDate;
+
+  /// No description provided for @csvProblemUnknownType.
+  ///
+  /// In en, this message translates to:
+  /// **'unknown type'**
+  String get csvProblemUnknownType;
+
+  /// No description provided for @csvProblemUnknownCurrency.
+  ///
+  /// In en, this message translates to:
+  /// **'unknown currency'**
+  String get csvProblemUnknownCurrency;
+
+  /// No description provided for @csvProblemUnsupportedUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'unit doesn’t fit this asset'**
+  String get csvProblemUnsupportedUnit;
+
+  /// No description provided for @csvProblemUnsupportedKarat.
+  ///
+  /// In en, this message translates to:
+  /// **'karat doesn’t fit this asset'**
+  String get csvProblemUnsupportedKarat;
+
+  /// No description provided for @csvProblemOversell.
+  ///
+  /// In en, this message translates to:
+  /// **'sells more than was held'**
+  String get csvProblemOversell;
+
+  /// No description provided for @csvProblemDuplicate.
+  ///
+  /// In en, this message translates to:
+  /// **'already in Qima'**
+  String get csvProblemDuplicate;
+
+  /// No description provided for @transactionBuyPricePlain.
+  ///
+  /// In en, this message translates to:
+  /// **'Price paid'**
+  String get transactionBuyPricePlain;
+
+  /// No description provided for @transactionSalePricePlain.
+  ///
+  /// In en, this message translates to:
+  /// **'Sale price'**
+  String get transactionSalePricePlain;
+
+  /// No description provided for @transactionCarriedCostPlain.
+  ///
+  /// In en, this message translates to:
+  /// **'Original cost (optional)'**
+  String get transactionCarriedCostPlain;
 }
 
 class _AppLocalizationsDelegate

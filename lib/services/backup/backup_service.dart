@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:typed_data';
 import 'dart:ui' show Rect;
 
@@ -12,14 +13,17 @@ import '../../models/backup.dart';
 import '../../models/chart_range.dart';
 import '../../models/custom_instrument.dart';
 import '../../models/holding.dart';
+import '../../models/holding_transaction.dart';
 import '../../models/price_alert.dart';
 import '../../models/syncable.dart';
 import '../../models/watch_card.dart';
+import '../../models/zakat.dart';
 import '../alerts_store.dart';
 import '../custom_instrument_store.dart';
 import '../holdings_store.dart';
 import '../preferences.dart';
 import '../synced_store.dart';
+import '../transactions_store.dart';
 import '../watchlist_store.dart';
 import 'backup_codec.dart';
 import 'holdings_csv.dart';
@@ -60,7 +64,9 @@ class BackupPreview {
 
   int get cardCount => payload.watchcards.length;
 
-  int get lotCount => payload.holdings.length;
+  /// Ledger rows in the file — or, for a backup from before the ledger,
+  /// its lots, each of which restores as a buy.
+  int get transactionCount => payload.transactions?.length ?? payload.holdings.length;
 
   int get customTickerCount => payload.customInstruments.length;
 }
@@ -84,6 +90,7 @@ enum BackupImportMode { merge, replace }
 class BackupService {
   final WatchlistStore watchlistStore;
   final HoldingsStore holdingsStore;
+  final TransactionsStore transactionsStore;
   final CustomInstrumentStore customInstrumentStore;
   final AlertsStore alertsStore;
   final Preferences preferences;
@@ -91,10 +98,11 @@ class BackupService {
   BackupService({
     required this.watchlistStore,
     required this.holdingsStore,
+    TransactionsStore? transactionsStore,
     required this.customInstrumentStore,
     required this.alertsStore,
     required this.preferences,
-  });
+  }) : transactionsStore = transactionsStore ?? TransactionsStore(legacyLots: holdingsStore);
 
   static const String _lastBackupAtKey = 'backup.lastBackupAt';
   static const String _reminderEnabledKey = 'backup.reminderEnabled';
@@ -128,6 +136,7 @@ class BackupService {
   Future<BackupPayload> buildPayload() async {
     final cardsRecords = await watchlistStore.exportRecords();
     final lotsRecords = await holdingsStore.exportRecords();
+    final transactionRecords = await transactionsStore.exportRecords();
     final customRecords = await customInstrumentStore.exportRecords();
     final alertsRecords = await alertsStore.exportRecords();
 
@@ -137,11 +146,13 @@ class BackupService {
       appearance: (await preferences.appearance).name,
       preferredChartRange: preferences.preferredChartRange.name,
       widgetRefreshInterval: (await preferences.widgetRefreshInterval).rawValue,
+      zakat: (await preferences.zakatSettings).toJson(),
     );
 
     return BackupPayload(
       watchcards: cardsRecords.map((r) => r.toJson()).toList(),
       holdings: lotsRecords.map((r) => r.toJson()).toList(),
+      transactions: transactionRecords.map((r) => r.toJson()).toList(),
       customInstruments: customRecords.map((r) => r.toJson()).toList(),
       alerts: alertsRecords.map((r) => r.toJson()).toList(),
       settings: settings,
@@ -200,12 +211,12 @@ class BackupService {
   /// Exports the holdings CSV (spec Phase 6) — export-only, never counted
   /// toward [lastBackupAt] (only a full JSON backup counts as "backed up").
   Future<bool> exportHoldingsCsv({
-    required List<HoldingLot> lots,
+    required List<HoldingTransaction> transactions,
     required AppLocalizations l10n,
     Rect? sharePositionOrigin,
   }) async {
     final now = DateTime.now();
-    final bytes = HoldingsCsv.bytes(lots, l10n);
+    final bytes = HoldingsCsv.bytes(transactions, l10n);
     final filename = _csvFilename(now);
     return _deliverFile(
       bytes: Uint8List.fromList(bytes),
@@ -282,6 +293,22 @@ class BackupService {
     return PickedBackupFile(name: file.name, raw: raw);
   }
 
+  /// Lets the user pick a spreadsheet to import transactions from.
+  Future<PickedBackupFile?> pickCsvFile() async {
+    final typeGroup = XTypeGroup(
+      label: 'CSV',
+      extensions: ['csv', 'txt'],
+      mimeTypes: ['text/csv', 'text/comma-separated-values', 'text/plain'],
+      uniformTypeIdentifiers: ['public.comma-separated-values-text', 'public.plain-text'],
+    );
+    final file = await openFile(acceptedTypeGroups: [typeGroup]);
+    if (file == null) return null;
+    final bytes = await file.readAsBytes();
+    // Spreadsheets save UTF-8 (often with a BOM); anything that isn't is
+    // read leniently rather than refused.
+    return PickedBackupFile(name: file.name, raw: utf8.decode(bytes, allowMalformed: true));
+  }
+
   /// Parses [raw] into a [BackupEnvelope] — throws [BackupError] for a
   /// malformed/unsupported file. Doesn't decrypt/decode the payload yet
   /// (that needs a password for an encrypted backup) or touch any store.
@@ -296,20 +323,20 @@ class BackupService {
     final payload = await BackupCodec.decodePayload(envelope, password: password);
 
     final cardRecords = _decodeRecords(payload.watchcards, WatchCard.fromJson);
-    final lotRecords = _decodeRecords(payload.holdings, HoldingLot.fromJson);
+    final transactionRecords = _transactionRecords(payload);
     final customRecords = _decodeRecords(payload.customInstruments, CustomInstrument.fromJson);
     final alertRecords = _decodeRecords(payload.alerts, PriceAlert.fromJson);
 
     final mergeDiff = await _diff(
       cardRecords: cardRecords,
-      lotRecords: lotRecords,
+      transactionRecords: transactionRecords,
       customRecords: customRecords,
       alertRecords: alertRecords,
       mode: BackupImportMode.merge,
     );
     final replaceDiff = await _diff(
       cardRecords: cardRecords,
-      lotRecords: lotRecords,
+      transactionRecords: transactionRecords,
       customRecords: customRecords,
       alertRecords: alertRecords,
       mode: BackupImportMode.replace,
@@ -329,20 +356,32 @@ class BackupService {
     }
   }
 
+  /// The ledger a payload restores: its own transactions, or for a backup
+  /// from before the ledger, its live lots as buys — the same conversion the
+  /// on-device migration makes, so the ids line up.
+  List<Record<HoldingTransaction>> _transactionRecords(BackupPayload payload) {
+    final transactions = payload.transactions;
+    if (transactions != null) return _decodeRecords(transactions, HoldingTransaction.fromJson);
+    return [
+      for (final r in _decodeRecords(payload.holdings, HoldingLot.fromJson))
+        if (!r.deleted) Record<HoldingTransaction>(item: HoldingTransaction.fromLot(r.item), order: r.order, updatedAt: r.updatedAt),
+    ];
+  }
+
   Future<BackupDiff> _diff({
     required List<Record<WatchCard>> cardRecords,
-    required List<Record<HoldingLot>> lotRecords,
+    required List<Record<HoldingTransaction>> transactionRecords,
     required List<Record<CustomInstrument>> customRecords,
     required List<Record<PriceAlert>> alertRecords,
     required BackupImportMode mode,
   }) async {
     final cards = await watchlistStore.exportRecords();
-    final lots = await holdingsStore.exportRecords();
+    final transactions = await transactionsStore.exportRecords();
     final customs = await customInstrumentStore.exportRecords();
     final alerts = await alertsStore.exportRecords();
 
     return _diffRecords(cards, cardRecords, mode) +
-        _diffRecords(lots, lotRecords, mode) +
+        _diffRecords(transactions, transactionRecords, mode) +
         _diffRecords(customs, customRecords, mode) +
         _diffRecords(alerts, alertRecords, mode);
   }
@@ -411,11 +450,15 @@ class BackupService {
 
     final cardRecords = _decodeRecords(payload.watchcards, WatchCard.fromJson);
     final lotRecords = _decodeRecords(payload.holdings, HoldingLot.fromJson);
+    final transactionRecords = _transactionRecords(payload);
     final customRecords = _decodeRecords(payload.customInstruments, CustomInstrument.fromJson);
     final alertRecords = _decodeRecords(payload.alerts, PriceAlert.fromJson);
 
     await watchlistStore.importRecords(cardRecords, replace: replace);
+    // The legacy lots first: importing the ledger afterwards means a lot a
+    // replace just tombstoned can't be migrated back in.
     await holdingsStore.importRecords(lotRecords, replace: replace);
+    await transactionsStore.importRecords(transactionRecords, replace: replace);
     await customInstrumentStore.importRecords(customRecords, replace: replace);
     await alertsStore.importRecords(alertRecords, replace: replace);
 
@@ -442,6 +485,8 @@ class BackupService {
     }
     final interval = WidgetRefreshInterval.fromRawValue(settings.widgetRefreshInterval);
     await preferences.setWidgetRefreshInterval(interval);
+    final zakat = settings.zakat;
+    if (zakat != null) await preferences.setZakatSettings(ZakatSettings.fromJson(zakat));
   }
 
   // -------------------------------------------------------------------

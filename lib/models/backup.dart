@@ -17,7 +17,11 @@ class BackupEnvelope extends Equatable {
   /// Bumped only when the envelope/payload shape changes in a way an older
   /// app couldn't read. [BackupCodec] refuses to import a file whose
   /// [version] is greater than this.
-  static const int currentVersion = 1;
+  ///
+  /// 2 (v3): holdings are a transaction ledger (`transactions`). A 2.x app
+  /// refuses these rather than restoring the lots alone and silently
+  /// dropping every sale.
+  static const int currentVersion = 2;
 
   final String format;
   final int version;
@@ -125,12 +129,18 @@ class BackupSettings extends Equatable {
   final String preferredChartRange;
   final int widgetRefreshInterval;
 
+  /// `ZakatSettings.toJson()` (v3). Optional: backups written before zakat
+  /// existed have none, and restoring one of those leaves the current zakat
+  /// settings untouched.
+  final Map<String, dynamic>? zakat;
+
   const BackupSettings({
     required this.baseCurrency,
     required this.appLanguage,
     required this.appearance,
     required this.preferredChartRange,
     required this.widgetRefreshInterval,
+    this.zakat,
   });
 
   Map<String, dynamic> toJson() => {
@@ -139,6 +149,7 @@ class BackupSettings extends Equatable {
         'appearance': appearance,
         'preferredChartRange': preferredChartRange,
         'widgetRefreshInterval': widgetRefreshInterval,
+        if (zakat != null) 'zakat': zakat,
       };
 
   factory BackupSettings.fromJson(Map<String, dynamic> json) {
@@ -147,6 +158,7 @@ class BackupSettings extends Equatable {
     final appearance = json['appearance'];
     final preferredChartRange = json['preferredChartRange'];
     final widgetRefreshInterval = json['widgetRefreshInterval'];
+    final zakat = json['zakat'];
     if (baseCurrency is! String ||
         appLanguage is! String ||
         appearance is! String ||
@@ -160,11 +172,12 @@ class BackupSettings extends Equatable {
       appearance: appearance,
       preferredChartRange: preferredChartRange,
       widgetRefreshInterval: widgetRefreshInterval,
+      zakat: zakat is Map<String, dynamic> ? zakat : null,
     );
   }
 
   @override
-  List<Object?> get props => [baseCurrency, appLanguage, appearance, preferredChartRange, widgetRefreshInterval];
+  List<Object?> get props => [baseCurrency, appLanguage, appearance, preferredChartRange, widgetRefreshInterval, zakat];
 }
 
 /// The plain (unencrypted) payload contents — raw `SyncedStore` records for
@@ -174,7 +187,13 @@ class BackupSettings extends Equatable {
 /// (`BackupService`) do the typed decode/merge via `SyncedStore.importRecords`.
 class BackupPayload extends Equatable {
   final List<Map<String, dynamic>> watchcards;
+  /// Legacy lot records (`holdings.records`), still carried so a restore
+  /// keeps the migration source in step.
   final List<Map<String, dynamic>> holdings;
+
+  /// The ledger (v3). Null in a backup written before it existed; its lots
+  /// are restored as buys instead.
+  final List<Map<String, dynamic>>? transactions;
   final List<Map<String, dynamic>> customInstruments;
   final List<Map<String, dynamic>> alerts;
   final BackupSettings settings;
@@ -182,6 +201,7 @@ class BackupPayload extends Equatable {
   const BackupPayload({
     required this.watchcards,
     required this.holdings,
+    this.transactions,
     required this.customInstruments,
     required this.alerts,
     required this.settings,
@@ -190,6 +210,7 @@ class BackupPayload extends Equatable {
   Map<String, dynamic> toJson() => {
         'watchcards': watchcards,
         'holdings': holdings,
+        if (transactions != null) 'transactions': transactions,
         'customInstruments': customInstruments,
         'alerts': alerts,
         'settings': settings.toJson(),
@@ -213,6 +234,7 @@ class BackupPayload extends Equatable {
     return BackupPayload(
       watchcards: listOf('watchcards'),
       holdings: listOf('holdings'),
+      transactions: json.containsKey('transactions') ? listOf('transactions') : null,
       customInstruments: listOf('customInstruments'),
       alerts: listOf('alerts'),
       settings: BackupSettings.fromJson(settingsJson),
@@ -220,7 +242,7 @@ class BackupPayload extends Equatable {
   }
 
   @override
-  List<Object?> get props => [watchcards, holdings, customInstruments, alerts, settings];
+  List<Object?> get props => [watchcards, holdings, transactions, customInstruments, alerts, settings];
 }
 
 /// Envelope `payload` shape when `encrypted: true` — the [BackupPayload]

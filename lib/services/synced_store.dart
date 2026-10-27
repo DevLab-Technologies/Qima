@@ -195,6 +195,36 @@ class SyncedStore<T extends Syncable> {
     return _liveSorted(await _readLocal());
   }
 
+  /// Adds each of [records] whose id this store has never seen — live or
+  /// tombstoned, here or in the cloud — keeping the record's own metadata.
+  /// One commit for the batch; returns how many were added.
+  ///
+  /// For migrations: two devices migrating the same source produce the
+  /// same records, and a record the user already deleted is never revived.
+  Future<int> insertMissing(List<Record<T>> records) async {
+    if (records.isEmpty) return 0;
+    final merged = merge(await _readLocal(), await _readCloud());
+    final known = {for (final r in merged) r.item.id};
+    final missing = [for (final r in records) if (!known.contains(r.item.id)) r];
+    if (missing.isEmpty) return 0;
+    await _commit([...merged, ...missing]);
+    return missing.length;
+  }
+
+  /// Tombstones every item in [ids] in one commit.
+  Future<List<T>> deleteAll(Iterable<String> ids) async {
+    final targets = ids.toSet();
+    final local = await _readLocal();
+    if (!local.any((r) => targets.contains(r.item.id) && !r.deleted)) return _liveSorted(local);
+    final now = DateTime.now();
+    final updated = [
+      for (final r in local)
+        targets.contains(r.item.id) && !r.deleted ? r.copyWith(deleted: true, updatedAt: now) : r,
+    ];
+    await _commit(updated);
+    return _liveSorted(await _readLocal());
+  }
+
   /// Reassigns order for each id in [orderedIds]; only bumps `updatedAt` for
   /// items whose order actually changed.
   Future<List<T>> setOrder(List<String> orderedIds) async {

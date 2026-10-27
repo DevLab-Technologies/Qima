@@ -1,10 +1,5 @@
-Qima 2.2.0
-• Nuevo diseño: pestañas Seguimiento, Cartera y Ajustes, con el gráfico de tu cartera en directo
-• Filtra tu lista por metales, cripto, acciones, índices o divisas
-• Alertas de precio con notificaciones
-• Widgets configurables: elige activo, unidad, quilates, divisa y periodo
-• Bloqueo con huella o rostro, y opción para ocultar saldos
-• Tema claro
-• Copia de seguridad cifrada y restauración
-• Recorrido inicial y ayuda en cada pantalla
-• Corregido: precio del oro sin actualizar
+Qima 3.0.0
+• Zakat: comprueba si superas el nisab y cuánto corresponde, con un recordatorio del hawl en calendario hégira o gregoriano
+• Distribución: tu cartera por metales, cripto, acciones y efectivo, el oro por quilates y cómo ha cambiado desde enero
+• Registra ventas, transferencias y comisiones, no solo compras, con ganancias realizadas y posiciones cerradas
+• Importa tus posiciones desde un archivo CSV; la exportación usa las mismas columnas

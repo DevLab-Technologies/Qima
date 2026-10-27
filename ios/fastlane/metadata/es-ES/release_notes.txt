@@ -1,11 +1,5 @@
-Qima 2.2.0
-• Nuevo diseño: pestañas Seguimiento, Cartera y Ajustes, con tu cartera en directo al frente
-• Filtra tu lista por metales, cripto, acciones, índices o divisas
-• Alertas de precio con notificaciones
-• Widgets para la pantalla de inicio y el Mac: precios, cartera y lista de seguimiento, cada uno a tu manera
-• Sincronización con iCloud entre iPhone, iPad y Mac
-• Bloqueo con Face ID y opción para ocultar saldos
-• Tema claro
-• Copia de seguridad cifrada y restauración
-• Recorrido inicial y ayuda en cada pantalla
-• Corregido: los precios del oro, la plata y las cripto no se actualizaban; «Actualizado» ahora muestra la fecha si no son de hoy
+Qima 3.0.0
+• Zakat: comprueba si superas el nisab y cuánto corresponde, con un recordatorio del hawl en calendario hégira o gregoriano
+• Distribución: tu cartera por metales, cripto, acciones y efectivo, el oro por quilates y cómo ha cambiado desde enero
+• Registra ventas, transferencias y comisiones, no solo compras, con ganancias realizadas y posiciones cerradas
+• Importa tus posiciones desde un archivo CSV; la exportación usa las mismas columnas

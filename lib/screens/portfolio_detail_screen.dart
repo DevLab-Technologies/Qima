@@ -4,7 +4,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../blocs/app_cubit.dart';
 import '../blocs/app_state.dart';
 import '../l10n/app_localizations.dart';
+import '../models/allocation.dart';
+import '../models/asset_group.dart';
+import '../models/asset.dart';
 import '../models/holding.dart';
+import '../models/zakat.dart';
 import '../theme/design_system.dart';
 import '../theme/help_topics.dart';
 import '../theme/masking.dart';
@@ -13,7 +17,11 @@ import '../theme/strings.dart';
 import '../widgets/allocation_donut.dart';
 import '../widgets/help_button.dart';
 import '../widgets/instrument_icon.dart';
+import '../widgets/section_header.dart';
+import 'allocation_screen.dart';
+import 'holdings_screen.dart';
 import 'instrument_detail_screen.dart';
+import 'zakat_screen.dart';
 
 /// Portfolio breakdown: an allocation-donut hero (total value, gain, cost)
 /// plus one row per held instrument — name, lot count/weight, value, gain,
@@ -66,6 +74,18 @@ class PortfolioDetailScreen extends StatelessWidget {
             final heldInstruments = cubit.heldInstruments;
             final slices = resolveAllocation(heldInstruments, colors);
             final sliceByID = {for (final s in slices) s.holding.id: s};
+            final realised = cubit.portfolioRealised;
+            final closed = cubit.closedPositions;
+
+            void openHolding(Instrument instrument) {
+              final card = cubit.firstCard(instrument);
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (_) => card != null
+                    ? InstrumentDetailScreen(card: card)
+                    // Not on the watchlist: straight to its ledger.
+                    : HoldingsScreen(instrument: instrument, displayCurrency: state.baseCurrency),
+              ));
+            }
 
             return ListView(
               controller: scrollController,
@@ -102,6 +122,15 @@ class PortfolioDetailScreen extends StatelessWidget {
                               ),
                               const SizedBox(height: DS.spaceXS),
                               _metricTile(colors, l10n.holdingsCost, Masking.amount(valuation.cost, hidden: hidden)),
+                              if (realised != null) ...[
+                                const SizedBox(height: DS.spaceXS),
+                                _metricTile(
+                                  colors,
+                                  l10n.ledgerRealised,
+                                  Masking.signedAmount(realised, hidden: hidden, isUp: realised.amount >= 0),
+                                  tint: QimaColors.trendColor(realised.amount >= 0, colors),
+                                ),
+                              ],
                             ],
                           ),
                         ),
@@ -113,6 +142,17 @@ class PortfolioDetailScreen extends StatelessWidget {
                     child: Text(l10n.portfolioEmpty,
                         style: TextStyle(color: colors.textTertiary)),
                   ),
+                if (state.lots.isNotEmpty) ...[
+                  const SizedBox(height: DS.spaceSM),
+                  _ZakatEntry(assessment: cubit.zakatAssessment, hidden: hidden),
+                ],
+                if (heldInstruments.isNotEmpty) ...[
+                  const SizedBox(height: DS.spaceSM),
+                  _AllocationCard(
+                    groups: Allocation.byGroup(heldInstruments, state.baseCurrency),
+                    hidden: hidden,
+                  ),
+                ],
                 const SizedBox(height: DS.spaceLG),
                 for (final held in heldInstruments)
                   Padding(
@@ -122,16 +162,35 @@ class PortfolioDetailScreen extends StatelessWidget {
                       color: sliceByID[held.id]?.color ?? colors.brand,
                       fraction: sliceByID[held.id]?.fraction ?? 0,
                       hidden: hidden,
-                      onTap: () {
-                        final card = cubit.firstCard(held.instrument);
-                        if (card != null) {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(builder: (_) => InstrumentDetailScreen(card: card)),
-                          );
-                        }
-                      },
+                      onTap: () => openHolding(held.instrument),
                     ),
                   ),
+                if (closed.isNotEmpty) ...[
+                  const SizedBox(height: DS.spaceSM),
+                  SectionHeader(l10n.portfolioClosedPositions),
+                  DSCard(
+                    padding: const EdgeInsets.symmetric(horizontal: DS.spaceMD, vertical: DS.spaceXS),
+                    child: Column(
+                      children: [
+                        for (final c in closed)
+                          ListTile(
+                            contentPadding: EdgeInsets.zero,
+                            leading: InstrumentIcon(instrument: c.instrument, size: 32),
+                            title: Text(displayLabel(context, c.instrument.nameKey), style: TextStyle(color: colors.textPrimary)),
+                            subtitle: Text(l10n.ledgerRealised, style: TextStyle(color: colors.textTertiary, fontSize: 12)),
+                            trailing: Text(
+                              Masking.signedAmount(c.realised, hidden: hidden, isUp: c.realised.amount >= 0),
+                              style: TextStyle(
+                                color: QimaColors.trendColor(c.realised.amount >= 0, colors),
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            onTap: () => openHolding(c.instrument),
+                          ),
+                      ],
+                    ),
+                  ),
+                ],
               ],
             );
           },
@@ -150,6 +209,90 @@ class PortfolioDetailScreen extends StatelessWidget {
           const SizedBox(height: 2),
           Text(value, style: TextStyle(color: tint ?? colors.textPrimary, fontWeight: FontWeight.w700)),
         ],
+      ),
+    );
+  }
+}
+
+/// Split by group (v3, Figma "Portfolio · value over time" allocation
+/// card); the card opens the full allocation detail.
+class _AllocationCard extends StatelessWidget {
+  final List<AllocationShare<AssetGroup>> groups;
+  final bool hidden;
+
+  const _AllocationCard({required this.groups, required this.hidden});
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final colors = context.colors;
+    return DSCard(
+      child: InkWell(
+        borderRadius: BorderRadius.circular(DS.radiusCard),
+        onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const AllocationScreen())),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    l10n.allocationTitle.toUpperCase(),
+                    style: TextStyle(color: colors.textTertiary, fontSize: 12, fontWeight: FontWeight.w600, letterSpacing: 0.5),
+                  ),
+                ),
+                Text(l10n.allocationDetails, style: TextStyle(color: colors.brandText, fontSize: 13)),
+                Icon(Icons.chevron_right, size: 18, color: colors.brandText),
+              ],
+            ),
+            const SizedBox(height: DS.spaceSM),
+            // A single group would only repeat the total above at 100%;
+            // the card stays as the way into the karat breakdown.
+            if (groups.length == 1)
+              Text(
+                l10n.allocationSingleGroup(assetGroupLabel(l10n, groups.single.key)),
+                style: TextStyle(color: colors.textSecondary),
+              )
+            else
+              groupBars(context, groups, hidden: hidden),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// One-line doorway to the zakat screen under the portfolio hero (v3):
+/// what's due when above nisab, otherwise where the user stands.
+class _ZakatEntry extends StatelessWidget {
+  final ZakatAssessment assessment;
+  final bool hidden;
+
+  const _ZakatEntry({required this.assessment, required this.hidden});
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final colors = context.colors;
+    final String subtitle;
+    switch (assessment.status) {
+      case NisabStatus.above:
+        subtitle = l10n.zakatEntryDue(Masking.amount(assessment.due, hidden: hidden));
+      case NisabStatus.below:
+        subtitle = l10n.zakatStatusBelow;
+      case NisabStatus.thresholdUnknown:
+      case NisabStatus.noHoldings:
+        subtitle = l10n.zakatEntryCalculate;
+    }
+    return DSCard(
+      padding: EdgeInsets.zero,
+      child: ListTile(
+        contentPadding: const EdgeInsets.symmetric(horizontal: DS.spaceMD, vertical: 2),
+        leading: Icon(Icons.volunteer_activism_outlined, color: colors.brandText),
+        title: Text(l10n.zakatTitle, style: TextStyle(color: colors.textPrimary, fontWeight: FontWeight.w600)),
+        subtitle: Text(subtitle, style: TextStyle(color: colors.textTertiary, fontSize: 12)),
+        trailing: Icon(Icons.chevron_right, color: colors.textTertiary),
+        onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ZakatScreen())),
       ),
     );
   }
@@ -194,7 +337,7 @@ class _HoldingRow extends StatelessWidget {
                       Text(displayLabel(context, held.instrument.nameKey),
                           style: TextStyle(color: colors.textPrimary, fontWeight: FontWeight.w600)),
                       Text(
-                        '${l10n.portfolioLotCount(held.lotCount)} · $weightPercent%',
+                        '${l10n.portfolioTransactionCount(held.transactionCount)} · $weightPercent%',
                         style: TextStyle(color: colors.textTertiary, fontSize: 12),
                       ),
                     ],

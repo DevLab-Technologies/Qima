@@ -8,6 +8,8 @@ import '../l10n/app_localizations.dart';
 import '../models/asset.dart';
 import '../models/holding.dart';
 import '../models/holding_totals.dart';
+import '../models/holding_transaction.dart';
+import '../models/ledger.dart';
 import '../models/metal_breakdown.dart';
 import '../models/money.dart';
 import '../theme/design_system.dart';
@@ -17,21 +19,20 @@ import '../theme/qima_colors.dart';
 import '../theme/strings.dart';
 import '../widgets/confirm_delete_dialog.dart';
 import '../widgets/help_button.dart';
-import 'lot_editor_screen.dart';
+import 'transaction_editor_screen.dart';
 
-/// Full lot list for one instrument, opened from the instrument detail
-/// screen's compact "N lots ›" holdings summary card (spec §v2-A "Instrument
-/// detail"). Holds the lot list previously inline in `holdings_card.dart`,
-/// including swipe-to-delete with the same confirmation dialog and the "+"
-/// add-lot action.
+/// One holding's ledger (v3, Figma "Gold · Transactions"): what's held, at
+/// what average cost, its unrealised and realised gain, and every
+/// transaction behind those numbers, newest first. Nothing on this screen
+/// is stored except the rows themselves — the summary is re-derived from
+/// them on every change.
 class HoldingsScreen extends StatelessWidget {
   final Instrument instrument;
   final String displayCurrency;
 
-  /// The unit/karat of the watch card the user opened Holdings from — the
-  /// reference totals are expressed at. Falls back to the instrument's
-  /// default unit and no karat (fine gold) when there's no originating card
-  /// (e.g. instrument opened directly).
+  /// The unit/karat of the watch card the user came from — the reference
+  /// the totals are expressed at. Falls back to the instrument's default
+  /// unit and fine (24K) when there's no originating card.
   final PriceUnit? refUnit;
   final GoldKarat? refKarat;
 
@@ -49,77 +50,98 @@ class HoldingsScreen extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     final colors = context.colors;
     final unit = refUnit ?? instrument.quotation.defaultUnit;
+    final name = displayLabel(context, instrument.nameKey);
+
+    void openEditor([HoldingTransaction? existing]) => Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => TransactionEditorScreen(
+              instrument: instrument,
+              defaultCurrency: displayCurrency,
+              defaultUnit: unit,
+              defaultKarat: refKarat,
+              existing: existing,
+            ),
+          ),
+        );
 
     return ScreenBackground(
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
-          title: Text(l10n.detailHoldings),
+          title: Text(refKarat == null ? name : l10n.ledgerTitleWithKarat(name, displayLabel(context, refKarat!.shortLabelKey))),
           actions: [
             const HelpButton(topic: HelpTopicId.holdings),
-            IconButton(
-              icon: Icon(Icons.add_circle_outline, color: colors.textPrimary),
-              onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) => LotEditorScreen(
-                    instrument: instrument,
-                    defaultCurrency: displayCurrency,
-                    defaultUnit: unit,
-                    defaultKarat: refKarat,
-                  ),
-                ),
-              ),
+            TextButton.icon(
+              onPressed: openEditor,
+              icon: const Icon(Icons.add, size: 18),
+              label: Text(l10n.ledgerAdd),
             ),
           ],
         ),
         body: BlocBuilder<AppCubit, AppState>(
           builder: (context, state) {
-            final lots = cubit.lotsFor(instrument);
-            final valuation = cubit.valuationFor(instrument, displayCurrency);
+            final transactions = cubit.transactionsFor(instrument);
+            final position = state.ledger[instrument.id];
             final hidden = state.hideBalances;
+
+            if (transactions.isEmpty) {
+              return ListView(
+                padding: const EdgeInsets.all(DS.spaceMD),
+                children: [
+                  DSCard(
+                    // Stretched: the app's filled buttons are full width and
+                    // carry no side padding of their own.
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Text(l10n.holdingsEmpty, style: TextStyle(color: colors.textSecondary)),
+                        const SizedBox(height: DS.spaceSM),
+                        FilledButton.icon(onPressed: openEditor, icon: const Icon(Icons.add), label: Text(l10n.ledgerAddFirst)),
+                      ],
+                    ),
+                  ),
+                ],
+              );
+            }
 
             return ListView(
               padding: const EdgeInsets.all(DS.spaceMD),
               children: [
-                if (valuation != null) ...[
-                  DSCard(
-                    child: _SummaryGrid(
-                      valuation: valuation,
-                      hidden: hidden,
-                      lots: lots,
-                      unit: unit,
-                      karat: refKarat,
-                      displayCurrency: displayCurrency,
-                      rates: state.rates,
-                    ),
+                if (position != null && position.overdrawn.isNotEmpty) ...[
+                  _OverdrawnBanner(),
+                  const SizedBox(height: DS.spaceSM),
+                ],
+                DSCard(
+                  child: _Summary(
+                    instrument: instrument,
+                    position: position,
+                    lots: cubit.lotsFor(instrument),
+                    unit: unit,
+                    karat: refKarat,
+                    displayCurrency: displayCurrency,
+                    state: state,
                   ),
-                  const SizedBox(height: DS.spaceMD),
-                ] else
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: DS.spaceMD),
-                    child: Text(l10n.holdingsEmpty, style: TextStyle(color: colors.textTertiary)),
-                  ),
-                for (final lot in lots)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: DS.spaceXS),
-                    child: _LotTile(
-                      lot: lot,
-                      hidden: hidden,
-                      onTap: () => Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => LotEditorScreen(
-                            instrument: instrument,
-                            defaultCurrency: displayCurrency,
-                            defaultUnit: unit,
-                            defaultKarat: refKarat,
-                            existing: lot,
-                          ),
+                ),
+                const SizedBox(height: DS.spaceMD),
+                DSCard(
+                  padding: const EdgeInsets.symmetric(horizontal: DS.spaceMD, vertical: DS.spaceXS),
+                  child: Column(
+                    children: [
+                      for (var i = 0; i < transactions.length; i++) ...[
+                        if (i > 0) Divider(color: colors.hairline, height: 1),
+                        _TransactionRow(
+                          transaction: transactions[i],
+                          hidden: hidden,
+                          overdrawn: position?.overdrawn.contains(transactions[i].id) ?? false,
+                          onTap: () => openEditor(transactions[i]),
                         ),
-                      ),
-                      onDelete: () => cubit.deleteLot(lot),
-                    ),
+                      ],
+                    ],
                   ),
+                ),
+                const SizedBox(height: DS.spaceMD),
+                Text(l10n.ledgerFootnote, style: TextStyle(color: colors.textTertiary, fontSize: 12)),
               ],
             );
           },
@@ -129,183 +151,351 @@ class HoldingsScreen extends StatelessWidget {
   }
 }
 
-class _SummaryGrid extends StatelessWidget {
-  final HoldingValuation valuation;
-  final bool hidden;
+class _Summary extends StatelessWidget {
+  final Instrument instrument;
+  final InstrumentPosition? position;
   final List<HoldingLot> lots;
   final PriceUnit unit;
   final GoldKarat? karat;
   final String displayCurrency;
-  final FXRates rates;
+  final AppState state;
 
-  const _SummaryGrid({
-    required this.valuation,
-    required this.hidden,
+  const _Summary({
+    required this.instrument,
+    required this.position,
     required this.lots,
     required this.unit,
     required this.karat,
     required this.displayCurrency,
-    required this.rates,
+    required this.state,
   });
 
   @override
   Widget build(BuildContext context) {
+    final cubit = context.read<AppCubit>();
     final l10n = AppLocalizations.of(context)!;
     final colors = context.colors;
-    final gainPercent = (valuation.gainFraction * 100).toStringAsFixed(2);
+    final hidden = state.hideBalances;
+    final valuation = cubit.valuationFor(instrument, displayCurrency);
     final held = HoldingTotals.totalHeld(lots: lots, refUnit: unit, refKarat: karat);
-    final averageCost = HoldingTotals.averageCost(
+    final average = HoldingTotals.averageCost(
       lots: lots,
       refUnit: unit,
       refKarat: karat,
       displayCurrency: displayCurrency,
-      rates: rates,
+      rates: state.rates,
     );
-    final mixed = HoldingTotals.isMixed(lots);
-    final mixedKarat = HoldingTotals.isMixedKarat(lots);
-    final heldText = quantityWithUnitKaratLabel(context, held, unit, karat);
-    final unitText = displayLabel(context, unit.labelKey);
-    final averageText = averageCost == null
-        ? '—'
-        : karat == null
-            ? l10n.holdingsAverageCostPerUnit(Masking.amount(averageCost, hidden: false), unitText)
-            : l10n.holdingsAverageCostPerUnitKarat(
-                Masking.amount(averageCost, hidden: false), unitText, displayLabel(context, karat!.shortLabelKey));
+    final position = this.position;
+    final realised = position?.realised.inCurrency(displayCurrency, state.rates);
+    final showRealised = position != null && (position.disposals.isNotEmpty || !position.realised.isZero);
+    final unitText = displayLabel(context, unit.abbreviationKey ?? unit.labelKey);
+
+    Widget row(String label, String value, {Color? tint}) => Padding(
+          padding: const EdgeInsets.symmetric(vertical: 6),
+          child: Row(
+            children: [
+              Expanded(child: Text(label, style: TextStyle(color: colors.textSecondary))),
+              Flexible(
+                child: Text(value,
+                    textAlign: TextAlign.end,
+                    style: TextStyle(color: tint ?? colors.textPrimary, fontWeight: FontWeight.w700)),
+              ),
+            ],
+          ),
+        );
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        // Fixed tile height: an aspect ratio made tiles balloon on tablets.
-        GridView(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            mainAxisExtent: 62,
-            mainAxisSpacing: DS.spaceXS,
-            crossAxisSpacing: DS.spaceXS,
+        Text(l10n.ledgerHolding.toUpperCase(),
+            style: TextStyle(color: colors.textTertiary, fontSize: 11, fontWeight: FontWeight.w600, letterSpacing: 0.5)),
+        const SizedBox(height: 4),
+        if (lots.isEmpty)
+          Text(l10n.ledgerNothingHeld, style: TextStyle(color: colors.textSecondary, fontSize: 20, fontWeight: FontWeight.w700))
+        else
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: AlignmentDirectional.centerStart,
+            child: Text(
+              hidden ? Masking.mask : quantityWithUnitKaratLabel(context, held, unit, karat),
+              style: TextStyle(color: colors.textPrimary, fontSize: 28, fontWeight: FontWeight.w800),
+            ),
           ),
-          children: [
-            // Total held is a bare quantity, which — like a balance — reveals
-            // wealth, so it's masked along with money amounts.
-            _metric(colors, l10n.holdingsTotalHeld, hidden ? Masking.mask : heldText),
-            _metric(colors, l10n.holdingsAverageCost, averageText),
-            _metric(colors, l10n.holdingsValue, Masking.amount(valuation.value, hidden: hidden)),
-            _metric(colors, l10n.holdingsCost, Masking.amount(valuation.cost, hidden: hidden)),
-            _metric(colors, l10n.holdingsGain, Masking.signedAmount(valuation.gain, hidden: hidden, isUp: valuation.isUp),
-                tint: QimaColors.trendColor(valuation.isUp, colors)),
-            _metric(colors, l10n.holdingsGainPercent, signedFigure('$gainPercent%', isUp: valuation.isUp),
-                tint: QimaColors.trendColor(valuation.isUp, colors)),
-          ],
-        ),
-        if (mixed) ...[
-          const SizedBox(height: DS.spaceXS),
+        if (lots.isNotEmpty && HoldingTotals.isMixed(lots)) ...[
+          const SizedBox(height: 2),
           Text(
-            // "Mixed karats" only when the karats actually differ (24K is
-            // still a karat, so a null ref karat still gets its own label)
-            // — a pure unit mismatch (e.g. some lots in g, some in oz t, all
-            // fine gold) gets the plainer wording instead.
-            mixedKarat
+            HoldingTotals.isMixedKarat(lots)
                 ? l10n.holdingsMixedNote(displayLabel(context, (karat ?? GoldKarat.k24).shortLabelKey))
                 : l10n.holdingsMixedUnitsNote,
             style: TextStyle(color: colors.textTertiary, fontSize: 11),
           ),
         ],
+        Divider(color: colors.hairline, height: DS.spaceLG),
+        if (average != null) row(l10n.holdingsAverageCost, perUnitLabel(l10n, Masking.amount(average, hidden: false), unit, unitText)),
+        if (valuation != null) ...[
+          row(l10n.ledgerMarketValue, Masking.amount(valuation.value, hidden: hidden)),
+          row(
+            l10n.ledgerUnrealised,
+            hidden
+                ? Masking.mask
+                : l10n.ledgerGainWithPercent(
+                    Masking.signedAmount(valuation.gain, hidden: false, isUp: valuation.isUp),
+                    signedFigure('${(valuation.gainFraction * 100).toStringAsFixed(1)}%', isUp: valuation.isUp),
+                  ),
+            tint: QimaColors.trendColor(valuation.isUp, colors),
+          ),
+        ],
+        if (showRealised && realised != null)
+          row(
+            l10n.ledgerRealised,
+            Masking.signedAmount(realised, hidden: hidden, isUp: realised.amount >= 0),
+            tint: QimaColors.trendColor(realised.amount >= 0, colors),
+          ),
       ],
     );
   }
+}
 
-  Widget _metric(QimaColors colors, String label, String value, {Color? tint}) {
-    return DSTile(
-      child: Column(
+class _TransactionRow extends StatelessWidget {
+  final HoldingTransaction transaction;
+  final bool hidden;
+  final bool overdrawn;
+  final VoidCallback onTap;
+
+  const _TransactionRow({required this.transaction, required this.hidden, required this.overdrawn, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    final cubit = context.read<AppCubit>();
+    final l10n = AppLocalizations.of(context)!;
+    final colors = context.colors;
+    final t = transaction;
+
+    final title = t.kind == TransactionKind.fee
+        ? (t.note.isEmpty ? l10n.transactionKindFee : t.note)
+        : quantityWithUnitKaratLabel(context, t.quantity, t.unit, t.karat);
+    final date = transactionDateLabel(context, t.date);
+    final String detail;
+    switch (t.kind) {
+      case TransactionKind.buy:
+      case TransactionKind.sell:
+        final price = perUnitLabel(l10n, Masking.amount(Money(t.unitPrice, t.currency), hidden: hidden), t.unit,
+            displayLabel(context, t.unit.abbreviationKey ?? t.unit.labelKey));
+        detail = t.fee > 0
+            ? l10n.ledgerDetailWithFee(date, price, Masking.amount(Money(t.fee, t.currency), hidden: hidden))
+            : l10n.ledgerDetail(date, price);
+      case TransactionKind.transferIn:
+        detail = t.unitPrice == 0 ? l10n.ledgerDetail(date, l10n.ledgerNoCostBasis) : l10n.ledgerDetail(date, l10n.ledgerCostCarried);
+      case TransactionKind.transferOut:
+        detail = date;
+      case TransactionKind.fee:
+        detail = t.note.isEmpty ? date : l10n.ledgerDetail(date, l10n.transactionKindFee);
+    }
+
+    final String amount;
+    final Color amountColor;
+    switch (t.kind) {
+      case TransactionKind.buy:
+        amount = Masking.signedAmount(Money(-t.totalCost, t.currency), hidden: hidden, isUp: false);
+        amountColor = colors.textPrimary;
+      case TransactionKind.sell:
+        amount = Masking.signedAmount(Money(t.netProceeds, t.currency), hidden: hidden, isUp: true);
+        amountColor = colors.up;
+      case TransactionKind.fee:
+        amount = Masking.signedAmount(Money(-t.fee, t.currency), hidden: hidden, isUp: false);
+        amountColor = colors.textPrimary;
+      case TransactionKind.transferIn:
+      case TransactionKind.transferOut:
+        amount = '—';
+        amountColor = colors.textTertiary;
+    }
+
+    return Dismissible(
+      key: ValueKey(t.id),
+      direction: DismissDirection.endToStart,
+      confirmDismiss: (_) => confirmDeleteTransaction(context, cubit, t),
+      onDismissed: (_) {},
+      background: Container(
+        alignment: AlignmentDirectional.centerEnd,
+        padding: const EdgeInsetsDirectional.only(end: DS.spaceMD),
+        child: Icon(Icons.delete, color: colors.down),
+      ),
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: DS.spaceSM),
+          child: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        TransactionKindChip(kind: t.kind),
+                        const SizedBox(width: DS.spaceXS),
+                        Flexible(
+                          child: Text(title,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(color: colors.textPrimary, fontWeight: FontWeight.w600)),
+                        ),
+                        if (overdrawn) ...[
+                          const SizedBox(width: 4),
+                          Icon(Icons.warning_amber_rounded, size: 16, color: colors.down),
+                        ],
+                      ],
+                    ),
+                    const SizedBox(height: 2),
+                    Text(detail, style: TextStyle(color: colors.textTertiary, fontSize: 12)),
+                  ],
+                ),
+              ),
+              const SizedBox(width: DS.spaceSM),
+              Text(amount, style: TextStyle(color: amountColor, fontWeight: FontWeight.w700)),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _OverdrawnBanner extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final colors = context.colors;
+    return DSCard(
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(label.toUpperCase(), style: TextStyle(color: colors.textTertiary, fontSize: 10)),
-          const SizedBox(height: 2),
-          Text(value, style: TextStyle(color: tint ?? colors.textPrimary, fontSize: 14, fontWeight: FontWeight.w700)),
+          Icon(Icons.warning_amber_rounded, color: colors.down),
+          const SizedBox(width: DS.spaceSM),
+          Expanded(child: Text(l10n.ledgerOverdrawnBanner, style: TextStyle(color: colors.textSecondary, fontSize: 13))),
         ],
       ),
     );
   }
 }
 
-class _LotTile extends StatelessWidget {
-  final HoldingLot lot;
-  final bool hidden;
-  final VoidCallback onTap;
-  final VoidCallback onDelete;
+/// "Buy", "Sell", "Fee", "Transfer in"… as a small tinted chip.
+class TransactionKindChip extends StatelessWidget {
+  final TransactionKind kind;
 
-  const _LotTile({required this.lot, required this.hidden, required this.onTap, required this.onDelete});
+  const TransactionKindChip({super.key, required this.kind});
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.colors;
-    final qtyText = lotQuantityLabel(context, lot);
-    final detailText = lotDetailLabel(lot, hidden: hidden);
     final l10n = AppLocalizations.of(context)!;
-    return Dismissible(
-      key: ValueKey(lot.id),
-      direction: DismissDirection.endToStart,
-      confirmDismiss: (_) => confirmDelete(
-        context,
-        title: l10n.confirmDeleteLotTitle,
-        message: l10n.confirmDeleteLotMessage('$qtyText · $detailText'),
-        confirmLabel: l10n.commonDelete,
-      ),
-      onDismissed: (_) => onDelete(),
-      background: Container(
-        alignment: Alignment.centerRight,
-        padding: const EdgeInsets.only(right: DS.spaceMD),
-        decoration: BoxDecoration(
-          gradient: DS.tileFill(colors),
-          borderRadius: BorderRadius.circular(DS.radiusTile),
-        ),
-        child: Icon(Icons.delete, color: colors.down),
-      ),
-      child: DSTile(
-        child: ListTile(
-          contentPadding: EdgeInsets.zero,
-          onTap: onTap,
-          title: Text(qtyText, style: TextStyle(color: colors.textPrimary)),
-          subtitle: Text(
-            detailText,
-            style: TextStyle(color: colors.textTertiary, fontSize: 12),
-          ),
-          trailing: Text(
-            Masking.amount(Money(lot.totalCost, lot.costCurrency), hidden: hidden),
-            style: TextStyle(color: colors.textSecondary),
-          ),
-        ),
-      ),
+    final colors = context.colors;
+    final color = switch (kind) {
+      TransactionKind.buy => colors.up,
+      TransactionKind.sell => colors.down,
+      TransactionKind.fee => colors.accentFiat,
+      TransactionKind.transferIn || TransactionKind.transferOut => colors.textSecondary,
+    };
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      decoration: BoxDecoration(color: color.withValues(alpha: 0.16), borderRadius: BorderRadius.circular(6)),
+      child: Text(transactionKindLabel(l10n, kind),
+          style: TextStyle(color: color, fontSize: 11, fontWeight: FontWeight.w700)),
     );
   }
 }
 
-/// "5 oz t" or "100 g · 21K" — the lot's quantity with its unit and (for a
-/// karat lot) its karat, as shown in lot lists. Never masked: a bare
-/// quantity isn't a money amount. Unlike [quantityWithUnitKaratLabel] this
-/// always shows the LOT's own stored karat, never a reference karat — a
-/// lot tile must reflect what the lot actually is.
-String lotQuantityLabel(BuildContext context, HoldingLot lot) =>
-    quantityWithUnitKaratLabel(context, lot.quantity, lot.unit, lot.karat);
+String transactionKindLabel(AppLocalizations l10n, TransactionKind kind) {
+  switch (kind) {
+    case TransactionKind.buy:
+      return l10n.transactionKindBuy;
+    case TransactionKind.sell:
+      return l10n.transactionKindSell;
+    case TransactionKind.transferIn:
+      return l10n.transactionKindTransferIn;
+    case TransactionKind.transferOut:
+      return l10n.transactionKindTransferOut;
+    case TransactionKind.fee:
+      return l10n.transactionKindFee;
+  }
+}
 
-/// "150 g · 21K" — a quantity already expressed at [unit]/[karat] (e.g. a
-/// totals figure from [HoldingTotals]), formatted the same way
-/// [lotQuantityLabel] formats a single lot's own quantity/unit/karat.
+/// "$74.10 / g" — or just "$74.10" for a share, coin or currency, where a
+/// per-unit suffix ("/ Each") only adds noise.
+String perUnitLabel(AppLocalizations l10n, String amount, PriceUnit unit, String unitText) =>
+    unit == PriceUnit.each ? amount : l10n.ledgerPerUnit(amount, unitText);
+
+/// "12 Mar 2026" with Western digits, like the other dates on these screens.
+String transactionDateLabel(BuildContext context, DateTime date) => dateWithYear(context, date);
+
+/// Asks before deleting [transaction], then deletes it — unless that would
+/// leave a later sale selling more than was held, in which case it explains
+/// which sale and keeps the row. Returns whether it was deleted.
+Future<bool> confirmDeleteTransaction(BuildContext context, AppCubit cubit, HoldingTransaction transaction) async {
+  final l10n = AppLocalizations.of(context)!;
+  final blocking = cubit.conflictForDelete(transaction);
+  if (blocking != null) {
+    await showLedgerConflict(context, blocking, deleting: true);
+    return false;
+  }
+  final confirmed = await confirmDelete(
+    context,
+    title: l10n.confirmDeleteTransactionTitle,
+    message: l10n.confirmDeleteTransactionMessage(transactionSummary(context, transaction, hidden: cubit.state.hideBalances)),
+    confirmLabel: l10n.commonDelete,
+  );
+  if (!confirmed) return false;
+  final conflict = await cubit.deleteTransaction(transaction);
+  if (conflict != null && context.mounted) {
+    await showLedgerConflict(context, conflict, deleting: true);
+    return false;
+  }
+  return true;
+}
+
+/// Explains why a save or delete was refused: it would leave [sale] selling
+/// more than was held on its date.
+Future<void> showLedgerConflict(BuildContext context, HoldingTransaction sale, {required bool deleting}) {
+  final l10n = AppLocalizations.of(context)!;
+  final kind = transactionKindLabel(l10n, sale.kind);
+  final date = transactionDateLabel(context, sale.date);
+  return showDialog<void>(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: Text(deleting ? l10n.ledgerConflictDeleteTitle : l10n.ledgerConflictSaveTitle),
+      content: Text(l10n.ledgerConflictMessage(kind, date)),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: Text(MaterialLocalizations.of(context).okButtonLabel),
+        ),
+      ],
+    ),
+  );
+}
+
+/// "Sell · 20 g · 21K · 18 Aug 2026" — one line naming a transaction, for
+/// confirmations.
+String transactionSummary(BuildContext context, HoldingTransaction t, {required bool hidden}) {
+  final l10n = AppLocalizations.of(context)!;
+  final parts = <String>[
+    transactionKindLabel(l10n, t.kind),
+    if (t.kind == TransactionKind.fee)
+      Masking.amount(Money(t.fee, t.currency), hidden: hidden)
+    else
+      quantityWithUnitKaratLabel(context, t.quantity, t.unit, t.karat),
+    transactionDateLabel(context, t.date),
+  ];
+  return parts.join(' · ');
+}
+
+/// "150 g · 21K" — a quantity expressed at [unit]/[karat], formatted the
+/// way every holdings list shows quantities. Never masked by itself: a bare
+/// quantity on a single row isn't a balance (callers mask totals).
 String quantityWithUnitKaratLabel(BuildContext context, double quantity, PriceUnit unit, GoldKarat? karat) {
   final unitSuffix = unit.abbreviationKey != null ? ' ${displayLabel(context, unit.abbreviationKey!)}' : '';
   final karatSuffix = karat != null ? ' · ${displayLabel(context, karat.shortLabelKey)}' : '';
   return '${_formatQty(quantity)}$unitSuffix$karatSuffix';
 }
-
-/// "$3,120.00 · 2024-03-14" — the lot's unit cost and purchase date. The
-/// unit cost is masked when [hidden] (used in both the lot list subtitle and
-/// the delete-confirmation message, so a swipe-to-delete prompt never leaks
-/// an amount while balances are hidden).
-String lotDetailLabel(HoldingLot lot, {bool hidden = false}) =>
-    '${Masking.amount(Money(lot.unitCost, lot.costCurrency), hidden: hidden)} · '
-    '${lot.date.year}-${lot.date.month.toString().padLeft(2, '0')}-${lot.date.day.toString().padLeft(2, '0')}';
 
 /// "117,000", "2.5", "0.1234": grouped like the app's money amounts, up to
 /// four decimals with trailing zeros dropped.

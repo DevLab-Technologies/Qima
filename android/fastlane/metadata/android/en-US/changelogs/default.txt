@@ -1,10 +1,5 @@
-Qima 2.2.0
-• New layout: Watchlist, Portfolio and Settings tabs, with a live portfolio chart up front
-• Filter your watchlist by metals, crypto, stocks, indices or currencies
-• Price alerts with notifications
-• Home-screen widgets you can set up: pick the asset, unit, karat, currency and range
-• App lock with fingerprint or face, and a hide-balances switch
-• Light theme
-• Encrypted backup and restore
-• A first-run tour, and a help button on every screen
-• Fixed: gold prices not updating
+Qima 3.0.0
+• Zakat: see whether you're above nisab and what's due, with a hawl reminder on the Hijri or Gregorian calendar
+• Allocation: your portfolio by metals, crypto, stocks and cash, gold by karat, and how it's shifted since January
+• Record sells, transfers and fees, not just buys, with realised gains and closed positions
+• Import holdings from a CSV file; exports use the same columns

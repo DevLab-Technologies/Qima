@@ -15,12 +15,14 @@ import '../theme/help_topics.dart';
 import '../theme/qima_colors.dart';
 import '../theme/strings.dart';
 import '../widgets/help_button.dart';
+import '../widgets/section_header.dart';
 import 'alerts_screen.dart';
 import 'backup_screen.dart';
 import 'currency_picker.dart';
 import 'help_index_sheet.dart';
 import 'help_sheet.dart';
 import 'onboarding_tour_screen.dart';
+import 'zakat_settings_screen.dart';
 
 /// Single settings sheet: base currency, default chart range, widget refresh
 /// interval, language, and a static data-sources footer. Mirrors
@@ -58,7 +60,7 @@ class SettingsScreen extends StatelessWidget {
               controller: scrollController,
               padding: const EdgeInsets.all(DS.spaceMD),
               children: [
-                _SectionHeader(l10n.settingsAppearance),
+                SectionHeader(l10n.settingsAppearance),
                 DSCard(
                   child: SegmentedButton<Appearance>(
                     segments: [
@@ -72,21 +74,34 @@ class SettingsScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: DS.spaceLG),
-                _SectionHeader(l10n.settingsAlerts),
+                SectionHeader(l10n.settingsAlerts),
                 const _AlertsSection(),
                 const SizedBox(height: DS.spaceLG),
-                _SectionHeader(l10n.settingsPrivacy),
+                SectionHeader(l10n.settingsPrivacy),
                 const _PrivacySecuritySection(),
                 const SizedBox(height: DS.spaceLG),
                 if (platformSupportsICloud) ...[
-                  _SectionHeader(l10n.settingsICloudSync),
+                  SectionHeader(l10n.settingsICloudSync),
                   const _ICloudSyncSection(),
                   const SizedBox(height: DS.spaceLG),
                 ],
-                _SectionHeader(l10n.settingsBackup),
+                SectionHeader(l10n.settingsBackup),
                 const _BackupSection(),
                 const SizedBox(height: DS.spaceLG),
-                _SectionHeader(l10n.settingsBaseCurrency),
+                SectionHeader(l10n.zakatTitle),
+                DSCard(
+                  padding: EdgeInsets.zero,
+                  child: ListTile(
+                    contentPadding: const EdgeInsets.symmetric(horizontal: DS.spaceMD, vertical: DS.spaceXS),
+                    title: Text(l10n.zakatSettingsTitle, style: TextStyle(color: colors.textPrimary)),
+                    subtitle: Text(l10n.settingsZakatSubtitle, style: TextStyle(color: colors.textTertiary, fontSize: 12)),
+                    trailing: Icon(Icons.chevron_right, color: colors.textTertiary),
+                    onTap: () =>
+                        Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ZakatSettingsScreen())),
+                  ),
+                ),
+                const SizedBox(height: DS.spaceLG),
+                SectionHeader(l10n.settingsBaseCurrency),
                 DSCard(
                   child: ListTile(
                     contentPadding: EdgeInsets.zero,
@@ -107,7 +122,7 @@ class SettingsScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: DS.spaceLG),
-                _SectionHeader(l10n.settingsDefaultRange),
+                SectionHeader(l10n.settingsDefaultRange),
                 DSCard(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -130,7 +145,7 @@ class SettingsScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: DS.spaceLG),
-                _SectionHeader(l10n.settingsWidgetRefresh),
+                SectionHeader(l10n.settingsWidgetRefresh),
                 DSCard(
                   child: Column(
                     children: [
@@ -163,7 +178,7 @@ class SettingsScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: DS.spaceLG),
-                _SectionHeader(l10n.settingsAbout),
+                SectionHeader(l10n.settingsAbout),
                 DSCard(
                   child: Column(
                     children: [
@@ -199,7 +214,7 @@ class SettingsScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: DS.spaceLG),
-                _SectionHeader(l10n.settingsHelpGroup),
+                SectionHeader(l10n.settingsHelpGroup),
                 const _HelpSection(),
               ],
             );
@@ -537,7 +552,7 @@ class _BackupSection extends StatelessWidget {
             : l10n.settingsBackupSubtitle(
                 MaterialLocalizations.of(context).formatMediumDate(lastBackupAt),
                 instrumentCount,
-                state.lots.length,
+                state.transactions.length,
               );
         return DSCard(
           padding: EdgeInsets.zero,
@@ -606,23 +621,6 @@ class _HelpSection extends StatelessWidget {
             ),
           ],
         ],
-      ),
-    );
-  }
-}
-
-class _SectionHeader extends StatelessWidget {
-  final String title;
-
-  const _SectionHeader(this.title);
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: DS.spaceXS, left: 4),
-      child: Text(
-        title.toUpperCase(),
-        style: TextStyle(color: context.colors.textTertiary, fontSize: 12, fontWeight: FontWeight.w600, letterSpacing: 0.5),
       ),
     );
   }

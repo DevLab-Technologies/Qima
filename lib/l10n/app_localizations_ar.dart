@@ -137,7 +137,8 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get holdingsEmpty => 'أضف أول دفعة لبدء تتبع هذه المقتنيات.';
+  String get holdingsEmpty =>
+      'لا توجد معاملات بعد. أضف عملية شراء لتبدأ تتبّع هذه الحيازة.';
 
   @override
   String get holdingsValue => 'القيمة';
@@ -152,12 +153,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get holdingsGainPercent => 'نسبة الربح';
 
   @override
-  String get holdingsNew => 'دفعة جديدة';
-
-  @override
-  String get holdingsEdit => 'تعديل الدفعة';
-
-  @override
   String get holdingsQuantity => 'الكمية';
 
   @override
@@ -167,30 +162,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get holdingsCostModeTotal => 'الإجمالي';
 
   @override
-  String get holdingsUnitCost => 'تكلفة الوحدة';
-
-  @override
-  String holdingsUnitCostWithUnit(String unit) {
-    return 'تكلفة الوحدة (لكل $unit)';
-  }
-
-  @override
-  String holdingsUnitCostWithKarat(String unit, String karat) {
-    return 'تكلفة الوحدة (لكل $unit · $karat)';
-  }
-
-  @override
-  String holdingsUnitCostPreview(String value) {
-    return 'لكل وحدة: $value';
-  }
-
-  @override
   String get holdingsTotalCost => 'التكلفة الإجمالية';
-
-  @override
-  String holdingsTotalCostPreview(String value) {
-    return 'الإجمالي: $value';
-  }
 
   @override
   String get holdingsDate => 'التاريخ';
@@ -203,20 +175,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get holdingsAverageCost => 'متوسط التكلفة';
-
-  @override
-  String holdingsAverageCostPerUnit(String value, String unit) {
-    return '$value لكل $unit';
-  }
-
-  @override
-  String holdingsAverageCostPerUnitKarat(
-    String value,
-    String unit,
-    String karat,
-  ) {
-    return '$value لكل $unit · $karat';
-  }
 
   @override
   String holdingsMixedNote(String karat) {
@@ -240,28 +198,13 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get portfolioEmpty =>
-      'لا توجد قيمة للمحفظة بعد — أضف دفعة مقتنيات للبدء.';
+      'لا توجد قيمة للمحفظة بعد — أضف عملية شراء لأي أصل للبدء.';
 
   @override
   String get portfolioNoChange => 'لا يوجد سجل كافٍ لهذه الفترة بعد';
 
   @override
-  String get portfolioNoHistory =>
-      'أضف دفعة مقتنيات لعرض الرسم البياني لمحفظتك';
-
-  @override
-  String portfolioLotCount(num count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count دفعة',
-      many: '$count دفعة',
-      few: '$count دفعات',
-      two: 'دفعتان',
-      one: 'دفعة واحدة',
-    );
-    return '$_temp0';
-  }
+  String get portfolioNoHistory => 'أضف عملية شراء لعرض الرسم البياني لمحفظتك';
 
   @override
   String get settingsTitle => 'الإعدادات';
@@ -324,7 +267,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get settingsHideBalancesFooter =>
-      'إخفاء مبالغ المحفظة والممتلكات والصفقات في جميع أنحاء التطبيق.';
+      'إخفاء مبالغ المحفظة والممتلكات والمعاملات في جميع أنحاء التطبيق.';
 
   @override
   String get settingsAppLock => 'قفل التطبيق';
@@ -605,14 +548,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get confirmRemoveCardMessage => 'ستبقى مقتنياتك من هذا الأصل محفوظة.';
 
   @override
-  String get confirmDeleteLotTitle => 'حذف هذه الدفعة؟';
-
-  @override
-  String confirmDeleteLotMessage(String details) {
-    return '$details. لا يمكن التراجع عن ذلك.';
-  }
-
-  @override
   String confirmRemoveTickerTitle(String symbol) {
     return 'إزالة الرمز المخصص $symbol؟';
   }
@@ -842,8 +777,21 @@ class AppLocalizationsAr extends AppLocalizations {
   String get settingsBackupSubtitleNever => 'لم يتم النسخ الاحتياطي مطلقًا';
 
   @override
-  String settingsBackupSubtitle(String date, int instruments, int lots) {
-    return 'آخر نسخة احتياطية $date · $instruments أصل، $lots دفعة';
+  String settingsBackupSubtitle(
+    String date,
+    int instruments,
+    int transactions,
+  ) {
+    String _temp0 = intl.Intl.pluralLogic(
+      transactions,
+      locale: localeName,
+      other: '$transactions معاملة',
+      many: '$transactions معاملة',
+      few: '$transactions معاملات',
+      two: 'معاملتان',
+      one: 'معاملة واحدة',
+    );
+    return 'آخر نسخة احتياطية $date · $instruments أصل، $_temp0';
   }
 
   @override
@@ -921,7 +869,8 @@ class AppLocalizationsAr extends AppLocalizations {
   String get backupExportCsvTitle => 'جدول بيانات الممتلكات';
 
   @override
-  String get backupExportCsvSubtitle => 'دفعاتك كجدول بيانات، لسجلاتك (.csv)';
+  String get backupExportCsvSubtitle =>
+      'كل المعاملات في جدول بيانات (‎.csv)، ويمكن استيراده مجددًا';
 
   @override
   String get backupRestoreSection => 'استعادة';
@@ -958,10 +907,19 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String backupExportSheetContentsSummary(
     int cards,
-    int lots,
+    int transactions,
     int customTickers,
   ) {
-    return '$cards بطاقة متابعة · $lots دفعة · $customTickers رمز مخصص';
+    String _temp0 = intl.Intl.pluralLogic(
+      transactions,
+      locale: localeName,
+      other: '$transactions معاملة',
+      many: '$transactions معاملة',
+      few: '$transactions معاملات',
+      two: 'معاملتان',
+      one: 'معاملة واحدة',
+    );
+    return '$cards بطاقة متابعة · $_temp0 · $customTickers رمز مخصص';
   }
 
   @override
@@ -1012,9 +970,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get backupImportCountCards => 'بطاقات المتابعة';
-
-  @override
-  String get backupImportCountLots => 'الدفعات';
 
   @override
   String get backupImportCountCustomTickers => 'الرموز المخصصة';
@@ -1087,7 +1042,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get backupImportCsvErrorMessage =>
-      'جدول بيانات الممتلكات (.csv) يحتوي على دفعاتك فقط، ولا يمكن استعادته. اختر ملف نسخة احتياطية كاملة (.json) بدلاً من ذلك.';
+      'هذا جدول بيانات وليس نسخة احتياطية من Qima. يمكنك استيراد صفوفه كمعاملات بدلًا من ذلك.';
 
   @override
   String get backupErrorNotQimaFile =>
@@ -1120,13 +1075,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get backupCsvHeaderKarat => 'العيار';
 
   @override
-  String get backupCsvHeaderUnitCost => 'تكلفة الوحدة';
+  String get backupCsvHeaderUnitCost => 'السعر للوحدة';
 
   @override
-  String get backupCsvHeaderCostCurrency => 'عملة التكلفة';
+  String get backupCsvHeaderCostCurrency => 'العملة';
 
   @override
-  String get backupCsvHeaderTotalCost => 'التكلفة الإجمالية';
+  String get backupCsvHeaderTotalCost => 'الإجمالي';
 
   @override
   String get backupCsvHeaderDate => 'التاريخ';
@@ -1333,7 +1288,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get helpAssetDetailStep5Body =>
-      'اضغط على الممتلكات لعرض دفعاتك أو إضافة عملية شراء.';
+      'اضغط على المقتنيات لعرض معاملاتك أو إضافة عملية شراء أو بيع.';
 
   @override
   String get helpPortfolioTitle => 'المحفظة';
@@ -1354,7 +1309,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get helpPortfolioStep2Body =>
-      'اضغط على صف لعرض دفعاته ومتوسط تكلفته وأرباحه.';
+      'اضغط على صف لعرض معاملاته ومتوسط تكلفته وأرباحه.';
 
   @override
   String get helpPortfolioStep3Title => 'أضف عملية شراء';
@@ -1377,45 +1332,46 @@ class AppLocalizationsAr extends AppLocalizations {
       'فعّل إخفاء الأرصدة في الإعدادات لإخفاء كل القيم.';
 
   @override
-  String get helpLotEditorTitle => 'محرر الدفعة';
+  String get helpLotEditorTitle => 'المعاملة';
 
   @override
   String get helpLotEditorSummary =>
-      'سجّل عملية شراء واحدة ليتمكن Qima من حساب ما تملكه ومتوسط تكلفتك وأرباحك.';
+      'سجّل شراء أو بيعًا أو تحويلًا أو رسومًا. تُحسب حيازتك ومتوسط تكلفتك وأرباحك منها.';
 
   @override
-  String get helpLotEditorStep1Title => 'الكمية والوحدة';
+  String get helpLotEditorStep1Title => 'النوع';
 
   @override
   String get helpLotEditorStep1Body =>
-      'أدخل الكمية التي اشتريتها، بالأونصة التروي أو الجرام أو الكيلوغرام.';
+      'الشراء يضيف بتكلفة، والبيع يُنقص ويحقق ربحًا أو خسارة، والتحويل ينقل كمية للداخل أو الخارج، والرسوم تسجّل تكلفة.';
 
   @override
   String get helpLotEditorStep2Title => 'العيار';
 
   @override
   String get helpLotEditorStep2Body =>
-      'للذهب بالجرام أو الكيلوغرام، اختر عيار 24 أو 22 أو 21 أو 18. يبدأ عند عيار البطاقة.';
+      'للذهب بالغرام أو الكيلوغرام اختر 24 أو 22 أو 21 أو 18 قيراطًا. يُحتسب كل شيء بمحتوى الذهب، فتختلط الأعيرة بشكل صحيح.';
 
   @override
-  String get helpLotEditorStep3Title => 'ما دفعته';
+  String get helpLotEditorStep3Title => 'السعر والرسوم';
 
   @override
   String get helpLotEditorStep3Body =>
-      'أدخل التكلفة لكل وحدة أو التكلفة الإجمالية، بالعملة التي دفعت بها.';
+      'أدخل السعر لكل وحدة أو الإجمالي وأي عمولة. يعرض البيع ما سيحققه قبل الحفظ.';
 
   @override
   String get helpLotEditorStep4Title => 'التاريخ';
 
   @override
-  String get helpLotEditorStep4Body => 'يوم الشراء.';
+  String get helpLotEditorStep4Body =>
+      'يوم حدوثها. لا يمكن تأريخ بيع قبل أن تملك ما يكفي.';
 
   @override
   String get helpLotEditorStep5Title => 'احفظ';
 
   @override
   String get helpLotEditorStep5Body =>
-      'يمكنك تعديل الدفعة أو حذفها في أي وقت من الممتلكات.';
+      'عدّل أي معاملة أو احذفها في أي وقت من سجل الحيازة.';
 
   @override
   String get helpAddAssetTitle => 'إضافة أصل';
@@ -1602,10 +1558,11 @@ class AppLocalizationsAr extends AppLocalizations {
       'استورد نسخة احتياطية بصيغة ‎.json. يضيف الدمج ما ينقص ولا يحذف شيئًا؛ ويستبدل الاستبدال كل شيء بمحتوى الملف.';
 
   @override
-  String get helpBackupStep5Title => 'جدول بيانات الممتلكات';
+  String get helpBackupStep5Title => 'جداول البيانات';
 
   @override
-  String get helpBackupStep5Body => 'ملف ‎.csv للمحاسبة. لا يمكن استعادته.';
+  String get helpBackupStep5Body =>
+      'صدّر كل المعاملات كملف ‎.csv أو استورد واحدًا من Qima أو جدول بيانات أو وسيط. الاستيراد يضيف معاملات ولا يستعيد الإعدادات.';
 
   @override
   String get helpWidgetsTitle => 'الودجت';
@@ -1650,26 +1607,29 @@ class AppLocalizationsAr extends AppLocalizations {
   String get helpHoldingsTitle => 'الممتلكات';
 
   @override
-  String get helpHoldingsSummary => 'كل دفعة اشتريتها من هذا الأصل، ومجموعها.';
+  String get helpHoldingsSummary =>
+      'كل معاملات هذا الأصل، من شراء وبيع وتحويل ورسوم، وما تصل إليه مجتمعة.';
 
   @override
   String get helpHoldingsStep1Title => 'اقرأ الإجماليات';
 
   @override
   String get helpHoldingsStep1Body =>
-      'الكمية ومتوسط التكلفة والقيمة الحالية والأرباح عبر كل الدفعات.';
+      'ما تملكه ومتوسط تكلفته وقيمته وربحه، إضافة إلى ما حققته المبيعات.';
 
   @override
-  String get helpHoldingsStep2Title => 'أضف دفعة';
+  String get helpHoldingsStep2Title => 'أضف معاملة';
 
   @override
-  String get helpHoldingsStep2Body => 'اضغط على + لتسجيل عملية شراء أخرى.';
+  String get helpHoldingsStep2Body =>
+      'اضغط إضافة لتسجيل شراء أو بيع أو تحويل أو رسوم.';
 
   @override
-  String get helpHoldingsStep3Title => 'عدّل دفعة أو احذفها';
+  String get helpHoldingsStep3Title => 'عدّل أو احذف';
 
   @override
-  String get helpHoldingsStep3Body => 'اضغط على دفعة لتعديلها، أو مرر لحذفها.';
+  String get helpHoldingsStep3Body =>
+      'اضغط صفًا لتعديله أو اسحبه لحذفه. لن يسمح Qima بتغيير يجعل بيعًا يتجاوز ما كنت تملكه.';
 
   @override
   String get helpCardConfigTitle => 'إعدادات الأصل';
@@ -1766,7 +1726,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get helpImportPreviewStep1Body =>
-      'اطّلع على عدد البطاقات والدفعات والتنبيهات في الملف قبل الاستعادة.';
+      'اطّلع على عدد البطاقات والمعاملات والتنبيهات في الملف قبل الاستعادة.';
 
   @override
   String get helpImportPreviewStep2Title => 'دمج أو استبدال';
@@ -1803,4 +1763,866 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get settingsHelpAddWidgetSubtitle => 'الشاشة الرئيسية وشاشة القفل';
+
+  @override
+  String get commonDone => 'تم';
+
+  @override
+  String get zakatTitle => 'الزكاة';
+
+  @override
+  String get zakatSettingsTitle => 'إعدادات الزكاة';
+
+  @override
+  String get settingsZakatSubtitle =>
+      'أساس النصاب، وما يُحتسب، وتاريخ الحول، والتذكير';
+
+  @override
+  String get zakatEmptyTitle => 'لا شيء لحسابه بعد';
+
+  @override
+  String get zakatEmptyMessage =>
+      'تُحسب الزكاة من ممتلكاتك. أضف عملية شراء لأي أصل وسيظهر هنا مع ما يُحتسب ضمن النصاب.';
+
+  @override
+  String get zakatNisabSection => 'النصاب';
+
+  @override
+  String get zakatWhatCountsSection => 'ما يُحتسب';
+
+  @override
+  String get zakatStatusAbove => 'فوق النصاب';
+
+  @override
+  String get zakatStatusBelow => 'دون النصاب';
+
+  @override
+  String get zakatStatusUnknown => 'لم يُسعَّر النصاب بعد';
+
+  @override
+  String zakatDueLabel(String rate) {
+    return 'الزكاة المستحقة · $rate';
+  }
+
+  @override
+  String zakatExplainAboveNoHawl(String base) {
+    return 'على وعاء زكوي قدره $base. حدّد تاريخ حولك لتعرف موعد وجوبها.';
+  }
+
+  @override
+  String zakatExplainAboveToday(String base) {
+    return 'على وعاء زكوي قدره $base. يكتمل حولك اليوم.';
+  }
+
+  @override
+  String zakatExplainAboveUpcoming(String base, String date, int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'بعد $days يوم',
+      many: 'بعد $days يومًا',
+      few: 'بعد $days أيام',
+      two: 'بعد يومين',
+      one: 'بعد يوم واحد',
+    );
+    return 'على وعاء زكوي قدره $base. تجب عند اكتمال حولك في $date ($_temp0)، إن بقي مالك فوق النصاب حينها.';
+  }
+
+  @override
+  String zakatExplainBelow(String base, String threshold) {
+    return 'وعاؤك الزكوي البالغ $base دون نصاب اليوم البالغ $threshold، فلا زكاة عليك.';
+  }
+
+  @override
+  String zakatExplainUnknown(String metal) {
+    return 'لم يُحمَّل سعر $metal اليوم بعد، لذا لا يمكن التحقق من النصاب الآن.';
+  }
+
+  @override
+  String get zakatRetry => 'حاول مجددًا';
+
+  @override
+  String get zakatUnpricedNote =>
+      'بعض الأصول بلا سعر بعد فلم تُحتسب، وستُحتسب فور تحميل سعرها.';
+
+  @override
+  String get zakatBasisRow => 'الأساس';
+
+  @override
+  String zakatBasisValue(String metal, String grams) {
+    return '$metal · $grams غ';
+  }
+
+  @override
+  String zakatOtherBasisLine(String metal, String amount) {
+    return 'أساس $metal سيكون $amount';
+  }
+
+  @override
+  String get zakatThresholdToday => 'النصاب اليوم';
+
+  @override
+  String get zakatYourBase => 'وعاؤك الزكوي';
+
+  @override
+  String get zakatHawlStart => 'بداية الحول';
+
+  @override
+  String get zakatHawlSet => 'حدّد التاريخ';
+
+  @override
+  String get zakatHawlNotSetSubtitle =>
+      'اليوم الذي بلغ فيه مالك النصاب أول مرة';
+
+  @override
+  String get zakatHawlCompletesToday => 'يكتمل اليوم';
+
+  @override
+  String zakatHawlNext(String date) {
+    return 'يكتمل التالي في $date';
+  }
+
+  @override
+  String get zakatWhatCountsFooter =>
+      'أوقف أصلًا لاستبعاده، كالحُلي المستعمل يوميًا إن كنت تأخذ بالرأي القائل بإعفائه.';
+
+  @override
+  String zakatExcludedClass(String cls) {
+    return '$cls غير محتسبة';
+  }
+
+  @override
+  String get zakatExcludedHolding => 'مستبعد';
+
+  @override
+  String get zakatExcludedNoPrice => 'بلا سعر بعد';
+
+  @override
+  String zakatLineTitle(String name, String quantity) {
+    return '$name · $quantity';
+  }
+
+  @override
+  String get zakatDisclaimer =>
+      'Qima يحسب ولا يُفتي. الأساس وما يُحتسب قرارك أنت، فاسأل عالمًا تثق به عند الشك.';
+
+  @override
+  String get assetGroupMetals => 'المعادن';
+
+  @override
+  String get assetGroupCrypto => 'العملات المشفرة';
+
+  @override
+  String get assetGroupEquities => 'الأسهم';
+
+  @override
+  String get assetGroupCash => 'النقد والعملات';
+
+  @override
+  String get zakatClassMetalsSubtitle => 'الذهب والفضة والبلاتين والبلاديوم';
+
+  @override
+  String get zakatClassCryptoSubtitle => 'تُعامل كأصل قابل للتداول';
+
+  @override
+  String get zakatClassEquitiesSubtitle =>
+      'غير محتسبة افتراضيًا، فالآراء في الأسهم طويلة الأجل مختلفة';
+
+  @override
+  String get zakatClassCashSubtitle => 'العملات التي تملكها';
+
+  @override
+  String zakatOverridesCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count أصل محدد يدويًا',
+      many: '$count أصلًا محددًا يدويًا',
+      few: '$count أصول محددة يدويًا',
+      two: 'أصلان محددان يدويًا',
+      one: 'أصل واحد محدد يدويًا',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get zakatOverridesSubtitle =>
+      'اختيرت من شاشة الزكاة وتتجاوز إعداد فئتها';
+
+  @override
+  String get zakatOverridesReset => 'إعادة ضبط';
+
+  @override
+  String get zakatNisabBasisSection => 'أساس النصاب';
+
+  @override
+  String get zakatClassesSection => 'الفئات الزكوية';
+
+  @override
+  String get zakatHawlSection => 'الحول';
+
+  @override
+  String get zakatBasisPriceMissing => 'لم يُحمَّل السعر بعد';
+
+  @override
+  String zakatBasisToday(String amount) {
+    return '$amount اليوم';
+  }
+
+  @override
+  String zakatBasisHigher(String amount) {
+    return 'نصاب أعلى · $amount اليوم';
+  }
+
+  @override
+  String zakatBasisLower(String amount) {
+    return 'نصاب أدنى · $amount اليوم · تجب على عدد أكبر';
+  }
+
+  @override
+  String get zakatCalendar => 'التقويم';
+
+  @override
+  String get zakatCalendarHijri => 'هجري';
+
+  @override
+  String get zakatCalendarGregorian => 'ميلادي';
+
+  @override
+  String zakatGregorianNote(String solarRate, String rate) {
+    return 'السنة الميلادية أطول من القمرية بنحو 11 يومًا، ويرفع بعض العلماء النسبة إلى $solarRate لذلك، بينما يُبقي Qima على $rate.';
+  }
+
+  @override
+  String get zakatHawlClear => 'مسح تاريخ الحول';
+
+  @override
+  String get zakatRemind => 'ذكّرني';
+
+  @override
+  String get zakatRemindSubtitle => 'إشعار في يوم اكتمال حولك';
+
+  @override
+  String get zakatRemindNeedsStart => 'حدّد تاريخ بداية الحول أولًا';
+
+  @override
+  String get zakatRemindNotificationsOff =>
+      'الإشعارات متوقفة لـ Qima، فعّلها من إعدادات النظام لتصلك هذه التذكرة';
+
+  @override
+  String get zakatHawlPickerTitle => 'بداية الحول';
+
+  @override
+  String get zakatHawlPickerDay => 'اليوم';
+
+  @override
+  String get zakatHawlPickerMonth => 'الشهر';
+
+  @override
+  String get zakatHawlPickerYear => 'السنة';
+
+  @override
+  String get zakatHawlPickerFuture => 'لا يمكن أن يبدأ الحول في المستقبل';
+
+  @override
+  String zakatHawlPickerGregorian(String date) {
+    return 'بالميلادي: $date';
+  }
+
+  @override
+  String zakatEntryDue(String amount) {
+    return '$amount مستحقة · فوق النصاب';
+  }
+
+  @override
+  String get zakatEntryCalculate => 'اعرف ما يستحق';
+
+  @override
+  String get zakatReminderNotificationTitle => 'اكتمل حولك';
+
+  @override
+  String get zakatReminderNotificationBody =>
+      'اكتمل عامك الزكوي اليوم. افتح Qima لترى ما يستحق.';
+
+  @override
+  String get hijriMonth1 => 'محرم';
+
+  @override
+  String get hijriMonth2 => 'صفر';
+
+  @override
+  String get hijriMonth3 => 'ربيع الأول';
+
+  @override
+  String get hijriMonth4 => 'ربيع الآخر';
+
+  @override
+  String get hijriMonth5 => 'جمادى الأولى';
+
+  @override
+  String get hijriMonth6 => 'جمادى الآخرة';
+
+  @override
+  String get hijriMonth7 => 'رجب';
+
+  @override
+  String get hijriMonth8 => 'شعبان';
+
+  @override
+  String get hijriMonth9 => 'رمضان';
+
+  @override
+  String get hijriMonth10 => 'شوال';
+
+  @override
+  String get hijriMonth11 => 'ذو القعدة';
+
+  @override
+  String get hijriMonth12 => 'ذو الحجة';
+
+  @override
+  String hijriDate(int day, String month, int year) {
+    return '$day $month $year هـ';
+  }
+
+  @override
+  String get helpZakatTitle => 'الزكاة';
+
+  @override
+  String get helpZakatSummary =>
+      'يحسب Qima الزكاة من ممتلكاتك بأسعار اليوم. هو يحسب، والاختيارات وراء الحساب لك.';
+
+  @override
+  String get helpZakatStep1Title => 'النصاب';
+
+  @override
+  String get helpZakatStep1Body =>
+      'النصاب 85 غرامًا من الذهب الخالص أو 595 غرامًا من الفضة، بسعر اللحظة. اختر الأساس من إعدادات الزكاة؛ نصاب الفضة أدنى فتجب على عدد أكبر.';
+
+  @override
+  String get helpZakatStep2Title => 'ما يُحتسب';
+
+  @override
+  String get helpZakatStep2Body =>
+      'المعادن والعملات المشفرة والنقد تُحتسب افتراضيًا، والأسهم لا. يُحتسب الذهب بعياره حسب محتواه من الذهب الخالص. ويمكنك استبعاد أي أصل من شاشة الزكاة.';
+
+  @override
+  String get helpZakatStep3Title => 'الحول';
+
+  @override
+  String get helpZakatStep3Body =>
+      'حدّد اليوم الذي بلغ فيه مالك النصاب أول مرة. تجب الزكاة كل سنة قمرية بعده، ويمكن لـ Qima تذكيرك في يومها.';
+
+  @override
+  String get helpZakatStep4Title => 'حاسبة لا فتوى';
+
+  @override
+  String get helpZakatStep4Body =>
+      'يختلف العلماء في الأساس وفي الأسهم والحُلي. كل خيار افتراضي هنا قابل للتغيير، فاسأل عالمًا تثق به عند الشك.';
+
+  @override
+  String get allocationTitle => 'التوزيع';
+
+  @override
+  String get allocationDetails => 'التفاصيل';
+
+  @override
+  String get allocationByGroup => 'حسب الفئة';
+
+  @override
+  String get allocationMetalsByForm => 'المعادن · حسب العيار والنوع';
+
+  @override
+  String allocationMetalForm(String metal, String karat) {
+    return '$metal $karat';
+  }
+
+  @override
+  String get allocationDriftTitle => 'التحوّل';
+
+  @override
+  String allocationDriftSince(String date) {
+    return 'التحوّل · منذ $date';
+  }
+
+  @override
+  String allocationDriftChange(String from, String to) {
+    return '$from ← $to';
+  }
+
+  @override
+  String get allocationDriftPendingTitle => 'قبل أن يتوفر سجل';
+
+  @override
+  String allocationDriftPending(String date) {
+    return 'يظهر تحوّل توزيعك بمرور الوقت عندما يمضي على ممتلكاتك 14 يومًا، في $date. حتى ذلك الحين هذا هو توزيع اليوم، دون اختلاق أي اتجاه.';
+  }
+
+  @override
+  String get allocationDriftNoHistory =>
+      'لا توجد أسعار محفوظة كافية بعد لمعرفة توزيعك في ذلك الوقت، وسيكتمل مع تحميل سجل الأسعار.';
+
+  @override
+  String allocationSingleGroup(String group) {
+    return 'الكل في $group';
+  }
+
+  @override
+  String get backupImportCountTransactions => 'المعاملات';
+
+  @override
+  String portfolioTransactionCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count معاملة',
+      many: '$count معاملة',
+      few: '$count معاملات',
+      two: 'معاملتان',
+      one: 'معاملة واحدة',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get portfolioClosedPositions => 'مراكز مُغلقة';
+
+  @override
+  String ledgerTitleWithKarat(String name, String karat) {
+    return '$name · $karat';
+  }
+
+  @override
+  String get ledgerAdd => 'إضافة';
+
+  @override
+  String get ledgerAddFirst => 'أضف معاملة';
+
+  @override
+  String get ledgerHolding => 'الحيازة';
+
+  @override
+  String get ledgerNothingHeld => 'لا شيء محتفظ به الآن';
+
+  @override
+  String ledgerPerUnit(String amount, String unit) {
+    return '$amount / $unit';
+  }
+
+  @override
+  String get ledgerMarketValue => 'القيمة السوقية';
+
+  @override
+  String get ledgerUnrealised => 'غير محقق';
+
+  @override
+  String get ledgerRealised => 'محقق';
+
+  @override
+  String ledgerGainWithPercent(String amount, String percent) {
+    return '$amount ($percent)';
+  }
+
+  @override
+  String ledgerDetail(String date, String detail) {
+    return '$date · $detail';
+  }
+
+  @override
+  String ledgerDetailWithFee(String date, String price, String fee) {
+    return '$date · $price · رسوم $fee';
+  }
+
+  @override
+  String get ledgerNoCostBasis => 'بلا أساس تكلفة';
+
+  @override
+  String get ledgerCostCarried => 'بتكلفة منقولة';
+
+  @override
+  String get ledgerFootnote =>
+      'يُحسب أساس التكلفة من هذا السجل ولا يُخزَّن، وتعديل أي صف يعيد حساب الحيازة.';
+
+  @override
+  String get ledgerOverdrawnBanner =>
+      'هناك عملية بيع تتجاوز ما كان محتفظًا به في تاريخها، غالبًا بسبب التعديل على جهازين معًا. تُحتسب كبيع ما تبقى؛ عدّلها أو احذفها لتصحيح الإجماليات.';
+
+  @override
+  String ledgerClosedLine(String amount) {
+    return 'لا شيء محتفظ به الآن · محقق $amount';
+  }
+
+  @override
+  String get ledgerConflictSaveTitle => 'هذا سيتجاوز الكمية';
+
+  @override
+  String get ledgerConflictDeleteTitle => 'لا يمكن الحذف الآن';
+
+  @override
+  String ledgerConflictMessage(String kind, String date) {
+    return 'عندها ستتجاوز عملية $kind بتاريخ $date ما كان محتفظًا به. عدّلها أو احذفها أولًا.';
+  }
+
+  @override
+  String get confirmDeleteTransactionTitle => 'حذف هذه المعاملة؟';
+
+  @override
+  String confirmDeleteTransactionMessage(String details) {
+    return '$details. ستُحسب الحيازة من جديد بدونها، ولا يمكن التراجع عن ذلك.';
+  }
+
+  @override
+  String get transactionNewTitle => 'معاملة جديدة';
+
+  @override
+  String get transactionEditTitle => 'تعديل المعاملة';
+
+  @override
+  String get transactionKindBuy => 'شراء';
+
+  @override
+  String get transactionKindSell => 'بيع';
+
+  @override
+  String get transactionKindTransfer => 'تحويل';
+
+  @override
+  String get transactionKindTransferIn => 'تحويل وارد';
+
+  @override
+  String get transactionKindTransferOut => 'تحويل صادر';
+
+  @override
+  String get transactionKindFee => 'رسوم';
+
+  @override
+  String get transactionTransferInLabel => 'وارد';
+
+  @override
+  String get transactionTransferOutLabel => 'صادر';
+
+  @override
+  String transactionFineHint(String quantity) {
+    return '= $quantity من الذهب الخالص';
+  }
+
+  @override
+  String transactionPerUnitKarat(String unit, String karat) {
+    return '$unit · $karat';
+  }
+
+  @override
+  String transactionBuyPrice(String unit) {
+    return 'السعر المدفوع (لكل $unit)';
+  }
+
+  @override
+  String transactionSalePrice(String unit) {
+    return 'سعر البيع (لكل $unit)';
+  }
+
+  @override
+  String transactionCarriedCost(String unit) {
+    return 'التكلفة الأصلية (لكل $unit، اختياري)';
+  }
+
+  @override
+  String get transactionTotalProceeds => 'إجمالي مبلغ البيع';
+
+  @override
+  String get transactionTotalCarriedCost => 'إجمالي التكلفة الأصلية (اختياري)';
+
+  @override
+  String get transactionTransferCostHelper =>
+      'تكلفتها الأصلية إن كنت تعرفها. إن تُركت فارغة تُضاف بلا أساس تكلفة.';
+
+  @override
+  String get transactionFee => 'الرسوم (اختياري)';
+
+  @override
+  String get transactionFeeAmount => 'قيمة الرسوم';
+
+  @override
+  String get transactionFeeLabel => 'سببها (اختياري)';
+
+  @override
+  String get transactionNote => 'ملاحظة (اختياري)';
+
+  @override
+  String get transactionNeedsQuantity => 'أدخل الكمية.';
+
+  @override
+  String get transactionNeedsPrice => 'أدخل السعر.';
+
+  @override
+  String get transactionNeedsFee => 'أدخل قيمة الرسوم.';
+
+  @override
+  String transactionMoreThanHeld(String held) {
+    return 'هذا أكثر مما كنت تملكه في ذلك التاريخ ($held).';
+  }
+
+  @override
+  String get transactionPreviewTitle => 'معاينة الربح المحقق';
+
+  @override
+  String get transactionProceeds => 'العائد';
+
+  @override
+  String get transactionBasisReleased => 'أساس التكلفة المُحرَّر';
+
+  @override
+  String get transactionRealisedGain => 'الربح المحقق';
+
+  @override
+  String transactionPreviewRemaining(String quantity, String average) {
+    return 'على أساس المتوسط المرجّح. المتبقي بعدها: $quantity بمتوسط $average.';
+  }
+
+  @override
+  String get transactionPreviewClosesPosition =>
+      'على أساس المتوسط المرجّح. هذا يبيع كل ما تملكه.';
+
+  @override
+  String get backupCsvHeaderType => 'النوع';
+
+  @override
+  String get backupCsvHeaderFee => 'الرسوم';
+
+  @override
+  String get backupCsvHeaderNote => 'ملاحظة';
+
+  @override
+  String get csvImportTitle => 'استيراد من جدول بيانات';
+
+  @override
+  String get csvImportEntryTitle => 'استيراد المعاملات من CSV';
+
+  @override
+  String get csvImportEntrySubtitle =>
+      'من جدول بيانات أو ملف وسيط أو تطبيق آخر';
+
+  @override
+  String get csvImportFromBackupError => 'استيرادها كمعاملات';
+
+  @override
+  String csvImportRowCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count صف',
+      many: '$count صفًا',
+      few: '$count صفوف',
+      two: 'صفان',
+      one: 'صف واحد',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get csvImportEmptyFile =>
+      'يحتوي هذا الملف على صف عناوين بلا بيانات تحته.';
+
+  @override
+  String get csvImportColumnsSection => 'الأعمدة';
+
+  @override
+  String get csvImportColumnsFooter =>
+      'طابقها Qima من صف العناوين حيثما أمكن. يكفي السعر أو الإجمالي، ويمكن أن يكون الأصل رمزًا أو اسمًا. * مطلوب.';
+
+  @override
+  String get csvImportNotInFile => 'غير موجود في الملف';
+
+  @override
+  String get csvImportOptionsSection => 'قراءة الملف';
+
+  @override
+  String get csvImportFallbackCurrency => 'العملة';
+
+  @override
+  String get csvImportFallbackCurrencySubtitle => 'للصفوف التي لا تذكر عملة';
+
+  @override
+  String get csvImportDateOrder => 'التواريخ مثل 03/04/2026 تعني';
+
+  @override
+  String get csvImportDayFirst => '3 أبريل';
+
+  @override
+  String get csvImportMonthFirst => '4 مارس';
+
+  @override
+  String get csvImportDecimalComma => 'الفاصلة هي العلامة العشرية';
+
+  @override
+  String get csvImportDecimalCommaSubtitle =>
+      'قراءة 1.234,56 على أنها ألف ومئتان…';
+
+  @override
+  String get csvImportNeedsColumns => 'اختر على الأقل الأصل والتاريخ والكمية.';
+
+  @override
+  String get csvImportReview => 'مراجعة الصفوف';
+
+  @override
+  String get csvImportReadyCount => 'جاهزة';
+
+  @override
+  String get csvImportDuplicateCount => 'موجودة في Qima';
+
+  @override
+  String get csvImportProblemCount => 'لا يمكن استيرادها';
+
+  @override
+  String get csvImportSkipNote =>
+      'تُتخطى الصفوف غير المقروءة أو الموجودة مسبقًا في Qima، ولا يُخمَّن شيء.';
+
+  @override
+  String get csvImportShowAll => 'كل الصفوف';
+
+  @override
+  String get csvImportShowProblems => 'المتخطاة فقط';
+
+  @override
+  String get csvImportSkipped => 'متخطاة';
+
+  @override
+  String get csvImportDuplicate => 'مكررة';
+
+  @override
+  String get csvImportBackToColumns => 'الأعمدة';
+
+  @override
+  String csvImportConfirm(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'استيراد $count معاملة',
+      many: 'استيراد $count معاملة',
+      few: 'استيراد $count معاملات',
+      two: 'استيراد معاملتين',
+      one: 'استيراد معاملة واحدة',
+      zero: 'لا شيء للاستيراد',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String csvImportDoneTitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'تم استيراد $count معاملة',
+      many: 'تم استيراد $count معاملة',
+      few: 'تم استيراد $count معاملات',
+      two: 'تم استيراد معاملتين',
+      one: 'تم استيراد معاملة واحدة',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get csvImportDoneMessage =>
+      'أصبحت في سجل كل أصل. إن بدا شيء غير صحيح فالتراجع يزيل ما أضافه هذا الاستيراد فقط.';
+
+  @override
+  String get csvImportUndo => 'التراجع عن هذا الاستيراد';
+
+  @override
+  String csvImportUndone(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'أُزيلت $count معاملة مستوردة',
+      many: 'أُزيلت $count معاملة مستوردة',
+      few: 'أُزيلت $count معاملات مستوردة',
+      two: 'أُزيلت معاملتان مستوردتان',
+      one: 'أُزيلت معاملة مستوردة واحدة',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get csvFieldType => 'النوع';
+
+  @override
+  String get csvFieldAsset => 'اسم الأصل';
+
+  @override
+  String get csvFieldSymbol => 'الرمز';
+
+  @override
+  String get csvFieldQuantity => 'الكمية';
+
+  @override
+  String get csvFieldUnit => 'الوحدة';
+
+  @override
+  String get csvFieldKarat => 'العيار';
+
+  @override
+  String get csvFieldUnitPrice => 'السعر للوحدة';
+
+  @override
+  String get csvFieldTotal => 'الإجمالي';
+
+  @override
+  String get csvFieldFee => 'الرسوم';
+
+  @override
+  String get csvFieldCurrency => 'العملة';
+
+  @override
+  String get csvFieldDate => 'التاريخ';
+
+  @override
+  String get csvFieldNote => 'ملاحظة';
+
+  @override
+  String get csvProblemUnknownAsset => 'أصل غير معروف';
+
+  @override
+  String get csvProblemMissingQuantity => 'بلا كمية';
+
+  @override
+  String get csvProblemBadNumber => 'رقم غير مقروء';
+
+  @override
+  String get csvProblemMissingPrice => 'بلا سعر';
+
+  @override
+  String get csvProblemMissingDate => 'بلا تاريخ';
+
+  @override
+  String get csvProblemBadDate => 'تاريخ غير مقروء';
+
+  @override
+  String get csvProblemFutureDate => 'تاريخ في المستقبل';
+
+  @override
+  String get csvProblemUnknownType => 'نوع غير معروف';
+
+  @override
+  String get csvProblemUnknownCurrency => 'عملة غير معروفة';
+
+  @override
+  String get csvProblemUnsupportedUnit => 'وحدة لا تناسب هذا الأصل';
+
+  @override
+  String get csvProblemUnsupportedKarat => 'عيار لا يناسب هذا الأصل';
+
+  @override
+  String get csvProblemOversell => 'تبيع أكثر مما كان محتفظًا به';
+
+  @override
+  String get csvProblemDuplicate => 'موجودة في Qima';
+
+  @override
+  String get transactionBuyPricePlain => 'السعر المدفوع';
+
+  @override
+  String get transactionSalePricePlain => 'سعر البيع';
+
+  @override
+  String get transactionCarriedCostPlain => 'التكلفة الأصلية (اختياري)';
 }

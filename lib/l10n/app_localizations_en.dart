@@ -138,7 +138,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get holdingsEmpty =>
-      'Add your first lot to start tracking this holding.';
+      'No transactions yet. Add a buy to start tracking this holding.';
 
   @override
   String get holdingsValue => 'Value';
@@ -153,12 +153,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get holdingsGainPercent => 'Gain %';
 
   @override
-  String get holdingsNew => 'New lot';
-
-  @override
-  String get holdingsEdit => 'Edit lot';
-
-  @override
   String get holdingsQuantity => 'Quantity';
 
   @override
@@ -168,30 +162,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get holdingsCostModeTotal => 'Total';
 
   @override
-  String get holdingsUnitCost => 'Unit cost';
-
-  @override
-  String holdingsUnitCostWithUnit(String unit) {
-    return 'Unit cost (per $unit)';
-  }
-
-  @override
-  String holdingsUnitCostWithKarat(String unit, String karat) {
-    return 'Unit cost (per $unit · $karat)';
-  }
-
-  @override
-  String holdingsUnitCostPreview(String value) {
-    return 'Per unit: $value';
-  }
-
-  @override
   String get holdingsTotalCost => 'Total cost';
-
-  @override
-  String holdingsTotalCostPreview(String value) {
-    return 'Total: $value';
-  }
 
   @override
   String get holdingsDate => 'Date';
@@ -204,20 +175,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get holdingsAverageCost => 'Average cost';
-
-  @override
-  String holdingsAverageCostPerUnit(String value, String unit) {
-    return '$value per $unit';
-  }
-
-  @override
-  String holdingsAverageCostPerUnitKarat(
-    String value,
-    String unit,
-    String karat,
-  ) {
-    return '$value per $unit · $karat';
-  }
 
   @override
   String holdingsMixedNote(String karat) {
@@ -240,25 +197,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get portfolioEmpty =>
-      'No portfolio value yet — add a holding lot to get started.';
+      'No portfolio value yet — add a buy to any asset to get started.';
 
   @override
   String get portfolioNoChange => 'Not enough history for this range yet';
 
   @override
-  String get portfolioNoHistory =>
-      'Add a holding lot to see your portfolio chart';
-
-  @override
-  String portfolioLotCount(num count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count lots',
-      one: '1 lot',
-    );
-    return '$_temp0';
-  }
+  String get portfolioNoHistory => 'Add a buy to see your portfolio chart';
 
   @override
   String get settingsTitle => 'Settings';
@@ -323,7 +268,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsHideBalancesFooter =>
-      'Mask portfolio, holdings and lot amounts throughout the app.';
+      'Mask portfolio, holdings and transaction amounts throughout the app.';
 
   @override
   String get settingsAppLock => 'App lock';
@@ -606,14 +551,6 @@ class AppLocalizationsEn extends AppLocalizations {
       'Your holdings for this asset are kept.';
 
   @override
-  String get confirmDeleteLotTitle => 'Delete this lot?';
-
-  @override
-  String confirmDeleteLotMessage(String details) {
-    return '$details. This can\'t be undone.';
-  }
-
-  @override
   String confirmRemoveTickerTitle(String symbol) {
     return 'Remove custom ticker $symbol?';
   }
@@ -841,8 +778,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsBackupSubtitleNever => 'Never backed up';
 
   @override
-  String settingsBackupSubtitle(String date, int instruments, int lots) {
-    return 'Last backup $date · $instruments assets, $lots lots';
+  String settingsBackupSubtitle(
+    String date,
+    int instruments,
+    int transactions,
+  ) {
+    String _temp0 = intl.Intl.pluralLogic(
+      transactions,
+      locale: localeName,
+      other: '$transactions transactions',
+      one: '1 transaction',
+    );
+    return 'Last backup $date · $instruments assets, $_temp0';
   }
 
   @override
@@ -920,7 +867,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get backupExportCsvSubtitle =>
-      'Your lots as a spreadsheet, for your records (.csv)';
+      'Every transaction as a spreadsheet (.csv) — it imports back too';
 
   @override
   String get backupRestoreSection => 'Restore';
@@ -956,10 +903,16 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String backupExportSheetContentsSummary(
     int cards,
-    int lots,
+    int transactions,
     int customTickers,
   ) {
-    return '$cards watchlist cards · $lots lots · $customTickers custom tickers';
+    String _temp0 = intl.Intl.pluralLogic(
+      transactions,
+      locale: localeName,
+      other: '$transactions transactions',
+      one: '1 transaction',
+    );
+    return '$cards watchlist cards · $_temp0 · $customTickers custom tickers';
   }
 
   @override
@@ -1010,9 +963,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get backupImportCountCards => 'Watchlist cards';
-
-  @override
-  String get backupImportCountLots => 'Lots';
 
   @override
   String get backupImportCountCustomTickers => 'Custom tickers';
@@ -1085,7 +1035,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get backupImportCsvErrorMessage =>
-      'A holdings spreadsheet (.csv) only has your lots, and can\'t be restored. Choose a full backup file (.json) instead.';
+      'This is a spreadsheet, not a Qima backup. You can import its rows as transactions instead.';
 
   @override
   String get backupErrorNotQimaFile =>
@@ -1118,13 +1068,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get backupCsvHeaderKarat => 'Karat';
 
   @override
-  String get backupCsvHeaderUnitCost => 'Unit cost';
+  String get backupCsvHeaderUnitCost => 'Price per unit';
 
   @override
-  String get backupCsvHeaderCostCurrency => 'Cost currency';
+  String get backupCsvHeaderCostCurrency => 'Currency';
 
   @override
-  String get backupCsvHeaderTotalCost => 'Total cost';
+  String get backupCsvHeaderTotalCost => 'Total';
 
   @override
   String get backupCsvHeaderDate => 'Date';
@@ -1336,7 +1286,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get helpAssetDetailStep5Body =>
-      'Tap Holdings to see your lots or add a purchase.';
+      'Tap Holdings to see your transactions or add a buy or sale.';
 
   @override
   String get helpPortfolioTitle => 'Portfolio';
@@ -1357,7 +1307,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get helpPortfolioStep2Body =>
-      'Tap a row to see its lots, average cost and gain.';
+      'Tap a row to see its transactions, average cost and gain.';
 
   @override
   String get helpPortfolioStep3Title => 'Add a purchase';
@@ -1380,45 +1330,46 @@ class AppLocalizationsEn extends AppLocalizations {
       'Turn on Hide balances in Settings to mask every value.';
 
   @override
-  String get helpLotEditorTitle => 'Lot editor';
+  String get helpLotEditorTitle => 'Transaction';
 
   @override
   String get helpLotEditorSummary =>
-      'Record one purchase so Qima can work out what you hold, your average cost and your gain.';
+      'Record one buy, sell, transfer or fee. Your holding, average cost and gains are worked out from these.';
 
   @override
-  String get helpLotEditorStep1Title => 'Quantity and unit';
+  String get helpLotEditorStep1Title => 'Type';
 
   @override
   String get helpLotEditorStep1Body =>
-      'Enter how much you bought, in troy ounces, grams or kilograms.';
+      'Buy adds at a cost. Sell removes and realises a gain or loss. Transfer moves quantity in or out. Fee records a charge.';
 
   @override
   String get helpLotEditorStep2Title => 'Karat';
 
   @override
   String get helpLotEditorStep2Body =>
-      'For gold by gram or kilogram, pick 24K, 22K, 21K or 18K. It starts at the card\'s karat.';
+      'For gold by gram or kilogram, pick 24K, 22K, 21K or 18K. Everything is counted by gold content, so karats mix correctly.';
 
   @override
-  String get helpLotEditorStep3Title => 'What you paid';
+  String get helpLotEditorStep3Title => 'Price and fee';
 
   @override
   String get helpLotEditorStep3Body =>
-      'Enter the cost per unit or the total, in the currency you paid in.';
+      'Enter the price per unit or the total, and any commission. A sell shows what it realises before you save.';
 
   @override
   String get helpLotEditorStep4Title => 'Date';
 
   @override
-  String get helpLotEditorStep4Body => 'The day you bought it.';
+  String get helpLotEditorStep4Body =>
+      'The day it happened. A sale can’t be dated before you held enough.';
 
   @override
   String get helpLotEditorStep5Title => 'Save';
 
   @override
   String get helpLotEditorStep5Body =>
-      'Edit or delete a lot any time from Holdings.';
+      'Edit or delete a transaction any time from the holding’s ledger.';
 
   @override
   String get helpAddAssetTitle => 'Add asset';
@@ -1607,11 +1558,11 @@ class AppLocalizationsEn extends AppLocalizations {
       'Import a .json backup. Merge adds what\'s missing and deletes nothing; Replace swaps everything for the file.';
 
   @override
-  String get helpBackupStep5Title => 'Holdings spreadsheet';
+  String get helpBackupStep5Title => 'Spreadsheets';
 
   @override
   String get helpBackupStep5Body =>
-      'A .csv for accounting. It can\'t be restored.';
+      'Export every transaction as a .csv, or import one — from Qima, a spreadsheet or a broker. It adds transactions; it doesn’t restore settings.';
 
   @override
   String get helpWidgetsTitle => 'Widgets';
@@ -1657,27 +1608,28 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get helpHoldingsSummary =>
-      'Every lot you bought of this asset, and what they add up to.';
+      'Every transaction for this asset — buys, sells, transfers and fees — and what they add up to.';
 
   @override
   String get helpHoldingsStep1Title => 'Read the totals';
 
   @override
   String get helpHoldingsStep1Body =>
-      'Quantity, average cost, current value and gain across every lot.';
+      'What you hold, your average cost, its value and gain, plus what sales have realised.';
 
   @override
-  String get helpHoldingsStep2Title => 'Add a lot';
+  String get helpHoldingsStep2Title => 'Add a transaction';
 
   @override
-  String get helpHoldingsStep2Body => 'Tap + to record another purchase.';
+  String get helpHoldingsStep2Body =>
+      'Tap Add to record a buy, a sell, a transfer or a fee.';
 
   @override
-  String get helpHoldingsStep3Title => 'Edit or delete a lot';
+  String get helpHoldingsStep3Title => 'Edit or delete one';
 
   @override
   String get helpHoldingsStep3Body =>
-      'Tap a lot to change it, or swipe to delete.';
+      'Tap a row to change it, or swipe to delete. Qima won’t let a change leave a sale selling more than you held.';
 
   @override
   String get helpCardConfigTitle => 'Asset settings';
@@ -1775,7 +1727,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get helpImportPreviewStep1Body =>
-      'See how many cards, lots and alerts the file contains before restoring.';
+      'See how many cards, transactions and alerts the file contains before restoring.';
 
   @override
   String get helpImportPreviewStep2Title => 'Merge or Replace';
@@ -1812,4 +1764,848 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsHelpAddWidgetSubtitle => 'Home Screen and Lock Screen';
+
+  @override
+  String get commonDone => 'Done';
+
+  @override
+  String get zakatTitle => 'Zakat';
+
+  @override
+  String get zakatSettingsTitle => 'Zakat settings';
+
+  @override
+  String get settingsZakatSubtitle =>
+      'Nisab basis, what counts, hawl date and reminder';
+
+  @override
+  String get zakatEmptyTitle => 'Nothing to assess yet';
+
+  @override
+  String get zakatEmptyMessage =>
+      'Zakat is worked out from your holdings. Add a buy to any asset and it appears here, with what counts toward nisab.';
+
+  @override
+  String get zakatNisabSection => 'Nisab';
+
+  @override
+  String get zakatWhatCountsSection => 'What counts';
+
+  @override
+  String get zakatStatusAbove => 'Above nisab';
+
+  @override
+  String get zakatStatusBelow => 'Below nisab';
+
+  @override
+  String get zakatStatusUnknown => 'Nisab not priced yet';
+
+  @override
+  String zakatDueLabel(String rate) {
+    return 'Zakat due · $rate';
+  }
+
+  @override
+  String zakatExplainAboveNoHawl(String base) {
+    return 'On a zakatable base of $base. Set your hawl date to know when it falls due.';
+  }
+
+  @override
+  String zakatExplainAboveToday(String base) {
+    return 'On a zakatable base of $base. Your hawl completes today.';
+  }
+
+  @override
+  String zakatExplainAboveUpcoming(String base, String date, int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'in $days days',
+      one: 'in 1 day',
+    );
+    return 'On a zakatable base of $base. Due when your hawl completes on $date ($_temp0), if your wealth is still above nisab then.';
+  }
+
+  @override
+  String zakatExplainBelow(String base, String threshold) {
+    return 'Your zakatable base of $base is below today’s nisab of $threshold, so no zakat is due.';
+  }
+
+  @override
+  String zakatExplainUnknown(String metal) {
+    return 'Today’s $metal price hasn’t loaded, so the nisab threshold can’t be checked yet.';
+  }
+
+  @override
+  String get zakatRetry => 'Try again';
+
+  @override
+  String get zakatUnpricedNote =>
+      'Some assets have no price yet and aren’t counted. They count as soon as their price loads.';
+
+  @override
+  String get zakatBasisRow => 'Basis';
+
+  @override
+  String zakatBasisValue(String metal, String grams) {
+    return '$metal · $grams g';
+  }
+
+  @override
+  String zakatOtherBasisLine(String metal, String amount) {
+    return '$metal basis would be $amount';
+  }
+
+  @override
+  String get zakatThresholdToday => 'Threshold today';
+
+  @override
+  String get zakatYourBase => 'Your zakatable base';
+
+  @override
+  String get zakatHawlStart => 'Hawl start';
+
+  @override
+  String get zakatHawlSet => 'Set date';
+
+  @override
+  String get zakatHawlNotSetSubtitle =>
+      'The day your wealth first reached nisab';
+
+  @override
+  String get zakatHawlCompletesToday => 'completes today';
+
+  @override
+  String zakatHawlNext(String date) {
+    return 'next completes $date';
+  }
+
+  @override
+  String get zakatWhatCountsFooter =>
+      'Switch an asset off to leave it out — for example jewelry worn every day, if you follow the view that it is exempt.';
+
+  @override
+  String zakatExcludedClass(String cls) {
+    return '$cls switched off';
+  }
+
+  @override
+  String get zakatExcludedHolding => 'left out';
+
+  @override
+  String get zakatExcludedNoPrice => 'no price yet';
+
+  @override
+  String zakatLineTitle(String name, String quantity) {
+    return '$name · $quantity';
+  }
+
+  @override
+  String get zakatDisclaimer =>
+      'Qima computes; it does not rule. The basis and what counts are yours to set — ask a scholar you trust when unsure.';
+
+  @override
+  String get assetGroupMetals => 'Metals';
+
+  @override
+  String get assetGroupCrypto => 'Crypto';
+
+  @override
+  String get assetGroupEquities => 'Equities';
+
+  @override
+  String get assetGroupCash => 'Cash & currencies';
+
+  @override
+  String get zakatClassMetalsSubtitle => 'Gold, silver, platinum, palladium';
+
+  @override
+  String get zakatClassCryptoSubtitle => 'Treated as a tradeable asset';
+
+  @override
+  String get zakatClassEquitiesSubtitle =>
+      'Off by default — views on long-term shareholdings differ';
+
+  @override
+  String get zakatClassCashSubtitle => 'Currencies you hold';
+
+  @override
+  String zakatOverridesCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count assets set individually',
+      one: '1 asset set individually',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get zakatOverridesSubtitle =>
+      'Chosen on the zakat screen, overriding their class';
+
+  @override
+  String get zakatOverridesReset => 'Reset';
+
+  @override
+  String get zakatNisabBasisSection => 'Nisab basis';
+
+  @override
+  String get zakatClassesSection => 'Zakatable classes';
+
+  @override
+  String get zakatHawlSection => 'Hawl';
+
+  @override
+  String get zakatBasisPriceMissing => 'Price not loaded yet';
+
+  @override
+  String zakatBasisToday(String amount) {
+    return '$amount today';
+  }
+
+  @override
+  String zakatBasisHigher(String amount) {
+    return 'Higher threshold · $amount today';
+  }
+
+  @override
+  String zakatBasisLower(String amount) {
+    return 'Lower threshold · $amount today · more people owe';
+  }
+
+  @override
+  String get zakatCalendar => 'Calendar';
+
+  @override
+  String get zakatCalendarHijri => 'Hijri';
+
+  @override
+  String get zakatCalendarGregorian => 'Gregorian';
+
+  @override
+  String zakatGregorianNote(String solarRate, String rate) {
+    return 'A Gregorian year is about 11 days longer than a lunar one. Some scholars raise the rate to $solarRate to account for it; Qima keeps $rate.';
+  }
+
+  @override
+  String get zakatHawlClear => 'Clear hawl date';
+
+  @override
+  String get zakatRemind => 'Remind me';
+
+  @override
+  String get zakatRemindSubtitle =>
+      'A notification on the day your hawl completes';
+
+  @override
+  String get zakatRemindNeedsStart => 'Set a hawl start date first';
+
+  @override
+  String get zakatRemindNotificationsOff =>
+      'Notifications are off for Qima — turn them on in system settings to get this reminder';
+
+  @override
+  String get zakatHawlPickerTitle => 'Hawl start';
+
+  @override
+  String get zakatHawlPickerDay => 'Day';
+
+  @override
+  String get zakatHawlPickerMonth => 'Month';
+
+  @override
+  String get zakatHawlPickerYear => 'Year';
+
+  @override
+  String get zakatHawlPickerFuture => 'A hawl can’t start in the future';
+
+  @override
+  String zakatHawlPickerGregorian(String date) {
+    return 'Gregorian: $date';
+  }
+
+  @override
+  String zakatEntryDue(String amount) {
+    return '$amount due · above nisab';
+  }
+
+  @override
+  String get zakatEntryCalculate => 'See what’s due';
+
+  @override
+  String get zakatReminderNotificationTitle => 'Your hawl is complete';
+
+  @override
+  String get zakatReminderNotificationBody =>
+      'Your zakat year completed today. Open Qima to see what’s due.';
+
+  @override
+  String get hijriMonth1 => 'Muharram';
+
+  @override
+  String get hijriMonth2 => 'Safar';
+
+  @override
+  String get hijriMonth3 => 'Rabi al-Awwal';
+
+  @override
+  String get hijriMonth4 => 'Rabi al-Thani';
+
+  @override
+  String get hijriMonth5 => 'Jumada al-Ula';
+
+  @override
+  String get hijriMonth6 => 'Jumada al-Akhirah';
+
+  @override
+  String get hijriMonth7 => 'Rajab';
+
+  @override
+  String get hijriMonth8 => 'Shaban';
+
+  @override
+  String get hijriMonth9 => 'Ramadan';
+
+  @override
+  String get hijriMonth10 => 'Shawwal';
+
+  @override
+  String get hijriMonth11 => 'Dhu al-Qadah';
+
+  @override
+  String get hijriMonth12 => 'Dhu al-Hijjah';
+
+  @override
+  String hijriDate(int day, String month, int year) {
+    return '$day $month $year AH';
+  }
+
+  @override
+  String get helpZakatTitle => 'Zakat';
+
+  @override
+  String get helpZakatSummary =>
+      'Qima works out zakat from your holdings at today’s prices. It calculates; the choices behind the calculation are yours.';
+
+  @override
+  String get helpZakatStep1Title => 'Nisab';
+
+  @override
+  String get helpZakatStep1Body =>
+      'The threshold is 85 g of fine gold or 595 g of silver, priced live. Pick the basis in Zakat settings; silver is lower, so more people owe.';
+
+  @override
+  String get helpZakatStep2Title => 'What counts';
+
+  @override
+  String get helpZakatStep2Body =>
+      'Metals, crypto and cash count by default; equities don’t. Karat gold counts by its gold content. Switch any single asset off on the zakat screen.';
+
+  @override
+  String get helpZakatStep3Title => 'Hawl';
+
+  @override
+  String get helpZakatStep3Body =>
+      'Set the day your wealth first reached nisab. Zakat falls due each lunar year after it, and Qima can remind you on the day.';
+
+  @override
+  String get helpZakatStep4Title => 'A calculator, not a fatwa';
+
+  @override
+  String get helpZakatStep4Body =>
+      'Scholars differ on the basis, on equities and on jewelry. Every default here can be changed — when unsure, ask a scholar you trust.';
+
+  @override
+  String get allocationTitle => 'Allocation';
+
+  @override
+  String get allocationDetails => 'Details';
+
+  @override
+  String get allocationByGroup => 'By group';
+
+  @override
+  String get allocationMetalsByForm => 'Metals · by karat and form';
+
+  @override
+  String allocationMetalForm(String metal, String karat) {
+    return '$metal $karat';
+  }
+
+  @override
+  String get allocationDriftTitle => 'Drift';
+
+  @override
+  String allocationDriftSince(String date) {
+    return 'Drift · since $date';
+  }
+
+  @override
+  String allocationDriftChange(String from, String to) {
+    return '$from → $to';
+  }
+
+  @override
+  String get allocationDriftPendingTitle => 'Before there is history';
+
+  @override
+  String allocationDriftPending(String date) {
+    return 'How your split moves over time appears once your holdings are 14 days old, on $date. Until then, this is today’s allocation — no trend is invented.';
+  }
+
+  @override
+  String get allocationDriftNoHistory =>
+      'There aren’t enough stored prices yet to know how your allocation looked back then. It fills in as price history loads.';
+
+  @override
+  String allocationSingleGroup(String group) {
+    return 'All in $group';
+  }
+
+  @override
+  String get backupImportCountTransactions => 'Transactions';
+
+  @override
+  String portfolioTransactionCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count transactions',
+      one: '1 transaction',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get portfolioClosedPositions => 'Closed positions';
+
+  @override
+  String ledgerTitleWithKarat(String name, String karat) {
+    return '$name · $karat';
+  }
+
+  @override
+  String get ledgerAdd => 'Add';
+
+  @override
+  String get ledgerAddFirst => 'Add a transaction';
+
+  @override
+  String get ledgerHolding => 'Holding';
+
+  @override
+  String get ledgerNothingHeld => 'Nothing held now';
+
+  @override
+  String ledgerPerUnit(String amount, String unit) {
+    return '$amount / $unit';
+  }
+
+  @override
+  String get ledgerMarketValue => 'Market value';
+
+  @override
+  String get ledgerUnrealised => 'Unrealised';
+
+  @override
+  String get ledgerRealised => 'Realised';
+
+  @override
+  String ledgerGainWithPercent(String amount, String percent) {
+    return '$amount ($percent)';
+  }
+
+  @override
+  String ledgerDetail(String date, String detail) {
+    return '$date · $detail';
+  }
+
+  @override
+  String ledgerDetailWithFee(String date, String price, String fee) {
+    return '$date · $price · fee $fee';
+  }
+
+  @override
+  String get ledgerNoCostBasis => 'no cost basis';
+
+  @override
+  String get ledgerCostCarried => 'cost carried over';
+
+  @override
+  String get ledgerFootnote =>
+      'Cost basis is worked out from this ledger, not stored. Editing any row re-derives the holding.';
+
+  @override
+  String get ledgerOverdrawnBanner =>
+      'A sale here sells more than was held on its date — usually from editing on two devices at once. It counts as selling what was left; edit or delete it to fix the totals.';
+
+  @override
+  String ledgerClosedLine(String amount) {
+    return 'Nothing held now · realised $amount';
+  }
+
+  @override
+  String get ledgerConflictSaveTitle => 'That would oversell';
+
+  @override
+  String get ledgerConflictDeleteTitle => 'Can’t delete this yet';
+
+  @override
+  String ledgerConflictMessage(String kind, String date) {
+    return 'The $kind on $date would then sell more than was held. Edit or delete that one first.';
+  }
+
+  @override
+  String get confirmDeleteTransactionTitle => 'Delete this transaction?';
+
+  @override
+  String confirmDeleteTransactionMessage(String details) {
+    return '$details. The holding is worked out again without it. This can’t be undone.';
+  }
+
+  @override
+  String get transactionNewTitle => 'New transaction';
+
+  @override
+  String get transactionEditTitle => 'Edit transaction';
+
+  @override
+  String get transactionKindBuy => 'Buy';
+
+  @override
+  String get transactionKindSell => 'Sell';
+
+  @override
+  String get transactionKindTransfer => 'Transfer';
+
+  @override
+  String get transactionKindTransferIn => 'Transfer in';
+
+  @override
+  String get transactionKindTransferOut => 'Transfer out';
+
+  @override
+  String get transactionKindFee => 'Fee';
+
+  @override
+  String get transactionTransferInLabel => 'In';
+
+  @override
+  String get transactionTransferOutLabel => 'Out';
+
+  @override
+  String transactionFineHint(String quantity) {
+    return '= $quantity of fine gold';
+  }
+
+  @override
+  String transactionPerUnitKarat(String unit, String karat) {
+    return '$unit · $karat';
+  }
+
+  @override
+  String transactionBuyPrice(String unit) {
+    return 'Price paid (per $unit)';
+  }
+
+  @override
+  String transactionSalePrice(String unit) {
+    return 'Sale price (per $unit)';
+  }
+
+  @override
+  String transactionCarriedCost(String unit) {
+    return 'Original cost (per $unit, optional)';
+  }
+
+  @override
+  String get transactionTotalProceeds => 'Total sale amount';
+
+  @override
+  String get transactionTotalCarriedCost => 'Original total cost (optional)';
+
+  @override
+  String get transactionTransferCostHelper =>
+      'What it originally cost, if you know it. Left empty, it joins with no cost basis.';
+
+  @override
+  String get transactionFee => 'Fee (optional)';
+
+  @override
+  String get transactionFeeAmount => 'Fee amount';
+
+  @override
+  String get transactionFeeLabel => 'What it was for (optional)';
+
+  @override
+  String get transactionNote => 'Note (optional)';
+
+  @override
+  String get transactionNeedsQuantity => 'Enter a quantity.';
+
+  @override
+  String get transactionNeedsPrice => 'Enter a price.';
+
+  @override
+  String get transactionNeedsFee => 'Enter the fee amount.';
+
+  @override
+  String transactionMoreThanHeld(String held) {
+    return 'That’s more than you held on that date ($held).';
+  }
+
+  @override
+  String get transactionPreviewTitle => 'Realised gain preview';
+
+  @override
+  String get transactionProceeds => 'Proceeds';
+
+  @override
+  String get transactionBasisReleased => 'Cost basis released';
+
+  @override
+  String get transactionRealisedGain => 'Realised gain';
+
+  @override
+  String transactionPreviewRemaining(String quantity, String average) {
+    return 'Weighted average basis. Still held after this: $quantity at $average.';
+  }
+
+  @override
+  String get transactionPreviewClosesPosition =>
+      'Weighted average basis. This sells everything you hold.';
+
+  @override
+  String get backupCsvHeaderType => 'Type';
+
+  @override
+  String get backupCsvHeaderFee => 'Fee';
+
+  @override
+  String get backupCsvHeaderNote => 'Note';
+
+  @override
+  String get csvImportTitle => 'Import from a spreadsheet';
+
+  @override
+  String get csvImportEntryTitle => 'Import transactions from CSV';
+
+  @override
+  String get csvImportEntrySubtitle =>
+      'From a spreadsheet, a broker export or another app';
+
+  @override
+  String get csvImportFromBackupError => 'Import these as transactions';
+
+  @override
+  String csvImportRowCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count rows',
+      one: '1 row',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get csvImportEmptyFile =>
+      'This file has a header row but no data under it.';
+
+  @override
+  String get csvImportColumnsSection => 'Columns';
+
+  @override
+  String get csvImportColumnsFooter =>
+      'Matched from the header row where Qima could. A price or a total will do; the asset can be a symbol or a name. * needed.';
+
+  @override
+  String get csvImportNotInFile => 'Not in file';
+
+  @override
+  String get csvImportOptionsSection => 'Reading the file';
+
+  @override
+  String get csvImportFallbackCurrency => 'Currency';
+
+  @override
+  String get csvImportFallbackCurrencySubtitle =>
+      'For rows that don’t name one';
+
+  @override
+  String get csvImportDateOrder => 'Dates like 03/04/2026 mean';
+
+  @override
+  String get csvImportDayFirst => '3 April';
+
+  @override
+  String get csvImportMonthFirst => 'March 4';
+
+  @override
+  String get csvImportDecimalComma => 'Comma is the decimal mark';
+
+  @override
+  String get csvImportDecimalCommaSubtitle =>
+      'Read 1.234,56 as one thousand two hundred…';
+
+  @override
+  String get csvImportNeedsColumns =>
+      'Choose at least the asset, the date and the quantity.';
+
+  @override
+  String get csvImportReview => 'Review rows';
+
+  @override
+  String get csvImportReadyCount => 'Ready';
+
+  @override
+  String get csvImportDuplicateCount => 'Already in Qima';
+
+  @override
+  String get csvImportProblemCount => 'Can’t import';
+
+  @override
+  String get csvImportSkipNote =>
+      'Rows that can’t be read, or are already in Qima, are skipped. Nothing is guessed.';
+
+  @override
+  String get csvImportShowAll => 'All rows';
+
+  @override
+  String get csvImportShowProblems => 'Skipped only';
+
+  @override
+  String get csvImportSkipped => 'Skipped';
+
+  @override
+  String get csvImportDuplicate => 'Duplicate';
+
+  @override
+  String get csvImportBackToColumns => 'Columns';
+
+  @override
+  String csvImportConfirm(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Import $count transactions',
+      one: 'Import 1 transaction',
+      zero: 'Nothing to import',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String csvImportDoneTitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count transactions imported',
+      one: '1 transaction imported',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get csvImportDoneMessage =>
+      'They’re in each asset’s ledger now. If something looks off, undo removes exactly what this import added.';
+
+  @override
+  String get csvImportUndo => 'Undo this import';
+
+  @override
+  String csvImportUndone(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Removed $count imported transactions',
+      one: 'Removed 1 imported transaction',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get csvFieldType => 'Type';
+
+  @override
+  String get csvFieldAsset => 'Asset name';
+
+  @override
+  String get csvFieldSymbol => 'Symbol';
+
+  @override
+  String get csvFieldQuantity => 'Quantity';
+
+  @override
+  String get csvFieldUnit => 'Unit';
+
+  @override
+  String get csvFieldKarat => 'Karat';
+
+  @override
+  String get csvFieldUnitPrice => 'Price per unit';
+
+  @override
+  String get csvFieldTotal => 'Total';
+
+  @override
+  String get csvFieldFee => 'Fee';
+
+  @override
+  String get csvFieldCurrency => 'Currency';
+
+  @override
+  String get csvFieldDate => 'Date';
+
+  @override
+  String get csvFieldNote => 'Note';
+
+  @override
+  String get csvProblemUnknownAsset => 'unknown asset';
+
+  @override
+  String get csvProblemMissingQuantity => 'no quantity';
+
+  @override
+  String get csvProblemBadNumber => 'a number can’t be read';
+
+  @override
+  String get csvProblemMissingPrice => 'no price';
+
+  @override
+  String get csvProblemMissingDate => 'no date';
+
+  @override
+  String get csvProblemBadDate => 'date can’t be read';
+
+  @override
+  String get csvProblemFutureDate => 'date in the future';
+
+  @override
+  String get csvProblemUnknownType => 'unknown type';
+
+  @override
+  String get csvProblemUnknownCurrency => 'unknown currency';
+
+  @override
+  String get csvProblemUnsupportedUnit => 'unit doesn’t fit this asset';
+
+  @override
+  String get csvProblemUnsupportedKarat => 'karat doesn’t fit this asset';
+
+  @override
+  String get csvProblemOversell => 'sells more than was held';
+
+  @override
+  String get csvProblemDuplicate => 'already in Qima';
+
+  @override
+  String get transactionBuyPricePlain => 'Price paid';
+
+  @override
+  String get transactionSalePricePlain => 'Sale price';
+
+  @override
+  String get transactionCarriedCostPlain => 'Original cost (optional)';
 }

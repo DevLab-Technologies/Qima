@@ -113,6 +113,9 @@ void main() {
     await cubit.backupService.setReminderEnabled(true);
     await tester.pumpWidget(harness(cubit));
     await tester.pump();
+    // The reminder card sits at the bottom of the list, below the fold.
+    await tester.dragUntilVisible(find.byType(SwitchListTile), find.byType(ListView), const Offset(0, -200));
+    await tester.pump();
 
     final switchFinder = find.byType(SwitchListTile).last;
     expect(tester.widget<SwitchListTile>(switchFinder).value, isTrue);

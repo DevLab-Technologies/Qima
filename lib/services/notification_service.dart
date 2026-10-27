@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// Fired with the tapped notification's payload (a `WatchCard.id`) whenever a
 /// notification is tapped — foreground, background, or the app is
@@ -107,11 +108,13 @@ class NotificationService {
       final ios = _plugin.resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>();
       if (ios != null) {
         final granted = await ios.requestPermissions(alert: true, badge: true, sound: true);
+        await _markDarwinPermissionRequested();
         return granted ?? false;
       }
       final macos = _plugin.resolvePlatformSpecificImplementation<MacOSFlutterLocalNotificationsPlugin>();
       if (macos != null) {
         final granted = await macos.requestPermissions(alert: true, badge: true, sound: true);
+        await _markDarwinPermissionRequested();
         return granted ?? false;
       }
       // No platform-specific implementation resolved (e.g. Linux, Web,
@@ -129,18 +132,39 @@ class NotificationService {
   /// "Notifications are off" banner. Returns true (rather than false) when
   /// the platform has no meaningful concept of it, so that banner doesn't
   /// show incorrectly on those platforms.
+  ///
+  /// On iOS/macOS the real status is only reported once this app has asked
+  /// at least once: before the first prompt the OS reports "not enabled"
+  /// too, and a "turn them on in Settings" banner would point at a switch
+  /// that doesn't exist yet.
   Future<bool> isEnabled() async {
     try {
       final android = _plugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
       if (android != null) {
         return await android.areNotificationsEnabled() ?? true;
       }
+      if (!await _darwinPermissionRequested()) return true;
+      final ios = _plugin.resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>();
+      if (ios != null) return _enabled(await ios.checkPermissions());
+      final macos = _plugin.resolvePlatformSpecificImplementation<MacOSFlutterLocalNotificationsPlugin>();
+      if (macos != null) return _enabled(await macos.checkPermissions());
       return true;
     } catch (e, st) {
       debugPrint('NotificationService: isEnabled check failed: $e\n$st');
       return true;
     }
   }
+
+  static bool _enabled(NotificationsEnabledOptions? options) =>
+      options == null || options.isEnabled || options.isProvisionalEnabled;
+
+  static const _darwinPermissionRequestedKey = 'notificationPermissionRequested';
+
+  Future<bool> _darwinPermissionRequested() async =>
+      (await SharedPreferences.getInstance()).getBool(_darwinPermissionRequestedKey) ?? false;
+
+  Future<void> _markDarwinPermissionRequested() async =>
+      (await SharedPreferences.getInstance()).setBool(_darwinPermissionRequestedKey, true);
 
   /// Shows a single notification. [id] should be stable-but-distinct per
   /// alert (the caller passes a hash of the alert id) so a repeat alert
