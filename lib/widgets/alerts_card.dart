@@ -42,7 +42,7 @@ class AlertsCard extends StatelessWidget {
                   ),
                   const Spacer(),
                   IconButton(
-                    icon: Icon(Icons.add_circle_outline, color: colors.brand),
+                    icon: Icon(Icons.add_circle_outline, color: colors.brandText),
                     tooltip: l10n.alertsCardAdd,
                     onPressed: () => AlertEditorSheet.show(context, card: card),
                   ),
@@ -106,10 +106,8 @@ class _AlertRow extends StatelessWidget {
                 ),
               ),
             ),
-            Switch(
+            Switch.adaptive(
               value: alert.enabled,
-              activeThumbColor: colors.onBrand,
-              activeTrackColor: colors.brand,
               onChanged: (value) => cubit.setAlertEnabled(alert, value),
             ),
           ],

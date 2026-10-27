@@ -146,7 +146,7 @@ class _ExportBackupSheetState extends State<ExportBackupSheet> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    SwitchListTile(
+                    SwitchListTile.adaptive(
                       contentPadding: EdgeInsets.zero,
                       title: Text(
                         l10n.backupExportSheetProtectTitle,
@@ -160,8 +160,6 @@ class _ExportBackupSheetState extends State<ExportBackupSheet> {
                         ),
                       ),
                       value: _protect,
-                      activeThumbColor: colors.onBrand,
-                      activeTrackColor: colors.brand,
                       onChanged: (value) => setState(() => _protect = value),
                     ),
                     if (_protect) ...[

@@ -143,7 +143,7 @@
   "settingsDefaultRangeFooter": "Used when opening an asset for the first time.",
   "settingsWidgetRefresh": "Widget refresh interval",
   "settingsWidgetRefreshFooter": "How often background widgets fetch new prices.",
-  "settingsAbout": "About",
+  "settingsLanguage": "Language",
   "settingsLanguageSystem": "Follow system",
   "settingsDataSource": "finance.yahoo.com · gold-api.com · er-api.com",
   "settingsPrivacy": "Privacy & security",
@@ -335,7 +335,6 @@
   "alertEditorSave": "Save",
   "alertEditorDelete": "Delete",
   "alertsScreenTitle": "Alerts",
-  "alertsScreenInfo": "Alerts are checked roughly every 15 minutes in the background, and live while Qima is open.",
   "alertsScreenEmptyTitle": "No alerts yet",
   "alertsScreenEmptyMessage": "Open an asset and tap the bell to set a price alert.",
   "alertsScreenFiredToday": "Fired today {time} · switched off",
@@ -810,7 +809,7 @@
   "@helpAssetDetailStep4Title": {
     "description": "Asset detail help step 4 title."
   },
-  "helpAssetDetailStep4Body": "Tap the bell to hear when the price crosses a level or moves by a percent.",
+  "helpAssetDetailStep4Body": "Tap + on the Alerts card to hear when the price crosses a level or moves by a percent.",
   "@helpAssetDetailStep4Body": {
     "description": "Asset detail help step 4 body."
   },

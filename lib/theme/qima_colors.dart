@@ -16,6 +16,10 @@ class QimaColors extends ThemeExtension<QimaColors> {
   final Color tileTop;
   final Color tileBottom;
 
+  /// The raised "thumb" of a segmented control, sitting on a [tileTop]
+  /// track — white in light mode, a lifted grey in dark.
+  final Color segmentThumb;
+
   /// Menus, dialogs and sheets floating above cards.
   final Color overlay;
   final Color hairline;
@@ -27,8 +31,8 @@ class QimaColors extends ThemeExtension<QimaColors> {
   final Color up;
   final Color down;
 
-  /// Brand accent (gold): FILLS ONLY — chips, switches, radio rings,
-  /// selected segments. Never used as text; use [brandText] for that.
+  /// Brand accent (gold): FILLS ONLY — primary buttons, switch tracks,
+  /// selected washes. Never used as text; use [brandText] for that.
   final Color brand;
 
   /// Gold text/glyphs on a surface: text buttons, links, highlights,
@@ -58,6 +62,7 @@ class QimaColors extends ThemeExtension<QimaColors> {
     required this.surfaceBottom,
     required this.tileTop,
     required this.tileBottom,
+    required this.segmentThumb,
     required this.overlay,
     required this.hairline,
     required this.hairlineStrong,
@@ -89,13 +94,15 @@ class QimaColors extends ThemeExtension<QimaColors> {
     surfaceBottom: Color(0xFF191B21),
     tileTop: Color(0xFF2B2F39),
     tileBottom: Color(0xFF22252D),
+    segmentThumb: Color(0xFF454A56),
     overlay: Color(0xFF262A33),
     hairline: Color.fromRGBO(255, 255, 255, 0.10),
     hairlineStrong: Color.fromRGBO(255, 255, 255, 0.18),
     textPrimary: Colors.white,
     textSecondary: Color.fromRGBO(255, 255, 255, 0.60),
     textTertiary: Color.fromRGBO(255, 255, 255, 0.52),
-    up: Color(0xFF30D158),
+    // Matched to [down]'s brightness so neither trend shouts over the other.
+    up: Color(0xFF3DBE6E),
     down: Color(0xFFFF6B61),
     brand: Color(0xFFE6BA4D),
     brandText: Color(0xFFE6BA4D),
@@ -119,6 +126,7 @@ class QimaColors extends ThemeExtension<QimaColors> {
     surfaceBottom: Color(0xFFFAFAFC),
     tileTop: Color(0xFFF2F3F6),
     tileBottom: Color(0xFFEAECF0),
+    segmentThumb: Color(0xFFFFFFFF),
     overlay: Color(0xFFFFFFFF),
     hairline: Color.fromRGBO(0x11, 0x13, 0x18, 0.10),
     hairlineStrong: Color.fromRGBO(0x11, 0x13, 0x18, 0.18),
@@ -127,7 +135,10 @@ class QimaColors extends ThemeExtension<QimaColors> {
     textTertiary: Color.fromRGBO(0x11, 0x13, 0x18, 0.60),
     up: Color(0xFF166B2E),
     down: Color(0xFFB42A26),
-    brand: Color(0xFFA87B14),
+    // A bright metallic gold. Like iOS's own switch green it sits under 3:1
+    // against white, so it is only a fill: gold text uses [brandText] and
+    // anything drawn on it uses [onBrand] (7.6:1).
+    brand: Color(0xFFD4A72C),
     brandText: Color(0xFF8A6410),
     onBrand: Color(0xFF1A1406),
     shadow: Color.fromRGBO(0x1B, 0x22, 0x30, 0.08),
@@ -151,6 +162,7 @@ class QimaColors extends ThemeExtension<QimaColors> {
     Color? surfaceBottom,
     Color? tileTop,
     Color? tileBottom,
+    Color? segmentThumb,
     Color? overlay,
     Color? hairline,
     Color? hairlineStrong,
@@ -179,6 +191,7 @@ class QimaColors extends ThemeExtension<QimaColors> {
       surfaceBottom: surfaceBottom ?? this.surfaceBottom,
       tileTop: tileTop ?? this.tileTop,
       tileBottom: tileBottom ?? this.tileBottom,
+      segmentThumb: segmentThumb ?? this.segmentThumb,
       overlay: overlay ?? this.overlay,
       hairline: hairline ?? this.hairline,
       hairlineStrong: hairlineStrong ?? this.hairlineStrong,
@@ -212,6 +225,7 @@ class QimaColors extends ThemeExtension<QimaColors> {
       surfaceBottom: Color.lerp(surfaceBottom, other.surfaceBottom, t)!,
       tileTop: Color.lerp(tileTop, other.tileTop, t)!,
       tileBottom: Color.lerp(tileBottom, other.tileBottom, t)!,
+      segmentThumb: Color.lerp(segmentThumb, other.segmentThumb, t)!,
       overlay: Color.lerp(overlay, other.overlay, t)!,
       hairline: Color.lerp(hairline, other.hairline, t)!,
       hairlineStrong: Color.lerp(hairlineStrong, other.hairlineStrong, t)!,

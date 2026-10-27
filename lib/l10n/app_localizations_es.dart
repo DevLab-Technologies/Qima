@@ -254,7 +254,7 @@ class AppLocalizationsEs extends AppLocalizations {
       'Con qué frecuencia los widgets en segundo plano obtienen nuevos precios.';
 
   @override
-  String get settingsAbout => 'Acerca de';
+  String get settingsLanguage => 'Idioma';
 
   @override
   String get settingsLanguageSystem => 'Seguir el sistema';
@@ -678,10 +678,6 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get alertsScreenTitle => 'Alertas';
-
-  @override
-  String get alertsScreenInfo =>
-      'Las alertas se comprueban aproximadamente cada 15 minutos en segundo plano, y en tiempo real mientras Qima está abierta.';
 
   @override
   String get alertsScreenEmptyTitle => 'Aún no hay alertas';
@@ -1295,7 +1291,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get helpAssetDetailStep4Body =>
-      'Toca la campana para que te avisen cuando el precio cruce un nivel o se mueva un porcentaje.';
+      'Toca + en la tarjeta Alertas para que te avisen cuando el precio cruce un nivel o se mueva un porcentaje.';
 
   @override
   String get helpAssetDetailStep5Title => 'Registra lo que tienes';

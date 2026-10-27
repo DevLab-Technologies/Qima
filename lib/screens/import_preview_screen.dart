@@ -255,7 +255,7 @@ class _ImportPreviewScreenState extends State<ImportPreviewScreen> {
           ],
           selected: {_mode},
           onSelectionChanged: (selection) => setState(() => _mode = selection.first),
-          style: DS.segmentedButtonStyle(colors, colors.brand),
+          showSelectedIcon: false,
         ),
         const SizedBox(height: DS.spaceXS),
         Text(

@@ -200,17 +200,15 @@ class _CsvImportScreenState extends State<CsvImportScreen> {
                   ],
                   selected: {_mapping.dateOrder},
                   onSelectionChanged: (s) => setState(() => _mapping = _mapping.copyWith(dateOrder: s.first)),
-                  style: DS.segmentedButtonStyle(colors, colors.brand),
+                  showSelectedIcon: false,
                 ),
               ],
               Divider(color: colors.hairline),
-              SwitchListTile(
+              SwitchListTile.adaptive(
                 contentPadding: EdgeInsets.zero,
                 title: Text(l10n.csvImportDecimalComma, style: TextStyle(color: colors.textPrimary)),
                 subtitle: Text(l10n.csvImportDecimalCommaSubtitle, style: TextStyle(color: colors.textTertiary, fontSize: 12)),
                 value: _mapping.decimalComma,
-                activeThumbColor: colors.onBrand,
-                activeTrackColor: colors.brand,
                 onChanged: (v) => setState(() => _mapping = _mapping.copyWith(decimalComma: v)),
               ),
             ],
@@ -275,8 +273,6 @@ class _CsvImportScreenState extends State<CsvImportScreen> {
               ),
               const SizedBox(height: DS.spaceSM),
               if (plan.problemCount + plan.duplicateCount > 0) ...[
-                Text(l10n.csvImportSkipNote, style: TextStyle(color: colors.textTertiary, fontSize: 12)),
-                const SizedBox(height: DS.spaceSM),
                 SegmentedButton<bool>(
                   segments: [
                     ButtonSegment(value: false, label: Text(l10n.csvImportShowAll)),
@@ -284,7 +280,7 @@ class _CsvImportScreenState extends State<CsvImportScreen> {
                   ],
                   selected: {_onlyProblems},
                   onSelectionChanged: (s) => setState(() => _onlyProblems = s.first),
-                  style: DS.segmentedButtonStyle(colors, colors.brand),
+                  showSelectedIcon: false,
                 ),
                 const SizedBox(height: DS.spaceSM),
               ],
@@ -306,21 +302,29 @@ class _CsvImportScreenState extends State<CsvImportScreen> {
           top: false,
           child: Padding(
             padding: const EdgeInsets.fromLTRB(DS.spaceMD, DS.spaceXS, DS.spaceMD, DS.spaceMD),
-            child: Row(
-              children: [
-                OutlinedButton(
-                  onPressed: _busy ? null : () => setState(() => _step = _Step.mapping),
-                  child: Text(l10n.csvImportBackToColumns),
-                ),
-                const SizedBox(width: DS.spaceSM),
-                Expanded(
-                  child: FilledButton(
-                    onPressed: plan.readyCount == 0 || _busy ? null : _import,
-                    child: Text(l10n.csvImportConfirm(plan.readyCount)),
+            // With nothing importable, going back to fix the column mapping
+            // is the only useful step, so it becomes the main action rather
+            // than sitting beside a disabled "Nothing to import".
+            child: plan.readyCount == 0
+                ? FilledButton(
+                    onPressed: _busy ? null : () => setState(() => _step = _Step.mapping),
+                    child: Text(l10n.csvImportBackToColumns),
+                  )
+                : Row(
+                    children: [
+                      OutlinedButton(
+                        onPressed: _busy ? null : () => setState(() => _step = _Step.mapping),
+                        child: Text(l10n.csvImportBackToColumns),
+                      ),
+                      const SizedBox(width: DS.spaceSM),
+                      Expanded(
+                        child: FilledButton(
+                          onPressed: _busy ? null : _import,
+                          child: Text(l10n.csvImportConfirm(plan.readyCount)),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-              ],
-            ),
           ),
         ),
       ],
@@ -374,6 +378,8 @@ class _CsvImportScreenState extends State<CsvImportScreen> {
   }
 }
 
+const int _notInFile = -1;
+
 class _FieldRow extends StatelessWidget {
   final String label;
   final bool required;
@@ -402,29 +408,39 @@ class _FieldRow extends StatelessWidget {
       return '$name$example';
     }
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        children: [
-          Expanded(
-            flex: 2,
-            child: Text(required ? '$label *' : label, style: TextStyle(color: colors.textPrimary)),
-          ),
-          Expanded(
-            flex: 3,
-            child: DropdownButton<int?>(
-              value: value,
-              isExpanded: true,
-              underline: const SizedBox.shrink(),
-              items: [
-                DropdownMenuItem<int?>(value: null, child: Text(notInFile, style: TextStyle(color: colors.textTertiary))),
-                for (var i = 0; i < header.length; i++)
-                  DropdownMenuItem<int?>(value: i, child: Text(option(i), overflow: TextOverflow.ellipsis, maxLines: 1)),
-              ],
-              onChanged: onChanged,
+    // A list row that opens a menu, rather than a dropdown with a ▼, so the
+    // mapping reads like the app's other settings rows. The menu can't
+    // return null for a choice, so "not in file" travels as [_notInFile].
+    return PopupMenuButton<int>(
+      initialValue: value ?? _notInFile,
+      onSelected: (i) => onChanged(i == _notInFile ? null : i),
+      itemBuilder: (context) => [
+        PopupMenuItem<int>(value: _notInFile, child: Text(notInFile, style: TextStyle(color: colors.textTertiary))),
+        for (var i = 0; i < header.length; i++)
+          PopupMenuItem<int>(value: i, child: Text(option(i), overflow: TextOverflow.ellipsis, maxLines: 1)),
+      ],
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: DS.spaceSM),
+        child: Row(
+          children: [
+            Expanded(
+              flex: 2,
+              child: Text(required ? '$label *' : label, style: TextStyle(color: colors.textPrimary)),
             ),
-          ),
-        ],
+            Expanded(
+              flex: 3,
+              child: Text(
+                value == null ? notInFile : option(value!),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+                textAlign: TextAlign.end,
+                style: TextStyle(color: value == null ? colors.textTertiary : colors.textSecondary),
+              ),
+            ),
+            const SizedBox(width: DS.space2XS),
+            Icon(Icons.unfold_more, size: 18, color: colors.textTertiary),
+          ],
+        ),
       ),
     );
   }

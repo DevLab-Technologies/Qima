@@ -268,7 +268,6 @@ class _TransactionEditorScreenState extends State<TransactionEditorScreen> {
                     showSelectedIcon: false,
                     selected: {_kind},
                     onSelectionChanged: (s) => setState(() => _kind = s.first),
-                    style: DS.segmentedButtonStyle(colors, accent),
                   ),
                   if (_kind == _Kind.transfer) ...[
                     const SizedBox(height: DS.spaceSM),
@@ -279,7 +278,7 @@ class _TransactionEditorScreenState extends State<TransactionEditorScreen> {
                       ],
                       selected: {_transferIn},
                       onSelectionChanged: (s) => setState(() => _transferIn = s.first),
-                      style: DS.segmentedButtonStyle(colors, accent),
+                      showSelectedIcon: false,
                     ),
                   ],
                   const SizedBox(height: DS.spaceMD),
@@ -340,7 +339,7 @@ class _TransactionEditorScreenState extends State<TransactionEditorScreen> {
               ],
               selected: {_karat ?? GoldKarat.k24},
               onSelectionChanged: (s) => setState(() => _karat = s.first == GoldKarat.k24 ? null : s.first),
-              style: DS.segmentedButtonStyle(colors, accent),
+              showSelectedIcon: false,
             ),
             if (_karat != null && q > 0) ...[
               const SizedBox(height: 4),
@@ -366,7 +365,7 @@ class _TransactionEditorScreenState extends State<TransactionEditorScreen> {
               final shown = _priceMode == _PriceMode.perUnit ? perUnit : perUnit * _quantityValue;
               _price.text = shown == 0 ? '' : _trim(double.parse(shown.toStringAsFixed(6)));
             }),
-            style: DS.segmentedButtonStyle(colors, accent),
+            showSelectedIcon: false,
           ),
           const SizedBox(height: DS.spaceSM),
           _numberField(

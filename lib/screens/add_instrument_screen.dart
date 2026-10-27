@@ -244,7 +244,7 @@ class _GroupHeader extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: DS.spaceXS, left: 4),
       child: Text(
         text,
-        style: TextStyle(color: context.colors.textTertiary, fontSize: 12, fontWeight: FontWeight.w600, letterSpacing: 0.5),
+        style: DS.overline(context, color: context.colors.textTertiary, fontSize: 12, fontWeight: FontWeight.w600),
       ),
     );
   }

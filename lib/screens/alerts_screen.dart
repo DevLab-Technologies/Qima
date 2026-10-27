@@ -85,10 +85,6 @@ class _AlertsScreenState extends State<AlertsScreen> with WidgetsBindingObserver
                   _NotificationsOffBanner(onOpenSettings: SystemSettings.openNotificationSettings),
                   const SizedBox(height: DS.spaceMD),
                 ],
-                DSCard(
-                  child: Text(l10n.alertsScreenInfo, style: TextStyle(color: colors.textTertiary, fontSize: 12)),
-                ),
-                const SizedBox(height: DS.spaceMD),
                 if (alerts.isEmpty)
                   _EmptyState(l10n: l10n, colors: colors)
                 else
@@ -294,10 +290,8 @@ class _AlertTile extends StatelessWidget {
                   ],
                 ),
               ),
-              Switch(
+              Switch.adaptive(
                 value: alert.enabled,
-                activeThumbColor: colors.onBrand,
-                activeTrackColor: colors.brand,
                 onChanged: (value) => cubit.setAlertEnabled(alert, value),
               ),
             ],

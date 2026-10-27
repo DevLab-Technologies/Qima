@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../models/asset.dart';
 import '../theme/instrument_theme.dart';
+import '../theme/qima_colors.dart';
 
 IconData _materialIcon(String systemImage) {
   switch (systemImage) {
@@ -20,8 +21,9 @@ IconData _materialIcon(String systemImage) {
   }
 }
 
-/// Accent-gradient-tinted instrument icon, used in the watchlist row, detail
-/// header, and add-instrument list.
+/// Instrument icon used in the watchlist row, detail header, and
+/// add-instrument list: a soft wash of the instrument's accent with the
+/// glyph in that accent.
 class InstrumentIcon extends StatelessWidget {
   final Instrument? instrument;
   final double size;
@@ -30,18 +32,20 @@ class InstrumentIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final gradient = InstrumentTheme.accentGradient(instrument);
+    final colors = context.colors;
+    final accent = InstrumentTheme.accentColor(instrument, colors);
+    final dark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       width: size,
       height: size,
-      decoration: BoxDecoration(gradient: gradient, shape: BoxShape.circle),
+      decoration: BoxDecoration(color: InstrumentTheme.iconWash(accent, dark: dark), shape: BoxShape.circle),
       // Pinned LTR: some glyphs (the stocks trend line) mirror under RTL,
       // which would read as a downtrend in Arabic.
       child: Directionality(
         textDirection: TextDirection.ltr,
         child: Icon(
           _materialIcon(instrument?.systemImage ?? 'dollarsign.circle.fill'),
-          color: Colors.black.withValues(alpha: 0.65),
+          color: InstrumentTheme.iconGlyph(accent, colors.surfaceTop, dark: dark),
           size: size * 0.55,
         ),
       ),

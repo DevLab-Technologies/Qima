@@ -45,7 +45,7 @@ class HelpIndexSheet extends StatelessWidget {
             children: [
               Text(
                 l10n.helpSheetIndexHeader,
-                style: TextStyle(color: colors.textTertiary, fontSize: 11, fontWeight: FontWeight.w700, letterSpacing: 0.6),
+                style: DS.overline(context, color: colors.textTertiary, fontSize: 11, fontWeight: FontWeight.w700),
               ),
               const SizedBox(height: 4),
               Text(

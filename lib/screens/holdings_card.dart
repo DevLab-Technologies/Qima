@@ -84,7 +84,7 @@ class HoldingsCard extends StatelessWidget {
                   children: [
                     Text(l10n.detailHoldings,
                         style: TextStyle(color: colors.textPrimary, fontSize: 16, fontWeight: FontWeight.w700)),
-                    const SizedBox(width: DS.spaceXS),
+                    const SizedBox(width: DS.spaceMD),
                     Text(
                       l10n.portfolioTransactionCount(transactionCount),
                       style: TextStyle(color: colors.textTertiary, fontSize: 13),
@@ -122,7 +122,7 @@ class HoldingsCard extends StatelessWidget {
                   Row(
                     children: [
                       Expanded(child: StatPill(title: l10n.holdingsValue, value: Masking.amount(valuation.value, hidden: hidden))),
-                      const SizedBox(width: DS.spaceXS),
+                      const SizedBox(width: DS.spaceMD),
                       Expanded(
                         child: StatPill(
                           title: l10n.holdingsGain,
@@ -130,7 +130,7 @@ class HoldingsCard extends StatelessWidget {
                           tint: QimaColors.trendColor(valuation.isUp, colors),
                         ),
                       ),
-                      const SizedBox(width: DS.spaceXS),
+                      const SizedBox(width: DS.spaceMD),
                       Expanded(
                         child: StatPill(
                           title: l10n.holdingsGainPercent,

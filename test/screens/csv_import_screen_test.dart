@@ -143,9 +143,11 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.text(en.csvImportReview));
     await tester.pumpAndSettle();
-    expect(find.text(en.csvImportConfirm(0)), findsOneWidget);
     expect(find.text(en.csvImportDuplicate), findsOneWidget);
-    expect(tester.widget<FilledButton>(find.widgetWithText(FilledButton, en.csvImportConfirm(0))).onPressed, isNull);
+    // Nothing to import: no disabled import button, and going back to the
+    // column mapping becomes the main action.
+    expect(find.text(en.csvImportConfirm(0)), findsNothing);
+    expect(tester.widget<FilledButton>(find.widgetWithText(FilledButton, en.csvImportBackToColumns)).onPressed, isNotNull);
   });
 
   testWidgets('without enough columns, review is disabled and says why', (tester) async {

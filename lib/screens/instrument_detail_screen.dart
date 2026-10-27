@@ -19,8 +19,8 @@ import '../widgets/alerts_card.dart';
 import '../widgets/help_button.dart';
 import '../widgets/instrument_icon.dart';
 import '../widgets/key_stats_grid.dart';
+import '../widgets/range_selector.dart';
 import '../widgets/unit_price_carousel.dart';
-import 'alert_editor_sheet.dart';
 import 'currency_picker.dart';
 import 'holdings_card.dart';
 
@@ -153,21 +153,9 @@ class _InstrumentDetailScreenState extends State<InstrumentDetailScreen> {
                       ),
                   ],
                 ),
-                IconButton(
-                  icon: const Icon(Icons.notifications_outlined),
-                  tooltip: l10n.alertBellTooltip,
-                  onPressed: () => AlertEditorSheet.show(context, card: _card),
-                ),
-                IconButton(
-                  icon: state.phase == RefreshPhase.refreshing
-                      ? const SizedBox(
-                          width: 18,
-                          height: 18,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : const Icon(Icons.refresh),
-                  onPressed: () => cubit.refresh(instrument),
-                ),
+                // Alerts are added from the Alerts card's +, and prices refresh
+                // by pulling down, so the bar keeps just help and display
+                // options.
               ],
             ),
             body: RefreshIndicator(
@@ -193,7 +181,7 @@ class _InstrumentDetailScreenState extends State<InstrumentDetailScreen> {
                   const SizedBox(height: DS.spaceSM),
                   Text(
                     presentation.latestPrice,
-                    style: TextStyle(color: colors.textPrimary, fontSize: 40, fontWeight: FontWeight.w800),
+                    style: TextStyle(color: colors.textPrimary, fontSize: DS.figureDisplay, fontWeight: FontWeight.w800),
                   ),
                   const SizedBox(height: DS.spaceXS),
                   Row(
@@ -231,22 +219,11 @@ class _InstrumentDetailScreenState extends State<InstrumentDetailScreen> {
                   const SizedBox(height: DS.spaceMD),
                   AlertsCard(card: _card),
                   const SizedBox(height: DS.spaceMD),
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: [
-                        for (final range in _detailRanges)
-                          Padding(
-                            padding: const EdgeInsets.only(right: DS.spaceXS),
-                            child: DSChoiceChip(
-                              label: displayLabel(context, range.labelKey),
-                              selected: _range == range,
-                              onSelected: (_) => _select(range),
-                              accent: accent,
-                            ),
-                          ),
-                      ],
-                    ),
+                  RangeSelector(
+                    ranges: _detailRanges,
+                    selected: _range,
+                    onSelected: _select,
+                    accent: accent,
                   ),
                   const SizedBox(height: DS.spaceSM),
                   SizedBox(

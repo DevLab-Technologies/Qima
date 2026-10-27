@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import '../theme/design_system.dart';
 import '../theme/qima_colors.dart';
 
-/// Small labeled metric tile, matching `StatPill.swift`.
+/// Small labeled metric: an overline label above a figure. It has no
+/// surface of its own — it always sits inside a card, and a second
+/// bordered box there would read as a card within a card.
 class StatPill extends StatelessWidget {
   final String title;
   final String value;
@@ -14,7 +16,8 @@ class StatPill extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
-    return DSTile(
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: DS.space2XS),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
@@ -23,12 +26,7 @@ class StatPill extends StatelessWidget {
             title.toUpperCase(),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              color: colors.textTertiary,
-              fontSize: 10,
-              fontWeight: FontWeight.w600,
-              letterSpacing: 0.4,
-            ),
+            style: DS.overline(context, color: colors.textTertiary, fontSize: 10, fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 4),
           // One line, shrunk to fit: a long amount (or a currency symbol

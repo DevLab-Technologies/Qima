@@ -12,10 +12,10 @@ class SectionHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: DS.spaceXS, left: 4),
+      padding: const EdgeInsetsDirectional.only(bottom: DS.spaceXS, start: 4),
       child: Text(
         title.toUpperCase(),
-        style: TextStyle(color: context.colors.textTertiary, fontSize: 12, fontWeight: FontWeight.w600, letterSpacing: 0.5),
+        style: DS.overline(context, color: context.colors.textTertiary, fontSize: 12, fontWeight: FontWeight.w600),
       ),
     );
   }
