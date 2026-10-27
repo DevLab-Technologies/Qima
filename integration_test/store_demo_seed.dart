@@ -8,6 +8,7 @@ import 'package:qima/models/holding.dart';
 import 'package:qima/models/holding_transaction.dart';
 import 'package:qima/models/metal_breakdown.dart';
 import 'package:qima/models/watch_card.dart';
+import 'package:qima/models/zakat.dart';
 import 'package:qima/services/preferences.dart';
 
 /// Replaces the watchlist and holdings with the demo set, in [language] and
@@ -91,6 +92,20 @@ Future<void> seedStoreDemo(AppCubit cubit, {AppLanguage language = AppLanguage.e
   for (final lot in lots) {
     await cubit.saveTransaction(HoldingTransaction.fromLot(lot));
   }
+  // One sale, so the ledger and the portfolio show a realised gain.
+  await cubit.saveTransaction(HoldingTransaction(
+    id: 'shot-tx-sell-1',
+    instrumentID: 'metal.XAU',
+    kind: TransactionKind.sell,
+    quantity: 1,
+    unit: PriceUnit.troyOunce,
+    unitPrice: 3320,
+    currency: 'USD',
+    date: DateTime(2025, 5, 20),
+  ));
+  // Default zakat classes with a hawl under way, so the zakat screen shows
+  // what's due and when instead of asking for a start date.
+  await cubit.updateZakatSettings((_) => ZakatSettings(hawlStart: DateTime(2025, 3, 30)));
   await cubit.refreshAll();
   await cubit.backfillHistoryIfNeeded();
 }
