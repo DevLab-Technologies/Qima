@@ -7,8 +7,11 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:qima/blocs/app_cubit.dart';
 import 'package:qima/main.dart';
+import 'package:qima/models/zakat.dart';
+import 'package:qima/screens/allocation_screen.dart';
 import 'package:qima/screens/home_shell.dart';
 import 'package:qima/screens/instrument_detail_screen.dart';
+import 'package:qima/screens/zakat_screen.dart';
 import 'package:qima/services/preferences.dart';
 import 'package:qima/widgets/instrument_row.dart';
 
@@ -41,6 +44,11 @@ Future<void> _shot(WidgetTester tester, String name) async {
   print('QIMA_SCREENSHOT $name');
   await _wait(_holdForCapture);
 }
+
+/// Opens [screen] on the root navigator, as its card on the portfolio tab
+/// would; a tap could land off-screen on smaller devices.
+void _push(WidgetTester tester, Widget screen) =>
+    tester.state<NavigatorState>(find.byType(Navigator).first).push(MaterialPageRoute<void>(builder: (_) => screen));
 
 /// Closes whatever the root navigator last pushed (detail page or add flow).
 void _popRoute(WidgetTester tester) => tester.state<NavigatorState>(find.byType(Navigator).first).pop();
@@ -92,12 +100,28 @@ void main() {
     await tester.tap(find.byIcon(Icons.pie_chart_outline));
     await _shot(tester, '4_portfolio');
 
+    _push(tester, const AllocationScreen());
+    await _shot(tester, '5_allocation');
+    _popRoute(tester);
+    await _wait(const Duration(seconds: 1));
+
+    _push(tester, const ZakatScreen());
+    // The nisab needs live gold and silver prices.
+    final nisab = DateTime.now().add(const Duration(seconds: 30));
+    while (cubit.zakatAssessment.status == NisabStatus.thresholdUnknown) {
+      if (DateTime.now().isAfter(nisab)) throw TestFailure('Nisab prices did not load.');
+      await _wait(const Duration(milliseconds: 500));
+    }
+    await _shot(tester, '6_zakat');
+    _popRoute(tester);
+    await _wait(const Duration(seconds: 1));
+
     await tester.tap(find.byIcon(Icons.list_alt_outlined));
     await _wait(const Duration(seconds: 1));
     await tester.tap(find.byIcon(Icons.add).first);
     await _wait(const Duration(seconds: 1));
     // The search field focuses itself; keep the keyboard out of the shot.
     FocusManager.instance.primaryFocus?.unfocus();
-    await _shot(tester, '5_add_asset');
+    await _shot(tester, '7_add_asset');
   });
 }
