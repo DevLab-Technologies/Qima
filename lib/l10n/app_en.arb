@@ -1971,5 +1971,97 @@
   "csvProblemDuplicate": "already in Qima",
   "transactionBuyPricePlain": "Price paid",
   "transactionSalePricePlain": "Sale price",
-  "transactionCarriedCostPlain": "Original cost (optional)"
+  "transactionCarriedCostPlain": "Original cost (optional)",
+  "settingsVersion": "Version {version} ({build})",
+  "@settingsVersion": {
+    "description": "App version and build number, at the bottom of Settings.",
+    "placeholders": {
+      "version": {
+        "type": "String"
+      },
+      "build": {
+        "type": "String"
+      }
+    }
+  },
+  "watchlistEditOrder": "Edit order",
+  "watchlistSortBy": "Sort by",
+  "watchlistSortName": "Name",
+  "watchlistSortChange": "Top performers",
+  "@watchlistSortChange": {
+    "description": "Sort that puts the biggest gain over the row's 3-month change first."
+  },
+  "watchlistSortAssetClass": "Asset class",
+  "watchlistDragHandle": "Move {name}",
+  "@watchlistDragHandle": {
+    "description": "Screen-reader label for a row's drag handle in Edit order.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "watchlistEditOrderHint": "Drag the handles to reorder. A sort sets a new order you can keep adjusting.",
+  "shareAction": "Share",
+  "shareTitle": "Share {name}",
+  "@shareTitle": {
+    "description": "Share sheet title; name is the asset.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "shareToWhatsappMessage": "WhatsApp message",
+  "shareToWhatsappStatus": "WhatsApp status",
+  "shareToInstagramPost": "Instagram post",
+  "shareToInstagramStory": "Instagram story",
+  "shareToFacebookPost": "Facebook post",
+  "shareToFacebookStory": "Facebook story",
+  "shareToLinkedinPost": "LinkedIn post",
+  "shareCaption": "{name} is at {price}.",
+  "@shareCaption": {
+    "description": "Shared-post text when there's no change yet.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "shareCaptionWithChange": "{name} is at {price} ({change}, {range}).",
+  "@shareCaptionWithChange": {
+    "description": "Shared-post text; change is like +5.26%, range a short label like 3M.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "price": {
+        "type": "String"
+      },
+      "change": {
+        "type": "String"
+      },
+      "range": {
+        "type": "String"
+      }
+    }
+  },
+  "shareCaptionFooter": "Tracked with Qima: {url}",
+  "@shareCaptionFooter": {
+    "description": "Last line of shared-post text.",
+    "placeholders": {
+      "url": {
+        "type": "String"
+      }
+    }
+  },
+  "shareCaptionCopied": "Caption copied. Paste it if the app leaves it out.",
+  "shareFailed": "Couldn't create the image. Try again.",
+  "helpWatchlistStep6Title": "Change the order",
+  "helpWatchlistStep6Body": "Tap the arrows at the top to drag cards by their handles, or sort by name, performance or asset class. You can also press and hold a card to drag it.",
+  "helpAssetDetailStep6Title": "Share it",
+  "helpAssetDetailStep6Body": "Tap share to post the price and chart as an image sized for WhatsApp, Instagram, Facebook or LinkedIn, with a ready caption."
 }

@@ -2628,4 +2628,103 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get transactionCarriedCostPlain => 'Coût d’origine (facultatif)';
+
+  @override
+  String settingsVersion(String version, String build) {
+    return 'Version $version ($build)';
+  }
+
+  @override
+  String get watchlistEditOrder => 'Modifier l\'ordre';
+
+  @override
+  String get watchlistSortBy => 'Trier par';
+
+  @override
+  String get watchlistSortName => 'Nom';
+
+  @override
+  String get watchlistSortChange => 'Meilleures performances';
+
+  @override
+  String get watchlistSortAssetClass => 'Classe d\'actifs';
+
+  @override
+  String watchlistDragHandle(String name) {
+    return 'Déplacer $name';
+  }
+
+  @override
+  String get watchlistEditOrderHint =>
+      'Faites glisser les poignées pour réorganiser. Un tri fixe un nouvel ordre que vous pouvez encore ajuster.';
+
+  @override
+  String get shareAction => 'Partager';
+
+  @override
+  String shareTitle(String name) {
+    return 'Partager $name';
+  }
+
+  @override
+  String get shareToWhatsappMessage => 'Message WhatsApp';
+
+  @override
+  String get shareToWhatsappStatus => 'Statut WhatsApp';
+
+  @override
+  String get shareToInstagramPost => 'Publication Instagram';
+
+  @override
+  String get shareToInstagramStory => 'Story Instagram';
+
+  @override
+  String get shareToFacebookPost => 'Publication Facebook';
+
+  @override
+  String get shareToFacebookStory => 'Story Facebook';
+
+  @override
+  String get shareToLinkedinPost => 'Publication LinkedIn';
+
+  @override
+  String shareCaption(String name, String price) {
+    return '$name est à $price.';
+  }
+
+  @override
+  String shareCaptionWithChange(
+    String name,
+    String price,
+    String change,
+    String range,
+  ) {
+    return '$name est à $price ($change, $range).';
+  }
+
+  @override
+  String shareCaptionFooter(String url) {
+    return 'Suivi avec Qima : $url';
+  }
+
+  @override
+  String get shareCaptionCopied =>
+      'Texte copié. Collez-le si l\'app ne l\'ajoute pas.';
+
+  @override
+  String get shareFailed => 'Impossible de créer l\'image. Réessayez.';
+
+  @override
+  String get helpWatchlistStep6Title => 'Changez l\'ordre';
+
+  @override
+  String get helpWatchlistStep6Body =>
+      'Touchez les flèches en haut pour faire glisser les cartes par leurs poignées, ou triez-les par nom, performance ou classe d\'actifs. Vous pouvez aussi maintenir une carte appuyée pour la déplacer.';
+
+  @override
+  String get helpAssetDetailStep6Title => 'Partagez-le';
+
+  @override
+  String get helpAssetDetailStep6Body =>
+      'Touchez partager pour publier le prix et le graphique en image au format WhatsApp, Instagram, Facebook ou LinkedIn, avec un texte prêt.';
 }

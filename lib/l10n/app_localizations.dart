@@ -4519,6 +4519,167 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Original cost (optional)'**
   String get transactionCarriedCostPlain;
+
+  /// App version and build number, at the bottom of Settings.
+  ///
+  /// In en, this message translates to:
+  /// **'Version {version} ({build})'**
+  String settingsVersion(String version, String build);
+
+  /// No description provided for @watchlistEditOrder.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit order'**
+  String get watchlistEditOrder;
+
+  /// No description provided for @watchlistSortBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Sort by'**
+  String get watchlistSortBy;
+
+  /// No description provided for @watchlistSortName.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get watchlistSortName;
+
+  /// Sort that puts the biggest gain over the row's 3-month change first.
+  ///
+  /// In en, this message translates to:
+  /// **'Top performers'**
+  String get watchlistSortChange;
+
+  /// No description provided for @watchlistSortAssetClass.
+  ///
+  /// In en, this message translates to:
+  /// **'Asset class'**
+  String get watchlistSortAssetClass;
+
+  /// Screen-reader label for a row's drag handle in Edit order.
+  ///
+  /// In en, this message translates to:
+  /// **'Move {name}'**
+  String watchlistDragHandle(String name);
+
+  /// No description provided for @watchlistEditOrderHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Drag the handles to reorder. A sort sets a new order you can keep adjusting.'**
+  String get watchlistEditOrderHint;
+
+  /// No description provided for @shareAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Share'**
+  String get shareAction;
+
+  /// Share sheet title; name is the asset.
+  ///
+  /// In en, this message translates to:
+  /// **'Share {name}'**
+  String shareTitle(String name);
+
+  /// No description provided for @shareToWhatsappMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'WhatsApp message'**
+  String get shareToWhatsappMessage;
+
+  /// No description provided for @shareToWhatsappStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'WhatsApp status'**
+  String get shareToWhatsappStatus;
+
+  /// No description provided for @shareToInstagramPost.
+  ///
+  /// In en, this message translates to:
+  /// **'Instagram post'**
+  String get shareToInstagramPost;
+
+  /// No description provided for @shareToInstagramStory.
+  ///
+  /// In en, this message translates to:
+  /// **'Instagram story'**
+  String get shareToInstagramStory;
+
+  /// No description provided for @shareToFacebookPost.
+  ///
+  /// In en, this message translates to:
+  /// **'Facebook post'**
+  String get shareToFacebookPost;
+
+  /// No description provided for @shareToFacebookStory.
+  ///
+  /// In en, this message translates to:
+  /// **'Facebook story'**
+  String get shareToFacebookStory;
+
+  /// No description provided for @shareToLinkedinPost.
+  ///
+  /// In en, this message translates to:
+  /// **'LinkedIn post'**
+  String get shareToLinkedinPost;
+
+  /// Shared-post text when there's no change yet.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} is at {price}.'**
+  String shareCaption(String name, String price);
+
+  /// Shared-post text; change is like +5.26%, range a short label like 3M.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} is at {price} ({change}, {range}).'**
+  String shareCaptionWithChange(
+    String name,
+    String price,
+    String change,
+    String range,
+  );
+
+  /// Last line of shared-post text.
+  ///
+  /// In en, this message translates to:
+  /// **'Tracked with Qima: {url}'**
+  String shareCaptionFooter(String url);
+
+  /// No description provided for @shareCaptionCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Caption copied. Paste it if the app leaves it out.'**
+  String get shareCaptionCopied;
+
+  /// No description provided for @shareFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t create the image. Try again.'**
+  String get shareFailed;
+
+  /// No description provided for @helpWatchlistStep6Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Change the order'**
+  String get helpWatchlistStep6Title;
+
+  /// No description provided for @helpWatchlistStep6Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap the arrows at the top to drag cards by their handles, or sort by name, performance or asset class. You can also press and hold a card to drag it.'**
+  String get helpWatchlistStep6Body;
+
+  /// No description provided for @helpAssetDetailStep6Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Share it'**
+  String get helpAssetDetailStep6Title;
+
+  /// No description provided for @helpAssetDetailStep6Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap share to post the price and chart as an image sized for WhatsApp, Instagram, Facebook or LinkedIn, with a ready caption.'**
+  String get helpAssetDetailStep6Body;
 }
 
 class _AppLocalizationsDelegate

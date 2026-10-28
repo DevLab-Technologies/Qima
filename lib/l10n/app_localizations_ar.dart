@@ -2621,4 +2621,102 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get transactionCarriedCostPlain => 'التكلفة الأصلية (اختياري)';
+
+  @override
+  String settingsVersion(String version, String build) {
+    return 'الإصدار $version ($build)';
+  }
+
+  @override
+  String get watchlistEditOrder => 'ترتيب القائمة';
+
+  @override
+  String get watchlistSortBy => 'الترتيب حسب';
+
+  @override
+  String get watchlistSortName => 'الاسم';
+
+  @override
+  String get watchlistSortChange => 'الأفضل أداءً';
+
+  @override
+  String get watchlistSortAssetClass => 'فئة الأصل';
+
+  @override
+  String watchlistDragHandle(String name) {
+    return 'نقل $name';
+  }
+
+  @override
+  String get watchlistEditOrderHint =>
+      'اسحب المقابض لإعادة الترتيب. الفرز يضع ترتيبًا جديدًا يمكنك تعديله لاحقًا.';
+
+  @override
+  String get shareAction => 'مشاركة';
+
+  @override
+  String shareTitle(String name) {
+    return 'مشاركة $name';
+  }
+
+  @override
+  String get shareToWhatsappMessage => 'رسالة واتساب';
+
+  @override
+  String get shareToWhatsappStatus => 'حالة واتساب';
+
+  @override
+  String get shareToInstagramPost => 'منشور إنستغرام';
+
+  @override
+  String get shareToInstagramStory => 'قصة إنستغرام';
+
+  @override
+  String get shareToFacebookPost => 'منشور فيسبوك';
+
+  @override
+  String get shareToFacebookStory => 'قصة فيسبوك';
+
+  @override
+  String get shareToLinkedinPost => 'منشور لينكدإن';
+
+  @override
+  String shareCaption(String name, String price) {
+    return 'سعر $name الآن $price.';
+  }
+
+  @override
+  String shareCaptionWithChange(
+    String name,
+    String price,
+    String change,
+    String range,
+  ) {
+    return 'سعر $name الآن $price ($change، $range).';
+  }
+
+  @override
+  String shareCaptionFooter(String url) {
+    return 'من تطبيق قيمة: $url';
+  }
+
+  @override
+  String get shareCaptionCopied => 'نُسخ النص. الصقه إن لم يظهر في التطبيق.';
+
+  @override
+  String get shareFailed => 'تعذّر إنشاء الصورة. حاول مرة أخرى.';
+
+  @override
+  String get helpWatchlistStep6Title => 'غيّر الترتيب';
+
+  @override
+  String get helpWatchlistStep6Body =>
+      'اضغط على الأسهم في الأعلى لسحب البطاقات من مقابضها، أو رتّبها حسب الاسم أو الأداء أو فئة الأصل. ويمكنك أيضًا الضغط مطولًا على بطاقة لسحبها.';
+
+  @override
+  String get helpAssetDetailStep6Title => 'شاركه';
+
+  @override
+  String get helpAssetDetailStep6Body =>
+      'اضغط على المشاركة لنشر السعر والرسم البياني كصورة بمقاس واتساب أو إنستغرام أو فيسبوك أو لينكدإن، مع نص جاهز.';
 }

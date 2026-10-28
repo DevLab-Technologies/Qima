@@ -2604,4 +2604,103 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get transactionCarriedCostPlain => 'Original cost (optional)';
+
+  @override
+  String settingsVersion(String version, String build) {
+    return 'Version $version ($build)';
+  }
+
+  @override
+  String get watchlistEditOrder => 'Edit order';
+
+  @override
+  String get watchlistSortBy => 'Sort by';
+
+  @override
+  String get watchlistSortName => 'Name';
+
+  @override
+  String get watchlistSortChange => 'Top performers';
+
+  @override
+  String get watchlistSortAssetClass => 'Asset class';
+
+  @override
+  String watchlistDragHandle(String name) {
+    return 'Move $name';
+  }
+
+  @override
+  String get watchlistEditOrderHint =>
+      'Drag the handles to reorder. A sort sets a new order you can keep adjusting.';
+
+  @override
+  String get shareAction => 'Share';
+
+  @override
+  String shareTitle(String name) {
+    return 'Share $name';
+  }
+
+  @override
+  String get shareToWhatsappMessage => 'WhatsApp message';
+
+  @override
+  String get shareToWhatsappStatus => 'WhatsApp status';
+
+  @override
+  String get shareToInstagramPost => 'Instagram post';
+
+  @override
+  String get shareToInstagramStory => 'Instagram story';
+
+  @override
+  String get shareToFacebookPost => 'Facebook post';
+
+  @override
+  String get shareToFacebookStory => 'Facebook story';
+
+  @override
+  String get shareToLinkedinPost => 'LinkedIn post';
+
+  @override
+  String shareCaption(String name, String price) {
+    return '$name is at $price.';
+  }
+
+  @override
+  String shareCaptionWithChange(
+    String name,
+    String price,
+    String change,
+    String range,
+  ) {
+    return '$name is at $price ($change, $range).';
+  }
+
+  @override
+  String shareCaptionFooter(String url) {
+    return 'Tracked with Qima: $url';
+  }
+
+  @override
+  String get shareCaptionCopied =>
+      'Caption copied. Paste it if the app leaves it out.';
+
+  @override
+  String get shareFailed => 'Couldn\'t create the image. Try again.';
+
+  @override
+  String get helpWatchlistStep6Title => 'Change the order';
+
+  @override
+  String get helpWatchlistStep6Body =>
+      'Tap the arrows at the top to drag cards by their handles, or sort by name, performance or asset class. You can also press and hold a card to drag it.';
+
+  @override
+  String get helpAssetDetailStep6Title => 'Share it';
+
+  @override
+  String get helpAssetDetailStep6Body =>
+      'Tap share to post the price and chart as an image sized for WhatsApp, Instagram, Facebook or LinkedIn, with a ready caption.';
 }
