@@ -30,6 +30,8 @@
 	<true/>
 	<key>NSFaceIDUsageDescription</key>
 	<string>Qima uses Face ID to keep your portfolio private.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Qima saves the price images you share to your photo library when you choose Save Image.</string>
 	<!-- Price alerts (spec Phase 5): lets iOS opportunistically wake the app
 	     in the background to refresh prices and evaluate alerts via
 	     BGTaskScheduler. "fetch" additionally opts into the legacy

@@ -123,6 +123,9 @@ void main() {
     await settle(tester);
 
     final l10n = await AppLocalizations.delegate.load(const Locale('en'));
+    // The link sits under the steps, below the fold on a short screen.
+    await tester.ensureVisible(find.text(l10n.onboardingReplayTour));
+    await settle(tester);
     await tester.tap(find.text(l10n.onboardingReplayTour));
     await settle(tester);
 

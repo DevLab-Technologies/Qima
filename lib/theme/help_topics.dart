@@ -45,6 +45,7 @@ HelpTopic helpTopicFor(BuildContext context, HelpTopicId id) {
           HelpStep(icon: Icons.filter_list, title: l10n.helpWatchlistStep3Title, body: l10n.helpWatchlistStep3Body),
           HelpStep(icon: Icons.show_chart, title: l10n.helpWatchlistStep4Title, body: l10n.helpWatchlistStep4Body),
           HelpStep(icon: Icons.refresh, title: l10n.helpWatchlistStep5Title, body: l10n.helpWatchlistStep5Body),
+          HelpStep(icon: Icons.swap_vert, title: l10n.helpWatchlistStep6Title, body: l10n.helpWatchlistStep6Body),
         ],
       );
     case HelpTopicId.assetDetail:
@@ -57,6 +58,7 @@ HelpTopic helpTopicFor(BuildContext context, HelpTopicId id) {
           HelpStep(icon: Icons.view_column_outlined, title: l10n.helpAssetDetailStep3Title, body: l10n.helpAssetDetailStep3Body),
           HelpStep(icon: Icons.add_alert_outlined, title: l10n.helpAssetDetailStep4Title, body: l10n.helpAssetDetailStep4Body),
           HelpStep(icon: Icons.account_balance_wallet_outlined, title: l10n.helpAssetDetailStep5Title, body: l10n.helpAssetDetailStep5Body),
+          HelpStep(icon: Icons.ios_share, title: l10n.helpAssetDetailStep6Title, body: l10n.helpAssetDetailStep6Body),
         ],
       );
     case HelpTopicId.portfolio:
