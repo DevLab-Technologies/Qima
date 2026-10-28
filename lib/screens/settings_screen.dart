@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart' show kIsWeb, TargetPlatform, defaultTar
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 import '../blocs/app_cubit.dart';
 import '../blocs/app_state.dart';
@@ -206,10 +207,16 @@ class SettingsScreen extends StatelessWidget {
                 const _HelpSection(),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: DS.spaceLG),
-                  child: Text(
-                    l10n.settingsDataSource,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(color: colors.textTertiary, fontSize: 12),
+                  child: Column(
+                    children: [
+                      const _AppVersionLabel(),
+                      const SizedBox(height: DS.spaceXS),
+                      Text(
+                        l10n.settingsDataSource,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: colors.textTertiary, fontSize: 12),
+                      ),
+                    ],
                   ),
                 ),
               ],
@@ -217,6 +224,38 @@ class SettingsScreen extends StatelessWidget {
           },
         ),
       ),
+    );
+  }
+}
+
+/// "Version 3.1.0 (4)" under Help, read from the installed bundle so it
+/// always matches what the stores and TestFlight show.
+class _AppVersionLabel extends StatefulWidget {
+  const _AppVersionLabel();
+
+  @override
+  State<_AppVersionLabel> createState() => _AppVersionLabelState();
+}
+
+class _AppVersionLabelState extends State<_AppVersionLabel> {
+  late final Future<PackageInfo> _info = PackageInfo.fromPlatform();
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final colors = context.colors;
+    return FutureBuilder<PackageInfo>(
+      future: _info,
+      builder: (context, snapshot) {
+        final info = snapshot.data;
+        // Keeps the footer's height steady while the platform call runs,
+        // and stays blank rather than wrong if it fails.
+        return Text(
+          info == null ? '' : l10n.settingsVersion(info.version, info.buildNumber),
+          textAlign: TextAlign.center,
+          style: TextStyle(color: colors.textSecondary, fontSize: 12, fontWeight: FontWeight.w600),
+        );
+      },
     );
   }
 }

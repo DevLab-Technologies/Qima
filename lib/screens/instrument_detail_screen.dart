@@ -23,6 +23,7 @@ import '../widgets/range_selector.dart';
 import '../widgets/unit_price_carousel.dart';
 import 'currency_picker.dart';
 import 'holdings_card.dart';
+import 'share_asset_sheet.dart';
 
 /// Chart-first ranges offered on the instrument detail screen. Every range
 /// is always shown — none are gated behind a "load history" action; picking
@@ -123,6 +124,12 @@ class _InstrumentDetailScreenState extends State<InstrumentDetailScreen> {
               title: Text(displayLabel(context, instrument.nameKey)),
               actions: [
                 const HelpButton(topic: HelpTopicId.assetDetail),
+                if (presentation.hasData)
+                  IconButton(
+                    icon: Icon(Icons.adaptive.share),
+                    tooltip: l10n.shareAction,
+                    onPressed: () => ShareAssetSheet.show(context, card: _card, range: _range),
+                  ),
                 PopupMenuButton<String>(
                   icon: const Icon(Icons.tune),
                   onSelected: (value) async {

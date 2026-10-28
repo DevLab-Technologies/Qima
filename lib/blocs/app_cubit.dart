@@ -22,6 +22,7 @@ import '../models/portfolio_history.dart';
 import '../models/price_alert.dart';
 import '../models/quote.dart';
 import '../models/watch_card.dart';
+import '../models/watchlist_sort.dart';
 import '../models/zakat.dart';
 import '../models/chart_range.dart';
 import '../services/alert_runtime_store.dart';
@@ -823,6 +824,24 @@ class AppCubit extends Cubit<AppState> {
     final cards = List.of(state.cards);
     final item = cards.removeAt(fromIndex);
     cards.insert(toIndex > fromIndex ? toIndex - 1 : toIndex, item);
+    await _saveOrder(cards);
+  }
+
+  /// Rewrites the watchlist order by [sort]. [nameOf] is the localized row
+  /// name, which only the UI can resolve.
+  Future<void> sortWatchlist(WatchlistSort sort, {required String Function(WatchCard) nameOf}) async {
+    final now = DateTime.now();
+    final cards = sortWatchCards(
+      state.cards,
+      sort,
+      nameOf: nameOf,
+      changeOf: (card) => presentation(card).sparklineChange(now)?.percentValue,
+      assetClassOf: (card) => presentation(card).instrument.assetClass,
+    );
+    await _saveOrder(cards);
+  }
+
+  Future<void> _saveOrder(List<WatchCard> cards) async {
     emit(state.copyWith(cards: cards));
     await watchlistStore.setOrder(cards.map((c) => c.id).toList());
     unawaited(_markDataChanged());

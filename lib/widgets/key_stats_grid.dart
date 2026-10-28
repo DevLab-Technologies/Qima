@@ -38,7 +38,8 @@ class KeyStatsGrid extends StatelessWidget {
             physics: const NeverScrollableScrollPhysics(),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
-              mainAxisExtent: 48,
+              // Room for Arabic's taller small text (Almarai) as well as SF.
+              mainAxisExtent: 52,
               mainAxisSpacing: DS.spaceSM,
               crossAxisSpacing: DS.spaceMD,
             ),
