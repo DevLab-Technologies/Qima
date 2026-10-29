@@ -149,6 +149,19 @@ void main() {
       }
     });
 
+    testWidgets('the size label keeps width × height left-to-right in Arabic', (tester) async {
+      await tester.binding.setSurfaceSize(const Size(430, 1400));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+      await tester.pumpWidget(harness(
+        Scaffold(body: ShareAssetSheet(card: goldCard, range: ChartRange.month1)),
+        locale: const Locale('ar'),
+      ));
+      await tester.pump();
+
+      final label = tester.widget<Text>(find.text('1:1 · 1080×1080'));
+      expect(label.textDirection, TextDirection.ltr);
+    });
+
     testWidgets('the caption carries the price, the change and the site', (tester) async {
       await tester.pumpWidget(harness(Scaffold(body: ShareAssetSheet(card: goldCard, range: ChartRange.month1))));
       await tester.pump();
