@@ -213,6 +213,9 @@ class _ShareAssetSheetState extends State<ShareAssetSheet> {
               const SizedBox(height: DS.space2XS),
               Text(
                 '${format.ratioLabel} · ${format.widthPx}×${format.heightPx}',
+                // Dimensions read width × height in every language; in RTL
+                // the bidi algorithm would otherwise reverse the numbers.
+                textDirection: ui.TextDirection.ltr,
                 textAlign: TextAlign.center,
                 style: TextStyle(color: colors.textTertiary, fontSize: 12),
               ),
