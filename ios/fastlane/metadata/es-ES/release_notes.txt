@@ -1,5 +1,5 @@
-Qima 3.0.0
-• Zakat: comprueba si superas el nisab y cuánto corresponde, con un recordatorio del hawl en calendario hégira o gregoriano
-• Distribución: tu cartera por metales, cripto, acciones y efectivo, el oro por quilates y cómo ha cambiado desde enero
-• Registra ventas, transferencias y comisiones, no solo compras, con ganancias realizadas y posiciones cerradas
-• Importa tus posiciones desde un archivo CSV; la exportación usa las mismas columnas
+Qima 3.1.0
+• Un aspecto más limpio y sereno, más natural en iPhone
+• Ordena tu lista: arrastra los elementos u ordénalos por nombre, mejor rendimiento o tipo de activo
+• Comparte un activo como imagen a medida para publicaciones e historias de WhatsApp, Instagram, Facebook y LinkedIn, con un texto listo
+• La versión de la app, en Ajustes
