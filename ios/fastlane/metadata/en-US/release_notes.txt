@@ -1,5 +1,5 @@
-Qima 3.0.0
-• Zakat: see whether you're above nisab and what's due, with a hawl reminder on the Hijri or Gregorian calendar
-• Allocation: your portfolio by metals, crypto, stocks and cash, gold by karat, and how it's shifted since January
-• Record sells, transfers and fees, not just buys, with realised gains and closed positions
-• Import holdings from a CSV file; exports use the same columns
+Qima 3.1.0
+• A cleaner, calmer look that feels at home on iPhone
+• Reorder your watchlist: drag items, or sort by name, top performers or asset class
+• Share an asset as an image sized for WhatsApp, Instagram, Facebook and LinkedIn posts and stories, with a ready caption
+• See the app version in Settings
