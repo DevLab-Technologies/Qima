@@ -11,6 +11,7 @@ import 'package:qima/models/zakat.dart';
 import 'package:qima/screens/allocation_screen.dart';
 import 'package:qima/screens/home_shell.dart';
 import 'package:qima/screens/instrument_detail_screen.dart';
+import 'package:qima/screens/share_asset_sheet.dart';
 import 'package:qima/screens/zakat_screen.dart';
 import 'package:qima/services/preferences.dart';
 import 'package:qima/widgets/instrument_row.dart';
@@ -79,6 +80,12 @@ void main() {
     await tester.tap((await _waitFor(find.byType(InstrumentRow))).first);
     await _shot(tester, '2_gold_detail');
 
+    await tester.tap(find.byIcon(Icons.adaptive.share));
+    await _waitFor(find.byType(ShareAssetSheet));
+    await _shot(tester, '3_share');
+    Navigator.of(tester.element(find.byType(ShareAssetSheet))).pop();
+    await _wait(const Duration(seconds: 1));
+
     // Scroll the page itself to its end (the holdings card) rather than drag:
     // a synthetic swipe can land on the back gesture, notably in RTL.
     final page = find
@@ -93,15 +100,15 @@ void main() {
       duration: const Duration(milliseconds: 600),
       curve: Curves.easeOut,
     );
-    await _shot(tester, '3_gold_holdings');
+    await _shot(tester, '4_gold_holdings');
 
     _popRoute(tester);
     await _wait(const Duration(seconds: 2));
     await tester.tap(find.byIcon(Icons.pie_chart_outline));
-    await _shot(tester, '4_portfolio');
+    await _shot(tester, '5_portfolio');
 
     _push(tester, const AllocationScreen());
-    await _shot(tester, '5_allocation');
+    await _shot(tester, '6_allocation');
     _popRoute(tester);
     await _wait(const Duration(seconds: 1));
 
@@ -112,7 +119,7 @@ void main() {
       if (DateTime.now().isAfter(nisab)) throw TestFailure('Nisab prices did not load.');
       await _wait(const Duration(milliseconds: 500));
     }
-    await _shot(tester, '6_zakat');
+    await _shot(tester, '7_zakat');
     _popRoute(tester);
     await _wait(const Duration(seconds: 1));
 
@@ -122,6 +129,6 @@ void main() {
     await _wait(const Duration(seconds: 1));
     // The search field focuses itself; keep the keyboard out of the shot.
     FocusManager.instance.primaryFocus?.unfocus();
-    await _shot(tester, '7_add_asset');
+    await _shot(tester, '8_add_asset');
   });
 }
