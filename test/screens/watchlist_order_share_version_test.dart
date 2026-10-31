@@ -170,7 +170,7 @@ void main() {
       expect(caption, contains('Gold'));
       expect(caption, contains('2,000.00'));
       expect(caption, contains(', 1M).'));
-      expect(caption, contains('https://qima.devlabtechnologies.com/'));
+      expect(caption, contains('https://qima.money/'));
     });
   });
 

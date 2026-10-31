@@ -1,1 +1,1 @@
-oro,plata,lingotes,quilates,cartera,cripto,bitcoin,acciones,divisas,tipo de cambio,precio
+plata,lingotes,joyas,nisab,24k,22k,21k,18k,gramo,onza,platino,bitcoin,cripto,divisas,precio

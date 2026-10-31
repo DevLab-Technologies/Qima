@@ -1,20 +1,27 @@
-Qima suit tout ce que vous détenez — or, argent, crypto, actions, indices et devises — et l'additionne en un seul chiffre, dans la devise de votre choix.
+Qima additionne tout ce que vous possédez, à commencer par l'or, en un seul chiffre, dans la devise de votre choix.
 
 PENSÉE POUR L'OR
-• Cours au comptant en direct par once troy, gramme ou kilogramme, avec les titres 24K, 22K, 21K et 18K.
-• Enregistrez chaque achat comme un lot — quantité, unité, coût et date — et voyez valeur, coût et gain d'un coup d'œil.
+• Cours de l'or, de l'argent, du platine et du palladium par once troy, gramme ou kilogramme, en 24K, 22K, 21K et 18K.
+• Enregistrez chaque achat, vente, transfert et frais, et voyez la valeur, le coût moyen et le gain.
+
+ZAKAT
+• Voyez si vous dépassez le nisab et ce qui est dû, sur la base de 85 g d'or ou 595 g d'argent.
+• Fixez votre hawl sur le calendrier hégirien ou grégorien et recevez un rappel.
+• Qima calcule ; les choix derrière le calcul vous appartiennent.
 
 UN SEUL PORTEFEUILLE
-• Métaux précieux, Bitcoin et Ethereum, grandes actions et indices, et devises du monde entier.
-• Ajoutez n'importe quel ticker d'action ou d'ETF absent de la liste.
-• Graphiques de cours d'un jour à tout l'historique.
-• Français, anglais, arabe et espagnol, avec mise en page de droite à gauche pour l'arabe.
+• Bitcoin et Ethereum, actions, indices et devises du monde entier à côté de vos métaux.
+• Répartition par classe d'actifs, et de l'or par carat.
+• Alertes quand un cours franchit un seuil ou varie d'un pourcentage en 24 heures ou 7 jours.
+• Graphiques d'un jour à tout l'historique.
+• Importez et exportez vos avoirs sous forme de tableur (CSV).
+• Widgets de cours et de portefeuille pour l'écran d'accueil et l'écran verrouillé.
 
 PRIVÉ PAR CONCEPTION
-• Pas de compte, pas d'inscription, pas de connexion.
-• Vos avoirs restent sur vos appareils et dans votre iCloud privé, jamais sur nos serveurs.
-• Pas de publicité, pas d'analyse, pas de pistage.
+• Pas de compte, pas d'inscription, pas de publicité, pas d'analyse, pas de pistage.
+• Vos données restent sur vos appareils, avec une synchronisation iCloud facultative.
+• Verrouillez l'app avec Face ID ou Touch ID, masquez les soldes et sauvegardez dans un fichier protégeable par mot de passe (AES-256).
 
-Gratuit — sans abonnement ni achats intégrés.
+Français, anglais, arabe et espagnol, avec l'arabe entièrement de droite à gauche. Gratuit, sans abonnement ni achats intégrés.
 
-Qima fournit uniquement des informations de marché. Ce n'est ni un conseil en investissement, ni un courtier, une plateforme d'échange ou un dépositaire. Les cours proviennent de tiers et peuvent être différés.
+Les cours proviennent de tiers et peuvent être différés. Qima n'est pas un conseil en investissement, ni un courtier, une plateforme d'échange ou un dépositaire.

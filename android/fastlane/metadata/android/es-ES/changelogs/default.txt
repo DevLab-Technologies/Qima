@@ -1,5 +1,2 @@
-Qima 3.1.0
-• Un aspecto más limpio y sereno, más natural en iPhone
-• Ordena tu lista: arrastra los elementos u ordénalos por nombre, mejor rendimiento o tipo de activo
-• Comparte un activo como imagen a medida para publicaciones e historias de WhatsApp, Instagram, Facebook y LinkedIn, con un texto listo
-• La versión de la app, en Ajustes
+Qima 3.1.1
+• Las imágenes y los textos que compartes ahora enlazan a nuestra nueva web, qima.money
