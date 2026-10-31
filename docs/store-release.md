@@ -140,7 +140,7 @@ if you add them.
 
 ## 4. Console questionnaires
 
-These answers follow from the [privacy policy](https://qima.devlabtechnologies.com/privacy): no accounts, no backend, no analytics, ads or tracking SDKs, and holdings kept on the device.
+These answers follow from the [privacy policy](https://qima.money/privacy): no accounts, no backend, no analytics, ads or tracking SDKs, and holdings kept on the device.
 
 ### App Store Connect
 
@@ -153,7 +153,7 @@ These answers follow from the [privacy policy](https://qima.devlabtechnologies.c
 | Primary category | Finance |
 | Price | Free |
 | Sign-in required for review | No (note: *"No account needed. Add an instrument with the + button; holdings are optional."*) |
-| Privacy policy URL | https://qima.devlabtechnologies.com/privacy |
+| Privacy policy URL | https://qima.money/privacy |
 | Support URL | https://github.com/DevLab-Technologies/Qima/issues |
 
 ### Google Play Console
