@@ -1,21 +1,27 @@
-Qima sigue todo lo que tienes —oro, plata, cripto, acciones, índices y divisas— y lo suma en una sola cifra en la moneda que elijas.
+Qima suma todo lo que tienes, empezando por el oro, en una sola cifra en la moneda que elijas.
 
 PENSADA PARA EL ORO
-• Precios al contado en directo por onza troy, gramo o kilogramo, con pureza de 24K, 22K, 21K y 18K.
-• Registra cada compra como un lote —cantidad, unidad, coste y fecha— y ve valor, coste y ganancia de un vistazo.
+• Precios del oro, la plata, el platino y el paladio por onza troy, gramo o kilogramo, con 24K, 22K, 21K y 18K.
+• Registra cada compra, venta, transferencia y comisión, y ve el valor, el coste medio y la ganancia.
+
+ZAKAT
+• Comprueba si superas el nisab y cuánto corresponde, sobre 85 g de oro o 595 g de plata.
+• Fija tu hawl en el calendario hégira o gregoriano y recibe un recordatorio.
+• Qima calcula; las decisiones detrás del cálculo son tuyas.
 
 UNA SOLA CARTERA
-• Metales preciosos, Bitcoin y Ethereum, las principales acciones e índices y divisas de todo el mundo.
-• Añade cualquier ticker de acción o ETF que no esté incluido.
-• Gráficos de precios desde un día hasta todo el historial.
-• Español, inglés, árabe y francés, con diseño de derecha a izquierda para el árabe.
-• Widgets de precios y de cartera para la pantalla de inicio, y lista de seguimiento en Wear OS.
+• Bitcoin y Ethereum, acciones, índices y divisas de todo el mundo junto a tus metales.
+• Distribución por tipo de activo y del oro por quilates.
+• Alertas cuando un precio cruza un nivel o se mueve un porcentaje en 24 horas o 7 días.
+• Gráficos desde un día hasta todo el historial.
+• Importa y exporta tus posiciones como hoja de cálculo (CSV).
+• Widgets de precios y de cartera para la pantalla de inicio.
 
 PRIVADA POR DISEÑO
-• Sin cuenta, sin registro, sin inicio de sesión.
-• Tus posiciones se quedan en tu teléfono y nunca se suben.
-• Sin anuncios, sin analíticas, sin rastreo.
+• Sin cuenta, sin registro, sin anuncios, sin analíticas, sin rastreo.
+• Tus datos se quedan en tu dispositivo.
+• Bloquea la app con tu huella o código, oculta los saldos y haz copias en un archivo que puedes proteger con contraseña (AES-256).
 
-Gratis: sin suscripción ni compras dentro de la app.
+Español, inglés, árabe y francés, con el árabe completo de derecha a izquierda. Gratis, sin suscripción ni compras dentro de la app.
 
-Qima solo ofrece información de mercado. No es asesoramiento de inversión ni un bróker, exchange o custodio. Los precios proceden de terceros y pueden tener retraso.
+Los precios proceden de terceros y pueden tener retraso. Qima no es asesoramiento de inversión ni un bróker, exchange o custodio.
