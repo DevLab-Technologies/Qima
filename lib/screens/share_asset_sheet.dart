@@ -20,8 +20,8 @@ import '../theme/strings.dart';
 import '../widgets/asset_share_card.dart';
 
 /// The site the shared image and caption point people to.
-const String qimaSiteLabel = 'qima.devlabtechnologies.com';
-const String qimaSiteUrl = 'https://qima.devlabtechnologies.com/';
+const String qimaSiteLabel = 'qima.money';
+const String qimaSiteUrl = 'https://qima.money/';
 
 /// The text that goes with a shared asset image: price and change, then
 /// where it came from.

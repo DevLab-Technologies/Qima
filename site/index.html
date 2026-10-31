@@ -3,127 +3,173 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Qima — Precious metals and portfolio tracker</title>
-<meta name="description" content="Live gold, silver, crypto, stock and currency prices in one portfolio. No account. No ads. No tracking. Your holdings never leave your device.">
-<link rel="canonical" href="https://qima.devlabtechnologies.com/">
-<meta property="og:title" content="Qima — Every asset you hold, in one place">
-<meta property="og:description" content="Live gold, silver, crypto, stock and currency prices in one portfolio. No account. No ads. No tracking.">
-<meta property="og:url" content="https://qima.devlabtechnologies.com/">
+<title>Qima: Gold and portfolio tracker</title>
+<meta name="description" content="Gold by the gram and karat, plus crypto, stocks and currencies, added up in your currency. Zakat worked out from what you hold. No account. Your data stays on your devices.">
+<link rel="canonical" href="https://qima.money/">
+<meta property="og:title" content="Qima: Every asset you hold. One number.">
+<meta property="og:description" content="Gold by the gram and karat, plus crypto, stocks and currencies, added up in your currency. No account. Your data stays on your devices.">
+<meta property="og:url" content="https://qima.money/">
 <meta property="og:type" content="website">
-<meta property="og:image" content="https://qima.devlabtechnologies.com/img/og.png">
+<meta property="og:image" content="https://qima.money/img/og-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#08090C">
 <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32.png">
 <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+<link rel="preload" href="fonts/almarai-extrabold.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
+<a class="skip" href="#main">Skip to content</a>
+
 <header>
   <div class="wrap nav">
-    <a class="brand" href="./"><img class="brand-mark" src="img/logo.png" alt="" width="24" height="24"> Qima</a>
-    <nav class="nav-links">
-      <a href="#portfolio">Portfolio</a>
+    <a class="brand" href="./" aria-label="Qima home">
+      <img class="brand-mark" src="img/logo.png" alt="" width="24" height="24">
+      <svg class="wordmark" viewBox="29 -739 2388 815" aria-hidden="true"><path d="M644 -102 735 -12 657 64 561 -31Q487 10 385 11Q234 11 141 -86Q41 -192 41 -358Q41 -523 141 -630Q232 -727 386 -727Q539 -727 630 -630Q730 -522 730 -358Q730 -210 651 -110ZM544 -202 547 -208Q583 -269 583 -359Q583 -476 522 -543Q469 -601 386 -601Q290 -601 235 -526Q188 -461 188 -358Q188 -239 249 -173Q302 -115 386 -115Q426 -115 462 -129L379 -213L457 -289ZM962 -530V0H824V-530ZM892 -712Q919 -712 937.5 -693.0Q956 -674 956 -647Q956 -620 937.5 -601.5Q919 -583 892 -583Q865 -583 846.0 -601.5Q827 -620 827 -647Q827 -674 846.0 -693.0Q865 -712 892 -712ZM1085 -530H1222V-466Q1283 -541 1367 -541Q1470 -541 1511 -463Q1571 -541 1666 -541Q1746 -541 1790.5 -497.5Q1835 -454 1835 -377V0H1698V-355Q1698 -424 1623 -424Q1579 -424 1554.0 -396.5Q1529 -369 1529 -320V0H1391V-355Q1391 -424 1317 -424Q1273 -424 1248.0 -396.5Q1223 -369 1223 -320V0H1085ZM2405 -35V0H2255Q2240 -19 2239 -54Q2184 11 2079 11Q2002 11 1955 -36Q1917 -74 1917 -141Q1917 -241 1997 -283Q2031 -301 2132 -319L2240 -339L2239 -377Q2238 -430 2159 -430Q2108 -430 2087.5 -414.5Q2067 -399 2062 -358H1930Q1942 -541 2156 -541Q2274 -541 2326 -499Q2373 -459 2373 -378V-82Q2373 -46 2405 -35ZM2240 -256 2139 -233Q2096 -223 2075 -204Q2055 -185 2055 -157Q2055 -100 2129 -100Q2236 -100 2239 -217Z"/></svg>
+    </a>
+    <nav class="nav-links" aria-label="Main">
+      <a class="optional" href="#gold">Gold</a>
+      <a class="optional" href="#zakat">Zakat</a>
       <a href="#privacy">Privacy</a>
+      <a href="#download">Download</a>
       <a href="https://github.com/DevLab-Technologies/Qima/issues">Support</a>
     </nav>
   </div>
 </header>
 
-<main>
+<main id="main">
 
 <section class="wrap hero">
-  <h1>Every asset you hold.<br>One number.</h1>
-  <p class="sub">
-    Gold, silver, crypto, stocks and currencies — tracked together,
-    priced live, stored only on your phone.
-  </p>
-  <div class="cta-row">
-    <a class="btn btn-primary" href="#" aria-disabled="true">App Store</a>
-    <a class="btn" href="#" aria-disabled="true">Google Play</a>
-  </div>
-</section>
-
-<div class="stage">
-  <div class="phone">
-    <img src="img/hero.png" alt="Qima watchlist showing live gold, silver and crypto prices" width="1320" height="2868">
-  </div>
-  <p class="phone-caption">Qima on iPhone</p>
-</div>
-
-<section class="statement alt" id="portfolio">
-  <div class="wrap">
-    <h2>Bullion isn't an afterthought.</h2>
-    <p>
-      Most trackers bolt metals onto a stock app. Qima starts with them —
-      spot prices in the weights and purities you actually buy in.
+  <div class="hero-copy">
+    <h1><span>Every asset you hold.</span> <span>One number.</span></h1>
+    <p class="lead">
+      Gold by the gram and karat, plus crypto, stocks and currencies, added up
+      in your currency. No account. Your data stays on your devices.
     </p>
-    <div class="duo">
-      <div class="phone">
-        <img src="img/portfolio.png" alt="Qima portfolio screen showing total value and holdings" width="1320" height="2868">
-      </div>
-      <div class="phone">
-        <img src="img/detail.png" alt="Qima instrument detail screen with price chart" width="1320" height="2868">
-      </div>
+    <div class="cta-row store-badges">
+      <a class="store-badge" href="https://apps.apple.com/app/id6815332595">
+        <img src="img/badges/app-store.svg" alt="Download on the App Store" width="144" height="48">
+      </a>
+      <a class="store-badge store-badge-play" href="https://play.google.com/store/apps/details?id=com.devlabtechnologies.qima">
+        <img src="img/badges/google-play.png" alt="Get it on Google Play" width="185" height="71">
+      </a>
     </div>
+    <p class="fineprint">Free. No subscription and no in-app purchases.</p>
+  </div>
+  <figure class="screen">
+    <img src="img/watchlist.webp" alt="Qima watchlist: a portfolio total above live prices for gold by the ounce and by the 21K gram, silver, Bitcoin, Apple and the S&amp;P 500" width="660" height="1434" fetchpriority="high">
+  </figure>
+</section>
+
+<section class="feature" id="gold">
+  <div class="wrap feature-grid">
+    <div class="feature-copy">
+      <h2>Gold by the gram, ounce or kilo</h2>
+      <p>
+        Most trackers add metals to a stock app as an afterthought. Qima starts
+        with them: gold, silver, platinum and palladium, priced in the weight
+        and karat you actually bought.
+      </p>
+      <dl class="facts">
+        <div><dt>Units</dt><dd>Troy ounce, gram, kilogram</dd></div>
+        <div><dt>Karats</dt><dd><span class="chip">24K</span> <span class="chip">22K</span> <span class="chip">21K</span> <span class="chip">18K</span></dd></div>
+        <div><dt>Ledger</dt><dd>Buys, sells, transfers and fees, with value, average cost and gain</dd></div>
+      </dl>
+      <p class="note">Prices come from third-party sources and may be delayed. Qima is not investment advice.</p>
+    </div>
+    <figure class="screen">
+      <img src="img/gold.webp" alt="Gold detail screen: price per troy ounce, kilogram and 24K gram, above a holdings card with value, gain and gain percent" width="660" height="1434" loading="lazy">
+    </figure>
   </div>
 </section>
 
-<section class="statement">
-  <div class="wrap">
-    <h2>Nothing about you leaves the device.</h2>
-    <p>
-      No account. No sign-up. No analytics. There is no server holding your
-      portfolio, because the app never sends it anywhere.
-    </p>
-    <ul class="checks" id="privacy">
-      <li>No account, no sign-up, no login</li>
-      <li>No analytics or telemetry SDKs</li>
-      <li>No advertising and no ad identifiers</li>
-      <li>No third-party trackers or data brokers</li>
-      <li>Holdings deleted when you uninstall</li>
-    </ul>
+<section class="feature feature-flip" id="zakat">
+  <div class="wrap feature-grid">
+    <div class="feature-copy">
+      <h2>Zakat, worked out from what you hold</h2>
+      <p>
+        Qima checks your holdings against nisab at today's prices, shows what is
+        due and reminds you when your hawl completes.
+      </p>
+      <dl class="facts">
+        <div><dt>Nisab</dt><dd>85 g of gold or 595 g of silver</dd></div>
+        <div><dt>Hawl</dt><dd>Hijri or Gregorian calendar, with a reminder</dd></div>
+        <div><dt>What counts</dt><dd>You choose, asset by asset</dd></div>
+      </dl>
+      <p class="note">Qima calculates; the choices behind the calculation are yours.</p>
+    </div>
+    <figure class="screen">
+      <img src="img/zakat.webp" alt="Zakat screen: above nisab, with the amount due at 2.5% of the zakatable base, the gold basis, the hawl start date and the assets that count" width="660" height="1434" loading="lazy">
+    </figure>
   </div>
 </section>
 
-<section class="statement alt">
-  <div class="wrap">
-    <h2>The details.</h2>
-    <div class="specs">
-      <div class="spec">
-        <div class="rule"></div>
-        <h3>Asset classes</h3>
-        <p>Precious metals, cryptocurrencies, stocks, indices and currencies,
-           converted into one base currency.</p>
-      </div>
-      <div class="spec">
-        <div class="rule"></div>
-        <h3>Metal units</h3>
-        <p>Grams, ounces and tolas, with karat purity — priced the way
-           bullion is actually sold.</p>
-      </div>
-      <div class="spec">
-        <div class="rule"></div>
-        <h3>Home screen widgets</h3>
-        <p>Price and portfolio widgets on Android. Coming to iOS.</p>
-      </div>
-      <div class="spec">
-        <div class="rule"></div>
-        <h3>Languages</h3>
-        <p>English, Arabic, Spanish and French, with full right-to-left
-           layout for Arabic.</p>
-      </div>
-      <div class="spec">
-        <div class="rule"></div>
-        <h3>Offline</h3>
-        <p>Holdings are stored locally, so your portfolio opens with or
-           without a connection.</p>
-      </div>
-      <div class="spec">
-        <div class="rule"></div>
-        <h3>Price</h3>
-        <p>Free. No subscription, no in-app purchases, no ads.</p>
-      </div>
-    </div>
+<section class="wrap block">
+  <h2>Everything else you own, in the same total</h2>
+  <dl class="specs">
+    <div><dt>Crypto, stocks and currencies</dt><dd>Bitcoin and Ethereum, major stocks and indices and world currencies, converted into the currency you choose.</dd></div>
+    <div><dt>Custom tickers</dt><dd>Add any stock or ETF that isn't built in. Qima checks the symbol with the price source first.</dd></div>
+    <div><dt>Allocation</dt><dd>Your portfolio split by asset class, and your gold split by karat.</dd></div>
+    <div><dt>Price alerts</dt><dd>When a price goes above or below a level, or moves by a percent in 24 hours or 7 days.</dd></div>
+    <div><dt>Charts</dt><dd>From one day to all time.</dd></div>
+    <div><dt>Languages</dt><dd>English, Arabic, Spanish and French, with full right-to-left Arabic.</dd></div>
+  </dl>
+</section>
+
+<section class="wrap block" id="privacy">
+  <h2>No account. Your data stays on your devices.</h2>
+  <p class="block-lead">There is no Qima server holding your portfolio. This is where everything lives.</p>
+  <table class="where">
+    <tbody>
+      <tr><th scope="row">Holdings and transactions</th><td>On your device. With iCloud sync turned on, also in your own iCloud account.</td></tr>
+      <tr><th scope="row">Account</th><td>None. No sign-up, no login, no email.</td></tr>
+      <tr><th scope="row">Analytics and ads</th><td>None. No analytics, advertising or tracking SDKs in the app.</td></tr>
+      <tr><th scope="row">Price requests</th><td>Sent to public market-data providers. They ask for prices only and never include your holdings.</td></tr>
+      <tr><th scope="row">Backups</th><td>A file you keep where you choose, protected with a password if you want (AES-256). Holdings also export to CSV.</td></tr>
+      <tr><th scope="row">App lock</th><td>Face ID, Touch ID, fingerprint or passcode, and an option to hide balances.</td></tr>
+    </tbody>
+  </table>
+  <p class="more"><a href="/privacy">Read the privacy policy</a></p>
+</section>
+
+<section class="wrap block" id="download">
+  <h2>On your Mac and PC too</h2>
+  <p class="block-lead">The same app on the desktop: the same total, the same privacy, free.</p>
+  <table class="where downloads">
+    <tbody>
+      <tr>
+        <th scope="row">Mac</th>
+        <td>From the Mac App Store, under the same listing as iPhone. <a href="https://apps.apple.com/app/id6815332595">Open in the Mac App Store</a></td>
+      </tr>
+      <tr>
+        <th scope="row">Windows</th>
+        <td>An installer for 64-bit Windows. It isn't code-signed yet, so SmartScreen may warn the first time: choose More info, then Run anyway. <a href="https://github.com/DevLab-Technologies/Qima/releases/latest">Download the Windows installer</a></td>
+      </tr>
+      <tr>
+        <th scope="row">Linux</th>
+        <td>A tar.gz for 64-bit (x86-64) Linux with GTK 3, extracted into your home folder. <a href="/linux">Installation guide</a> <a href="https://github.com/DevLab-Technologies/Qima/releases/latest">Download for Linux</a></td>
+      </tr>
+      <tr>
+        <th scope="row">Android APK</th>
+        <td>For Android devices without Google Play. It doesn't update itself; get each new version from the same page. <a href="https://github.com/DevLab-Technologies/Qima/releases/latest">Download the APK</a></td>
+      </tr>
+    </tbody>
+  </table>
+  <p class="fineprint">Windows, Linux and the APK come from Qima's latest GitHub release. Look for the files ending in -windows-setup.exe, -linux-x64.tar.gz and .apk; each has a SHA-256 checksum beside it.</p>
+</section>
+
+<section class="wrap closing">
+  <p class="closing-title">Qima is free on iPhone, Android, Mac, Windows and Linux.</p>
+  <div class="cta-row store-badges">
+    <a class="store-badge" href="https://apps.apple.com/app/id6815332595">
+      <img src="img/badges/app-store.svg" alt="Download on the App Store" width="144" height="48">
+    </a>
+    <a class="store-badge store-badge-play" href="https://play.google.com/store/apps/details?id=com.devlabtechnologies.qima">
+      <img src="img/badges/google-play.png" alt="Get it on Google Play" width="185" height="71">
+    </a>
   </div>
 </section>
 

@@ -1,5 +1,2 @@
-Qima 3.1.0
-• A cleaner, calmer look that feels at home on iPhone
-• Reorder your watchlist: drag items, or sort by name, top performers or asset class
-• Share an asset as an image sized for WhatsApp, Instagram, Facebook and LinkedIn posts and stories, with a ready caption
-• See the app version in Settings
+Qima 3.1.1
+• Shared images and captions now link to our new website, qima.money

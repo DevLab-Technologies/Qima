@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Install on Linux · Qima</title>
+<meta name="description" content="How to install, update and remove Qima on 64-bit Linux.">
+<link rel="canonical" href="https://qima.money/linux">
+<meta name="theme-color" content="#08090C">
+<link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32.png">
+<link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+<link rel="preload" href="fonts/almarai-extrabold.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="./" aria-label="Qima home">
+      <img class="brand-mark" src="img/logo.png" alt="" width="24" height="24">
+      <svg class="wordmark" viewBox="29 -739 2388 815" aria-hidden="true"><path d="M644 -102 735 -12 657 64 561 -31Q487 10 385 11Q234 11 141 -86Q41 -192 41 -358Q41 -523 141 -630Q232 -727 386 -727Q539 -727 630 -630Q730 -522 730 -358Q730 -210 651 -110ZM544 -202 547 -208Q583 -269 583 -359Q583 -476 522 -543Q469 -601 386 -601Q290 -601 235 -526Q188 -461 188 -358Q188 -239 249 -173Q302 -115 386 -115Q426 -115 462 -129L379 -213L457 -289ZM962 -530V0H824V-530ZM892 -712Q919 -712 937.5 -693.0Q956 -674 956 -647Q956 -620 937.5 -601.5Q919 -583 892 -583Q865 -583 846.0 -601.5Q827 -620 827 -647Q827 -674 846.0 -693.0Q865 -712 892 -712ZM1085 -530H1222V-466Q1283 -541 1367 -541Q1470 -541 1511 -463Q1571 -541 1666 -541Q1746 -541 1790.5 -497.5Q1835 -454 1835 -377V0H1698V-355Q1698 -424 1623 -424Q1579 -424 1554.0 -396.5Q1529 -369 1529 -320V0H1391V-355Q1391 -424 1317 -424Q1273 -424 1248.0 -396.5Q1223 -369 1223 -320V0H1085ZM2405 -35V0H2255Q2240 -19 2239 -54Q2184 11 2079 11Q2002 11 1955 -36Q1917 -74 1917 -141Q1917 -241 1997 -283Q2031 -301 2132 -319L2240 -339L2239 -377Q2238 -430 2159 -430Q2108 -430 2087.5 -414.5Q2067 -399 2062 -358H1930Q1942 -541 2156 -541Q2274 -541 2326 -499Q2373 -459 2373 -378V-82Q2373 -46 2405 -35ZM2240 -256 2139 -233Q2096 -223 2075 -204Q2055 -185 2055 -157Q2055 -100 2129 -100Q2236 -100 2239 -217Z"/></svg>
+    </a>
+    <nav class="nav-links" aria-label="Main">
+      <a href="/privacy">Privacy</a>
+      <a href="/terms">Terms</a>
+      <a href="https://github.com/DevLab-Technologies/Qima/issues">Support</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap narrow legal" id="main">
+
+<h1>Install Qima on Linux</h1>
+<p class="updated">For 64-bit (x86-64) Linux with a desktop that runs GTK 3 apps</p>
+
+<p>
+  Qima for Linux is a folder you extract and run, with no installer and no
+  root access needed for the app itself. These steps put it in your home
+  folder and add it to your app menu.
+</p>
+
+<h2>1. Download</h2>
+<p>
+  Open the <a href="https://github.com/DevLab-Technologies/Qima/releases/latest">latest release</a>
+  and download the file ending in <code>-linux-x64.tar.gz</code>, plus its
+  <code>.sha256</code> file if you want to check it.
+</p>
+<p>To check the download, run this in the folder you saved both files to. It should print <strong>OK</strong>:</p>
+<pre><code>sha256sum -c qima-*-linux-x64.tar.gz.sha256</code></pre>
+
+<h2>2. Install GTK 3</h2>
+<p>Most desktops already have it. If Qima doesn't start in step 4, install it for your distribution:</p>
+<pre><code># Ubuntu, Debian, Mint, Pop!_OS
+sudo apt install libgtk-3-0
+
+# Fedora
+sudo dnf install gtk3
+
+# Arch, Manjaro
+sudo pacman -S gtk3
+
+# openSUSE
+sudo zypper install libgtk-3-0</code></pre>
+
+<h2>3. Extract</h2>
+<p>The archive has no top folder, so extract it into one of its own:</p>
+<pre><code>mkdir -p ~/.local/opt/qima
+tar -xzf qima-*-linux-x64.tar.gz -C ~/.local/opt/qima</code></pre>
+
+<h2>4. Run</h2>
+<pre><code>~/.local/opt/qima/qima</code></pre>
+<p>To start it by typing <code>qima</code>, link it into a folder on your path:</p>
+<pre><code>mkdir -p ~/.local/bin
+ln -sf ~/.local/opt/qima/qima ~/.local/bin/qima</code></pre>
+
+<h2>5. Add it to your app menu</h2>
+<p>Optional. This downloads the icon and creates a menu entry:</p>
+<pre><code>mkdir -p ~/.local/share/icons ~/.local/share/applications
+curl -fsSL -o ~/.local/share/icons/qima.png https://qima.money/img/apple-touch-icon.png
+cat &gt; ~/.local/share/applications/qima.desktop &lt;&lt;EOF
+[Desktop Entry]
+Type=Application
+Name=Qima
+Comment=Gold, crypto, stocks and currencies in one total
+Exec=$HOME/.local/opt/qima/qima
+Icon=$HOME/.local/share/icons/qima.png
+Categories=Office;Finance;
+EOF</code></pre>
+<p>Qima appears in the menu after you log out and back in, or straight away on most desktops.</p>
+
+<h2>Update</h2>
+<p>
+  Linux builds don't update themselves. When a new version is out, download
+  it and replace the folder:
+</p>
+<pre><code>rm -rf ~/.local/opt/qima
+mkdir -p ~/.local/opt/qima
+tar -xzf qima-*-linux-x64.tar.gz -C ~/.local/opt/qima</code></pre>
+<p>
+  Your holdings and settings are kept outside that folder, so updating
+  doesn't touch them. To keep a copy anyway, make a backup in Qima first.
+</p>
+
+<h2>Uninstall</h2>
+<pre><code>rm -rf ~/.local/opt/qima ~/.local/bin/qima
+rm -f ~/.local/share/applications/qima.desktop ~/.local/share/icons/qima.png</code></pre>
+<p>
+  That leaves your data in place. To delete it too, remove
+  <code>~/.local/share/com.devlabtechnologies.qima</code>. This can't be undone.
+</p>
+
+<div class="callout">
+  <p>
+    Something not working? <a href="https://github.com/DevLab-Technologies/Qima/issues">Open an issue</a>
+    with your distribution and what you see when you run
+    <code>~/.local/opt/qima/qima</code> from a terminal.
+  </p>
+</div>
+
+</main>
+
+<footer>
+  <div class="wrap foot">
+    <span>© 2026 DevLab Technologies</span>
+    <a href="./">Home</a>
+    <a href="/privacy">Privacy</a>
+    <a href="/terms">Terms</a>
+    <a href="https://github.com/DevLab-Technologies/Qima/issues">Support</a>
+  </div>
+</footer>
+
+</body>
+</html>
