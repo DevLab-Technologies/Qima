@@ -1,5 +1,2 @@
-Qima 3.1.0
-• Une apparence plus nette et plus sereine, plus naturelle sur iPhone
-• Réorganisez votre liste : faites glisser les éléments ou triez par nom, meilleures performances ou classe d'actifs
-• Partagez un actif en image au format des publications et stories WhatsApp, Instagram, Facebook et LinkedIn, avec une légende prête
-• La version de l'app, dans les Réglages
+Qima 3.1.1
+• Les images et légendes partagées renvoient désormais vers notre nouveau site, qima.money
