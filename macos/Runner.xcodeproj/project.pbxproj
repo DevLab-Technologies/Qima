@@ -40,6 +40,7 @@
 		5460139A4143DBBE2C2AB506 /* Almarai-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 408B831A0A2757B5D4BD1CED /* Almarai-Bold.ttf */; };
 		5A547C59AF5085D0AB57EB2F /* Almarai-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6059BC6DDE9EBC40764BCE82 /* Almarai-Regular.ttf */; };
 		5FD69F91CF488F7DCAE88044 /* DictationPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3794FBE2155DB3B163954FBE /* DictationPlugin.swift */; };
+		728C05FE860B80295E7FA4B0 /* TextRecognitionPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8C30E8506F800E068650C9E /* TextRecognitionPlugin.swift */; };
 		73AAC079839DB44852708F4D /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 69EC81A8A640E308BE210739 /* Cocoa.framework */; };
 		76606324EE9FD9552E639006 /* Intents.swift in Sources */ = {isa = PBXBuildFile; fileRef = E496DADE24854F1EEFBAD378 /* Intents.swift */; };
 		78A318202AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 78A3181F2AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage */; };
@@ -155,6 +156,7 @@
 		AC5554DCB91DEE7EA62D855B /* SystemSettingsPlugin.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SystemSettingsPlugin.swift; sourceTree = "<group>"; };
 		B30FD18DDE4B78F8429EDB98 /* ar */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.strings; name = ar; path = ar.lproj/AppShortcuts.strings; sourceTree = "<group>"; };
 		B8A4249D5BE098E9FF1A3852 /* fr */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/Localizable.strings; sourceTree = "<group>"; };
+		B8C30E8506F800E068650C9E /* TextRecognitionPlugin.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = TextRecognitionPlugin.swift; sourceTree = "<group>"; };
 		BAB6E5380877E84A0DAF4100 /* PortfolioWidget.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PortfolioWidget.swift; sourceTree = "<group>"; };
 		BE7AE4049736E3E6086DD26A /* es */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Localizable.strings; sourceTree = "<group>"; };
 		C4ED79CAE5CB0C060A932D3F /* fr */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/AppShortcuts.strings; sourceTree = "<group>"; };
@@ -330,6 +332,7 @@
 				CD8580026DF67B18D287FED4 /* AssistantIntents.swift */,
 				6B2CEA2650B75113933DDE8B /* AppShortcuts.strings */,
 				E08A91F9FADE3A5DD2D9D3F1 /* OnDeviceModelPlugin.swift */,
+				B8C30E8506F800E068650C9E /* TextRecognitionPlugin.swift */,
 			);
 			name = Assistant;
 			path = ../ios/Runner;
@@ -640,6 +643,7 @@
 				FFDA55CC64104AFF5CABA8AE /* Style.swift in Sources */,
 				33CFEBF8C17499E9793DEBE3 /* AssistantIntents.swift in Sources */,
 				05D0B38EBEAC2D4EFC7645C1 /* OnDeviceModelPlugin.swift in Sources */,
+				728C05FE860B80295E7FA4B0 /* TextRecognitionPlugin.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

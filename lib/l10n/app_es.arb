@@ -842,5 +842,9 @@
   "modelUnsupported": "No disponible en este dispositivo",
   "modelTurnedOff": "Activa Apple Intelligence en los Ajustes del sistema para usarlo",
   "modelNotReady": "El modelo aún se está descargando",
-  "modelUnsupportedLanguage": "Aún no disponible en este idioma"
+  "modelUnsupportedLanguage": "Aún no disponible en este idioma",
+  "receiptScan": "Escanear un recibo",
+  "receiptTakePhoto": "Hacer una foto",
+  "receiptChoosePhoto": "Elegir una foto",
+  "receiptNoText": "No se encontró texto en esa foto. Inténtalo de nuevo más cerca, con el recibo plano y bien iluminado."
 }

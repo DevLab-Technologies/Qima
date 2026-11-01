@@ -237,6 +237,9 @@ void main() {
       expect(slash.date.value, DateTime(2026, 1, 15));
       expect(slash.date.guessed, isFalse);
       expect(_parse('20g gold 3/1/2026').date.guessed, isTrue);
+      final yearFirst = _parse('20g gold 2026/01/15');
+      expect(yearFirst.date.value, DateTime(2026, 1, 15));
+      expect(yearFirst.date.guessed, isFalse);
     });
 
     test('no date means today, not flagged', () {

@@ -842,5 +842,9 @@
   "modelUnsupported": "غير متاح على هذا الجهاز",
   "modelTurnedOff": "فعّل Apple Intelligence من إعدادات النظام لاستخدامه",
   "modelNotReady": "ما زال النموذج يُنزَّل",
-  "modelUnsupportedLanguage": "غير متاح بهذه اللغة بعد"
+  "modelUnsupportedLanguage": "غير متاح بهذه اللغة بعد",
+  "receiptScan": "مسح إيصال",
+  "receiptTakePhoto": "التقاط صورة",
+  "receiptChoosePhoto": "اختيار صورة",
+  "receiptNoText": "لم يُعثر على نص في هذه الصورة. حاول مرة أخرى من مسافة أقرب، والإيصال مسطّح وفي إضاءة جيدة."
 }

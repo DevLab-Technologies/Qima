@@ -842,5 +842,9 @@
   "modelUnsupported": "Indisponible sur cet appareil",
   "modelTurnedOff": "Activez Apple Intelligence dans les Réglages du système pour l’utiliser",
   "modelNotReady": "Le modèle est encore en téléchargement",
-  "modelUnsupportedLanguage": "Pas encore disponible dans cette langue"
+  "modelUnsupportedLanguage": "Pas encore disponible dans cette langue",
+  "receiptScan": "Scanner un reçu",
+  "receiptTakePhoto": "Prendre une photo",
+  "receiptChoosePhoto": "Choisir une photo",
+  "receiptNoText": "Aucun texte trouvé sur cette photo. Réessayez de plus près, avec le reçu bien à plat et bien éclairé."
 }

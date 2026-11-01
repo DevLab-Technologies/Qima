@@ -260,7 +260,7 @@ class TransactionCapture {
       return Captured(today.subtract(const Duration(days: 1)), source: s.source(m));
     }
     // 2026-03-12
-    if (s.take(RegExp(r'(?<!\d)(\d{4})-(\d{1,2})-(\d{1,2})(?!\d)')) case final m?) {
+    if (s.take(RegExp(r'(?<!\d)(\d{4})[-/](\d{1,2})[-/](\d{1,2})(?!\d)')) case final m?) {
       return result(m, _validDate(int.parse(m[1]!), int.parse(m[2]!), int.parse(m[3]!)));
     }
     // 12/3 or 12/3/2026 — day first, as across the Arabic-speaking world

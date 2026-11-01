@@ -4972,6 +4972,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Not available in this language yet'**
   String get modelUnsupportedLanguage;
+
+  /// No description provided for @receiptScan.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan a receipt'**
+  String get receiptScan;
+
+  /// No description provided for @receiptTakePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Take a photo'**
+  String get receiptTakePhoto;
+
+  /// No description provided for @receiptChoosePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a photo'**
+  String get receiptChoosePhoto;
+
+  /// No description provided for @receiptNoText.
+  ///
+  /// In en, this message translates to:
+  /// **'No text found in that photo. Try again closer, with the receipt flat and well lit.'**
+  String get receiptNoText;
 }
 
 class _AppLocalizationsDelegate

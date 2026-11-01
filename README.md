@@ -224,6 +224,14 @@ Linux have no voice input. Qima asks for microphone and speech recognition
 access the first time you tap the mic, and listens only until you tap it
 again or stop speaking.
 
+### Receipt scan
+
+The scan button in Add reads a receipt photo with Apple's on-device Vision
+text recognition (iOS and macOS). The photo is not uploaded and not kept:
+the app's copy is deleted as soon as its text is read. The text goes into
+the Add field, and nothing is saved until you confirm the preview. Qima asks
+for camera access the first time you take a photo.
+
 ---
 
 ## Contributing

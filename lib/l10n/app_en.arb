@@ -2213,5 +2213,9 @@
   "modelUnsupported": "Not available on this device",
   "modelTurnedOff": "Turn on Apple Intelligence in system Settings to use it",
   "modelNotReady": "The model is still downloading",
-  "modelUnsupportedLanguage": "Not available in this language yet"
+  "modelUnsupportedLanguage": "Not available in this language yet",
+  "receiptScan": "Scan a receipt",
+  "receiptTakePhoto": "Take a photo",
+  "receiptChoosePhoto": "Choose a photo",
+  "receiptNoText": "No text found in that photo. Try again closer, with the receipt flat and well lit."
 }
