@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0AA92A0B9492FF92102D1575 /* AssistantIntents.swift in Sources */ = {isa = PBXBuildFile; fileRef = A33AB563DB1CE7353BA58879 /* AssistantIntents.swift */; };
 		0D4228F17377A3E115A95C14 /* Riyal-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 59150B92530BBA1B1248398F /* Riyal-Regular.ttf */; };
 		0F7349CF2DC86E7FEFAE7E34 /* PortfolioWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07624C0012DECBE889434CFA /* PortfolioWidget.swift */; };
 		0FD9E6C03135E59773D7F5FC /* DictationPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9732D81EDDDD6CD213AF1A6C /* DictationPlugin.swift */; };
@@ -18,8 +19,10 @@
 		3E9DD0E261620C3558BC4233 /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75DD25601108DAD5152C600B /* Components.swift */; };
 		44D7345EA79FD186FACF0BF3 /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0543E7527BB75E3921F637E0 /* Pods_Runner.framework */; };
 		4DF3F8BD19290C3978CB3CBF /* Style.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFFB65C63B793F955A51C719 /* Style.swift */; };
+		567D7C2DD39AD654EEBDF4FC /* AppShortcuts.strings in Resources */ = {isa = PBXBuildFile; fileRef = A885562BD59C7889F20B3529 /* AppShortcuts.strings */; };
 		5837FB7023AA69A61801EF7A /* AppIntents.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B75AD0EDDBE1390F319BFF7B /* AppIntents.framework */; };
 		61D21369D21F5848843B9A62 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01B2128AD33F3E9FBFBD9C27 /* Foundation.framework */; };
+		68E966B4B509650D955D6DD0 /* Style.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFFB65C63B793F955A51C719 /* Style.swift */; };
 		69D7A32ECB40BA5C75A79E01 /* Almarai-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5C328B25E071F6B1D5E2CE4A /* Almarai-Bold.ttf */; };
 		74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74858FAE1ED2DC5600515810 /* AppDelegate.swift */; };
 		78728EE0FFF6868E22D5BFCB /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D182F74BEE65A17C3768E4EE /* WidgetKit.framework */; };
@@ -33,8 +36,10 @@
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
 		A131E80A7AA06ED4A9F20647 /* CloudKVPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C17207816BE6A8A148BE81D /* CloudKVPlugin.swift */; };
 		A9E90784C671485521F9FC10 /* QimaWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 1AB69C3516654ACD919EC695 /* QimaWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		BCD049D994757152012D26DA /* Snapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45982C19AB91A2BE84668221 /* Snapshot.swift */; };
 		BEED61BD5C190324C649EB61 /* Almarai-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BCBE5B0DCA1E2163E578CE39 /* Almarai-ExtraBold.ttf */; };
 		C30B5E44FD61F79F38D07BAB /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C568E3D1924E43B5B314D32 /* SwiftUI.framework */; };
+		C58EF737CDA651F1E9227336 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 606679B5F3386110AF3C55EB /* Localizable.strings */; };
 		E264BF0CD571C8346C1EEF60 /* QimaWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 049F19D0C32724E78A5E2DE8 /* QimaWidgetBundle.swift */; };
 		EBAB88C69D5C29A4E49241C0 /* Riyal-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A225EE856A4D8626EB99F8B3 /* Riyal-Bold.ttf */; };
 		F213BFF32CC6D97925090ED2 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 606679B5F3386110AF3C55EB /* Localizable.strings */; };
@@ -102,6 +107,7 @@
 		3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = AppFrameworkInfo.plist; path = Flutter/AppFrameworkInfo.plist; sourceTree = "<group>"; };
 		45982C19AB91A2BE84668221 /* Snapshot.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Snapshot.swift; sourceTree = "<group>"; };
 		49C7CADE251C9EE01AD498C4 /* Riyal-Medium.ttf */ = {isa = PBXFileReference; includeInIndex = 1; name = "Riyal-Medium.ttf"; path = "../assets/fonts/riyal/Riyal-Medium.ttf"; sourceTree = SOURCE_ROOT; };
+		49E28D6CF1E48D7627E0B2F0 /* fr */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/AppShortcuts.strings; sourceTree = "<group>"; };
 		59150B92530BBA1B1248398F /* Riyal-Regular.ttf */ = {isa = PBXFileReference; includeInIndex = 1; name = "Riyal-Regular.ttf"; path = "../assets/fonts/riyal/Riyal-Regular.ttf"; sourceTree = SOURCE_ROOT; };
 		5C328B25E071F6B1D5E2CE4A /* Almarai-Bold.ttf */ = {isa = PBXFileReference; includeInIndex = 1; name = "Almarai-Bold.ttf"; path = "../assets/fonts/almarai/Almarai-Bold.ttf"; sourceTree = SOURCE_ROOT; };
 		6DDF1C9B8D9D7476FC8A321F /* Pods-Runner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"; sourceTree = "<group>"; };
@@ -128,14 +134,17 @@
 		97C147001CF9000F007C117D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		97C147021CF9000F007C117D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A225EE856A4D8626EB99F8B3 /* Riyal-Bold.ttf */ = {isa = PBXFileReference; includeInIndex = 1; name = "Riyal-Bold.ttf"; path = "../assets/fonts/riyal/Riyal-Bold.ttf"; sourceTree = SOURCE_ROOT; };
+		A33AB563DB1CE7353BA58879 /* AssistantIntents.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AssistantIntents.swift; sourceTree = "<group>"; };
 		B75AD0EDDBE1390F319BFF7B /* AppIntents.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppIntents.framework; path = System/Library/Frameworks/AppIntents.framework; sourceTree = SDKROOT; };
 		BCBE5B0DCA1E2163E578CE39 /* Almarai-ExtraBold.ttf */ = {isa = PBXFileReference; includeInIndex = 1; name = "Almarai-ExtraBold.ttf"; path = "../assets/fonts/almarai/Almarai-ExtraBold.ttf"; sourceTree = SOURCE_ROOT; };
 		BDD496E82EFA8E007B85E83B /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BF3ECC85679FCE9412D97C20 /* SystemSettingsPlugin.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SystemSettingsPlugin.swift; sourceTree = "<group>"; };
 		BFD37CB6F239777D2EEC2734 /* es */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Localizable.strings; sourceTree = "<group>"; };
 		C5B31F6407E07BC04B701770 /* Pods-Runner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"; sourceTree = "<group>"; };
+		C9FB0BA5139967C8D321D2D6 /* ar */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.strings; name = ar; path = ar.lproj/AppShortcuts.strings; sourceTree = "<group>"; };
 		CC6F4E4FEB967333F0DD9ED7 /* PriceWidget.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PriceWidget.swift; sourceTree = "<group>"; };
 		D182F74BEE65A17C3768E4EE /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		D6F2688226364C0CA96AC2C8 /* es */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/AppShortcuts.strings; sourceTree = "<group>"; };
 		DFFB65C63B793F955A51C719 /* Style.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Style.swift; sourceTree = "<group>"; };
 		E14A81BE438B9AE25D58F359 /* Pods-Runner.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig"; sourceTree = "<group>"; };
 		E8B0961D05F84263F5F2318E /* Almarai-Regular.ttf */ = {isa = PBXFileReference; includeInIndex = 1; name = "Almarai-Regular.ttf"; path = "../assets/fonts/almarai/Almarai-Regular.ttf"; sourceTree = SOURCE_ROOT; };
@@ -288,6 +297,8 @@
 				8FC8DB27897060618A7308B6 /* Runner.entitlements */,
 				BF3ECC85679FCE9412D97C20 /* SystemSettingsPlugin.swift */,
 				9732D81EDDDD6CD213AF1A6C /* DictationPlugin.swift */,
+				A33AB563DB1CE7353BA58879 /* AssistantIntents.swift */,
+				A885562BD59C7889F20B3529 /* AppShortcuts.strings */,
 			);
 			path = Runner;
 			sourceTree = "<group>";
@@ -449,6 +460,8 @@
 				3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */,
 				97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */,
 				97C146FC1CF9000F007C117D /* Main.storyboard in Resources */,
+				C58EF737CDA651F1E9227336 /* Localizable.strings in Resources */,
+				567D7C2DD39AD654EEBDF4FC /* AppShortcuts.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -566,6 +579,9 @@
 				A131E80A7AA06ED4A9F20647 /* CloudKVPlugin.swift in Sources */,
 				939D1EC5CEAB4A33465B37CD /* SystemSettingsPlugin.swift in Sources */,
 				0FD9E6C03135E59773D7F5FC /* DictationPlugin.swift in Sources */,
+				BCD049D994757152012D26DA /* Snapshot.swift in Sources */,
+				68E966B4B509650D955D6DD0 /* Style.swift in Sources */,
+				0AA92A0B9492FF92102D1575 /* AssistantIntents.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -611,6 +627,16 @@
 				97C147001CF9000F007C117D /* Base */,
 			);
 			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+		A885562BD59C7889F20B3529 /* AppShortcuts.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				C9FB0BA5139967C8D321D2D6 /* ar */,
+				D6F2688226364C0CA96AC2C8 /* es */,
+				49E28D6CF1E48D7627E0B2F0 /* fr */,
+			);
+			name = AppShortcuts.strings;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
