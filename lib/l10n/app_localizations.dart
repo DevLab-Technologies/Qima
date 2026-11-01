@@ -4824,6 +4824,82 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Recorded: {summary}'**
   String captureRecorded(String summary);
+
+  /// No description provided for @settingsSummaries.
+  ///
+  /// In en, this message translates to:
+  /// **'Summaries'**
+  String get settingsSummaries;
+
+  /// No description provided for @settingsPlainSummaries.
+  ///
+  /// In en, this message translates to:
+  /// **'Month in a sentence'**
+  String get settingsPlainSummaries;
+
+  /// No description provided for @settingsPlainSummariesFooter.
+  ///
+  /// In en, this message translates to:
+  /// **'Shows what moved your holdings over the past month as one sentence on Portfolio. Written on this device from your own numbers.'**
+  String get settingsPlainSummariesFooter;
+
+  /// No description provided for @summaryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Past month'**
+  String get summaryTitle;
+
+  /// No description provided for @summaryUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Over the past month your holdings gained {amount} ({percent}).'**
+  String summaryUp(String amount, String percent);
+
+  /// No description provided for @summaryDown.
+  ///
+  /// In en, this message translates to:
+  /// **'Over the past month your holdings lost {amount} ({percent}).'**
+  String summaryDown(String amount, String percent);
+
+  /// No description provided for @summaryFlat.
+  ///
+  /// In en, this message translates to:
+  /// **'Your holdings barely moved over the past month.'**
+  String get summaryFlat;
+
+  /// No description provided for @summaryTopMover.
+  ///
+  /// In en, this message translates to:
+  /// **'{asset} moved them most, {amount}.'**
+  String summaryTopMover(String asset, String amount);
+
+  /// No description provided for @summaryTransactions.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{You recorded 1 transaction.} other{You recorded {count} transactions.}}'**
+  String summaryTransactions(int count);
+
+  /// No description provided for @chartDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'{from} to {to}: {start} to {end}, {change}. High {high} on {highDate}, low {low} on {lowDate}.'**
+  String chartDescription(
+    String from,
+    String to,
+    String start,
+    String end,
+    String change,
+    String high,
+    String highDate,
+    String low,
+    String lowDate,
+  );
+
+  /// No description provided for @chartDescriptionHidden.
+  ///
+  /// In en, this message translates to:
+  /// **'{from} to {to}: {change}.'**
+  String chartDescriptionHidden(String from, String to, String change);
 }
 
 class _AppLocalizationsDelegate

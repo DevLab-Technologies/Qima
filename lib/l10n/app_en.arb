@@ -2109,5 +2109,97 @@
         "type": "String"
       }
     }
+  },
+  "settingsSummaries": "Summaries",
+  "settingsPlainSummaries": "Month in a sentence",
+  "settingsPlainSummariesFooter": "Shows what moved your holdings over the past month as one sentence on Portfolio. Written on this device from your own numbers.",
+  "summaryTitle": "Past month",
+  "summaryUp": "Over the past month your holdings gained {amount} ({percent}).",
+  "@summaryUp": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "summaryDown": "Over the past month your holdings lost {amount} ({percent}).",
+  "@summaryDown": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "summaryFlat": "Your holdings barely moved over the past month.",
+  "summaryTopMover": "{asset} moved them most, {amount}.",
+  "@summaryTopMover": {
+    "placeholders": {
+      "asset": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "summaryTransactions": "{count, plural, =1{You recorded 1 transaction.} other{You recorded {count} transactions.}}",
+  "@summaryTransactions": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chartDescription": "{from} to {to}: {start} to {end}, {change}. High {high} on {highDate}, low {low} on {lowDate}.",
+  "@chartDescription": {
+    "placeholders": {
+      "from": {
+        "type": "String"
+      },
+      "to": {
+        "type": "String"
+      },
+      "start": {
+        "type": "String"
+      },
+      "end": {
+        "type": "String"
+      },
+      "change": {
+        "type": "String"
+      },
+      "high": {
+        "type": "String"
+      },
+      "highDate": {
+        "type": "String"
+      },
+      "low": {
+        "type": "String"
+      },
+      "lowDate": {
+        "type": "String"
+      }
+    }
+  },
+  "chartDescriptionHidden": "{from} to {to}: {change}.",
+  "@chartDescriptionHidden": {
+    "placeholders": {
+      "from": {
+        "type": "String"
+      },
+      "to": {
+        "type": "String"
+      },
+      "change": {
+        "type": "String"
+      }
+    }
   }
 }

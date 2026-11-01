@@ -2783,4 +2783,66 @@ class AppLocalizationsEn extends AppLocalizations {
   String captureRecorded(String summary) {
     return 'Recorded: $summary';
   }
+
+  @override
+  String get settingsSummaries => 'Summaries';
+
+  @override
+  String get settingsPlainSummaries => 'Month in a sentence';
+
+  @override
+  String get settingsPlainSummariesFooter =>
+      'Shows what moved your holdings over the past month as one sentence on Portfolio. Written on this device from your own numbers.';
+
+  @override
+  String get summaryTitle => 'Past month';
+
+  @override
+  String summaryUp(String amount, String percent) {
+    return 'Over the past month your holdings gained $amount ($percent).';
+  }
+
+  @override
+  String summaryDown(String amount, String percent) {
+    return 'Over the past month your holdings lost $amount ($percent).';
+  }
+
+  @override
+  String get summaryFlat => 'Your holdings barely moved over the past month.';
+
+  @override
+  String summaryTopMover(String asset, String amount) {
+    return '$asset moved them most, $amount.';
+  }
+
+  @override
+  String summaryTransactions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'You recorded $count transactions.',
+      one: 'You recorded 1 transaction.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String chartDescription(
+    String from,
+    String to,
+    String start,
+    String end,
+    String change,
+    String high,
+    String highDate,
+    String low,
+    String lowDate,
+  ) {
+    return '$from to $to: $start to $end, $change. High $high on $highDate, low $low on $lowDate.';
+  }
+
+  @override
+  String chartDescriptionHidden(String from, String to, String change) {
+    return '$from to $to: $change.';
+  }
 }

@@ -95,11 +95,29 @@ into the Add search field and record the purchase in two taps.
   does the row show the other name that did ("XAU · Also “دهب”"), with the
   matched part highlighted.
 
+## Phase 3 — plain-language summaries
+
+**Job:** know what moved this month without reading a chart.
+
+- `PeriodSummary` (`lib/models/period_summary.dart`) holds the facts for the
+  past month: the gain change and percent from `PortfolioRangeChange`, the
+  holding whose gain moved most, and how many transactions were recorded.
+  The cubit memoizes it per day and per input, like the portfolio history.
+- `periodSummarySentence` builds the sentence from a template in each
+  language. Hidden balances mask the amounts and keep the direction.
+- Portfolio shows it in a "Past month" card when Settings · Summaries ·
+  Month in a sentence is on. It is off by default, per device.
+- Every chart carries a spoken description for screen readers (dates,
+  start and end, change, high and low with their dates; only the change
+  when balances are hidden). This one is always on, because it is
+  invisible and costs nothing.
+- Summaries are rebuilt from the live history on each open, memoized per
+  day, rather than cached with a snapshot: the inputs are already in
+  memory and the walk is cheap.
+
 ## Open questions
 
 - Dictation in the add flow only, or in every form? (Phase 4. The proposal
   is the add flow only.)
 - If Arabic dictation quality is poor, is English-only voice acceptable in
   an Arabic-first app? (This decides phase 4.)
-- Summaries: generate on every open, or cache with the snapshot? (Phase 3.
-  The proposal is to cache them per snapshot day.)
