@@ -6,6 +6,8 @@ import '../l10n/app_localizations.dart';
 import '../models/asset.dart';
 import '../models/instrument_catalog.dart';
 import '../models/instrument_search.dart';
+import '../models/transaction_capture.dart';
+import '../services/ai_assist_provider.dart';
 import '../theme/design_system.dart';
 import '../theme/help_topics.dart';
 import '../theme/qima_colors.dart';
@@ -13,14 +15,21 @@ import '../theme/strings.dart';
 import '../widgets/confirm_delete_dialog.dart';
 import '../widgets/help_button.dart';
 import '../widgets/instrument_icon.dart';
+import 'capture_review_screen.dart';
 import 'card_config_screen.dart';
 import 'custom_ticker_screen.dart';
+import 'holdings_screen.dart';
 
 /// Grouped-by-asset-class list of all catalog instruments, plus a "custom
 /// ticker" entry in the stock section. A pinned search field filters the
 /// catalog by localized name or symbol; when the query doesn't match
 /// anything (or to add something genuinely missing), an "Add as custom
 /// ticker" row is always offered. Mirrors `AddInstrumentView.swift`.
+///
+/// The same field takes a purchase described in words (v4): when the query
+/// reads as a transaction — "20 g 21K gold at 4,100 EGP" — a "Record this"
+/// card above the results opens it for checking. Same screen, same field;
+/// nothing new to find.
 class AddInstrumentScreen extends StatefulWidget {
   const AddInstrumentScreen({super.key});
 
@@ -148,6 +157,20 @@ class _AddInstrumentScreenState extends State<AddInstrumentScreen> {
       query,
       displayName: (i) => displayLabel(context, i.nameKey),
     );
+    final draft = TransactionCapture.parse(query, captureContextOf(context, cubit.state));
+
+    if (draft != null) {
+      // A described purchase isn't a ticker to add, so no custom-ticker
+      // offer here; matching assets still show below.
+      return ListView(
+        padding: const EdgeInsets.fromLTRB(DS.spaceMD, 0, DS.spaceMD, DS.spaceMD),
+        children: [
+          _CaptureCard(draft: draft, onTap: () => _openCapture(context, cubit, query)),
+          const SizedBox(height: DS.spaceLG),
+          for (final group in groups) _searchGroup(context, cubit, group),
+        ],
+      );
+    }
 
     if (groups.isEmpty) {
       return ListView(
@@ -217,6 +240,21 @@ class _AddInstrumentScreenState extends State<AddInstrumentScreen> {
     );
   }
 
+  /// Parses again with the model's help when one is available — the card
+  /// shows the deterministic parse, which a model can only add to.
+  Future<void> _openCapture(BuildContext context, AppCubit cubit, String query) async {
+    final captureContext = captureContextOf(context, cubit.state);
+    final navigator = Navigator.of(context);
+    final draft = await captureTransaction(
+      query,
+      captureContext,
+      provider: cubit.aiAssist,
+      localeTag: Localizations.localeOf(context).toLanguageTag(),
+    );
+    if (draft == null || !mounted) return;
+    navigator.push(MaterialPageRoute(builder: (_) => CaptureReviewScreen(text: query, draft: draft)));
+  }
+
   void _openConfig(BuildContext context, Instrument instrument) {
     Navigator.of(context).push(
       MaterialPageRoute(builder: (_) => CardConfigScreen(instrument: instrument)),
@@ -230,6 +268,36 @@ class _AddInstrumentScreenState extends State<AddInstrumentScreen> {
       ),
     );
     if (mounted) setState(() {});
+  }
+}
+
+/// "Record this · Buy · 20 g · 21K · Gold" — the search query, read as a
+/// transaction.
+class _CaptureCard extends StatelessWidget {
+  final TransactionDraft draft;
+  final VoidCallback onTap;
+
+  const _CaptureCard({required this.draft, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final colors = context.colors;
+    final summary = [
+      transactionKindLabel(l10n, draft.kind.value),
+      quantityWithUnitKaratLabel(context, draft.quantity.value, draft.unit.value, draft.karat?.value),
+      displayLabel(context, draft.instrument.value.nameKey),
+    ].join(' · ');
+    return DSCard(
+      padding: EdgeInsets.zero,
+      child: ListTile(
+        leading: Icon(Icons.edit_note, color: colors.brand),
+        title: Text(l10n.captureRecordThis, style: TextStyle(color: colors.textPrimary, fontWeight: FontWeight.w700)),
+        subtitle: Text(summary, style: TextStyle(color: colors.textSecondary)),
+        trailing: Icon(Icons.chevron_right, color: colors.textTertiary),
+        onTap: onTap,
+      ),
+    );
   }
 }
 

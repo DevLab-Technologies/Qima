@@ -25,6 +25,7 @@ import '../models/watch_card.dart';
 import '../models/watchlist_sort.dart';
 import '../models/zakat.dart';
 import '../models/chart_range.dart';
+import '../services/ai_assist_provider.dart';
 import '../services/alert_runtime_store.dart';
 import '../services/alerts_store.dart';
 import '../services/app_lock_service.dart';
@@ -60,6 +61,11 @@ class AppCubit extends Cubit<AppState> {
   final AlertsStore alertsStore;
   final AlertRuntimeStore alertRuntimeStore;
   final NotificationService notificationService;
+
+  /// The on-device language model, if any (v4). [NullAiAssistProvider]
+  /// until a platform implementation exists; every feature that consults it
+  /// has a deterministic path that never does.
+  final AiAssistProvider aiAssist;
   late Preferences preferences;
   late BackupService backupService;
   RefreshPipeline? _pipeline;
@@ -99,6 +105,7 @@ class AppCubit extends Cubit<AppState> {
     AlertRuntimeStore? alertRuntimeStore,
     NotificationService? notificationService,
     SwitchableCloudKVStore? cloudStore,
+    AiAssistProvider? aiAssist,
     Locale? deviceLocale,
   }) {
     // Built once up front so every default-constructed store below shares
@@ -117,6 +124,7 @@ class AppCubit extends Cubit<AppState> {
       alertRuntimeStore: alertRuntimeStore ?? AlertRuntimeStore(),
       notificationService: notificationService ?? NotificationService(),
       cloudStore: resolvedCloudStore,
+      aiAssist: aiAssist ?? const NullAiAssistProvider(),
       deviceLocale: deviceLocale,
     );
   }
@@ -132,6 +140,7 @@ class AppCubit extends Cubit<AppState> {
     required this.alertRuntimeStore,
     required this.notificationService,
     required this.cloudStore,
+    required this.aiAssist,
     Locale? deviceLocale,
   })  : _deviceLocale = deviceLocale,
         super(AppState());
