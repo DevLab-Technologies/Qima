@@ -830,5 +830,9 @@
   "summaryTopMover": "{asset} les a le plus fait bouger, {amount}.",
   "summaryTransactions": "{count, plural, =1{Vous avez enregistré 1 transaction.} other{Vous avez enregistré {count} transactions.}}",
   "chartDescription": "Du {from} au {to} : de {start} à {end}, {change}. Plus haut {high} le {highDate}, plus bas {low} le {lowDate}.",
-  "chartDescriptionHidden": "Du {from} au {to} : {change}."
+  "chartDescriptionHidden": "Du {from} au {to} : {change}.",
+  "dictationStart": "Dicter un achat",
+  "dictationStop": "Arrêter l’écoute",
+  "dictationUnsupported": "La saisie vocale dans cette langue n’est pas disponible sur cet appareil. Qima n’écoute que sur l’appareil, jamais via un serveur.",
+  "dictationDenied": "Le micro ou la reconnaissance vocale est désactivé pour Qima. Activez-les dans Réglages pour dicter un achat."
 }

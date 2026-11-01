@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		0D4228F17377A3E115A95C14 /* Riyal-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 59150B92530BBA1B1248398F /* Riyal-Regular.ttf */; };
 		0F7349CF2DC86E7FEFAE7E34 /* PortfolioWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07624C0012DECBE889434CFA /* PortfolioWidget.swift */; };
+		0FD9E6C03135E59773D7F5FC /* DictationPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9732D81EDDDD6CD213AF1A6C /* DictationPlugin.swift */; };
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
 		1B6FF9FB7B414C15D8E0CD9C /* Almarai-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E8B0961D05F84263F5F2318E /* Almarai-Regular.ttf */; };
 		1F7EB2958E30914F71B205B8 /* WatchlistWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FDD20824A59F7550B4CC321 /* WatchlistWidget.swift */; };
@@ -118,6 +119,7 @@
 		89303B6A20E7730FE37F7356 /* QimaWidget.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = QimaWidget.xcconfig; sourceTree = "<group>"; };
 		8FC8DB27897060618A7308B6 /* Runner.entitlements */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.entitlements; path = Runner.entitlements; sourceTree = "<group>"; };
 		913B2B9380962DDFB163E85D /* Pods-RunnerTests.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.profile.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.profile.xcconfig"; sourceTree = "<group>"; };
+		9732D81EDDDD6CD213AF1A6C /* DictationPlugin.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DictationPlugin.swift; sourceTree = "<group>"; };
 		9740EEB21CF90195004384FC /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Debug.xcconfig; path = Flutter/Debug.xcconfig; sourceTree = "<group>"; };
 		9740EEB31CF90195004384FC /* Generated.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Generated.xcconfig; path = Flutter/Generated.xcconfig; sourceTree = "<group>"; };
 		97C146EE1CF9000F007C117D /* Runner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Runner.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -285,6 +287,7 @@
 				2C17207816BE6A8A148BE81D /* CloudKVPlugin.swift */,
 				8FC8DB27897060618A7308B6 /* Runner.entitlements */,
 				BF3ECC85679FCE9412D97C20 /* SystemSettingsPlugin.swift */,
+				9732D81EDDDD6CD213AF1A6C /* DictationPlugin.swift */,
 			);
 			path = Runner;
 			sourceTree = "<group>";
@@ -562,6 +565,7 @@
 				7884E8682EC3CC0700C636F2 /* SceneDelegate.swift in Sources */,
 				A131E80A7AA06ED4A9F20647 /* CloudKVPlugin.swift in Sources */,
 				939D1EC5CEAB4A33465B37CD /* SystemSettingsPlugin.swift in Sources */,
+				0FD9E6C03135E59773D7F5FC /* DictationPlugin.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

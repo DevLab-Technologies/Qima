@@ -14,6 +14,7 @@ import '../theme/help_topics.dart';
 import '../theme/qima_colors.dart';
 import '../theme/strings.dart';
 import '../widgets/confirm_delete_dialog.dart';
+import '../widgets/dictation_button.dart';
 import '../widgets/help_button.dart';
 import '../widgets/instrument_icon.dart';
 import 'capture_review_screen.dart';
@@ -48,6 +49,12 @@ class _AddInstrumentScreenState extends State<AddInstrumentScreen> {
     super.dispose();
   }
 
+  /// Dictated text replaces the query, as if typed.
+  void _setQuery(String text) {
+    _searchController.value = TextEditingValue(text: text, selection: TextSelection.collapsed(offset: text.length));
+    setState(() => _query = text);
+  }
+
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<AppCubit>();
@@ -75,6 +82,7 @@ class _AddInstrumentScreenState extends State<AddInstrumentScreen> {
                   hintText: l10n.addSearchHint,
                   hintStyle: TextStyle(color: colors.textTertiary),
                   prefixIcon: Icon(Icons.search, color: colors.textTertiary),
+                  suffixIcon: DictationButton(onText: _setQuery),
                   filled: true,
                   fillColor: colors.tileTop,
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(DS.radiusTile), borderSide: BorderSide.none),

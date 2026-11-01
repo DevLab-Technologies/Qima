@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -17,6 +18,7 @@ import 'package:qima/screens/add_instrument_screen.dart';
 import 'package:qima/screens/capture_review_screen.dart';
 import 'package:qima/screens/holdings_screen.dart';
 import 'package:qima/screens/transaction_editor_screen.dart';
+import 'package:qima/services/dictation_service.dart';
 import 'package:qima/services/holdings_store.dart';
 import 'package:qima/services/local_file_store.dart';
 import 'package:qima/services/preferences.dart';
@@ -56,6 +58,26 @@ class _MemoryTransactionsStore extends TransactionsStore {
   }
 }
 
+class _FakeDictation implements DictationService {
+  final DictationAvailability availabilityResult;
+  final controller = StreamController<DictationEvent>();
+  String? listenedIn;
+
+  _FakeDictation(this.availabilityResult);
+
+  @override
+  Future<DictationAvailability> availability(String localeTag) async => availabilityResult;
+
+  @override
+  Stream<DictationEvent> listen(String localeTag) {
+    listenedIn = localeTag;
+    return controller.stream;
+  }
+
+  @override
+  Future<void> stop() async {}
+}
+
 void main() {
   final en = AppLocalizationsEn();
   final ar = AppLocalizationsAr();
@@ -77,9 +99,9 @@ void main() {
     addTearDown(tester.view.reset);
   }
 
-  Future<(AppCubit, _MemoryTransactionsStore)> cubit() async {
+  Future<(AppCubit, _MemoryTransactionsStore)> cubit({DictationService? dictation}) async {
     final store = _MemoryTransactionsStore();
-    final cubit = AppCubit(repository: _OfflineRepository(), transactionsStore: store);
+    final cubit = AppCubit(repository: _OfflineRepository(), transactionsStore: store, dictation: dictation);
     cubit.preferences = await Preferences.create();
     cubit.emit(cubit.state.copyWith(
       initialized: true,
@@ -234,5 +256,54 @@ void main() {
     expect(saved.unitPrice, 4100);
     expect(saved.currency, 'EGP');
     expect(tester.takeException(), isNull);
+  });
+
+  group('dictation', () {
+    testWidgets('what is said fills the field, number words as digits, and is offered for recording', (tester) async {
+      phone(tester);
+      final dictation = _FakeDictation(DictationAvailability.available);
+      final (c, _) = await cubit(dictation: dictation);
+      await openAdd(tester, c);
+
+      await tester.tap(find.byTooltip(en.dictationStart));
+      await tester.pump();
+      expect(dictation.listenedIn, startsWith('en'));
+      expect(find.byTooltip(en.dictationStop), findsOneWidget);
+
+      dictation.controller.add(const DictationPartial('twenty grams'));
+      await tester.pump();
+      expect(find.widgetWithText(TextField, '20 grams'), findsOneWidget);
+
+      dictation.controller.add(const DictationFinal('twenty grams of gold at four thousand one hundred pounds'));
+      await dictation.controller.close();
+      await tester.pumpAndSettle();
+      expect(find.widgetWithText(TextField, '20 grams of gold at 4100 pounds'), findsOneWidget);
+      expect(find.text(en.captureRecordThis), findsOneWidget);
+      expect(find.byTooltip(en.dictationStart), findsOneWidget, reason: 'back to ready');
+    });
+
+    testWidgets('without an on-device recognizer the mic only explains why', (tester) async {
+      phone(tester);
+      final dictation = _FakeDictation(DictationAvailability.unsupported);
+      final (c, _) = await cubit(dictation: dictation);
+      await openAdd(tester, c);
+      await tester.tap(find.byTooltip(en.dictationUnsupported));
+      await tester.pump();
+      expect(find.text(en.dictationUnsupported), findsWidgets);
+      expect(dictation.listenedIn, isNull);
+    });
+
+    testWidgets('a refused permission turns the mic off', (tester) async {
+      phone(tester);
+      final dictation = _FakeDictation(DictationAvailability.available);
+      final (c, _) = await cubit(dictation: dictation);
+      await openAdd(tester, c);
+      await tester.tap(find.byTooltip(en.dictationStart));
+      await tester.pump();
+      dictation.controller.add(const DictationFailed(denied: true));
+      await dictation.controller.close();
+      await tester.pumpAndSettle();
+      expect(find.byIcon(Icons.mic_off), findsOneWidget);
+    });
   });
 }

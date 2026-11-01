@@ -2845,4 +2845,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String chartDescriptionHidden(String from, String to, String change) {
     return '$from to $to: $change.';
   }
+
+  @override
+  String get dictationStart => 'Speak a purchase';
+
+  @override
+  String get dictationStop => 'Stop listening';
+
+  @override
+  String get dictationUnsupported =>
+      'Voice input in this language isn\'t available on this device. Qima only listens on the device, never through a server.';
+
+  @override
+  String get dictationDenied =>
+      'Microphone or speech recognition is off for Qima. Turn them on in Settings to speak a purchase.';
 }

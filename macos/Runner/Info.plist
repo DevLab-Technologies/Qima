@@ -32,5 +32,9 @@
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Qima listens only after you tap the mic in Add, to write down a purchase you say. Audio stays on this device.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>Qima turns what you say into text on this device, to record a purchase. Nothing is sent to a server.</string>
 </dict>
 </plist>

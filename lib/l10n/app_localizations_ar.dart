@@ -2863,4 +2863,18 @@ class AppLocalizationsAr extends AppLocalizations {
   String chartDescriptionHidden(String from, String to, String change) {
     return 'من $from إلى $to: $change.';
   }
+
+  @override
+  String get dictationStart => 'قل عملية الشراء';
+
+  @override
+  String get dictationStop => 'إيقاف الاستماع';
+
+  @override
+  String get dictationUnsupported =>
+      'الإدخال الصوتي بهذه اللغة غير متاح على هذا الجهاز. قيمة تستمع على الجهاز فقط، ولا تستخدم أي خادم.';
+
+  @override
+  String get dictationDenied =>
+      'الميكروفون أو التعرّف على الكلام متوقف لقيمة. فعّلهما من الإعدادات لتقول عملية الشراء.';
 }
