@@ -819,5 +819,16 @@
   "captureOnDevice": "En el dispositivo",
   "captureNothingSent": "Se lee en este dispositivo. No se envía nada a ningún sitio.",
   "captureNeedsPrice": "No se encontró un precio. Edita los campos para añadirlo.",
-  "captureRecorded": "Registrado: {summary}"
+  "captureRecorded": "Registrado: {summary}",
+  "settingsSummaries": "Resúmenes",
+  "settingsPlainSummaries": "El mes en una frase",
+  "settingsPlainSummariesFooter": "Muestra en Cartera, en una frase, qué movió tus activos el último mes. Se escribe en este dispositivo con tus propios números.",
+  "summaryTitle": "Último mes",
+  "summaryUp": "En el último mes tus activos ganaron {amount} ({percent}).",
+  "summaryDown": "En el último mes tus activos perdieron {amount} ({percent}).",
+  "summaryFlat": "Tus activos apenas se movieron en el último mes.",
+  "summaryTopMover": "{asset} fue lo que más los movió, {amount}.",
+  "summaryTransactions": "{count, plural, =1{Registraste 1 transacción.} other{Registraste {count} transacciones.}}",
+  "chartDescription": "Del {from} al {to}: de {start} a {end}, {change}. Máximo {high} el {highDate}, mínimo {low} el {lowDate}.",
+  "chartDescriptionHidden": "Del {from} al {to}: {change}."
 }

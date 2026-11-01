@@ -14,6 +14,7 @@ import '../theme/help_topics.dart';
 import '../theme/masking.dart';
 import '../theme/qima_colors.dart';
 import '../theme/strings.dart';
+import '../theme/summaries.dart';
 import '../widgets/allocation_donut.dart';
 import '../widgets/help_button.dart';
 import '../widgets/instrument_icon.dart';
@@ -164,6 +165,13 @@ class PortfolioDetailScreen extends StatelessWidget {
                     child: Text(l10n.portfolioEmpty,
                         style: TextStyle(color: colors.textTertiary)),
                   ),
+                if (state.plainSummaries)
+                  if (cubit.periodSummary() case final summary?) ...[
+                    const SizedBox(height: DS.spaceSM),
+                    _SummaryCard(
+                      sentence: periodSummarySentence(context, summary, currency: state.baseCurrency, hidden: hidden),
+                    ),
+                  ],
                 if (state.lots.isNotEmpty) ...[
                   const SizedBox(height: DS.spaceSM),
                   _ZakatEntry(assessment: cubit.zakatAssessment, hidden: hidden),
@@ -217,6 +225,29 @@ class PortfolioDetailScreen extends StatelessWidget {
             );
           },
         ),
+      ),
+    );
+  }
+}
+
+/// The past month in a sentence (v4 phase 3), when turned on in Settings.
+class _SummaryCard extends StatelessWidget {
+  final String sentence;
+
+  const _SummaryCard({required this.sentence});
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final colors = context.colors;
+    return DSCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(l10n.summaryTitle, style: TextStyle(color: colors.textTertiary, fontSize: 12)),
+          const SizedBox(height: DS.space2XS),
+          Text(sentence, style: TextStyle(color: colors.textPrimary, fontSize: 15, height: 1.4)),
+        ],
       ),
     );
   }

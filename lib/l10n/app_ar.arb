@@ -819,5 +819,16 @@
   "captureOnDevice": "على الجهاز",
   "captureNothingSent": "تُقرأ على هذا الجهاز. لا يُرسل أي شيء إلى أي مكان.",
   "captureNeedsPrice": "لم يُعثر على سعر. عدّل الحقول لإضافته.",
-  "captureRecorded": "سُجّلت: {summary}"
+  "captureRecorded": "سُجّلت: {summary}",
+  "settingsSummaries": "الملخصات",
+  "settingsPlainSummaries": "الشهر في جملة",
+  "settingsPlainSummariesFooter": "يعرض في المحفظة جملة واحدة عمّا حرّك مقتنياتك خلال الشهر الماضي. تُكتب على هذا الجهاز من أرقامك أنت.",
+  "summaryTitle": "الشهر الماضي",
+  "summaryUp": "خلال الشهر الماضي ربحت مقتنياتك {amount} ({percent}).",
+  "summaryDown": "خلال الشهر الماضي خسرت مقتنياتك {amount} ({percent}).",
+  "summaryFlat": "لم تتحرك مقتنياتك تقريبًا خلال الشهر الماضي.",
+  "summaryTopMover": "كان {asset} الأكثر تأثيرًا، {amount}.",
+  "summaryTransactions": "{count, plural, =1{سجّلت معاملة واحدة.} =2{سجّلت معاملتين.} few{سجّلت {count} معاملات.} other{سجّلت {count} معاملة.}}",
+  "chartDescription": "من {from} إلى {to}: من {start} إلى {end}، {change}. الأعلى {high} في {highDate}، والأدنى {low} في {lowDate}.",
+  "chartDescriptionHidden": "من {from} إلى {to}: {change}."
 }

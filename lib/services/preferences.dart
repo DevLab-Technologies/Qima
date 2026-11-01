@@ -142,6 +142,7 @@ class Preferences {
   static const String _preferredChartRangeKey = 'preferredChartRange';
   static const String _preferredPortfolioRangeKey = 'preferredPortfolioRange';
   static const String _hideBalancesKey = 'hideBalances';
+  static const String _plainSummariesKey = 'plainSummaries';
   static const String _appLockEnabledKey = 'appLockEnabled';
   static const String _lockGraceKey = 'lockGrace';
   static const String _deliverAlertsOnThisDeviceKey = 'deliverAlertsOnThisDevice';
@@ -319,6 +320,14 @@ class Preferences {
 
   Future<void> setHideBalances(bool value) async {
     await local.setBool(_hideBalancesKey, value);
+  }
+
+  /// v4: the month-in-a-sentence card on Portfolio. Off until asked for,
+  /// and per device like [hideBalances].
+  bool get plainSummaries => local.getBool(_plainSummariesKey) ?? false;
+
+  Future<void> setPlainSummaries(bool value) async {
+    await local.setBool(_plainSummariesKey, value);
   }
 
   /// Local-only, like [hideBalances] — app lock is tied to this device's own

@@ -67,6 +67,9 @@ class AppState extends Equatable {
   /// never synced, see `Preferences`.
   final bool hideBalances;
   final bool appLockEnabled;
+
+  /// v4: whether Portfolio shows the past month as a sentence.
+  final bool plainSummaries;
   final LockGrace lockGrace;
 
   /// Price alert definitions (spec Phase 5) — synced like [cards]/[lots].
@@ -144,6 +147,7 @@ class AppState extends Equatable {
     this.isLoadingHistory = false,
     this.hideBalances = false,
     this.appLockEnabled = false,
+    this.plainSummaries = false,
     this.lockGrace = LockGrace.defaultValue,
     this.alerts = const [],
     this.deliverAlertsOnThisDevice = true,
@@ -190,6 +194,7 @@ class AppState extends Equatable {
     bool? isBackfilling,
     bool? isLoadingHistory,
     bool? hideBalances,
+    bool? plainSummaries,
     bool? appLockEnabled,
     LockGrace? lockGrace,
     List<PriceAlert>? alerts,
@@ -225,6 +230,7 @@ class AppState extends Equatable {
       isBackfilling: isBackfilling ?? this.isBackfilling,
       isLoadingHistory: isLoadingHistory ?? this.isLoadingHistory,
       hideBalances: hideBalances ?? this.hideBalances,
+      plainSummaries: plainSummaries ?? this.plainSummaries,
       appLockEnabled: appLockEnabled ?? this.appLockEnabled,
       lockGrace: lockGrace ?? this.lockGrace,
       alerts: alerts ?? this.alerts,
@@ -260,6 +266,7 @@ class AppState extends Equatable {
         isBackfilling,
         isLoadingHistory,
         hideBalances,
+        plainSummaries,
         appLockEnabled,
         lockGrace,
         alerts,

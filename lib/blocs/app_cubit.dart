@@ -18,6 +18,7 @@ import '../models/instrument_catalog.dart';
 import '../models/instrument_presentation.dart';
 import '../models/metal_breakdown.dart';
 import '../models/money.dart';
+import '../models/period_summary.dart';
 import '../models/portfolio_history.dart';
 import '../models/price_alert.dart';
 import '../models/quote.dart';
@@ -189,6 +190,7 @@ class AppCubit extends Cubit<AppState> {
     final preferredChartRange = preferences.preferredChartRange;
     final preferredPortfolioRange = preferences.preferredPortfolioRange;
     final hideBalances = preferences.hideBalances;
+    final plainSummaries = preferences.plainSummaries;
     final appLockEnabled = preferences.appLockEnabled;
     final lockGrace = preferences.lockGrace;
     final deliverAlertsOnThisDevice = preferences.deliverAlertsOnThisDevice;
@@ -268,6 +270,7 @@ class AppCubit extends Cubit<AppState> {
       fxHistory: fxHistory,
       seriesByID: seriesByID,
       hideBalances: hideBalances,
+      plainSummaries: plainSummaries,
       appLockEnabled: appLockEnabled,
       lockGrace: lockGrace,
       backupReminderDue: backupService.isReminderDue(),
@@ -971,6 +974,12 @@ class AppCubit extends Cubit<AppState> {
     emit(state.copyWith(hideBalances: value));
   }
 
+  Future<void> setPlainSummaries(bool value) async {
+    if (value == state.plainSummaries) return;
+    await preferences.setPlainSummaries(value);
+    emit(state.copyWith(plainSummaries: value));
+  }
+
   /// Enabling app lock requires a successful authentication first — the
   /// user proves they can actually unlock before the app starts depending on
   /// it. Returns whether the setting ended up enabled: `true` on success,
@@ -1413,6 +1422,37 @@ class AppCubit extends Cubit<AppState> {
   /// [PortfolioRangeChange.from].
   PortfolioRangeChange? portfolioChange(ChartRange range) =>
       PortfolioRangeChange.from(portfolioHistory(range), range);
+
+  (Ledger, Map<String, QuoteSeries>, FXHistory, FXRates, String, DateTime)? _summaryKey;
+  PeriodSummary? _summary;
+
+  /// The past month as facts for the summary sentence (v4 phase 3), or null
+  /// when nothing was held. One history walk per held instrument, so it is
+  /// memoized like [portfolioHistory].
+  PeriodSummary? periodSummary() {
+    final now = DateTime.now();
+    final key = (state.ledger, state.seriesByID, state.fxHistory, state.rates, state.baseCurrency, DateTime(now.year, now.month, now.day));
+    final cached = _summaryKey;
+    if (cached != null &&
+        identical(cached.$1, key.$1) &&
+        identical(cached.$2, key.$2) &&
+        identical(cached.$3, key.$3) &&
+        identical(cached.$4, key.$4) &&
+        cached.$5 == key.$5 &&
+        cached.$6 == key.$6) {
+      return _summary;
+    }
+    _summaryKey = key;
+    return _summary = PeriodSummary.build(
+      ledger: state.ledger,
+      transactions: state.transactions,
+      seriesByID: state.seriesByID,
+      rates: state.rates,
+      fxHistory: state.fxHistory,
+      baseCurrency: state.baseCurrency,
+      now: now,
+    );
+  }
 
   // ---------------------------------------------------------------------
   // Home-screen widgets (Android Glance + iOS/macOS WidgetKit)

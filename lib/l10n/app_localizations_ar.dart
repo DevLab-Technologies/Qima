@@ -2799,4 +2799,68 @@ class AppLocalizationsAr extends AppLocalizations {
   String captureRecorded(String summary) {
     return 'سُجّلت: $summary';
   }
+
+  @override
+  String get settingsSummaries => 'الملخصات';
+
+  @override
+  String get settingsPlainSummaries => 'الشهر في جملة';
+
+  @override
+  String get settingsPlainSummariesFooter =>
+      'يعرض في المحفظة جملة واحدة عمّا حرّك مقتنياتك خلال الشهر الماضي. تُكتب على هذا الجهاز من أرقامك أنت.';
+
+  @override
+  String get summaryTitle => 'الشهر الماضي';
+
+  @override
+  String summaryUp(String amount, String percent) {
+    return 'خلال الشهر الماضي ربحت مقتنياتك $amount ($percent).';
+  }
+
+  @override
+  String summaryDown(String amount, String percent) {
+    return 'خلال الشهر الماضي خسرت مقتنياتك $amount ($percent).';
+  }
+
+  @override
+  String get summaryFlat => 'لم تتحرك مقتنياتك تقريبًا خلال الشهر الماضي.';
+
+  @override
+  String summaryTopMover(String asset, String amount) {
+    return 'كان $asset الأكثر تأثيرًا، $amount.';
+  }
+
+  @override
+  String summaryTransactions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'سجّلت $count معاملة.',
+      few: 'سجّلت $count معاملات.',
+      two: 'سجّلت معاملتين.',
+      one: 'سجّلت معاملة واحدة.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String chartDescription(
+    String from,
+    String to,
+    String start,
+    String end,
+    String change,
+    String high,
+    String highDate,
+    String low,
+    String lowDate,
+  ) {
+    return 'من $from إلى $to: من $start إلى $end، $change. الأعلى $high في $highDate، والأدنى $low في $lowDate.';
+  }
+
+  @override
+  String chartDescriptionHidden(String from, String to, String change) {
+    return 'من $from إلى $to: $change.';
+  }
 }

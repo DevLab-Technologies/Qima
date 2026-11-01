@@ -819,5 +819,16 @@
   "captureOnDevice": "Sur l’appareil",
   "captureNothingSent": "Lu sur cet appareil. Rien n’est envoyé nulle part.",
   "captureNeedsPrice": "Aucun prix trouvé. Modifiez les champs pour en ajouter un.",
-  "captureRecorded": "Enregistré : {summary}"
+  "captureRecorded": "Enregistré : {summary}",
+  "settingsSummaries": "Résumés",
+  "settingsPlainSummaries": "Le mois en une phrase",
+  "settingsPlainSummariesFooter": "Affiche dans Portefeuille, en une phrase, ce qui a fait bouger vos avoirs le mois dernier. Rédigé sur cet appareil à partir de vos propres chiffres.",
+  "summaryTitle": "Le mois dernier",
+  "summaryUp": "Le mois dernier, vos avoirs ont gagné {amount} ({percent}).",
+  "summaryDown": "Le mois dernier, vos avoirs ont perdu {amount} ({percent}).",
+  "summaryFlat": "Vos avoirs ont à peine bougé le mois dernier.",
+  "summaryTopMover": "{asset} les a le plus fait bouger, {amount}.",
+  "summaryTransactions": "{count, plural, =1{Vous avez enregistré 1 transaction.} other{Vous avez enregistré {count} transactions.}}",
+  "chartDescription": "Du {from} au {to} : de {start} à {end}, {change}. Plus haut {high} le {highDate}, plus bas {low} le {lowDate}.",
+  "chartDescriptionHidden": "Du {from} au {to} : {change}."
 }

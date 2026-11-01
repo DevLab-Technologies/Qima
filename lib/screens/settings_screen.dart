@@ -86,6 +86,21 @@ class SettingsScreen extends StatelessWidget {
                   const _ICloudSyncSection(),
                   const SizedBox(height: DS.spaceLG),
                 ],
+                SectionHeader(l10n.settingsSummaries),
+                DSCard(
+                  padding: const EdgeInsets.symmetric(horizontal: DS.spaceMD, vertical: DS.spaceXS),
+                  child: SwitchListTile.adaptive(
+                    contentPadding: EdgeInsets.zero,
+                    title: Text(l10n.settingsPlainSummaries, style: TextStyle(color: colors.textPrimary)),
+                    subtitle: Text(
+                      l10n.settingsPlainSummariesFooter,
+                      style: TextStyle(color: colors.textTertiary, fontSize: 12),
+                    ),
+                    value: state.plainSummaries,
+                    onChanged: cubit.setPlainSummaries,
+                  ),
+                ),
+                const SizedBox(height: DS.spaceLG),
                 SectionHeader(l10n.settingsBackup),
                 const _BackupSection(),
                 const SizedBox(height: DS.spaceLG),

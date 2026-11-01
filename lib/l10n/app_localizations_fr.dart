@@ -2808,4 +2808,66 @@ class AppLocalizationsFr extends AppLocalizations {
   String captureRecorded(String summary) {
     return 'Enregistré : $summary';
   }
+
+  @override
+  String get settingsSummaries => 'Résumés';
+
+  @override
+  String get settingsPlainSummaries => 'Le mois en une phrase';
+
+  @override
+  String get settingsPlainSummariesFooter =>
+      'Affiche dans Portefeuille, en une phrase, ce qui a fait bouger vos avoirs le mois dernier. Rédigé sur cet appareil à partir de vos propres chiffres.';
+
+  @override
+  String get summaryTitle => 'Le mois dernier';
+
+  @override
+  String summaryUp(String amount, String percent) {
+    return 'Le mois dernier, vos avoirs ont gagné $amount ($percent).';
+  }
+
+  @override
+  String summaryDown(String amount, String percent) {
+    return 'Le mois dernier, vos avoirs ont perdu $amount ($percent).';
+  }
+
+  @override
+  String get summaryFlat => 'Vos avoirs ont à peine bougé le mois dernier.';
+
+  @override
+  String summaryTopMover(String asset, String amount) {
+    return '$asset les a le plus fait bouger, $amount.';
+  }
+
+  @override
+  String summaryTransactions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Vous avez enregistré $count transactions.',
+      one: 'Vous avez enregistré 1 transaction.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String chartDescription(
+    String from,
+    String to,
+    String start,
+    String end,
+    String change,
+    String high,
+    String highDate,
+    String low,
+    String lowDate,
+  ) {
+    return 'Du $from au $to : de $start à $end, $change. Plus haut $high le $highDate, plus bas $low le $lowDate.';
+  }
+
+  @override
+  String chartDescriptionHidden(String from, String to, String change) {
+    return 'Du $from au $to : $change.';
+  }
 }

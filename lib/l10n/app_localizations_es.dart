@@ -2804,4 +2804,66 @@ class AppLocalizationsEs extends AppLocalizations {
   String captureRecorded(String summary) {
     return 'Registrado: $summary';
   }
+
+  @override
+  String get settingsSummaries => 'Resúmenes';
+
+  @override
+  String get settingsPlainSummaries => 'El mes en una frase';
+
+  @override
+  String get settingsPlainSummariesFooter =>
+      'Muestra en Cartera, en una frase, qué movió tus activos el último mes. Se escribe en este dispositivo con tus propios números.';
+
+  @override
+  String get summaryTitle => 'Último mes';
+
+  @override
+  String summaryUp(String amount, String percent) {
+    return 'En el último mes tus activos ganaron $amount ($percent).';
+  }
+
+  @override
+  String summaryDown(String amount, String percent) {
+    return 'En el último mes tus activos perdieron $amount ($percent).';
+  }
+
+  @override
+  String get summaryFlat => 'Tus activos apenas se movieron en el último mes.';
+
+  @override
+  String summaryTopMover(String asset, String amount) {
+    return '$asset fue lo que más los movió, $amount.';
+  }
+
+  @override
+  String summaryTransactions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Registraste $count transacciones.',
+      one: 'Registraste 1 transacción.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String chartDescription(
+    String from,
+    String to,
+    String start,
+    String end,
+    String change,
+    String high,
+    String highDate,
+    String low,
+    String lowDate,
+  ) {
+    return 'Del $from al $to: de $start a $end, $change. Máximo $high el $highDate, mínimo $low el $lowDate.';
+  }
+
+  @override
+  String chartDescriptionHidden(String from, String to, String change) {
+    return 'Del $from al $to: $change.';
+  }
 }
