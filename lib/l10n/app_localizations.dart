@@ -4924,6 +4924,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Microphone or speech recognition is off for Qima. Turn them on in Settings to speak a purchase.'**
   String get dictationDenied;
+
+  /// No description provided for @settingsIntelligence.
+  ///
+  /// In en, this message translates to:
+  /// **'On-device intelligence'**
+  String get settingsIntelligence;
+
+  /// No description provided for @settingsUseModel.
+  ///
+  /// In en, this message translates to:
+  /// **'Use the on-device model'**
+  String get settingsUseModel;
+
+  /// No description provided for @settingsUseModelFooter.
+  ///
+  /// In en, this message translates to:
+  /// **'Helps read purchases Qima can\'t place on its own, and words the month summary. It runs only on this device, never gives advice, and never supplies a number: every figure comes from your own records.'**
+  String get settingsUseModelFooter;
+
+  /// No description provided for @modelReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready on this device'**
+  String get modelReady;
+
+  /// No description provided for @modelUnsupported.
+  ///
+  /// In en, this message translates to:
+  /// **'Not available on this device'**
+  String get modelUnsupported;
+
+  /// No description provided for @modelTurnedOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn on Apple Intelligence in system Settings to use it'**
+  String get modelTurnedOff;
+
+  /// No description provided for @modelNotReady.
+  ///
+  /// In en, this message translates to:
+  /// **'The model is still downloading'**
+  String get modelNotReady;
+
+  /// No description provided for @modelUnsupportedLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Not available in this language yet'**
+  String get modelUnsupportedLanguage;
 }
 
 class _AppLocalizationsDelegate

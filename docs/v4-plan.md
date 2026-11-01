@@ -164,7 +164,39 @@ opening the app.
   and `PriceModel.resolve`, and the answer strings are already generated for
   Android.
 
+## Phase 6 — on-device models
+
+**Job:** read the purchases the parser can't, and word the month summary
+like a person would, without anything leaving the device.
+
+- `OnDeviceModelPlugin.swift` (iOS and macOS 26 and later) uses Apple's
+  Foundation Models through `SystemLanguageModel.default` only, never the
+  Private Cloud Compute model. The framework is weak-linked, so the app
+  still runs on iOS 15 and macOS 12.
+  - `labelTransaction` uses guided generation (`@Generable Labels`) to
+    return the exact words for each field. Dart's
+    `TransactionCapture.parseWithSpans` keeps only literal substrings and
+    parses them like typed text, as the phase 1 seam requires.
+  - `phrase` rewords a summary sentence. `acceptPhrasing` (Dart) shows the
+    result only if it has exactly the template's numbers (Arabic-Indic
+    digits fold), keeps masked amounts masked, and uses no advice or
+    forecast words. Anything else falls back to the template.
+- Settings · On-device intelligence has a switch (off by default, per
+  device) and the model's status for the app language: ready, not on this
+  device, Apple Intelligence off, still downloading, or language not
+  supported. `AppCubit.assist` is the null provider unless the switch is on.
+- Tested on this Mac: availability reports Apple Intelligence off, and
+  Arabic is not a supported model language today, so Arabic users see "not
+  available in this language yet".
+- **Android (Gemini Nano) is not in this phase.** The only supported route
+  is ML Kit GenAI (`com.google.mlkit:genai-prompt`), which brings in
+  Google's `transport-backend-cct` usage-logging stack. That conflicts with
+  Qima's "no analytics, nothing leaves the device" promise, so it needs a
+  product decision first.
+
 ## Open questions
 
+- Gemini Nano on Android: accept ML Kit's usage logging (and update the
+  privacy policy), or wait for an on-device route without it? (Phase 6.)
 - If Arabic dictation turns out poor on real hardware, should the mic be
   hidden in Arabic, or kept with its quality caveat? (Phase 4 gate.)

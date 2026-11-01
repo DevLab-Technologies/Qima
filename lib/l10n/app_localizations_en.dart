@@ -2859,4 +2859,30 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get dictationDenied =>
       'Microphone or speech recognition is off for Qima. Turn them on in Settings to speak a purchase.';
+
+  @override
+  String get settingsIntelligence => 'On-device intelligence';
+
+  @override
+  String get settingsUseModel => 'Use the on-device model';
+
+  @override
+  String get settingsUseModelFooter =>
+      'Helps read purchases Qima can\'t place on its own, and words the month summary. It runs only on this device, never gives advice, and never supplies a number: every figure comes from your own records.';
+
+  @override
+  String get modelReady => 'Ready on this device';
+
+  @override
+  String get modelUnsupported => 'Not available on this device';
+
+  @override
+  String get modelTurnedOff =>
+      'Turn on Apple Intelligence in system Settings to use it';
+
+  @override
+  String get modelNotReady => 'The model is still downloading';
+
+  @override
+  String get modelUnsupportedLanguage => 'Not available in this language yet';
 }

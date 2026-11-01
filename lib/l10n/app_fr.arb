@@ -834,5 +834,13 @@
   "dictationStart": "Dicter un achat",
   "dictationStop": "Arrêter l’écoute",
   "dictationUnsupported": "La saisie vocale dans cette langue n’est pas disponible sur cet appareil. Qima n’écoute que sur l’appareil, jamais via un serveur.",
-  "dictationDenied": "Le micro ou la reconnaissance vocale est désactivé pour Qima. Activez-les dans Réglages pour dicter un achat."
+  "dictationDenied": "Le micro ou la reconnaissance vocale est désactivé pour Qima. Activez-les dans Réglages pour dicter un achat.",
+  "settingsIntelligence": "Intelligence sur l’appareil",
+  "settingsUseModel": "Utiliser le modèle de l’appareil",
+  "settingsUseModelFooter": "Aide à lire les achats que Qima ne comprend pas seule, et rédige le résumé du mois. Il fonctionne uniquement sur cet appareil, ne donne jamais de conseil et n’apporte jamais de chiffre : chaque montant vient de vos propres données.",
+  "modelReady": "Prêt sur cet appareil",
+  "modelUnsupported": "Indisponible sur cet appareil",
+  "modelTurnedOff": "Activez Apple Intelligence dans les Réglages du système pour l’utiliser",
+  "modelNotReady": "Le modèle est encore en téléchargement",
+  "modelUnsupportedLanguage": "Pas encore disponible dans cette langue"
 }

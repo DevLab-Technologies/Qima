@@ -2205,5 +2205,13 @@
   "dictationStart": "Speak a purchase",
   "dictationStop": "Stop listening",
   "dictationUnsupported": "Voice input in this language isn't available on this device. Qima only listens on the device, never through a server.",
-  "dictationDenied": "Microphone or speech recognition is off for Qima. Turn them on in Settings to speak a purchase."
+  "dictationDenied": "Microphone or speech recognition is off for Qima. Turn them on in Settings to speak a purchase.",
+  "settingsIntelligence": "On-device intelligence",
+  "settingsUseModel": "Use the on-device model",
+  "settingsUseModelFooter": "Helps read purchases Qima can't place on its own, and words the month summary. It runs only on this device, never gives advice, and never supplies a number: every figure comes from your own records.",
+  "modelReady": "Ready on this device",
+  "modelUnsupported": "Not available on this device",
+  "modelTurnedOff": "Turn on Apple Intelligence in system Settings to use it",
+  "modelNotReady": "The model is still downloading",
+  "modelUnsupportedLanguage": "Not available in this language yet"
 }

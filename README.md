@@ -205,6 +205,14 @@ watchlist data are stored locally on your device. The only network traffic is
 anonymous HTTPS price and FX requests to the endpoints listed above; no user
 data is attached to them.
 
+### On-device model
+
+With Settings · On-device intelligence turned on, iOS and macOS 26 use
+Apple's on-device Foundation Model (`SystemLanguageModel.default`, never
+Private Cloud Compute) to read purchases the built-in parser can't and to
+word the month summary. Qima accepts the model's output only when it keeps
+the user's own numbers unchanged and adds none.
+
 ### Voice input
 
 The mic in Add uses the operating system's **on-device** speech recognizer

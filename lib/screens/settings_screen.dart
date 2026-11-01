@@ -11,6 +11,7 @@ import '../models/chart_range.dart';
 import '../services/app_lock_service.dart';
 import '../services/cloud_kv_store.dart';
 import '../services/preferences.dart';
+import '../services/ai_assist_provider.dart';
 import '../theme/design_system.dart';
 import '../theme/help_topics.dart';
 import '../theme/qima_colors.dart';
@@ -100,6 +101,9 @@ class SettingsScreen extends StatelessWidget {
                     onChanged: cubit.setPlainSummaries,
                   ),
                 ),
+                const SizedBox(height: DS.spaceLG),
+                SectionHeader(l10n.settingsIntelligence),
+                const _OnDeviceModelSection(),
                 const SizedBox(height: DS.spaceLG),
                 SectionHeader(l10n.settingsBackup),
                 const _BackupSection(),
@@ -662,6 +666,77 @@ class _HelpSection extends StatelessWidget {
               onTap: () => HelpSheet.show(context, topic: HelpTopicId.widgets),
             ),
           ],
+        ],
+      ),
+    );
+  }
+}
+
+/// Settings · On-device intelligence (v4 phase 6): the switch, and whether
+/// the OS's model is ready for the app's language. The switch works either
+/// way; with no model, nothing changes.
+class _OnDeviceModelSection extends StatefulWidget {
+  const _OnDeviceModelSection();
+
+  @override
+  State<_OnDeviceModelSection> createState() => _OnDeviceModelSectionState();
+}
+
+class _OnDeviceModelSectionState extends State<_OnDeviceModelSection> {
+  Future<ModelStatus>? _status;
+  String? _tag;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final tag = Localizations.localeOf(context).toLanguageTag();
+    if (tag != _tag) {
+      _tag = tag;
+      _status = context.read<AppCubit>().aiAssist.status(tag);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final cubit = context.read<AppCubit>();
+    final l10n = AppLocalizations.of(context)!;
+    final colors = context.colors;
+    return DSCard(
+      padding: const EdgeInsets.symmetric(horizontal: DS.spaceMD, vertical: DS.spaceXS),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SwitchListTile.adaptive(
+            contentPadding: EdgeInsets.zero,
+            title: Text(l10n.settingsUseModel, style: TextStyle(color: colors.textPrimary)),
+            subtitle: FutureBuilder<ModelStatus>(
+              future: _status,
+              builder: (context, snapshot) {
+                final status = snapshot.data;
+                if (status == null) return const SizedBox.shrink();
+                final text = switch (status) {
+                  ModelStatus.ready => l10n.modelReady,
+                  ModelStatus.unsupported => l10n.modelUnsupported,
+                  ModelStatus.turnedOff => l10n.modelTurnedOff,
+                  ModelStatus.notReady => l10n.modelNotReady,
+                  ModelStatus.unsupportedLanguage => l10n.modelUnsupportedLanguage,
+                };
+                return Text(
+                  text,
+                  style: TextStyle(color: status == ModelStatus.ready ? colors.up : colors.textSecondary, fontSize: 12),
+                );
+              },
+            ),
+            value: cubit.state.onDeviceModel,
+            onChanged: cubit.setOnDeviceModel,
+          ),
+          Padding(
+            padding: const EdgeInsets.only(bottom: DS.spaceSM),
+            child: Text(
+              l10n.settingsUseModelFooter,
+              style: TextStyle(color: colors.textTertiary, fontSize: 12, height: 1.35),
+            ),
+          ),
         ],
       ),
     );
