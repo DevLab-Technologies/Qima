@@ -1,0 +1,4 @@
+"What's my ${applicationName} portfolio worth" = "كم قيمة محفظتي في ${applicationName}";
+"${applicationName} portfolio value" = "قيمة المحفظة في ${applicationName}";
+"Get a price in ${applicationName}" = "اعرف سعرًا في ${applicationName}";
+"${applicationName} price of ${asset}" = "سعر ${asset} في ${applicationName}";

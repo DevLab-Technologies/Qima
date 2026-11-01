@@ -183,5 +183,70 @@
     "ar": "أضف أصولًا في قيمة لتظهر هنا",
     "es": "Añade activos en Qima para verlos aquí",
     "fr": "Ajoutez des actifs dans Qima pour les voir ici"
+  },
+  "Get a price": {
+    "ar": "معرفة سعر",
+    "es": "Consultar un precio",
+    "fr": "Obtenir un prix"
+  },
+  "Today's price of an asset, as Qima shows it.": {
+    "ar": "سعر أصل اليوم كما تعرضه قيمة.",
+    "es": "El precio de hoy de un activo, como lo muestra Qima.",
+    "fr": "Le prix du jour d’un actif, tel que Qima l’affiche."
+  },
+  "Get portfolio value": {
+    "ar": "معرفة قيمة المحفظة",
+    "es": "Consultar el valor de la cartera",
+    "fr": "Obtenir la valeur du portefeuille"
+  },
+  "What your holdings in Qima are worth now.": {
+    "ar": "قيمة مقتنياتك في قيمة الآن.",
+    "es": "Lo que valen ahora tus activos en Qima.",
+    "fr": "Ce que valent maintenant vos avoirs dans Qima."
+  },
+  "Portfolio value": {
+    "ar": "قيمة المحفظة",
+    "es": "Valor de la cartera",
+    "fr": "Valeur du portefeuille"
+  },
+  "Open Qima once to load prices.": {
+    "ar": "افتح قيمة مرة واحدة لتحميل الأسعار.",
+    "es": "Abre Qima una vez para cargar los precios.",
+    "fr": "Ouvrez Qima une fois pour charger les prix."
+  },
+  "Qima has no price for %@ yet.": {
+    "ar": "لا يوجد في قيمة سعر لـ %@ بعد.",
+    "es": "Qima aún no tiene precio para %@.",
+    "fr": "Qima n’a pas encore de prix pour %@."
+  },
+  "%@ is %@ per %@.": {
+    "ar": "سعر %@ هو %@ لكل %@.",
+    "es": "%@ está a %@ por %@.",
+    "fr": "%@ est à %@ par %@."
+  },
+  "%@ is %@.": {
+    "ar": "سعر %@ هو %@.",
+    "es": "%@ está a %@.",
+    "fr": "%@ est à %@."
+  },
+  "Balances are hidden in Qima.": {
+    "ar": "الأرصدة مخفية في قيمة.",
+    "es": "Los saldos están ocultos en Qima.",
+    "fr": "Les soldes sont masqués dans Qima."
+  },
+  "There are no holdings in Qima yet.": {
+    "ar": "لا توجد مقتنيات في قيمة بعد.",
+    "es": "Aún no hay activos en Qima.",
+    "fr": "Il n’y a pas encore d’avoirs dans Qima."
+  },
+  "Your holdings are worth %@, a gain of %@ on what you paid.": {
+    "ar": "قيمة مقتنياتك %@، بربح %@ على ما دفعته.",
+    "es": "Tus activos valen %@, una ganancia de %@ sobre lo que pagaste.",
+    "fr": "Vos avoirs valent %@, soit un gain de %@ sur ce que vous avez payé."
+  },
+  "Your holdings are worth %@, a loss of %@ on what you paid.": {
+    "ar": "قيمة مقتنياتك %@، بخسارة %@ على ما دفعته.",
+    "es": "Tus activos valen %@, una pérdida de %@ sobre lo que pagaste.",
+    "fr": "Vos avoirs valent %@, soit une perte de %@ sur ce que vous avez payé."
   }
 }

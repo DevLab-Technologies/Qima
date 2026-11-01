@@ -37,6 +37,10 @@ import workmanager_apple
       withIdentifier: "com.devlabtechnologies.qima.refresh",
       earliestBeginInSeconds: NSNumber(value: 15 * 60)
     )
+    // Refreshes the assets Siri can name in "price of …" (assistant intents).
+    if #available(iOS 17.0, *) {
+      QimaShortcuts.updateAppShortcutParameters()
+    }
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 

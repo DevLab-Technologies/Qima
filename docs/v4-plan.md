@@ -139,6 +139,31 @@ of typing it.
   Arabic dictation quality on real hardware before release. The simulator
   can't do this.
 
+## Phase 5 — system assistant
+
+**Job:** ask Siri what the portfolio is worth, or the price of gold, without
+opening the app.
+
+- `ios/Runner/AssistantIntents.swift` (compiled into the iOS and macOS
+  apps) has two read-only App Intents, *Get portfolio value* and *Get a
+  price*, and an `AppShortcutsProvider` with phrases in all four languages
+  (`AppShortcuts.strings`). They read the snapshot the app already
+  publishes for its widgets, through the widget's own `Snapshot.swift` and
+  `Style.swift`, which both apps now compile too. The price and value rules
+  moved into `Snapshot` (`livePrice`, `presentation`, `portfolioValue`), so
+  the price widget and the assistant share one implementation.
+- Hide balances in the app means hidden from the assistant too.
+- Answers are localized through `tool/widget_strings.json`. Regenerating it
+  also brought the widget's Arabic labels up to the app's Western digits.
+- **Android App Functions are not in this phase.** Every
+  `androidx.appfunctions` release with the current API (`alpha10` to
+  `beta01`) needs compile SDK 37 and AGP 9.1. Qima builds with Flutter's
+  defaults (SDK 36, AGP 8.11), and the releases that fit those are early
+  alphas with a different API. The Android side should land after a
+  toolchain upgrade. It reads the same snapshot through `widget/Snapshot.kt`
+  and `PriceModel.resolve`, and the answer strings are already generated for
+  Android.
+
 ## Open questions
 
 - If Arabic dictation turns out poor on real hardware, should the mic be

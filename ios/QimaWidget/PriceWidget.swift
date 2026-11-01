@@ -87,7 +87,7 @@ struct PriceModel {
             currency = chosen.id
         }
 
-        guard let latest = instrument.latest, let liveRate = snapshot.liveRate(currency) else { return nil }
+        guard let price = snapshot.livePrice(instrument, unit: unit, karat: karat, currency: currency) else { return nil }
         let factor = unit.multiplier * purity
         let points = (instrument.series[range.window.rawValue] ?? []).compactMap { sample -> ChartPoint? in
             guard sample.count == 2, let rate = snapshot.rate(currency, at: sample[0]) else { return nil }
@@ -101,7 +101,7 @@ struct PriceModel {
             unit: unit,
             karat: karat,
             range: range,
-            price: latest * liveRate * factor,
+            price: price,
             points: points,
             change: Change(points),
             updatedAt: instrument.latestAt.map { Date(timeIntervalSince1970: $0 / 1000) }

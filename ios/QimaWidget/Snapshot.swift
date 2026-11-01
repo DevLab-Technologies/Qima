@@ -106,6 +106,33 @@ struct Snapshot: Decodable {
     }
 }
 
+extension Snapshot {
+    /// Today's price of [instrument] per [unit] at [karat] purity in
+    /// [currency] — the app's `PriceConverter` rule, shared by the price
+    /// widget and the app's assistant intents.
+    func livePrice(_ instrument: InstrumentData, unit: PriceUnit, karat: Int?, currency: String) -> Double? {
+        guard let latest = instrument.latest, let rate = liveRate(currency) else { return nil }
+        return latest * rate * unit.multiplier * Double(karat ?? 24) / 24
+    }
+
+    /// How [instrument] is shown in the app: its first watchlist card's
+    /// unit, karat and currency, else its default unit in the base currency.
+    func presentation(of instrument: InstrumentData) -> (unit: PriceUnit, karat: Int?, currency: String) {
+        let card = cards.first { $0.instrumentID == instrument.id }
+        let unit = card.flatMap { PriceUnit(rawValue: $0.unit) }
+            ?? instrument.units.first.flatMap(PriceUnit.init(rawValue:)) ?? .each
+        let karat = instrument.karats.isEmpty ? nil : card?.karat
+        return (unit, karat, card?.currency ?? baseCurrency)
+    }
+
+    /// What the holdings are worth now in [currency], and their gain over
+    /// cost; nil without holdings or a rate.
+    func portfolioValue(in currency: String) -> (value: Double, gain: Double)? {
+        guard portfolio.available, let valueUSD = portfolio.valueUSD, let rate = liveRate(currency) else { return nil }
+        return (valueUSD * rate, (valueUSD - (portfolio.costUSD ?? valueUSD)) * rate)
+    }
+}
+
 enum PriceUnit: String {
     case troyOunce, gram, kilogram, each
 
