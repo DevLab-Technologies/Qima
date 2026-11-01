@@ -43,6 +43,11 @@ class TransactionEditorScreen extends StatefulWidget {
   final PriceUnit? defaultUnit;
   final GoldKarat? defaultKarat;
 
+  /// A new row to start from — a captured sentence the user chose to edit
+  /// before saving (v4). Saved under its own id; unlike [existing], it
+  /// isn't in the ledger yet.
+  final HoldingTransaction? draft;
+
   const TransactionEditorScreen({
     super.key,
     required this.instrument,
@@ -50,14 +55,15 @@ class TransactionEditorScreen extends StatefulWidget {
     this.defaultUnit,
     this.defaultKarat,
     this.existing,
-  });
+    this.draft,
+  }) : assert(existing == null || draft == null);
 
   @override
   State<TransactionEditorScreen> createState() => _TransactionEditorScreenState();
 }
 
 class _TransactionEditorScreenState extends State<TransactionEditorScreen> {
-  late final String _id = widget.existing?.id ?? const Uuid().v4();
+  late final String _id = widget.existing?.id ?? widget.draft?.id ?? const Uuid().v4();
   late _Kind _kind;
   bool _transferIn = true;
   late final TextEditingController _quantity;
@@ -73,7 +79,7 @@ class _TransactionEditorScreenState extends State<TransactionEditorScreen> {
   @override
   void initState() {
     super.initState();
-    final e = widget.existing;
+    final e = widget.existing ?? widget.draft;
     _kind = switch (e?.kind) {
       TransactionKind.sell => _Kind.sell,
       TransactionKind.transferIn || TransactionKind.transferOut => _Kind.transfer,

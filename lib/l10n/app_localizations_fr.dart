@@ -31,7 +31,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get addTitle => 'Ajouter un actif';
 
   @override
-  String get addSearchHint => 'Rechercher un actif';
+  String get addSearchHint => 'Rechercher ou décrire un achat';
 
   @override
   String addSearchCustomTickerTitle(String query) {
@@ -2727,4 +2727,80 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get helpAssetDetailStep6Body =>
       'Touchez partager pour publier le prix et le graphique en image au format WhatsApp, Instagram, Facebook ou LinkedIn, avec un texte prêt.';
+
+  @override
+  String get captureRecordThis => 'Enregistrer ceci';
+
+  @override
+  String get captureCheckTitle => 'Vérifiez';
+
+  @override
+  String get captureYouWrote => 'Vous avez écrit';
+
+  @override
+  String get captureRead => 'Compris comme';
+
+  @override
+  String get captureFieldType => 'Type';
+
+  @override
+  String get captureFieldAsset => 'Actif';
+
+  @override
+  String get captureFieldQuantity => 'Quantité';
+
+  @override
+  String get captureFieldPrice => 'Prix';
+
+  @override
+  String get captureFieldFee => 'Frais';
+
+  @override
+  String get captureFieldDate => 'Date';
+
+  @override
+  String captureFrom(String words) {
+    return 'de « $words »';
+  }
+
+  @override
+  String get captureBaseCurrency => 'votre devise de référence';
+
+  @override
+  String get captureTotalDivided => 'total ÷ quantité';
+
+  @override
+  String get captureAssumed => 'supposé';
+
+  @override
+  String get captureToday => 'aujourd’hui';
+
+  @override
+  String get captureCheck => 'à vérifier';
+
+  @override
+  String get captureConfirm => 'Confirmer';
+
+  @override
+  String get captureEditFields => 'Modifier';
+
+  @override
+  String get captureFootnote =>
+      'Chaque champ indique d’où il vient, et rien n’est enregistré avant votre confirmation.';
+
+  @override
+  String get captureOnDevice => 'Sur l’appareil';
+
+  @override
+  String get captureNothingSent =>
+      'Lu sur cet appareil. Rien n’est envoyé nulle part.';
+
+  @override
+  String get captureNeedsPrice =>
+      'Aucun prix trouvé. Modifiez les champs pour en ajouter un.';
+
+  @override
+  String captureRecorded(String summary) {
+    return 'Enregistré : $summary';
+  }
 }

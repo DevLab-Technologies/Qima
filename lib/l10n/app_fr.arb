@@ -7,7 +7,7 @@
   "watchlistEmptyTitle": "Votre liste de suivi est vide",
   "watchlistEmptyMessage": "Ajoutez des métaux, cryptomonnaies, actions ou devises pour suivre leurs prix.",
   "addTitle": "Ajouter un actif",
-  "addSearchHint": "Rechercher un actif",
+  "addSearchHint": "Rechercher ou décrire un achat",
   "addSearchCustomTickerTitle": "Ajouter « {query} » comme symbole personnalisé",
   "@addSearchCustomTickerTitle": {
     "placeholders": {
@@ -795,5 +795,28 @@
   "helpWatchlistStep6Title": "Changez l'ordre",
   "helpWatchlistStep6Body": "Touchez les flèches en haut pour faire glisser les cartes par leurs poignées, ou triez-les par nom, performance ou classe d'actifs. Vous pouvez aussi maintenir une carte appuyée pour la déplacer.",
   "helpAssetDetailStep6Title": "Partagez-le",
-  "helpAssetDetailStep6Body": "Touchez partager pour publier le prix et le graphique en image au format WhatsApp, Instagram, Facebook ou LinkedIn, avec un texte prêt."
+  "helpAssetDetailStep6Body": "Touchez partager pour publier le prix et le graphique en image au format WhatsApp, Instagram, Facebook ou LinkedIn, avec un texte prêt.",
+  "captureRecordThis": "Enregistrer ceci",
+  "captureCheckTitle": "Vérifiez",
+  "captureYouWrote": "Vous avez écrit",
+  "captureRead": "Compris comme",
+  "captureFieldType": "Type",
+  "captureFieldAsset": "Actif",
+  "captureFieldQuantity": "Quantité",
+  "captureFieldPrice": "Prix",
+  "captureFieldFee": "Frais",
+  "captureFieldDate": "Date",
+  "captureFrom": "de « {words} »",
+  "captureBaseCurrency": "votre devise de référence",
+  "captureTotalDivided": "total ÷ quantité",
+  "captureAssumed": "supposé",
+  "captureToday": "aujourd’hui",
+  "captureCheck": "à vérifier",
+  "captureConfirm": "Confirmer",
+  "captureEditFields": "Modifier",
+  "captureFootnote": "Chaque champ indique d’où il vient, et rien n’est enregistré avant votre confirmation.",
+  "captureOnDevice": "Sur l’appareil",
+  "captureNothingSent": "Lu sur cet appareil. Rien n’est envoyé nulle part.",
+  "captureNeedsPrice": "Aucun prix trouvé. Modifiez les champs pour en ajouter un.",
+  "captureRecorded": "Enregistré : {summary}"
 }

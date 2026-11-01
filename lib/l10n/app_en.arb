@@ -13,7 +13,7 @@
   "watchlistEmptyMessage": "Add metals, crypto, stocks, or currencies to start tracking prices.",
   "watchlistFilterAll": "All",
   "addTitle": "Add asset",
-  "addSearchHint": "Search assets",
+  "addSearchHint": "Search, or describe a purchase",
   "addSearchCustomTickerTitle": "Add “{query}” as a custom ticker",
   "@addSearchCustomTickerTitle": {
     "placeholders": {
@@ -2063,5 +2063,42 @@
   "helpWatchlistStep6Title": "Change the order",
   "helpWatchlistStep6Body": "Tap the arrows at the top to drag cards by their handles, or sort by name, performance or asset class. You can also press and hold a card to drag it.",
   "helpAssetDetailStep6Title": "Share it",
-  "helpAssetDetailStep6Body": "Tap share to post the price and chart as an image sized for WhatsApp, Instagram, Facebook or LinkedIn, with a ready caption."
+  "helpAssetDetailStep6Body": "Tap share to post the price and chart as an image sized for WhatsApp, Instagram, Facebook or LinkedIn, with a ready caption.",
+  "captureRecordThis": "Record this",
+  "captureCheckTitle": "Check this",
+  "captureYouWrote": "You wrote",
+  "captureRead": "Read as",
+  "captureFieldType": "Type",
+  "captureFieldAsset": "Asset",
+  "captureFieldQuantity": "Quantity",
+  "captureFieldPrice": "Price",
+  "captureFieldFee": "Fee",
+  "captureFieldDate": "Date",
+  "captureFrom": "from “{words}”",
+  "@captureFrom": {
+    "placeholders": {
+      "words": {
+        "type": "String"
+      }
+    }
+  },
+  "captureBaseCurrency": "your base currency",
+  "captureTotalDivided": "total ÷ quantity",
+  "captureAssumed": "assumed",
+  "captureToday": "today",
+  "captureCheck": "check",
+  "captureConfirm": "Confirm",
+  "captureEditFields": "Edit fields",
+  "captureFootnote": "Every field says where it came from, and nothing is saved until you confirm.",
+  "captureOnDevice": "On device",
+  "captureNothingSent": "Read on this device. Nothing is sent anywhere.",
+  "captureNeedsPrice": "No price found. Edit the fields to add one.",
+  "captureRecorded": "Recorded: {summary}",
+  "@captureRecorded": {
+    "placeholders": {
+      "summary": {
+        "type": "String"
+      }
+    }
+  }
 }

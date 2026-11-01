@@ -31,7 +31,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get addTitle => 'إضافة أصل';
 
   @override
-  String get addSearchHint => 'ابحث عن أصل';
+  String get addSearchHint => 'ابحث، أو صِف عملية شراء';
 
   @override
   String addSearchCustomTickerTitle(String query) {
@@ -2719,4 +2719,79 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get helpAssetDetailStep6Body =>
       'اضغط على المشاركة لنشر السعر والرسم البياني كصورة بمقاس واتساب أو إنستغرام أو فيسبوك أو لينكدإن، مع نص جاهز.';
+
+  @override
+  String get captureRecordThis => 'سجّل هذه العملية';
+
+  @override
+  String get captureCheckTitle => 'راجِع العملية';
+
+  @override
+  String get captureYouWrote => 'كتبت';
+
+  @override
+  String get captureRead => 'فُهمت هكذا';
+
+  @override
+  String get captureFieldType => 'النوع';
+
+  @override
+  String get captureFieldAsset => 'الأصل';
+
+  @override
+  String get captureFieldQuantity => 'الكمية';
+
+  @override
+  String get captureFieldPrice => 'السعر';
+
+  @override
+  String get captureFieldFee => 'الرسوم';
+
+  @override
+  String get captureFieldDate => 'التاريخ';
+
+  @override
+  String captureFrom(String words) {
+    return 'من «$words»';
+  }
+
+  @override
+  String get captureBaseCurrency => 'عملتك الأساسية';
+
+  @override
+  String get captureTotalDivided => 'الإجمالي ÷ الكمية';
+
+  @override
+  String get captureAssumed => 'افتراض';
+
+  @override
+  String get captureToday => 'اليوم';
+
+  @override
+  String get captureCheck => 'تحقّق';
+
+  @override
+  String get captureConfirm => 'تأكيد';
+
+  @override
+  String get captureEditFields => 'تعديل الحقول';
+
+  @override
+  String get captureFootnote =>
+      'كل حقل يوضّح من أين جاء، ولا يُحفظ شيء حتى تؤكّد.';
+
+  @override
+  String get captureOnDevice => 'على الجهاز';
+
+  @override
+  String get captureNothingSent =>
+      'تُقرأ على هذا الجهاز. لا يُرسل أي شيء إلى أي مكان.';
+
+  @override
+  String get captureNeedsPrice => 'لم يُعثر على سعر. عدّل الحقول لإضافته.';
+
+  @override
+  String captureRecorded(String summary) {
+    return 'سُجّلت: $summary';
+  }
 }

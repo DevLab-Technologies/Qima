@@ -7,7 +7,7 @@
   "watchlistEmptyMessage": "أضف معادن أو عملات رقمية أو أسهمًا أو عملات لبدء تتبع الأسعار.",
   "watchlistFilterAll": "الكل",
   "addTitle": "إضافة أصل",
-  "addSearchHint": "ابحث عن أصل",
+  "addSearchHint": "ابحث، أو صِف عملية شراء",
   "addSearchCustomTickerTitle": "إضافة ”{query}“ كرمز مخصص",
   "@addSearchCustomTickerTitle": {
     "placeholders": {
@@ -795,5 +795,28 @@
   "helpWatchlistStep6Title": "غيّر الترتيب",
   "helpWatchlistStep6Body": "اضغط على الأسهم في الأعلى لسحب البطاقات من مقابضها، أو رتّبها حسب الاسم أو الأداء أو فئة الأصل. ويمكنك أيضًا الضغط مطولًا على بطاقة لسحبها.",
   "helpAssetDetailStep6Title": "شاركه",
-  "helpAssetDetailStep6Body": "اضغط على المشاركة لنشر السعر والرسم البياني كصورة بمقاس واتساب أو إنستغرام أو فيسبوك أو لينكدإن، مع نص جاهز."
+  "helpAssetDetailStep6Body": "اضغط على المشاركة لنشر السعر والرسم البياني كصورة بمقاس واتساب أو إنستغرام أو فيسبوك أو لينكدإن، مع نص جاهز.",
+  "captureRecordThis": "سجّل هذه العملية",
+  "captureCheckTitle": "راجِع العملية",
+  "captureYouWrote": "كتبت",
+  "captureRead": "فُهمت هكذا",
+  "captureFieldType": "النوع",
+  "captureFieldAsset": "الأصل",
+  "captureFieldQuantity": "الكمية",
+  "captureFieldPrice": "السعر",
+  "captureFieldFee": "الرسوم",
+  "captureFieldDate": "التاريخ",
+  "captureFrom": "من «{words}»",
+  "captureBaseCurrency": "عملتك الأساسية",
+  "captureTotalDivided": "الإجمالي ÷ الكمية",
+  "captureAssumed": "افتراض",
+  "captureToday": "اليوم",
+  "captureCheck": "تحقّق",
+  "captureConfirm": "تأكيد",
+  "captureEditFields": "تعديل الحقول",
+  "captureFootnote": "كل حقل يوضّح من أين جاء، ولا يُحفظ شيء حتى تؤكّد.",
+  "captureOnDevice": "على الجهاز",
+  "captureNothingSent": "تُقرأ على هذا الجهاز. لا يُرسل أي شيء إلى أي مكان.",
+  "captureNeedsPrice": "لم يُعثر على سعر. عدّل الحقول لإضافته.",
+  "captureRecorded": "سُجّلت: {summary}"
 }

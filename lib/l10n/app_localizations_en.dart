@@ -31,7 +31,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get addTitle => 'Add asset';
 
   @override
-  String get addSearchHint => 'Search assets';
+  String get addSearchHint => 'Search, or describe a purchase';
 
   @override
   String addSearchCustomTickerTitle(String query) {
@@ -2703,4 +2703,79 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get helpAssetDetailStep6Body =>
       'Tap share to post the price and chart as an image sized for WhatsApp, Instagram, Facebook or LinkedIn, with a ready caption.';
+
+  @override
+  String get captureRecordThis => 'Record this';
+
+  @override
+  String get captureCheckTitle => 'Check this';
+
+  @override
+  String get captureYouWrote => 'You wrote';
+
+  @override
+  String get captureRead => 'Read as';
+
+  @override
+  String get captureFieldType => 'Type';
+
+  @override
+  String get captureFieldAsset => 'Asset';
+
+  @override
+  String get captureFieldQuantity => 'Quantity';
+
+  @override
+  String get captureFieldPrice => 'Price';
+
+  @override
+  String get captureFieldFee => 'Fee';
+
+  @override
+  String get captureFieldDate => 'Date';
+
+  @override
+  String captureFrom(String words) {
+    return 'from “$words”';
+  }
+
+  @override
+  String get captureBaseCurrency => 'your base currency';
+
+  @override
+  String get captureTotalDivided => 'total ÷ quantity';
+
+  @override
+  String get captureAssumed => 'assumed';
+
+  @override
+  String get captureToday => 'today';
+
+  @override
+  String get captureCheck => 'check';
+
+  @override
+  String get captureConfirm => 'Confirm';
+
+  @override
+  String get captureEditFields => 'Edit fields';
+
+  @override
+  String get captureFootnote =>
+      'Every field says where it came from, and nothing is saved until you confirm.';
+
+  @override
+  String get captureOnDevice => 'On device';
+
+  @override
+  String get captureNothingSent =>
+      'Read on this device. Nothing is sent anywhere.';
+
+  @override
+  String get captureNeedsPrice => 'No price found. Edit the fields to add one.';
+
+  @override
+  String captureRecorded(String summary) {
+    return 'Recorded: $summary';
+  }
 }

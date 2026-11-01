@@ -147,7 +147,7 @@ abstract class AppLocalizations {
   /// No description provided for @addSearchHint.
   ///
   /// In en, this message translates to:
-  /// **'Search assets'**
+  /// **'Search, or describe a purchase'**
   String get addSearchHint;
 
   /// No description provided for @addSearchCustomTickerTitle.
@@ -4680,6 +4680,144 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Tap share to post the price and chart as an image sized for WhatsApp, Instagram, Facebook or LinkedIn, with a ready caption.'**
   String get helpAssetDetailStep6Body;
+
+  /// No description provided for @captureRecordThis.
+  ///
+  /// In en, this message translates to:
+  /// **'Record this'**
+  String get captureRecordThis;
+
+  /// No description provided for @captureCheckTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Check this'**
+  String get captureCheckTitle;
+
+  /// No description provided for @captureYouWrote.
+  ///
+  /// In en, this message translates to:
+  /// **'You wrote'**
+  String get captureYouWrote;
+
+  /// No description provided for @captureRead.
+  ///
+  /// In en, this message translates to:
+  /// **'Read as'**
+  String get captureRead;
+
+  /// No description provided for @captureFieldType.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get captureFieldType;
+
+  /// No description provided for @captureFieldAsset.
+  ///
+  /// In en, this message translates to:
+  /// **'Asset'**
+  String get captureFieldAsset;
+
+  /// No description provided for @captureFieldQuantity.
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity'**
+  String get captureFieldQuantity;
+
+  /// No description provided for @captureFieldPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Price'**
+  String get captureFieldPrice;
+
+  /// No description provided for @captureFieldFee.
+  ///
+  /// In en, this message translates to:
+  /// **'Fee'**
+  String get captureFieldFee;
+
+  /// No description provided for @captureFieldDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get captureFieldDate;
+
+  /// No description provided for @captureFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'from “{words}”'**
+  String captureFrom(String words);
+
+  /// No description provided for @captureBaseCurrency.
+  ///
+  /// In en, this message translates to:
+  /// **'your base currency'**
+  String get captureBaseCurrency;
+
+  /// No description provided for @captureTotalDivided.
+  ///
+  /// In en, this message translates to:
+  /// **'total ÷ quantity'**
+  String get captureTotalDivided;
+
+  /// No description provided for @captureAssumed.
+  ///
+  /// In en, this message translates to:
+  /// **'assumed'**
+  String get captureAssumed;
+
+  /// No description provided for @captureToday.
+  ///
+  /// In en, this message translates to:
+  /// **'today'**
+  String get captureToday;
+
+  /// No description provided for @captureCheck.
+  ///
+  /// In en, this message translates to:
+  /// **'check'**
+  String get captureCheck;
+
+  /// No description provided for @captureConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm'**
+  String get captureConfirm;
+
+  /// No description provided for @captureEditFields.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit fields'**
+  String get captureEditFields;
+
+  /// No description provided for @captureFootnote.
+  ///
+  /// In en, this message translates to:
+  /// **'Every field says where it came from, and nothing is saved until you confirm.'**
+  String get captureFootnote;
+
+  /// No description provided for @captureOnDevice.
+  ///
+  /// In en, this message translates to:
+  /// **'On device'**
+  String get captureOnDevice;
+
+  /// No description provided for @captureNothingSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Read on this device. Nothing is sent anywhere.'**
+  String get captureNothingSent;
+
+  /// No description provided for @captureNeedsPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'No price found. Edit the fields to add one.'**
+  String get captureNeedsPrice;
+
+  /// No description provided for @captureRecorded.
+  ///
+  /// In en, this message translates to:
+  /// **'Recorded: {summary}'**
+  String captureRecorded(String summary);
 }
 
 class _AppLocalizationsDelegate

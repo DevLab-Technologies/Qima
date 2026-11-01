@@ -7,7 +7,7 @@
   "watchlistEmptyTitle": "Tu lista de seguimiento está vacía",
   "watchlistEmptyMessage": "Añade metales, criptomonedas, acciones o divisas para empezar a seguir precios.",
   "addTitle": "Añadir activo",
-  "addSearchHint": "Buscar activos",
+  "addSearchHint": "Busca o describe una compra",
   "addSearchCustomTickerTitle": "Añadir “{query}” como símbolo personalizado",
   "@addSearchCustomTickerTitle": {
     "placeholders": {
@@ -795,5 +795,28 @@
   "helpWatchlistStep6Title": "Cambia el orden",
   "helpWatchlistStep6Body": "Toca las flechas de arriba para arrastrar las tarjetas por sus controles u ordenarlas por nombre, rendimiento o tipo de activo. También puedes mantener pulsada una tarjeta para arrastrarla.",
   "helpAssetDetailStep6Title": "Compártelo",
-  "helpAssetDetailStep6Body": "Toca compartir para publicar el precio y el gráfico como una imagen a la medida de WhatsApp, Instagram, Facebook o LinkedIn, con un texto listo."
+  "helpAssetDetailStep6Body": "Toca compartir para publicar el precio y el gráfico como una imagen a la medida de WhatsApp, Instagram, Facebook o LinkedIn, con un texto listo.",
+  "captureRecordThis": "Registrar esto",
+  "captureCheckTitle": "Revisa esto",
+  "captureYouWrote": "Escribiste",
+  "captureRead": "Entendido como",
+  "captureFieldType": "Tipo",
+  "captureFieldAsset": "Activo",
+  "captureFieldQuantity": "Cantidad",
+  "captureFieldPrice": "Precio",
+  "captureFieldFee": "Comisión",
+  "captureFieldDate": "Fecha",
+  "captureFrom": "de «{words}»",
+  "captureBaseCurrency": "tu moneda base",
+  "captureTotalDivided": "total ÷ cantidad",
+  "captureAssumed": "supuesto",
+  "captureToday": "hoy",
+  "captureCheck": "revisar",
+  "captureConfirm": "Confirmar",
+  "captureEditFields": "Editar campos",
+  "captureFootnote": "Cada campo indica de dónde salió, y no se guarda nada hasta que confirmes.",
+  "captureOnDevice": "En el dispositivo",
+  "captureNothingSent": "Se lee en este dispositivo. No se envía nada a ningún sitio.",
+  "captureNeedsPrice": "No se encontró un precio. Edita los campos para añadirlo.",
+  "captureRecorded": "Registrado: {summary}"
 }
