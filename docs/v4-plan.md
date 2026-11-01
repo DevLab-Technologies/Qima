@@ -194,9 +194,33 @@ like a person would, without anything leaving the device.
   Qima's "no analytics, nothing leaves the device" promise, so it needs a
   product decision first.
 
+## Phase 7 — receipt scan
+
+**Job:** turn a photo of a receipt into a draft, with the text read on the
+device and the phase 1 parser doing the rest.
+
+- `TextRecognitionPlugin.swift` (iOS and macOS) reads the photo with
+  Vision's `VNRecognizeTextRequest` at the accurate level, in the app
+  language first and English second, and returns the lines top to bottom.
+  The picker's copy of the photo is deleted once it has been read; a file
+  the user picks from their own folders on macOS is left alone.
+- `ReceiptScanButton` sits beside the mic in the Add field. It offers
+  camera or library where there is a camera, shows progress while reading,
+  and joins the lines into the field (`receiptText`), where the typed
+  capture flow reads them and the "Check this" preview asks before
+  anything is saved. When no text is found it says so.
+- The parser also reads year-first dates written with slashes
+  (`2026/03/14`), which receipts often print.
+- **Android is not in this phase.** On-device text recognition there is ML
+  Kit, which brings the same `transport-backend-cct` usage logging as ML
+  Kit GenAI (phase 6). The button stays hidden on Android, web, Windows and
+  Linux until that is decided.
+
 ## Open questions
 
 - Gemini Nano on Android: accept ML Kit's usage logging (and update the
   privacy policy), or wait for an on-device route without it? (Phase 6.)
+  The same answer covers ML Kit text recognition for receipt scan on
+  Android (phase 7).
 - If Arabic dictation turns out poor on real hardware, should the mic be
   hidden in Arabic, or kept with its quality caveat? (Phase 4 gate.)

@@ -44,6 +44,7 @@ import '../services/price_converter.dart';
 import '../services/price_repository.dart';
 import '../services/refresh_pipeline.dart';
 import '../services/switchable_cloud_kv_store.dart';
+import '../services/text_recognition_service.dart';
 import '../services/watchlist_store.dart';
 import '../services/zakat_reminder_notifier.dart';
 import 'app_state.dart';
@@ -72,6 +73,9 @@ class AppCubit extends Cubit<AppState> {
 
   /// On-device speech to text for the Add field (v4 phase 4).
   final DictationService dictation;
+
+  /// On-device text recognition for receipt scans (v4 phase 7).
+  final TextRecognitionService textRecognition;
   late Preferences preferences;
   late BackupService backupService;
   RefreshPipeline? _pipeline;
@@ -113,6 +117,7 @@ class AppCubit extends Cubit<AppState> {
     SwitchableCloudKVStore? cloudStore,
     AiAssistProvider? aiAssist,
     DictationService? dictation,
+    TextRecognitionService? textRecognition,
     Locale? deviceLocale,
   }) {
     // Built once up front so every default-constructed store below shares
@@ -133,6 +138,7 @@ class AppCubit extends Cubit<AppState> {
       cloudStore: resolvedCloudStore,
       aiAssist: aiAssist ?? const PlatformAiAssistProvider(),
       dictation: dictation ?? const PlatformDictation(),
+      textRecognition: textRecognition ?? const PlatformTextRecognition(),
       deviceLocale: deviceLocale,
     );
   }
@@ -150,6 +156,7 @@ class AppCubit extends Cubit<AppState> {
     required this.cloudStore,
     required this.aiAssist,
     required this.dictation,
+    required this.textRecognition,
     Locale? deviceLocale,
   })  : _deviceLocale = deviceLocale,
         super(AppState());

@@ -2903,4 +2903,17 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get modelUnsupportedLanguage => 'غير متاح بهذه اللغة بعد';
+
+  @override
+  String get receiptScan => 'مسح إيصال';
+
+  @override
+  String get receiptTakePhoto => 'التقاط صورة';
+
+  @override
+  String get receiptChoosePhoto => 'اختيار صورة';
+
+  @override
+  String get receiptNoText =>
+      'لم يُعثر على نص في هذه الصورة. حاول مرة أخرى من مسافة أقرب، والإيصال مسطّح وفي إضاءة جيدة.';
 }

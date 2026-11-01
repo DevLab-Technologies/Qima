@@ -2885,4 +2885,17 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get modelUnsupportedLanguage => 'Not available in this language yet';
+
+  @override
+  String get receiptScan => 'Scan a receipt';
+
+  @override
+  String get receiptTakePhoto => 'Take a photo';
+
+  @override
+  String get receiptChoosePhoto => 'Choose a photo';
+
+  @override
+  String get receiptNoText =>
+      'No text found in that photo. Try again closer, with the receipt flat and well lit.';
 }

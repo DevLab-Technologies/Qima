@@ -2906,4 +2906,17 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get modelUnsupportedLanguage => 'Aún no disponible en este idioma';
+
+  @override
+  String get receiptScan => 'Escanear un recibo';
+
+  @override
+  String get receiptTakePhoto => 'Hacer una foto';
+
+  @override
+  String get receiptChoosePhoto => 'Elegir una foto';
+
+  @override
+  String get receiptNoText =>
+      'No se encontró texto en esa foto. Inténtalo de nuevo más cerca, con el recibo plano y bien iluminado.';
 }

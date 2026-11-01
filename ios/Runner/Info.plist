@@ -92,5 +92,7 @@
 	<string>Qima listens only after you tap the mic in Add, to write down a purchase you say. Audio stays on this device.</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
 	<string>Qima turns what you say into text on this device, to record a purchase. Nothing is sent to a server.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Qima uses the camera only when you scan a receipt in Add. The photo is read on this device and not kept.</string>
 </dict>
 </plist>
