@@ -155,14 +155,30 @@ opening the app.
 - Hide balances in the app means hidden from the assistant too.
 - Answers are localized through `tool/widget_strings.json`. Regenerating it
   also brought the widget's Arabic labels up to the app's Western digits.
-- **Android App Functions are not in this phase.** Every
-  `androidx.appfunctions` release with the current API (`alpha10` to
-  `beta01`) needs compile SDK 37 and AGP 9.1. Qima builds with Flutter's
-  defaults (SDK 36, AGP 8.11), and the releases that fit those are early
-  alphas with a different API. The Android side should land after a
-  toolchain upgrade. It reads the same snapshot through `widget/Snapshot.kt`
-  and `PriceModel.resolve`, and the answer strings are already generated for
-  Android.
+- On Android 16 and later, `AssistantFunctions.kt` declares the same two
+  answers as App Functions, `getPortfolioValue` and `getPrice(asset)`, for
+  Gemini and other agents. The `androidx.appfunctions` compiler (KSP)
+  generates `QimaAssistantService` and `assets/qima_assistant.xml` from it,
+  and the manifest declares both. They read the snapshot through
+  `widget/Snapshot.kt`, price through `PriceModel.resolve` as the asset's
+  first watchlist card shows it, and use the generated widget strings. An
+  asset matches by exact symbol or name first, then by a name or symbol
+  that contains it, watchlist assets first. Neither function writes or uses
+  the network. `AssistantAnswersTest` checks the answers on the JVM.
+- Android needed a toolchain upgrade first, since `appfunctions` `alpha10`
+  through `beta01` need compile SDK 37 and AGP 9.1. The app now compiles
+  against SDK 37 (target stays 36) with AGP 9.1.1, Gradle 9.3.1, Kotlin
+  2.3.21 and KSP 2.3.13. AGP 9's built-in Kotlin and new DSL are off in
+  `gradle.properties`. Several plugins still apply `kotlin-android`
+  themselves, and Flutter 3.41's Gradle plugin uses the old DSL.
+  `package_info_plus` skips `kotlin-android` on AGP 9, so the root build
+  applies it to every plugin module. Debug builds pin espresso 3.6.1,
+  because `integration_test`'s espresso 3.2 has two modules that share a
+  namespace, which AGP 9 rejects. Turn built-in Kotlin back on once the
+  plugins move.
+- Not yet checked on a device: the functions haven't been run on an
+  Android 16 emulator or device. The shell's `cmd app_function` can call
+  them there.
 
 ## Phase 6 — on-device models
 

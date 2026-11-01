@@ -82,6 +82,23 @@
             </intent-filter>
         </activity>
 
+        <!-- Read-only answers for the system assistant on Android 16+ (v4
+             phase 5). The class and the XML are generated from
+             AssistantFunctions.kt. -->
+        <service android:name=".QimaAssistantService"
+            android:permission="android.permission.BIND_APP_FUNCTION_SERVICE"
+            android:exported="true">
+            <property
+                android:name="android.app.appfunctions.schema"
+                android:value="app_functions_schema.xsd" />
+            <property
+                android:name="android.app.appfunctions.v2"
+                android:value="qima_assistant.xml" />
+            <intent-filter>
+                <action android:name="android.app.appfunctions.AppFunctionService" />
+            </intent-filter>
+        </service>
+
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data
