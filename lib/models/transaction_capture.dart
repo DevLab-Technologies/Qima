@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 
 import 'asset.dart';
 import 'holding_transaction.dart';
+import 'instrument_aliases.dart';
 import 'metal_breakdown.dart';
 
 /// One field of a [TransactionDraft]: its value, the words of the input it
@@ -512,27 +513,13 @@ class TransactionCapture {
     'نوفمبر': 11, 'ديسمبر': 12,
   };
 
-  /// Everyday names the catalog's own labels don't cover, by instrument id.
-  static const Map<String, List<String>> _aliases = {
-    'metal.XAU': ['gold', 'ذهب', 'دهب', 'oro'],
-    'metal.XAG': ['silver', 'فضة', 'فضه', 'plata', 'argent'],
-    'metal.XPT': ['platinum', 'بلاتين', 'platino', 'platine'],
-    'metal.XPD': ['palladium', 'بلاديوم', 'paladio'],
-    'crypto.BTC': ['bitcoin', 'bitcoins', 'بيتكوين', 'بتكوين'],
-    'crypto.ETH': ['ethereum', 'ether', 'إيثريوم', 'ايثريوم', 'إيثيريوم', 'ايثيريوم'],
-    'stock.AAPL': ['apple', 'أبل', 'ابل', 'آبل'],
-    'stock.MSFT': ['microsoft', 'مايكروسوفت'],
-    'stock.NVDA': ['nvidia', 'إنفيديا', 'انفيديا'],
-    'stock.AMZN': ['amazon', 'أمازون', 'امازون'],
-    'stock.TSLA': ['tesla', 'تسلا'],
-    'stock.GOOGL': ['google', 'alphabet', 'جوجل', 'ألفابت'],
-  };
-
   static List<String> _termsFor(Instrument instrument, CaptureContext context) {
     final terms = <String>{
       instrument.symbol,
       context.displayName(instrument),
-      ...?_aliases[instrument.id],
+      // Currency words ("riyal", جنيه) name a family, not one currency;
+      // the price scan resolves those against the base currency instead.
+      if (instrument.assetClass != AssetClass.fiat) ...InstrumentAliases.of(instrument.id),
     };
     // Arabic nouns usually carry the definite article: ذهب / الذهب.
     for (final t in terms.toList()) {

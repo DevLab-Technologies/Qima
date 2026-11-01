@@ -82,6 +82,19 @@ into the Add search field and record the purchase in two taps.
   boundaries, the rejection cases) and a widget test of the Check this
   screen.
 
+## Phase 2 — multilingual aliases
+
+**Job:** find gold by typing دهب, Oro or gold, whatever language the app is in.
+
+- `lib/models/instrument_aliases.dart` holds the curated everyday names
+  (spelling variants, colloquial names, currency family words). The phase 1
+  parser reads the same list, except currency words, which it resolves by
+  family against the base currency.
+- Search also matches each instrument's catalog label in all four app
+  languages. A name or symbol match always wins; only when neither matched
+  does the row show the other name that did ("XAU · Also “دهب”"), with the
+  matched part highlighted.
+
 ## Open questions
 
 - Dictation in the add flow only, or in every form? (Phase 4. The proposal

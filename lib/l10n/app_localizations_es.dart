@@ -39,6 +39,11 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
+  String addSearchMatchedAlias(String alias) {
+    return 'También «$alias»';
+  }
+
+  @override
   String get addSearchCustomTickerSubtitle =>
       'Para acciones, ETFs o índices que no aparecen aquí';
 

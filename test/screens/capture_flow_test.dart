@@ -167,6 +167,20 @@ void main() {
     expect(find.text(en.addSearchCustomTickerTitle('gold')), findsOneWidget);
   });
 
+  testWidgets('a name from another language finds the asset and says which word matched', (tester) async {
+    phone(tester);
+    final (c, _) = await cubit();
+    await openAdd(tester, c);
+    await tester.enterText(find.byType(TextField), 'ذهب');
+    await tester.pumpAndSettle();
+    expect(find.text('Gold'), findsOneWidget);
+    expect(find.text('XAU · ${en.addSearchMatchedAlias('ذهب')}'), findsOneWidget);
+
+    await tester.enterText(find.byType(TextField), 'Oro');
+    await tester.pumpAndSettle();
+    expect(find.text('XAU · ${en.addSearchMatchedAlias('Oro')}'), findsOneWidget);
+  });
+
   testWidgets('without a price, Confirm is off and Edit fields opens the editor prefilled', (tester) async {
     phone(tester);
     final (c, store) = await cubit();

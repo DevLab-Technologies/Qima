@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../blocs/app_cubit.dart';
 import '../l10n/app_localizations.dart';
 import '../models/asset.dart';
+import '../models/instrument_aliases.dart';
 import '../models/instrument_catalog.dart';
 import '../models/instrument_search.dart';
 import '../models/transaction_capture.dart';
@@ -156,6 +157,7 @@ class _AddInstrumentScreenState extends State<AddInstrumentScreen> {
       InstrumentCatalog.all,
       query,
       displayName: (i) => displayLabel(context, i.nameKey),
+      aliases: (i) => [...labelsInAllLocales(i.nameKey), ...InstrumentAliases.of(i.id)],
     );
     final draft = TransactionCapture.parse(query, captureContextOf(context, cubit.state));
 
@@ -226,6 +228,8 @@ class _AddInstrumentScreenState extends State<AddInstrumentScreen> {
                     isCustom: cubit.isCustom(match.instrument.id),
                     nameRanges: match.nameRanges,
                     symbolRanges: match.symbolRanges,
+                    alias: match.alias,
+                    aliasRanges: match.aliasRanges,
                     onTap: () => _openConfig(context, match.instrument),
                     onDeleteCustom: () async {
                       await cubit.removeCustomInstrument(match.instrument.id);
@@ -350,6 +354,8 @@ class _InstrumentTile extends StatelessWidget {
   final VoidCallback onDeleteCustom;
   final List<MatchRange> nameRanges;
   final List<MatchRange> symbolRanges;
+  final String? alias;
+  final List<MatchRange> aliasRanges;
 
   const _InstrumentTile({
     required this.instrument,
@@ -358,6 +364,8 @@ class _InstrumentTile extends StatelessWidget {
     required this.onDeleteCustom,
     this.nameRanges = const [],
     this.symbolRanges = const [],
+    this.alias,
+    this.aliasRanges = const [],
   });
 
   @override
@@ -372,12 +380,14 @@ class _InstrumentTile extends StatelessWidget {
         style: TextStyle(color: colors.textPrimary),
         highlightColor: colors.brandText,
       ),
-      subtitle: _HighlightedText(
-        text: instrument.symbol,
-        ranges: symbolRanges,
-        style: TextStyle(color: colors.textTertiary, fontSize: 12),
-        highlightColor: colors.brandText,
-      ),
+      subtitle: alias == null
+          ? _HighlightedText(
+              text: instrument.symbol,
+              ranges: symbolRanges,
+              style: TextStyle(color: colors.textTertiary, fontSize: 12),
+              highlightColor: colors.brandText,
+            )
+          : _AliasNote(symbol: instrument.symbol, alias: alias!, ranges: aliasRanges),
       trailing: Icon(Icons.chevron_right, color: colors.textTertiary),
       onTap: onTap,
     );
@@ -401,6 +411,34 @@ class _InstrumentTile extends StatelessWidget {
         child: Icon(Icons.delete, color: colors.down),
       ),
       child: tile,
+    );
+  }
+}
+
+/// "XAU · also “دهب”": why a row matched when its name and symbol didn't.
+class _AliasNote extends StatelessWidget {
+  final String symbol;
+  final String alias;
+  final List<MatchRange> ranges;
+
+  const _AliasNote({required this.symbol, required this.alias, required this.ranges});
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+    final note = AppLocalizations.of(context)!.addSearchMatchedAlias(alias);
+    final text = '$symbol · $note';
+    // The alias's ranges, moved to where the alias sits in the full line.
+    final at = text.indexOf(alias, symbol.length);
+    final offset = at < 0 ? -1 : text.substring(0, at).runes.length;
+    return _HighlightedText(
+      text: text,
+      ranges: [
+        if (offset >= 0)
+          for (final r in ranges) MatchRange(r.start + offset, r.end + offset),
+      ],
+      style: TextStyle(color: colors.textTertiary, fontSize: 12),
+      highlightColor: colors.brandText,
     );
   }
 }

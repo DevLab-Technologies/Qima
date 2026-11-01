@@ -22,6 +22,15 @@
       }
     }
   },
+  "addSearchMatchedAlias": "Also “{alias}”",
+  "@addSearchMatchedAlias": {
+    "description": "Under a search result that matched by another name, e.g. Spanish \"Oro\" for Gold",
+    "placeholders": {
+      "alias": {
+        "type": "String"
+      }
+    }
+  },
   "addSearchCustomTickerSubtitle": "For stocks, ETFs or indices not listed here",
   "addSearchNoResultsTitle": "No matches for “{query}”",
   "@addSearchNoResultsTitle": {

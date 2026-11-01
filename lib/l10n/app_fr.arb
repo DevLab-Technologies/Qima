@@ -16,6 +16,7 @@
       }
     }
   },
+  "addSearchMatchedAlias": "Aussi « {alias} »",
   "addSearchCustomTickerSubtitle": "Pour les actions, ETF ou indices non listés ici",
   "addSearchNoResultsTitle": "Aucun résultat pour « {query} »",
   "@addSearchNoResultsTitle": {

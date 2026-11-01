@@ -156,6 +156,12 @@ abstract class AppLocalizations {
   /// **'Add “{query}” as a custom ticker'**
   String addSearchCustomTickerTitle(String query);
 
+  /// Under a search result that matched by another name, e.g. Spanish "Oro" for Gold
+  ///
+  /// In en, this message translates to:
+  /// **'Also “{alias}”'**
+  String addSearchMatchedAlias(String alias);
+
   /// No description provided for @addSearchCustomTickerSubtitle.
   ///
   /// In en, this message translates to:
