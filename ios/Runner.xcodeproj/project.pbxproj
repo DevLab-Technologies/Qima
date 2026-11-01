@@ -741,11 +741,6 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					"-weak_framework",
-					FoundationModels,
-				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.devlabtechnologies.qima;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
@@ -958,11 +953,6 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					"-weak_framework",
-					FoundationModels,
-				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.devlabtechnologies.qima;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
@@ -986,11 +976,6 @@
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
-				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					"-weak_framework",
-					FoundationModels,
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.devlabtechnologies.qima;
 				PRODUCT_NAME = "$(TARGET_NAME)";
