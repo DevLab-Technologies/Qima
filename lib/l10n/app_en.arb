@@ -2201,5 +2201,9 @@
         "type": "String"
       }
     }
-  }
+  },
+  "dictationStart": "Speak a purchase",
+  "dictationStop": "Stop listening",
+  "dictationUnsupported": "Voice input in this language isn't available on this device. Qima only listens on the device, never through a server.",
+  "dictationDenied": "Microphone or speech recognition is off for Qima. Turn them on in Settings to speak a purchase."
 }

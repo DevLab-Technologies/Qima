@@ -27,6 +27,7 @@ import '../models/watchlist_sort.dart';
 import '../models/zakat.dart';
 import '../models/chart_range.dart';
 import '../services/ai_assist_provider.dart';
+import '../services/dictation_service.dart';
 import '../services/alert_runtime_store.dart';
 import '../services/alerts_store.dart';
 import '../services/app_lock_service.dart';
@@ -67,6 +68,9 @@ class AppCubit extends Cubit<AppState> {
   /// until a platform implementation exists; every feature that consults it
   /// has a deterministic path that never does.
   final AiAssistProvider aiAssist;
+
+  /// On-device speech to text for the Add field (v4 phase 4).
+  final DictationService dictation;
   late Preferences preferences;
   late BackupService backupService;
   RefreshPipeline? _pipeline;
@@ -107,6 +111,7 @@ class AppCubit extends Cubit<AppState> {
     NotificationService? notificationService,
     SwitchableCloudKVStore? cloudStore,
     AiAssistProvider? aiAssist,
+    DictationService? dictation,
     Locale? deviceLocale,
   }) {
     // Built once up front so every default-constructed store below shares
@@ -126,6 +131,7 @@ class AppCubit extends Cubit<AppState> {
       notificationService: notificationService ?? NotificationService(),
       cloudStore: resolvedCloudStore,
       aiAssist: aiAssist ?? const NullAiAssistProvider(),
+      dictation: dictation ?? const PlatformDictation(),
       deviceLocale: deviceLocale,
     );
   }
@@ -142,6 +148,7 @@ class AppCubit extends Cubit<AppState> {
     required this.notificationService,
     required this.cloudStore,
     required this.aiAssist,
+    required this.dictation,
     Locale? deviceLocale,
   })  : _deviceLocale = deviceLocale,
         super(AppState());

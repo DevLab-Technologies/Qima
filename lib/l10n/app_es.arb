@@ -830,5 +830,9 @@
   "summaryTopMover": "{asset} fue lo que más los movió, {amount}.",
   "summaryTransactions": "{count, plural, =1{Registraste 1 transacción.} other{Registraste {count} transacciones.}}",
   "chartDescription": "Del {from} al {to}: de {start} a {end}, {change}. Máximo {high} el {highDate}, mínimo {low} el {lowDate}.",
-  "chartDescriptionHidden": "Del {from} al {to}: {change}."
+  "chartDescriptionHidden": "Del {from} al {to}: {change}.",
+  "dictationStart": "Dicta una compra",
+  "dictationStop": "Dejar de escuchar",
+  "dictationUnsupported": "La entrada de voz en este idioma no está disponible en este dispositivo. Qima solo escucha en el dispositivo, nunca a través de un servidor.",
+  "dictationDenied": "El micrófono o el reconocimiento de voz están desactivados para Qima. Actívalos en Ajustes para dictar una compra."
 }

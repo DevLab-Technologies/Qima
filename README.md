@@ -205,6 +205,17 @@ watchlist data are stored locally on your device. The only network traffic is
 anonymous HTTPS price and FX requests to the endpoints listed above; no user
 data is attached to them.
 
+### Voice input
+
+The mic in Add uses the operating system's **on-device** speech recognizer
+only: `requiresOnDeviceRecognition` on iOS and macOS, and the on-device
+`SpeechRecognizer` on Android 12 and later. Audio and text never leave the
+device. When the device has no on-device model for the app's language, the
+mic says so and stays off; there is no server fallback. Web, Windows and
+Linux have no voice input. Qima asks for microphone and speech recognition
+access the first time you tap the mic, and listens only until you tap it
+again or stop speaking.
+
 ---
 
 ## Contributing

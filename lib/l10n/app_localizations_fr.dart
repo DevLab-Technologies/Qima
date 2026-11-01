@@ -2870,4 +2870,18 @@ class AppLocalizationsFr extends AppLocalizations {
   String chartDescriptionHidden(String from, String to, String change) {
     return 'Du $from au $to : $change.';
   }
+
+  @override
+  String get dictationStart => 'Dicter un achat';
+
+  @override
+  String get dictationStop => 'Arrêter l’écoute';
+
+  @override
+  String get dictationUnsupported =>
+      'La saisie vocale dans cette langue n’est pas disponible sur cet appareil. Qima n’écoute que sur l’appareil, jamais via un serveur.';
+
+  @override
+  String get dictationDenied =>
+      'Le micro ou la reconnaissance vocale est désactivé pour Qima. Activez-les dans Réglages pour dicter un achat.';
 }

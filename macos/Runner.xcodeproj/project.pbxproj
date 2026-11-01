@@ -35,6 +35,7 @@
 		33CC11132044BFA00003C045 /* MainFlutterWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33CC11122044BFA00003C045 /* MainFlutterWindow.swift */; };
 		5460139A4143DBBE2C2AB506 /* Almarai-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 408B831A0A2757B5D4BD1CED /* Almarai-Bold.ttf */; };
 		5A547C59AF5085D0AB57EB2F /* Almarai-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6059BC6DDE9EBC40764BCE82 /* Almarai-Regular.ttf */; };
+		5FD69F91CF488F7DCAE88044 /* DictationPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3794FBE2155DB3B163954FBE /* DictationPlugin.swift */; };
 		73AAC079839DB44852708F4D /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 69EC81A8A640E308BE210739 /* Cocoa.framework */; };
 		76606324EE9FD9552E639006 /* Intents.swift in Sources */ = {isa = PBXBuildFile; fileRef = E496DADE24854F1EEFBAD378 /* Intents.swift */; };
 		78A318202AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 78A3181F2AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage */; };
@@ -124,6 +125,7 @@
 		33E51913231747F40026EE4D /* DebugProfile.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = DebugProfile.entitlements; sourceTree = "<group>"; };
 		33E51914231749380026EE4D /* Release.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; path = Release.entitlements; sourceTree = "<group>"; };
 		33E5194F232828860026EE4D /* AppInfo.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = AppInfo.xcconfig; sourceTree = "<group>"; };
+		3794FBE2155DB3B163954FBE /* DictationPlugin.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DictationPlugin.swift; sourceTree = "<group>"; };
 		408B831A0A2757B5D4BD1CED /* Almarai-Bold.ttf */ = {isa = PBXFileReference; includeInIndex = 1; name = "Almarai-Bold.ttf"; path = "almarai/Almarai-Bold.ttf"; sourceTree = "<group>"; };
 		4A072E42D76CB59C63B3B8E2 /* Pods-Runner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"; sourceTree = "<group>"; };
 		4A34A460662992593804D5C2 /* Pods_RunnerTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RunnerTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -278,6 +280,7 @@
 				AC5554DCB91DEE7EA62D855B /* SystemSettingsPlugin.swift */,
 				939F245B8D59915241B3936C /* AppStore.entitlements */,
 				6273FFFE9222B2958CE83900 /* WidgetBridgePlugin.swift */,
+				3794FBE2155DB3B163954FBE /* DictationPlugin.swift */,
 			);
 			path = Runner;
 			sourceTree = "<group>";
@@ -607,6 +610,7 @@
 				E147DD45B9F3719AE3ABA33C /* CloudKVPlugin.swift in Sources */,
 				FCFA6FD55E45018E2A26DCBE /* SystemSettingsPlugin.swift in Sources */,
 				27681779DE28C68EE8095C27 /* WidgetBridgePlugin.swift in Sources */,
+				5FD69F91CF488F7DCAE88044 /* DictationPlugin.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

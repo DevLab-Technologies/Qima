@@ -115,9 +115,31 @@ into the Add search field and record the purchase in two taps.
   day, rather than cached with a snapshot: the inputs are already in
   memory and the walk is cheap.
 
+## Phase 4 — dictation
+
+**Job:** say "اشتريت عشرين جرام ذهب عيار واحد وعشرين" at the counter instead
+of typing it.
+
+- `DictationPlugin` (iOS and macOS, one Swift file per runner) and
+  `DictationChannel` (Android) require on-device recognition and report a
+  language as `unsupported` when no on-device model is installed for it.
+  `PlatformDictation` (Dart) wraps both behind `DictationService`, which
+  `AppCubit` takes like `aiAssist`, so tests use a fake.
+- The mic sits in the Add field and has four states: ready, listening,
+  unsupported (tapping explains why) and denied (tapping explains how to
+  turn access back on).
+- Recognized text goes into the field as if typed. `SpokenNumbers` first
+  turns English and Arabic number words into digits ("واحد وعشرين" → 21),
+  so the field shows what the parser reads and provenance stays literal.
+- The recognizer locale follows the app language and uses the device's
+  region for it when there is one (ar-EG on an Egyptian phone).
+- Decisions on the open questions: dictation is in the Add flow only.
+  Arabic voice is offered wherever the device has an on-device Arabic
+  model, and the mic explains itself where it hasn't. **Still to do:** test
+  Arabic dictation quality on real hardware before release. The simulator
+  can't do this.
+
 ## Open questions
 
-- Dictation in the add flow only, or in every form? (Phase 4. The proposal
-  is the add flow only.)
-- If Arabic dictation quality is poor, is English-only voice acceptable in
-  an Arabic-first app? (This decides phase 4.)
+- If Arabic dictation turns out poor on real hardware, should the mic be
+  hidden in Arabic, or kept with its quality caveat? (Phase 4 gate.)

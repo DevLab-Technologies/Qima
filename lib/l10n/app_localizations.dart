@@ -4900,6 +4900,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{from} to {to}: {change}.'**
   String chartDescriptionHidden(String from, String to, String change);
+
+  /// No description provided for @dictationStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Speak a purchase'**
+  String get dictationStart;
+
+  /// No description provided for @dictationStop.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop listening'**
+  String get dictationStop;
+
+  /// No description provided for @dictationUnsupported.
+  ///
+  /// In en, this message translates to:
+  /// **'Voice input in this language isn\'t available on this device. Qima only listens on the device, never through a server.'**
+  String get dictationUnsupported;
+
+  /// No description provided for @dictationDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Microphone or speech recognition is off for Qima. Turn them on in Settings to speak a purchase.'**
+  String get dictationDenied;
 }
 
 class _AppLocalizationsDelegate
