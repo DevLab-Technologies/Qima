@@ -64,9 +64,10 @@ class AppCubit extends Cubit<AppState> {
   final AlertRuntimeStore alertRuntimeStore;
   final NotificationService notificationService;
 
-  /// The on-device language model, if any (v4). [NullAiAssistProvider]
-  /// until a platform implementation exists; every feature that consults it
-  /// has a deterministic path that never does.
+  /// The OS's on-device language model (v4). Features reach it through
+  /// [assist], which is the null provider unless Settings · On-device
+  /// intelligence is on; every feature has a deterministic path that never
+  /// consults it.
   final AiAssistProvider aiAssist;
 
   /// On-device speech to text for the Add field (v4 phase 4).
@@ -130,7 +131,7 @@ class AppCubit extends Cubit<AppState> {
       alertRuntimeStore: alertRuntimeStore ?? AlertRuntimeStore(),
       notificationService: notificationService ?? NotificationService(),
       cloudStore: resolvedCloudStore,
-      aiAssist: aiAssist ?? const NullAiAssistProvider(),
+      aiAssist: aiAssist ?? const PlatformAiAssistProvider(),
       dictation: dictation ?? const PlatformDictation(),
       deviceLocale: deviceLocale,
     );
@@ -198,6 +199,7 @@ class AppCubit extends Cubit<AppState> {
     final preferredPortfolioRange = preferences.preferredPortfolioRange;
     final hideBalances = preferences.hideBalances;
     final plainSummaries = preferences.plainSummaries;
+    final onDeviceModel = preferences.onDeviceModel;
     final appLockEnabled = preferences.appLockEnabled;
     final lockGrace = preferences.lockGrace;
     final deliverAlertsOnThisDevice = preferences.deliverAlertsOnThisDevice;
@@ -278,6 +280,7 @@ class AppCubit extends Cubit<AppState> {
       seriesByID: seriesByID,
       hideBalances: hideBalances,
       plainSummaries: plainSummaries,
+      onDeviceModel: onDeviceModel,
       appLockEnabled: appLockEnabled,
       lockGrace: lockGrace,
       backupReminderDue: backupService.isReminderDue(),
@@ -985,6 +988,31 @@ class AppCubit extends Cubit<AppState> {
     if (value == state.plainSummaries) return;
     await preferences.setPlainSummaries(value);
     emit(state.copyWith(plainSummaries: value));
+  }
+
+  Future<void> setOnDeviceModel(bool value) async {
+    if (value == state.onDeviceModel) return;
+    await preferences.setOnDeviceModel(value);
+    emit(state.copyWith(onDeviceModel: value));
+  }
+
+  /// The model features may consult: [aiAssist] when the user turned it on,
+  /// else nothing.
+  AiAssistProvider get assist => state.onDeviceModel ? aiAssist : const NullAiAssistProvider();
+
+  final Map<String, String> _phrased = {};
+
+  /// [sentence] reworded by the on-device model, or [sentence] itself when
+  /// the model is off, unavailable, or its wording fails [acceptPhrasing].
+  /// Remembered per sentence, so a rebuild never asks twice.
+  Future<String> phrased(String sentence, String localeTag) async {
+    if (!state.onDeviceModel) return sentence;
+    final key = '$localeTag|$sentence';
+    final cached = _phrased[key];
+    if (cached != null) return cached;
+    final candidate = await aiAssist.phrase(sentence, localeTag);
+    final result = candidate != null && acceptPhrasing(sentence, candidate) ? candidate.trim() : sentence;
+    return _phrased[key] = result;
   }
 
   /// Enabling app lock requires a successful authentication first — the

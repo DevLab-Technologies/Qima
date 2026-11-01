@@ -2877,4 +2877,30 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get dictationDenied =>
       'الميكروفون أو التعرّف على الكلام متوقف لقيمة. فعّلهما من الإعدادات لتقول عملية الشراء.';
+
+  @override
+  String get settingsIntelligence => 'الذكاء على الجهاز';
+
+  @override
+  String get settingsUseModel => 'استخدام النموذج على الجهاز';
+
+  @override
+  String get settingsUseModelFooter =>
+      'يساعد في قراءة عمليات الشراء التي لا تستطيع قيمة فهمها وحدها، ويصوغ ملخص الشهر. يعمل على هذا الجهاز فقط، ولا يقدّم نصائح، ولا يضع أي رقم: كل رقم يأتي من سجلاتك أنت.';
+
+  @override
+  String get modelReady => 'جاهز على هذا الجهاز';
+
+  @override
+  String get modelUnsupported => 'غير متاح على هذا الجهاز';
+
+  @override
+  String get modelTurnedOff =>
+      'فعّل Apple Intelligence من إعدادات النظام لاستخدامه';
+
+  @override
+  String get modelNotReady => 'ما زال النموذج يُنزَّل';
+
+  @override
+  String get modelUnsupportedLanguage => 'غير متاح بهذه اللغة بعد';
 }

@@ -38,10 +38,16 @@ class _FakeProvider implements AiAssistProvider {
   Future<bool> isAvailable() async => true;
 
   @override
+  Future<ModelStatus> status(String localeTag) async => ModelStatus.ready;
+
+  @override
   Future<CaptureSpans?> labelTransaction(String text, String localeTag) async {
     calls++;
     return spans;
   }
+
+  @override
+  Future<String?> phrase(String sentence, String localeTag) async => null;
 }
 
 void main() {

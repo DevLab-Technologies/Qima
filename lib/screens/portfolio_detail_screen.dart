@@ -170,6 +170,7 @@ class PortfolioDetailScreen extends StatelessWidget {
                     const SizedBox(height: DS.spaceSM),
                     _SummaryCard(
                       sentence: periodSummarySentence(context, summary, currency: state.baseCurrency, hidden: hidden),
+                      hidden: hidden,
                     ),
                   ],
                 if (state.lots.isNotEmpty) ...[
@@ -231,15 +232,52 @@ class PortfolioDetailScreen extends StatelessWidget {
 }
 
 /// The past month in a sentence (v4 phase 3), when turned on in Settings.
-class _SummaryCard extends StatelessWidget {
+/// Shows the template sentence at once; with the on-device model on, swaps
+/// in its wording once that passes `acceptPhrasing` (phase 6).
+class _SummaryCard extends StatefulWidget {
   final String sentence;
+  final bool hidden;
 
-  const _SummaryCard({required this.sentence});
+  const _SummaryCard({required this.sentence, required this.hidden});
+
+  @override
+  State<_SummaryCard> createState() => _SummaryCardState();
+}
+
+class _SummaryCardState extends State<_SummaryCard> {
+  String? _phrased;
+  String? _for;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _phrase();
+  }
+
+  @override
+  void didUpdateWidget(covariant _SummaryCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _phrase();
+  }
+
+  void _phrase() {
+    // Masked sentences have nothing to word better.
+    final cubit = context.read<AppCubit>();
+    // Turning the model on or off words the same sentence again.
+    final key = '${cubit.state.onDeviceModel}|${widget.sentence}';
+    if (widget.hidden || key == _for) return;
+    _for = key;
+    _phrased = null;
+    cubit.phrased(widget.sentence, Localizations.localeOf(context).toLanguageTag()).then((value) {
+      if (mounted && _for == key) setState(() => _phrased = value);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final colors = context.colors;
+    final sentence = widget.hidden ? widget.sentence : (_phrased ?? widget.sentence);
     return DSCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

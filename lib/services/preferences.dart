@@ -143,6 +143,7 @@ class Preferences {
   static const String _preferredPortfolioRangeKey = 'preferredPortfolioRange';
   static const String _hideBalancesKey = 'hideBalances';
   static const String _plainSummariesKey = 'plainSummaries';
+  static const String _onDeviceModelKey = 'onDeviceModel';
   static const String _appLockEnabledKey = 'appLockEnabled';
   static const String _lockGraceKey = 'lockGrace';
   static const String _deliverAlertsOnThisDeviceKey = 'deliverAlertsOnThisDevice';
@@ -328,6 +329,14 @@ class Preferences {
 
   Future<void> setPlainSummaries(bool value) async {
     await local.setBool(_plainSummariesKey, value);
+  }
+
+  /// v4: whether the OS's on-device model may help read typed purchases
+  /// and word summaries. Off until asked for, per device.
+  bool get onDeviceModel => local.getBool(_onDeviceModelKey) ?? false;
+
+  Future<void> setOnDeviceModel(bool value) async {
+    await local.setBool(_onDeviceModelKey, value);
   }
 
   /// Local-only, like [hideBalances] — app lock is tied to this device's own

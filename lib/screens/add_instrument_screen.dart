@@ -260,7 +260,7 @@ class _AddInstrumentScreenState extends State<AddInstrumentScreen> {
     final draft = await captureTransaction(
       query,
       captureContext,
-      provider: cubit.aiAssist,
+      provider: cubit.assist,
       localeTag: Localizations.localeOf(context).toLanguageTag(),
     );
     if (draft == null || !mounted) return;

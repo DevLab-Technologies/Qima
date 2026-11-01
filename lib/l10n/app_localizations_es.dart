@@ -2880,4 +2880,30 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get dictationDenied =>
       'El micrófono o el reconocimiento de voz están desactivados para Qima. Actívalos en Ajustes para dictar una compra.';
+
+  @override
+  String get settingsIntelligence => 'Inteligencia en el dispositivo';
+
+  @override
+  String get settingsUseModel => 'Usar el modelo del dispositivo';
+
+  @override
+  String get settingsUseModelFooter =>
+      'Ayuda a leer compras que Qima no puede entender por sí sola y redacta el resumen del mes. Funciona solo en este dispositivo, nunca da consejos y nunca aporta un número: cada cifra sale de tus propios registros.';
+
+  @override
+  String get modelReady => 'Listo en este dispositivo';
+
+  @override
+  String get modelUnsupported => 'No disponible en este dispositivo';
+
+  @override
+  String get modelTurnedOff =>
+      'Activa Apple Intelligence en los Ajustes del sistema para usarlo';
+
+  @override
+  String get modelNotReady => 'El modelo aún se está descargando';
+
+  @override
+  String get modelUnsupportedLanguage => 'Aún no disponible en este idioma';
 }
