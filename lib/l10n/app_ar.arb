@@ -16,6 +16,7 @@
       }
     }
   },
+  "addSearchMatchedAlias": "أو «{alias}»",
   "addSearchCustomTickerSubtitle": "للأسهم أو الصناديق المتداولة أو المؤشرات غير المدرجة هنا",
   "addSearchNoResultsTitle": "لا نتائج لـ ”{query}“",
   "@addSearchNoResultsTitle": {

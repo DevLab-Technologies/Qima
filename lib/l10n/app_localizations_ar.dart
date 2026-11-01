@@ -39,6 +39,11 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
+  String addSearchMatchedAlias(String alias) {
+    return 'أو «$alias»';
+  }
+
+  @override
   String get addSearchCustomTickerSubtitle =>
       'للأسهم أو الصناديق المتداولة أو المؤشرات غير المدرجة هنا';
 

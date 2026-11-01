@@ -16,19 +16,27 @@ class MatchRange extends Equatable {
 
 /// One instrument that matched a search query, with the ranges (in the
 /// ORIGINAL, un-normalized display name/symbol) the query matched.
+///
+/// When neither the name nor the symbol matched, [alias] is the other name
+/// that did ("Oro", "دهب") and [aliasRanges] the part of it the query
+/// matched, so the row can say why it is there.
 class InstrumentMatch extends Equatable {
   final Instrument instrument;
   final List<MatchRange> nameRanges;
   final List<MatchRange> symbolRanges;
+  final String? alias;
+  final List<MatchRange> aliasRanges;
 
   const InstrumentMatch({
     required this.instrument,
     this.nameRanges = const [],
     this.symbolRanges = const [],
+    this.alias,
+    this.aliasRanges = const [],
   });
 
   @override
-  List<Object?> get props => [instrument, nameRanges, symbolRanges];
+  List<Object?> get props => [instrument, nameRanges, symbolRanges, alias, aliasRanges];
 }
 
 /// Matches for a single [AssetClass], in catalog order.
@@ -158,7 +166,8 @@ class InstrumentSearch {
   }
 
   /// Filters [instruments] by [query] against each one's [displayName] and
-  /// symbol, grouped by asset class in catalog order (the same order
+  /// symbol, then its [aliases] (names in other languages, everyday words)
+  /// when neither matched, grouped by asset class in catalog order (the same order
   /// [instruments] was passed in). Instruments with no match in either field
   /// are dropped; a blank/whitespace-only query is not a special case here —
   /// callers should show the plain unfiltered catalog UI themselves when the
@@ -167,6 +176,7 @@ class InstrumentSearch {
     List<Instrument> instruments,
     String query, {
     required String Function(Instrument) displayName,
+    Iterable<String> Function(Instrument)? aliases,
   }) {
     final normalizedQuery = _normalize(query.trim());
     if (normalizedQuery.isEmpty) return const [];
@@ -176,10 +186,14 @@ class InstrumentSearch {
       final name = displayName(instrument);
       final nameRanges = _matchRanges(name, normalizedQuery);
       final symbolRanges = _matchRanges(instrument.symbol, normalizedQuery);
-      if (nameRanges.isEmpty && symbolRanges.isEmpty) continue;
-      byClass.putIfAbsent(instrument.assetClass, () => []).add(
-            InstrumentMatch(instrument: instrument, nameRanges: nameRanges, symbolRanges: symbolRanges),
-          );
+      InstrumentMatch? match;
+      if (nameRanges.isNotEmpty || symbolRanges.isNotEmpty) {
+        match = InstrumentMatch(instrument: instrument, nameRanges: nameRanges, symbolRanges: symbolRanges);
+      } else if (aliases != null) {
+        match = _aliasMatch(instrument, aliases(instrument), normalizedQuery);
+      }
+      if (match == null) continue;
+      byClass.putIfAbsent(instrument.assetClass, () => []).add(match);
     }
 
     final groups = <InstrumentSearchGroup>[];
@@ -189,5 +203,22 @@ class InstrumentSearch {
       groups.add(InstrumentSearchGroup(assetClass: assetClass, matches: matches));
     }
     return groups;
+  }
+
+  /// The alias that best explains the match: one the query starts, then
+  /// the shortest, so "دول" shows "دولار" rather than a longer phrase.
+  static InstrumentMatch? _aliasMatch(Instrument instrument, Iterable<String> aliases, String normalizedQuery) {
+    ({String alias, List<MatchRange> ranges, bool prefix})? best;
+    for (final alias in aliases) {
+      final ranges = _matchRanges(alias, normalizedQuery);
+      if (ranges.isEmpty) continue;
+      final prefix = ranges.first.start == 0;
+      final better = best == null ||
+          (prefix && !best.prefix) ||
+          (prefix == best.prefix && alias.length < best.alias.length);
+      if (better) best = (alias: alias, ranges: ranges, prefix: prefix);
+    }
+    if (best == null) return null;
+    return InstrumentMatch(instrument: instrument, alias: best.alias, aliasRanges: best.ranges);
   }
 }
