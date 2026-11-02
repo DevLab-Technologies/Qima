@@ -60,7 +60,9 @@ class SpokenNumbers {
         i++;
         continue;
       }
-      out.write(_format(run.value));
+      out
+        ..write(run.prefix)
+        ..write(_format(run.value));
       i = run.end;
     }
     return out.toString();
@@ -71,7 +73,10 @@ class SpokenNumbers {
 
   /// The longest run of number words starting at token [start], with the
   /// token index after it. Whitespace tokens between words belong to the run.
-  static ({double value, int end})? _readRun(List<String> tokens, int start) {
+  /// A leading ب ("for", as in "بمية جنيه") is kept as [prefix], so the
+  /// parser still reads the price.
+  static ({double value, int end, String prefix})? _readRun(List<String> tokens, int start) {
+    var prefix = '';
     var total = 0.0;
     var current = 0.0;
     var end = start;
@@ -83,7 +88,11 @@ class SpokenNumbers {
         i++;
         continue;
       }
-      final word = _bare(token);
+      var word = _bare(token);
+      if (!any && word.length > 1 && word.startsWith('ب') && _value(word.substring(1)) != null) {
+        prefix = 'ب';
+        word = word.substring(1);
+      }
       // "and" / و only joins numbers when one follows.
       final joined = word.startsWith('و') && word.length > 1 && _value(word.substring(1)) != null;
       final value = joined ? _value(word.substring(1)) : _value(word);
@@ -119,7 +128,7 @@ class SpokenNumbers {
       break;
     }
     if (!any) return null;
-    return (value: total + current, end: end);
+    return (value: total + current, end: end, prefix: prefix);
   }
 
   /// (value, isScale) for a number word, or null.
