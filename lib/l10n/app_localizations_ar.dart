@@ -1107,21 +1107,21 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get onboardingStep1Body =>
-      'الذهب والفضة والعملات الرقمية والأسهم والمؤشرات والعملات، مجموعةً بعملتك.';
+      'الذهب والفضة والعملات الرقمية والأسهم والمؤشرات والعملات، مجموعة بعملتك، مع ملخص واضح لكل شهر.';
 
   @override
   String get onboardingStep2Title => 'الأسعار بالطريقة التي تشتري بها';
 
   @override
   String get onboardingStep2Body =>
-      'أسعار مباشرة بالجرام أو الأونصة أو الكيلوغرام، من عيار 24 إلى 18، بأي عملة. اضغط + للإضافة، واضغط على بطاقة لعرض مخططها.';
+      'أسعار مباشرة بالجرام أو الأونصة أو الكيلوجرام، من عيار 24 إلى 18، بأي عملة. اضغط + لتضيف إلى قائمة المتابعة، واضغط أي بطاقة لترى رسمها البياني.';
 
   @override
   String get onboardingStep3Title => 'اعرف ما تملكه';
 
   @override
   String get onboardingStep3Body =>
-      'سجّل كل عملية شراء: الكمية والوحدة والعيار والتكلفة والتاريخ. اطّلع على ما تملكه ومتوسط تكلفتك وقيمتك وأرباحك.';
+      'اضغط +، ثم «أضف حيازة»، واكتب ما اشتريته، أو قُله أو امسح إيصالًا. يُقرأ على هذا الجهاز ولا يُحفظ إلا حين تؤكد. اعرف ما تملكه ومتوسط تكلفتك وقيمته وربحك.';
 
   @override
   String get onboardingStep4Title => 'لا تفوّت أي تحرك';
@@ -1129,6 +1129,10 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get onboardingStep4Body =>
       'احصل على إشعار عند تجاوز السعر لمستوى معيّن أو تحرّكه بنسبة مئوية. أضف الأسعار إلى الشاشة الرئيسية وشاشة القفل.';
+
+  @override
+  String get onboardingStep4BodyApple =>
+      'تلقَّ تنبيهًا حين يتجاوز السعر مستوى معينًا أو يتحرك بنسبة ما. ضع الأسعار على الشاشة الرئيسية وشاشة القفل، أو اسأل Siri عن قيمة محفظتك.';
 
   @override
   String get onboardingStep5Title => 'خاص بتصميمه';
@@ -1231,7 +1235,8 @@ class AppLocalizationsAr extends AppLocalizations {
   String get helpWatchlistStep2Title => 'أضف أصلًا';
 
   @override
-  String get helpWatchlistStep2Body => 'اضغط على + وابحث بالاسم أو الرمز.';
+  String get helpWatchlistStep2Body =>
+      'اضغط + في الأسفل، ثم «أضف إلى قائمة المتابعة».';
 
   @override
   String get helpWatchlistStep3Title => 'صفِّ القائمة';
@@ -1319,7 +1324,8 @@ class AppLocalizationsAr extends AppLocalizations {
   String get helpPortfolioStep3Title => 'أضف عملية شراء';
 
   @override
-  String get helpPortfolioStep3Body => 'افتح أصلًا، ثم اضغط على +.';
+  String get helpPortfolioStep3Body =>
+      'اضغط + في الأسفل، ثم «أضف حيازة». أو افتح أصلًا واضغط المقتنيات.';
 
   @override
   String get helpPortfolioStep4Title => 'غيّر العملة';
@@ -1334,6 +1340,20 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get helpPortfolioStep5Body =>
       'فعّل إخفاء الأرصدة في الإعدادات لإخفاء كل القيم.';
+
+  @override
+  String get helpPortfolioStep6Title => 'الشهر الماضي';
+
+  @override
+  String get helpPortfolioStep6Body =>
+      'ملخص قصير لتحرّك مقتنياتك، محسوب من سجلاتك أنت. يمكنك إيقافه من الإعدادات.';
+
+  @override
+  String get helpPortfolioStep7Title => 'اسأل Siri';
+
+  @override
+  String get helpPortfolioStep7Body =>
+      'اسأل Siri أو استخدم الاختصارات لتعرف قيمة محفظتك أو سعرًا ما دون فتح Qima.';
 
   @override
   String get helpLotEditorTitle => 'المعاملة';
@@ -1378,18 +1398,18 @@ class AppLocalizationsAr extends AppLocalizations {
       'عدّل أي معاملة أو احذفها في أي وقت من سجل الحيازة.';
 
   @override
-  String get helpAddAssetTitle => 'أضف إلى قائمة المتابعة';
+  String get helpAddAssetTitle => 'أضف إلى المتابعة أو حيازة';
 
   @override
   String get helpAddAssetSummary =>
-      'ابحث عن شيء لمتابعته وأضفه إلى قائمة متابعتك.';
+      'تابع سعرًا في قائمة المتابعة، أو سجّل شيئًا اشتريته.';
 
   @override
   String get helpAddAssetStep1Title => 'ابحث';
 
   @override
   String get helpAddAssetStep1Body =>
-      'اضغط +، ثم «أضف إلى قائمة المتابعة». اكتب اسمًا أو رمزًا، مثل الذهب أو BTC أو AAPL.';
+      'اضغط +، ثم «أضف إلى قائمة المتابعة». ابحث بالاسم أو الرمز بأي لغة من لغات التطبيق، مثل ذهب أو gold أو BTC.';
 
   @override
   String get helpAddAssetStep2Title => 'اختر نتيجة';
@@ -1525,6 +1545,13 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get helpSettingsStep5Body =>
       'العملة الأساسية ومدى المخطط وتحديث الودجت واللغة.';
+
+  @override
+  String get helpSettingsStep6Title => 'الذكاء على الجهاز';
+
+  @override
+  String get helpSettingsStep6Body =>
+      'يمكنك أن تسمح لنموذج اللغة في هذا الجهاز بالمساعدة في قراءة المشتريات وصياغة الملخص. يعمل هنا فقط، ولا يقدّم نصيحة، ولا يضع أي رقم.';
 
   @override
   String get helpBackupTitle => 'النسخ الاحتياطي والاستعادة';
@@ -2970,5 +2997,12 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get helpAddAssetStep5Body =>
-      'اضغط +، ثم «أضف حيازة». اكتب أو تحدّث أو امسح إيصالًا، وراجع ما قُرئ ثم أكّد.';
+      'اضغط +، ثم «أضف حيازة». اكتب ما اشتريته، أو قُله أو امسح إيصالًا إن كان جهازك يدعم ذلك. راجع ما قُرئ ثم أكّد.';
+
+  @override
+  String get helpAddAssetStep6Title => 'يُقرأ على هذا الجهاز';
+
+  @override
+  String get helpAddAssetStep6Body =>
+      'يُقرأ الكلام والإيصالات على هذا الجهاز ولا يُرسل شيء منها. لا يُحفظ شيء حتى تؤكد، وكل رقم يأتي مما كتبته أو قلته أو مسحته.';
 }

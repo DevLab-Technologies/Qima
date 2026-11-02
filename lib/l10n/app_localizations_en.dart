@@ -1100,21 +1100,21 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get onboardingStep1Body =>
-      'Gold, silver, crypto, stocks, indices and currencies, added up in your currency.';
+      'Gold, silver, crypto, stocks, indices and currencies, added up in your currency, with a plain summary of each month.';
 
   @override
   String get onboardingStep2Title => 'Prices the way you buy';
 
   @override
   String get onboardingStep2Body =>
-      'Live prices by gram, ounce or kilogram, 24K to 18K, in any currency. Tap + to add, tap a card for its chart.';
+      'Live prices by gram, ounce or kilogram, 24K to 18K, in any currency. Tap + to add to your watchlist, tap a card for its chart.';
 
   @override
   String get onboardingStep3Title => 'Know what you hold';
 
   @override
   String get onboardingStep3Body =>
-      'Record each purchase: quantity, unit, karat, cost and date. See what you hold, your average cost, value and gain.';
+      'Tap +, then Add holding, and type what you bought, or say it or scan a receipt. It is read on this device and saved only when you confirm. See what you hold, your average cost, value and gain.';
 
   @override
   String get onboardingStep4Title => 'Never miss a move';
@@ -1122,6 +1122,10 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get onboardingStep4Body =>
       'Get notified when a price crosses a level or moves by a percent. Put prices on your Home and Lock Screen.';
+
+  @override
+  String get onboardingStep4BodyApple =>
+      'Get notified when a price crosses a level or moves by a percent. Put prices on your Home and Lock Screen, or ask Siri what your portfolio is worth.';
 
   @override
   String get onboardingStep5Title => 'Private by design';
@@ -1227,7 +1231,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get helpWatchlistStep2Title => 'Add an asset';
 
   @override
-  String get helpWatchlistStep2Body => 'Tap + and search by name or symbol.';
+  String get helpWatchlistStep2Body =>
+      'Tap + at the bottom, then Add to watchlist.';
 
   @override
   String get helpWatchlistStep3Title => 'Filter the list';
@@ -1317,7 +1322,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get helpPortfolioStep3Title => 'Add a purchase';
 
   @override
-  String get helpPortfolioStep3Body => 'Open an asset, then tap +.';
+  String get helpPortfolioStep3Body =>
+      'Tap + at the bottom, then Add holding. Or open an asset and tap Holdings.';
 
   @override
   String get helpPortfolioStep4Title => 'Change the currency';
@@ -1332,6 +1338,20 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get helpPortfolioStep5Body =>
       'Turn on Hide balances in Settings to mask every value.';
+
+  @override
+  String get helpPortfolioStep6Title => 'Past month';
+
+  @override
+  String get helpPortfolioStep6Body =>
+      'A short summary of how your holdings moved, worked out from your own records. Turn it off in Settings.';
+
+  @override
+  String get helpPortfolioStep7Title => 'Ask Siri';
+
+  @override
+  String get helpPortfolioStep7Body =>
+      'Ask Siri or use Shortcuts to hear what your portfolio is worth or check a price, without opening Qima.';
 
   @override
   String get helpLotEditorTitle => 'Transaction';
@@ -1376,18 +1396,18 @@ class AppLocalizationsEn extends AppLocalizations {
       'Edit or delete a transaction any time from the holding’s ledger.';
 
   @override
-  String get helpAddAssetTitle => 'Add to watchlist';
+  String get helpAddAssetTitle => 'Add to watchlist or holding';
 
   @override
   String get helpAddAssetSummary =>
-      'Find something to follow and add it to your watchlist.';
+      'Follow a price on your watchlist, or record something you bought.';
 
   @override
   String get helpAddAssetStep1Title => 'Search';
 
   @override
   String get helpAddAssetStep1Body =>
-      'Tap +, then Add to watchlist. Type a name or symbol, like gold, BTC or AAPL.';
+      'Tap +, then Add to watchlist. Search by name or symbol in any app language, like gold, ذهب or BTC.';
 
   @override
   String get helpAddAssetStep2Title => 'Pick a result';
@@ -1525,6 +1545,13 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get helpSettingsStep5Body =>
       'Base currency, chart range, widget refresh and language.';
+
+  @override
+  String get helpSettingsStep6Title => 'On-device intelligence';
+
+  @override
+  String get helpSettingsStep6Body =>
+      'Optionally let this device\'s own language model help read purchases and word the summary. It runs only here, never gives advice and never supplies a number.';
 
   @override
   String get helpBackupTitle => 'Backup & restore';
@@ -2952,5 +2979,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get helpAddAssetStep5Body =>
-      'Tap +, then Add holding. Type, speak or scan a receipt, check what was read, then confirm.';
+      'Tap +, then Add holding. Type what you bought, or speak it or scan a receipt where this device can. Check what was read, then confirm.';
+
+  @override
+  String get helpAddAssetStep6Title => 'Read on this device';
+
+  @override
+  String get helpAddAssetStep6Body =>
+      'Speech and receipts are read on this device and never sent anywhere. Nothing is saved until you confirm, and every number comes from what you typed, said or scanned.';
 }

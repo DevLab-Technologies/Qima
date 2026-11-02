@@ -599,7 +599,7 @@
   "@onboardingStep1Title": {
     "description": "Onboarding step 1 (Welcome) title."
   },
-  "onboardingStep1Body": "Gold, silver, crypto, stocks, indices and currencies, added up in your currency.",
+  "onboardingStep1Body": "Gold, silver, crypto, stocks, indices and currencies, added up in your currency, with a plain summary of each month.",
   "@onboardingStep1Body": {
     "description": "Onboarding step 1 (Welcome) body."
   },
@@ -607,7 +607,7 @@
   "@onboardingStep2Title": {
     "description": "Onboarding step 2 (Watchlist) title."
   },
-  "onboardingStep2Body": "Live prices by gram, ounce or kilogram, 24K to 18K, in any currency. Tap + to add, tap a card for its chart.",
+  "onboardingStep2Body": "Live prices by gram, ounce or kilogram, 24K to 18K, in any currency. Tap + to add to your watchlist, tap a card for its chart.",
   "@onboardingStep2Body": {
     "description": "Onboarding step 2 (Watchlist) body."
   },
@@ -615,7 +615,7 @@
   "@onboardingStep3Title": {
     "description": "Onboarding step 3 (Holdings) title."
   },
-  "onboardingStep3Body": "Record each purchase: quantity, unit, karat, cost and date. See what you hold, your average cost, value and gain.",
+  "onboardingStep3Body": "Tap +, then Add holding, and type what you bought, or say it or scan a receipt. It is read on this device and saved only when you confirm. See what you hold, your average cost, value and gain.",
   "@onboardingStep3Body": {
     "description": "Onboarding step 3 (Holdings) body."
   },
@@ -627,6 +627,7 @@
   "@onboardingStep4Body": {
     "description": "Onboarding step 4 (Alerts & widgets) title."
   },
+  "onboardingStep4BodyApple": "Get notified when a price crosses a level or moves by a percent. Put prices on your Home and Lock Screen, or ask Siri what your portfolio is worth.",
   "onboardingStep5Title": "Private by design",
   "@onboardingStep5Title": {
     "description": "Onboarding step 5 (Private by design) title."
@@ -755,7 +756,7 @@
   "@helpWatchlistStep2Title": {
     "description": "Watchlist help step 2 title."
   },
-  "helpWatchlistStep2Body": "Tap + and search by name or symbol.",
+  "helpWatchlistStep2Body": "Tap + at the bottom, then Add to watchlist.",
   "@helpWatchlistStep2Body": {
     "description": "Watchlist help step 2 body."
   },
@@ -859,7 +860,7 @@
   "@helpPortfolioStep3Title": {
     "description": "Portfolio help step 3 title."
   },
-  "helpPortfolioStep3Body": "Open an asset, then tap +.",
+  "helpPortfolioStep3Body": "Tap + at the bottom, then Add holding. Or open an asset and tap Holdings.",
   "@helpPortfolioStep3Body": {
     "description": "Portfolio help step 3 body."
   },
@@ -879,6 +880,10 @@
   "@helpPortfolioStep5Body": {
     "description": "Portfolio help step 5 body."
   },
+  "helpPortfolioStep6Title": "Past month",
+  "helpPortfolioStep6Body": "A short summary of how your holdings moved, worked out from your own records. Turn it off in Settings.",
+  "helpPortfolioStep7Title": "Ask Siri",
+  "helpPortfolioStep7Body": "Ask Siri or use Shortcuts to hear what your portfolio is worth or check a price, without opening Qima.",
   "helpLotEditorTitle": "Transaction",
   "@helpLotEditorTitle": {
     "description": "Lot editor help topic title."
@@ -927,11 +932,11 @@
   "@helpLotEditorStep5Body": {
     "description": "Lot editor help step 5 body."
   },
-  "helpAddAssetTitle": "Add to watchlist",
+  "helpAddAssetTitle": "Add to watchlist or holding",
   "@helpAddAssetTitle": {
     "description": "Add asset help topic title."
   },
-  "helpAddAssetSummary": "Find something to follow and add it to your watchlist.",
+  "helpAddAssetSummary": "Follow a price on your watchlist, or record something you bought.",
   "@helpAddAssetSummary": {
     "description": "Add asset help topic summary line."
   },
@@ -939,7 +944,7 @@
   "@helpAddAssetStep1Title": {
     "description": "Add asset help step 1 title."
   },
-  "helpAddAssetStep1Body": "Tap +, then Add to watchlist. Type a name or symbol, like gold, BTC or AAPL.",
+  "helpAddAssetStep1Body": "Tap +, then Add to watchlist. Search by name or symbol in any app language, like gold, ذهب or BTC.",
   "@helpAddAssetStep1Body": {
     "description": "Add asset help step 1 body."
   },
@@ -1103,6 +1108,8 @@
   "@helpSettingsStep5Body": {
     "description": "Settings help step 5 body."
   },
+  "helpSettingsStep6Title": "On-device intelligence",
+  "helpSettingsStep6Body": "Optionally let this device's own language model help read purchases and word the summary. It runs only here, never gives advice and never supplies a number.",
   "helpBackupTitle": "Backup & restore",
   "@helpBackupTitle": {
     "description": "Backup & restore help topic title."
@@ -2241,5 +2248,7 @@
   },
   "currencyFieldMore": "More",
   "helpAddAssetStep5Title": "Add a holding",
-  "helpAddAssetStep5Body": "Tap +, then Add holding. Type, speak or scan a receipt, check what was read, then confirm."
+  "helpAddAssetStep5Body": "Tap +, then Add holding. Type what you bought, or speak it or scan a receipt where this device can. Check what was read, then confirm.",
+  "helpAddAssetStep6Title": "Read on this device",
+  "helpAddAssetStep6Body": "Speech and receipts are read on this device and never sent anywhere. Nothing is saved until you confirm, and every number comes from what you typed, said or scanned."
 }

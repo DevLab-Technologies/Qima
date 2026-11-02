@@ -1113,21 +1113,21 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get onboardingStep1Body =>
-      'Or, argent, cryptomonnaies, actions, indices et devises, additionnés dans votre devise.';
+      'Or, argent, crypto, actions, indices et devises, additionnés dans votre devise, avec un résumé simple de chaque mois.';
 
   @override
   String get onboardingStep2Title => 'Des prix comme vous achetez';
 
   @override
   String get onboardingStep2Body =>
-      'Prix en direct au gramme, à l\'once ou au kilogramme, de 24 à 18 carats, dans n\'importe quelle devise. Appuyez sur + pour ajouter, appuyez sur une carte pour son graphique.';
+      'Prix en direct au gramme, à l\'once ou au kilo, de 24K à 18K, dans n\'importe quelle devise. Touchez + pour ajouter au suivi, touchez une carte pour son graphique.';
 
   @override
   String get onboardingStep3Title => 'Sachez ce que vous détenez';
 
   @override
   String get onboardingStep3Body =>
-      'Enregistrez chaque achat : quantité, unité, carat, coût et date. Consultez ce que vous détenez, votre coût moyen, la valeur et le gain.';
+      'Touchez +, puis Ajouter une position, et saisissez votre achat, ou dictez-le ou scannez un reçu. Il est lu sur cet appareil et enregistré seulement quand vous confirmez. Voyez ce que vous détenez, votre coût moyen, la valeur et le gain.';
 
   @override
   String get onboardingStep4Title => 'Ne manquez plus aucun mouvement';
@@ -1135,6 +1135,10 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get onboardingStep4Body =>
       'Recevez une notification quand un prix franchit un niveau ou évolue d\'un pourcentage. Affichez les prix sur votre écran d\'accueil et de verrouillage.';
+
+  @override
+  String get onboardingStep4BodyApple =>
+      'Soyez averti quand un prix franchit un seuil ou bouge d\'un pourcentage. Mettez des prix sur l\'écran d\'accueil et l\'écran verrouillé, ou demandez à Siri la valeur de votre portefeuille.';
 
   @override
   String get onboardingStep5Title => 'Privé par conception';
@@ -1242,7 +1246,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get helpWatchlistStep2Body =>
-      'Appuyez sur + et recherchez par nom ou symbole.';
+      'Touchez + en bas, puis Ajouter au suivi.';
 
   @override
   String get helpWatchlistStep3Title => 'Filtrez la liste';
@@ -1333,7 +1337,8 @@ class AppLocalizationsFr extends AppLocalizations {
   String get helpPortfolioStep3Title => 'Ajoutez un achat';
 
   @override
-  String get helpPortfolioStep3Body => 'Ouvrez un actif, puis appuyez sur +.';
+  String get helpPortfolioStep3Body =>
+      'Touchez + en bas, puis Ajouter une position. Ou ouvrez un actif et touchez Positions.';
 
   @override
   String get helpPortfolioStep4Title => 'Changez la devise';
@@ -1348,6 +1353,20 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get helpPortfolioStep5Body =>
       'Activez Masquer les montants dans Réglages pour masquer toutes les valeurs.';
+
+  @override
+  String get helpPortfolioStep6Title => 'Le mois dernier';
+
+  @override
+  String get helpPortfolioStep6Body =>
+      'Un court résumé de l\'évolution de vos positions, calculé à partir de vos propres données. Désactivez-le dans Réglages.';
+
+  @override
+  String get helpPortfolioStep7Title => 'Demandez à Siri';
+
+  @override
+  String get helpPortfolioStep7Body =>
+      'Demandez à Siri ou utilisez Raccourcis pour connaître la valeur de votre portefeuille ou un prix, sans ouvrir Qima.';
 
   @override
   String get helpLotEditorTitle => 'Transaction';
@@ -1392,18 +1411,18 @@ class AppLocalizationsFr extends AppLocalizations {
       'Modifiez ou supprimez une transaction à tout moment depuis le registre de l’avoir.';
 
   @override
-  String get helpAddAssetTitle => 'Ajouter au suivi';
+  String get helpAddAssetTitle => 'Ajouter au suivi ou une position';
 
   @override
   String get helpAddAssetSummary =>
-      'Trouvez un actif à suivre et ajoutez-le à votre liste de suivi.';
+      'Suivez un prix dans votre liste de suivi, ou enregistrez un achat.';
 
   @override
   String get helpAddAssetStep1Title => 'Recherchez';
 
   @override
   String get helpAddAssetStep1Body =>
-      'Touchez +, puis Ajouter au suivi. Saisissez un nom ou un symbole, comme or, BTC ou AAPL.';
+      'Touchez +, puis Ajouter au suivi. Cherchez par nom ou symbole dans n\'importe quelle langue de l\'app, comme or, ذهب ou BTC.';
 
   @override
   String get helpAddAssetStep2Title => 'Choisissez un résultat';
@@ -1543,6 +1562,13 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get helpSettingsStep5Body =>
       'Devise de base, période du graphique, actualisation du widget et langue.';
+
+  @override
+  String get helpSettingsStep6Title => 'Intelligence sur l\'appareil';
+
+  @override
+  String get helpSettingsStep6Body =>
+      'Si vous le souhaitez, laissez le modèle de langage de cet appareil aider à lire les achats et à rédiger le résumé. Il ne fonctionne qu\'ici, ne donne jamais de conseil et ne fournit jamais de nombre.';
 
   @override
   String get helpBackupTitle => 'Sauvegarde et restauration';
@@ -2979,5 +3005,12 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get helpAddAssetStep5Body =>
-      'Touchez +, puis Ajouter une position. Saisissez, dictez ou scannez un reçu, vérifiez ce qui a été lu, puis confirmez.';
+      'Touchez +, puis Ajouter une position. Saisissez votre achat, ou dictez-le ou scannez un reçu si cet appareil le permet. Vérifiez ce qui a été lu, puis confirmez.';
+
+  @override
+  String get helpAddAssetStep6Title => 'Lu sur cet appareil';
+
+  @override
+  String get helpAddAssetStep6Body =>
+      'La voix et les reçus sont lus sur cet appareil et ne sont jamais envoyés. Rien n\'est enregistré avant votre confirmation, et chaque nombre vient de ce que vous avez saisi, dit ou scanné.';
 }

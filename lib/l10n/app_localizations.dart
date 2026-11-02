@@ -2003,7 +2003,7 @@ abstract class AppLocalizations {
   /// Onboarding step 1 (Welcome) body.
   ///
   /// In en, this message translates to:
-  /// **'Gold, silver, crypto, stocks, indices and currencies, added up in your currency.'**
+  /// **'Gold, silver, crypto, stocks, indices and currencies, added up in your currency, with a plain summary of each month.'**
   String get onboardingStep1Body;
 
   /// Onboarding step 2 (Watchlist) title.
@@ -2015,7 +2015,7 @@ abstract class AppLocalizations {
   /// Onboarding step 2 (Watchlist) body.
   ///
   /// In en, this message translates to:
-  /// **'Live prices by gram, ounce or kilogram, 24K to 18K, in any currency. Tap + to add, tap a card for its chart.'**
+  /// **'Live prices by gram, ounce or kilogram, 24K to 18K, in any currency. Tap + to add to your watchlist, tap a card for its chart.'**
   String get onboardingStep2Body;
 
   /// Onboarding step 3 (Holdings) title.
@@ -2027,7 +2027,7 @@ abstract class AppLocalizations {
   /// Onboarding step 3 (Holdings) body.
   ///
   /// In en, this message translates to:
-  /// **'Record each purchase: quantity, unit, karat, cost and date. See what you hold, your average cost, value and gain.'**
+  /// **'Tap +, then Add holding, and type what you bought, or say it or scan a receipt. It is read on this device and saved only when you confirm. See what you hold, your average cost, value and gain.'**
   String get onboardingStep3Body;
 
   /// Onboarding step 4 (Alerts & widgets) title.
@@ -2041,6 +2041,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Get notified when a price crosses a level or moves by a percent. Put prices on your Home and Lock Screen.'**
   String get onboardingStep4Body;
+
+  /// No description provided for @onboardingStep4BodyApple.
+  ///
+  /// In en, this message translates to:
+  /// **'Get notified when a price crosses a level or moves by a percent. Put prices on your Home and Lock Screen, or ask Siri what your portfolio is worth.'**
+  String get onboardingStep4BodyApple;
 
   /// Onboarding step 5 (Private by design) title.
   ///
@@ -2225,7 +2231,7 @@ abstract class AppLocalizations {
   /// Watchlist help step 2 body.
   ///
   /// In en, this message translates to:
-  /// **'Tap + and search by name or symbol.'**
+  /// **'Tap + at the bottom, then Add to watchlist.'**
   String get helpWatchlistStep2Body;
 
   /// Watchlist help step 3 title.
@@ -2381,7 +2387,7 @@ abstract class AppLocalizations {
   /// Portfolio help step 3 body.
   ///
   /// In en, this message translates to:
-  /// **'Open an asset, then tap +.'**
+  /// **'Tap + at the bottom, then Add holding. Or open an asset and tap Holdings.'**
   String get helpPortfolioStep3Body;
 
   /// Portfolio help step 4 title.
@@ -2407,6 +2413,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Turn on Hide balances in Settings to mask every value.'**
   String get helpPortfolioStep5Body;
+
+  /// No description provided for @helpPortfolioStep6Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Past month'**
+  String get helpPortfolioStep6Title;
+
+  /// No description provided for @helpPortfolioStep6Body.
+  ///
+  /// In en, this message translates to:
+  /// **'A short summary of how your holdings moved, worked out from your own records. Turn it off in Settings.'**
+  String get helpPortfolioStep6Body;
+
+  /// No description provided for @helpPortfolioStep7Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask Siri'**
+  String get helpPortfolioStep7Title;
+
+  /// No description provided for @helpPortfolioStep7Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask Siri or use Shortcuts to hear what your portfolio is worth or check a price, without opening Qima.'**
+  String get helpPortfolioStep7Body;
 
   /// Lot editor help topic title.
   ///
@@ -2483,13 +2513,13 @@ abstract class AppLocalizations {
   /// Add asset help topic title.
   ///
   /// In en, this message translates to:
-  /// **'Add to watchlist'**
+  /// **'Add to watchlist or holding'**
   String get helpAddAssetTitle;
 
   /// Add asset help topic summary line.
   ///
   /// In en, this message translates to:
-  /// **'Find something to follow and add it to your watchlist.'**
+  /// **'Follow a price on your watchlist, or record something you bought.'**
   String get helpAddAssetSummary;
 
   /// Add asset help step 1 title.
@@ -2501,7 +2531,7 @@ abstract class AppLocalizations {
   /// Add asset help step 1 body.
   ///
   /// In en, this message translates to:
-  /// **'Tap +, then Add to watchlist. Type a name or symbol, like gold, BTC or AAPL.'**
+  /// **'Tap +, then Add to watchlist. Search by name or symbol in any app language, like gold, ذهب or BTC.'**
   String get helpAddAssetStep1Body;
 
   /// Add asset help step 2 title.
@@ -2743,6 +2773,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Base currency, chart range, widget refresh and language.'**
   String get helpSettingsStep5Body;
+
+  /// No description provided for @helpSettingsStep6Title.
+  ///
+  /// In en, this message translates to:
+  /// **'On-device intelligence'**
+  String get helpSettingsStep6Title;
+
+  /// No description provided for @helpSettingsStep6Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Optionally let this device\'s own language model help read purchases and word the summary. It runs only here, never gives advice and never supplies a number.'**
+  String get helpSettingsStep6Body;
 
   /// Backup & restore help topic title.
   ///
@@ -5096,8 +5138,20 @@ abstract class AppLocalizations {
   /// No description provided for @helpAddAssetStep5Body.
   ///
   /// In en, this message translates to:
-  /// **'Tap +, then Add holding. Type, speak or scan a receipt, check what was read, then confirm.'**
+  /// **'Tap +, then Add holding. Type what you bought, or speak it or scan a receipt where this device can. Check what was read, then confirm.'**
   String get helpAddAssetStep5Body;
+
+  /// No description provided for @helpAddAssetStep6Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Read on this device'**
+  String get helpAddAssetStep6Title;
+
+  /// No description provided for @helpAddAssetStep6Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Speech and receipts are read on this device and never sent anywhere. Nothing is saved until you confirm, and every number comes from what you typed, said or scanned.'**
+  String get helpAddAssetStep6Body;
 }
 
 class _AppLocalizationsDelegate

@@ -7,6 +7,7 @@ import '../blocs/app_state.dart';
 import '../l10n/app_localizations.dart';
 import '../services/cloud_kv_store.dart';
 import '../theme/design_system.dart';
+import '../theme/help_topics.dart';
 import '../theme/qima_colors.dart';
 import 'currency_picker.dart';
 import 'onboarding_illustrations.dart';
@@ -169,7 +170,8 @@ String _step2Body(AppLocalizations l10n) => l10n.onboardingStep2Body;
 String _step3Title(AppLocalizations l10n) => l10n.onboardingStep3Title;
 String _step3Body(AppLocalizations l10n) => l10n.onboardingStep3Body;
 String _step4Title(AppLocalizations l10n) => l10n.onboardingStep4Title;
-String _step4Body(AppLocalizations l10n) => l10n.onboardingStep4Body;
+String _step4Body(AppLocalizations l10n) =>
+    assistantSupportedOnThisPlatform ? l10n.onboardingStep4BodyApple : l10n.onboardingStep4Body;
 
 class _TourPage extends StatelessWidget {
   final Widget child;

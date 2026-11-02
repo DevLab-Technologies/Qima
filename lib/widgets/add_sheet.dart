@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -9,6 +8,7 @@ import '../l10n/app_localizations.dart';
 import '../screens/add_instrument_screen.dart';
 import '../services/dictation_service.dart';
 import '../theme/design_system.dart';
+import '../theme/help_topics.dart';
 import '../theme/qima_colors.dart';
 
 /// The round + docked in the centre of the phone bottom bar, and at the top
@@ -61,10 +61,6 @@ class _AddSheet extends StatelessWidget {
 
   const _AddSheet({required this.canSpeak, required this.canScan});
 
-  /// Siri and Shortcuts answer questions on iOS 17 and macOS 14 and later.
-  static bool get _hasSiri =>
-      !kIsWeb && (defaultTargetPlatform == TargetPlatform.iOS || defaultTargetPlatform == TargetPlatform.macOS);
-
   String _holdingSubtitle(AppLocalizations l10n) => switch ((canSpeak, canScan)) {
     (true, true) => l10n.addSheetHoldingSpeakScan,
     (true, false) => l10n.addSheetHoldingSpeak,
@@ -100,7 +96,7 @@ class _AddSheet extends StatelessWidget {
                 subtitle: _holdingSubtitle(l10n),
                 onTap: () => choose(AddStart.holding),
               ),
-              if (_hasSiri)
+              if (assistantSupportedOnThisPlatform)
                 Padding(
                   padding: const EdgeInsets.only(top: DS.spaceMD),
                   child: Row(
