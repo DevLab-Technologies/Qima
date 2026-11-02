@@ -15,7 +15,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get navWatchlist => 'Suivi';
 
   @override
-  String get watchlistAdd => 'Ajouter un actif';
+  String get watchlistAdd => 'Ajouter au suivi';
 
   @override
   String get watchlistEmptyTitle => 'Votre liste de suivi est vide';
@@ -28,10 +28,13 @@ class AppLocalizationsFr extends AppLocalizations {
   String get watchlistFilterAll => 'Tous';
 
   @override
-  String get addTitle => 'Ajouter un actif';
+  String get addTitle => 'Ajouter au suivi';
 
   @override
   String get addSearchHint => 'Rechercher ou décrire un achat';
+
+  @override
+  String get addWatchSearchHint => 'Cherchez or, Bitcoin, AAPL…';
 
   @override
   String addSearchCustomTickerTitle(String query) {
@@ -1389,7 +1392,7 @@ class AppLocalizationsFr extends AppLocalizations {
       'Modifiez ou supprimez une transaction à tout moment depuis le registre de l’avoir.';
 
   @override
-  String get helpAddAssetTitle => 'Ajouter un actif';
+  String get helpAddAssetTitle => 'Ajouter au suivi';
 
   @override
   String get helpAddAssetSummary =>
@@ -1400,7 +1403,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get helpAddAssetStep1Body =>
-      'Saisissez un nom ou un symbole, comme or, BTC ou AAPL.';
+      'Touchez +, puis Ajouter au suivi. Saisissez un nom ou un symbole, comme or, BTC ou AAPL.';
 
   @override
   String get helpAddAssetStep2Title => 'Choisissez un résultat';
@@ -2945,11 +2948,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get addSheetType => 'Saisir';
 
   @override
-  String get addSheetFollow => 'Suivre un actif';
+  String get addSheetWatch => 'Ajouter au suivi';
 
   @override
-  String get addSheetFollowSubtitle =>
-      'Ajoutez son prix à votre liste de suivi';
+  String get addSheetWatchSubtitle => 'Suivez un prix. Aucun achat nécessaire.';
 
   @override
   String get addSheetSiriTip =>
@@ -2977,5 +2979,5 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get helpAddAssetStep5Body =>
-      'Touchez Ajouter, puis dictez, scannez un reçu ou saisissez-le. Vérifiez ce qui a été lu, puis confirmez.';
+      'Touchez +, puis dictez, scannez un reçu ou saisissez-le. Vérifiez ce qui a été lu, puis confirmez.';
 }

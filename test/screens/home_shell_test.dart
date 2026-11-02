@@ -261,11 +261,11 @@ void main() {
     await settle(tester);
 
     await tester.tap(find.byIcon(Icons.add));
-    final follow = find.text('Follow an asset').hitTestable();
-    for (var i = 0; i < 40 && follow.evaluate().isEmpty; i++) {
+    final watch = find.byKey(const ValueKey('addSheetWatch')).hitTestable();
+    for (var i = 0; i < 40 && watch.evaluate().isEmpty; i++) {
       await tester.pump(const Duration(milliseconds: 100));
     }
-    await tester.tap(follow);
+    await tester.tap(watch);
     await settle(tester);
     expect(find.byType(AddInstrumentScreen), findsOneWidget);
 

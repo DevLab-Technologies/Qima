@@ -117,7 +117,7 @@ abstract class AppLocalizations {
   /// No description provided for @watchlistAdd.
   ///
   /// In en, this message translates to:
-  /// **'Add asset'**
+  /// **'Add to watchlist'**
   String get watchlistAdd;
 
   /// No description provided for @watchlistEmptyTitle.
@@ -141,7 +141,7 @@ abstract class AppLocalizations {
   /// No description provided for @addTitle.
   ///
   /// In en, this message translates to:
-  /// **'Add asset'**
+  /// **'Add to watchlist'**
   String get addTitle;
 
   /// No description provided for @addSearchHint.
@@ -149,6 +149,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Search, or describe a purchase'**
   String get addSearchHint;
+
+  /// No description provided for @addWatchSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search gold, Bitcoin, AAPL…'**
+  String get addWatchSearchHint;
 
   /// No description provided for @addSearchCustomTickerTitle.
   ///
@@ -2477,7 +2483,7 @@ abstract class AppLocalizations {
   /// Add asset help topic title.
   ///
   /// In en, this message translates to:
-  /// **'Add asset'**
+  /// **'Add to watchlist'**
   String get helpAddAssetTitle;
 
   /// Add asset help topic summary line.
@@ -2495,7 +2501,7 @@ abstract class AppLocalizations {
   /// Add asset help step 1 body.
   ///
   /// In en, this message translates to:
-  /// **'Type a name or symbol, like gold, BTC or AAPL.'**
+  /// **'Tap +, then Add to watchlist. Type a name or symbol, like gold, BTC or AAPL.'**
   String get helpAddAssetStep1Body;
 
   /// Add asset help step 2 title.
@@ -5033,17 +5039,17 @@ abstract class AppLocalizations {
   /// **'Type it'**
   String get addSheetType;
 
-  /// No description provided for @addSheetFollow.
+  /// No description provided for @addSheetWatch.
   ///
   /// In en, this message translates to:
-  /// **'Follow an asset'**
-  String get addSheetFollow;
+  /// **'Add to watchlist'**
+  String get addSheetWatch;
 
-  /// No description provided for @addSheetFollowSubtitle.
+  /// No description provided for @addSheetWatchSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Add its price to your watchlist'**
-  String get addSheetFollowSubtitle;
+  /// **'Track a price. No purchase needed.'**
+  String get addSheetWatchSubtitle;
 
   /// No description provided for @addSheetSiriTip.
   ///
@@ -5090,7 +5096,7 @@ abstract class AppLocalizations {
   /// No description provided for @helpAddAssetStep5Body.
   ///
   /// In en, this message translates to:
-  /// **'Tap Add, then speak, scan a receipt or type it. Check what was read, then confirm.'**
+  /// **'Tap +, then speak, scan a receipt or type it. Check what was read, then confirm.'**
   String get helpAddAssetStep5Body;
 }
 

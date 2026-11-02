@@ -2,12 +2,13 @@
   "@@locale": "ar",
   "appTitle": "قيمة",
   "navWatchlist": "قائمة المتابعة",
-  "watchlistAdd": "إضافة أصل",
+  "watchlistAdd": "أضف إلى قائمة المتابعة",
   "watchlistEmptyTitle": "قائمة المتابعة فارغة",
   "watchlistEmptyMessage": "أضف معادن أو عملات رقمية أو أسهمًا أو عملات لبدء تتبع الأسعار.",
   "watchlistFilterAll": "الكل",
-  "addTitle": "إضافة أصل",
+  "addTitle": "أضف إلى قائمة المتابعة",
   "addSearchHint": "ابحث، أو صِف عملية شراء",
+  "addWatchSearchHint": "ابحث عن الذهب أو بيتكوين أو AAPL…",
   "addSearchCustomTickerTitle": "إضافة ”{query}“ كرمز مخصص",
   "@addSearchCustomTickerTitle": {
     "placeholders": {
@@ -429,10 +430,10 @@
   "helpLotEditorStep4Body": "يوم حدوثها. لا يمكن تأريخ بيع قبل أن تملك ما يكفي.",
   "helpLotEditorStep5Title": "احفظ",
   "helpLotEditorStep5Body": "عدّل أي معاملة أو احذفها في أي وقت من سجل الحيازة.",
-  "helpAddAssetTitle": "إضافة أصل",
+  "helpAddAssetTitle": "أضف إلى قائمة المتابعة",
   "helpAddAssetSummary": "ابحث عن شيء لمتابعته وأضفه إلى قائمة متابعتك.",
   "helpAddAssetStep1Title": "ابحث",
-  "helpAddAssetStep1Body": "اكتب اسمًا أو رمزًا، مثل الذهب أو BTC أو AAPL.",
+  "helpAddAssetStep1Body": "اضغط +، ثم «أضف إلى قائمة المتابعة». اكتب اسمًا أو رمزًا، مثل الذهب أو BTC أو AAPL.",
   "helpAddAssetStep2Title": "اختر نتيجة",
   "helpAddAssetStep2Body": "اختر العملة والوحدة التي يُعرض بها سعره، ثم أضفه إلى قائمة المتابعة.",
   "helpAddAssetStep3Title": "غير موجود في القائمة؟",
@@ -853,8 +854,8 @@
   "addSheetSpeak": "تحدّث",
   "addSheetScan": "امسح إيصالًا",
   "addSheetType": "اكتبها",
-  "addSheetFollow": "تابع أصلًا",
-  "addSheetFollowSubtitle": "أضف سعره إلى قائمة المتابعة",
+  "addSheetWatch": "أضف إلى قائمة المتابعة",
+  "addSheetWatchSubtitle": "تابع سعرًا دون الحاجة إلى شراء.",
   "addSheetSiriTip": "اسأل Siri: «كم قيمة محفظتي في Qima»",
   "addTypeExample": "مثال: اشتريت ٢٠ جرام ذهب عيار ٢١ بسعر ٤١٠٠ جنيه",
   "currencyFieldShowIn": "اعرض الأسعار بعملة",
@@ -862,5 +863,5 @@
   "currencyFieldCount": "{count} عملة متاحة",
   "currencyFieldMore": "المزيد",
   "helpAddAssetStep5Title": "سجّل عملية شراء",
-  "helpAddAssetStep5Body": "اضغط إضافة، ثم تحدّث أو امسح إيصالًا أو اكتبها. راجع ما قُرئ ثم أكّد."
+  "helpAddAssetStep5Body": "اضغط +، ثم تحدّث أو امسح إيصالًا أو اكتبها. راجع ما قُرئ ثم أكّد."
 }

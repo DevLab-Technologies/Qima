@@ -15,7 +15,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get navWatchlist => 'قائمة المتابعة';
 
   @override
-  String get watchlistAdd => 'إضافة أصل';
+  String get watchlistAdd => 'أضف إلى قائمة المتابعة';
 
   @override
   String get watchlistEmptyTitle => 'قائمة المتابعة فارغة';
@@ -28,10 +28,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get watchlistFilterAll => 'الكل';
 
   @override
-  String get addTitle => 'إضافة أصل';
+  String get addTitle => 'أضف إلى قائمة المتابعة';
 
   @override
   String get addSearchHint => 'ابحث، أو صِف عملية شراء';
+
+  @override
+  String get addWatchSearchHint => 'ابحث عن الذهب أو بيتكوين أو AAPL…';
 
   @override
   String addSearchCustomTickerTitle(String query) {
@@ -1375,7 +1378,7 @@ class AppLocalizationsAr extends AppLocalizations {
       'عدّل أي معاملة أو احذفها في أي وقت من سجل الحيازة.';
 
   @override
-  String get helpAddAssetTitle => 'إضافة أصل';
+  String get helpAddAssetTitle => 'أضف إلى قائمة المتابعة';
 
   @override
   String get helpAddAssetSummary =>
@@ -1386,7 +1389,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get helpAddAssetStep1Body =>
-      'اكتب اسمًا أو رمزًا، مثل الذهب أو BTC أو AAPL.';
+      'اضغط +، ثم «أضف إلى قائمة المتابعة». اكتب اسمًا أو رمزًا، مثل الذهب أو BTC أو AAPL.';
 
   @override
   String get helpAddAssetStep2Title => 'اختر نتيجة';
@@ -2937,10 +2940,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get addSheetType => 'اكتبها';
 
   @override
-  String get addSheetFollow => 'تابع أصلًا';
+  String get addSheetWatch => 'أضف إلى قائمة المتابعة';
 
   @override
-  String get addSheetFollowSubtitle => 'أضف سعره إلى قائمة المتابعة';
+  String get addSheetWatchSubtitle => 'تابع سعرًا دون الحاجة إلى شراء.';
 
   @override
   String get addSheetSiriTip => 'اسأل Siri: «كم قيمة محفظتي في Qima»';
@@ -2968,5 +2971,5 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get helpAddAssetStep5Body =>
-      'اضغط إضافة، ثم تحدّث أو امسح إيصالًا أو اكتبها. راجع ما قُرئ ثم أكّد.';
+      'اضغط +، ثم تحدّث أو امسح إيصالًا أو اكتبها. راجع ما قُرئ ثم أكّد.';
 }

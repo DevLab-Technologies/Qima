@@ -8,12 +8,13 @@
   "@navWatchlist": {
     "description": "Bottom navigation / navigation rail label for the watchlist tab."
   },
-  "watchlistAdd": "Add asset",
+  "watchlistAdd": "Add to watchlist",
   "watchlistEmptyTitle": "Your watchlist is empty",
   "watchlistEmptyMessage": "Add metals, crypto, stocks, or currencies to start tracking prices.",
   "watchlistFilterAll": "All",
-  "addTitle": "Add asset",
+  "addTitle": "Add to watchlist",
   "addSearchHint": "Search, or describe a purchase",
+  "addWatchSearchHint": "Search gold, Bitcoin, AAPL…",
   "addSearchCustomTickerTitle": "Add “{query}” as a custom ticker",
   "@addSearchCustomTickerTitle": {
     "placeholders": {
@@ -926,7 +927,7 @@
   "@helpLotEditorStep5Body": {
     "description": "Lot editor help step 5 body."
   },
-  "helpAddAssetTitle": "Add asset",
+  "helpAddAssetTitle": "Add to watchlist",
   "@helpAddAssetTitle": {
     "description": "Add asset help topic title."
   },
@@ -938,7 +939,7 @@
   "@helpAddAssetStep1Title": {
     "description": "Add asset help step 1 title."
   },
-  "helpAddAssetStep1Body": "Type a name or symbol, like gold, BTC or AAPL.",
+  "helpAddAssetStep1Body": "Tap +, then Add to watchlist. Type a name or symbol, like gold, BTC or AAPL.",
   "@helpAddAssetStep1Body": {
     "description": "Add asset help step 1 body."
   },
@@ -2224,8 +2225,8 @@
   "addSheetSpeak": "Speak",
   "addSheetScan": "Scan receipt",
   "addSheetType": "Type it",
-  "addSheetFollow": "Follow an asset",
-  "addSheetFollowSubtitle": "Add its price to your watchlist",
+  "addSheetWatch": "Add to watchlist",
+  "addSheetWatchSubtitle": "Track a price. No purchase needed.",
   "addSheetSiriTip": "Ask Siri: “What's my Qima portfolio worth”",
   "addTypeExample": "For example: bought 20 g of 21K gold at 4,100 EGP",
   "currencyFieldShowIn": "Show prices in",
@@ -2240,5 +2241,5 @@
   },
   "currencyFieldMore": "More",
   "helpAddAssetStep5Title": "Record a purchase",
-  "helpAddAssetStep5Body": "Tap Add, then speak, scan a receipt or type it. Check what was read, then confirm."
+  "helpAddAssetStep5Body": "Tap +, then speak, scan a receipt or type it. Check what was read, then confirm."
 }

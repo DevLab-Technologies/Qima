@@ -127,7 +127,7 @@ void main() {
     await _wait(const Duration(seconds: 1));
     await tester.tap(find.byIcon(Icons.add).first);
     await _wait(const Duration(seconds: 1));
-    await tester.tap(find.byKey(const ValueKey('addSheetFollow')));
+    await tester.tap(find.byKey(const ValueKey('addSheetWatch')));
     await _wait(const Duration(seconds: 1));
     // The search field focuses itself; keep the keyboard out of the shot.
     FocusManager.instance.primaryFocus?.unfocus();

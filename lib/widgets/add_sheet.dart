@@ -32,9 +32,10 @@ class AddButton extends StatelessWidget {
   }
 }
 
-/// Opens the Add sheet, with everything that adds: recording a purchase by
-/// voice, receipt or text, and following a new asset. Speak and Scan appear only where the device can do
-/// them; a mic that's merely turned off still shows, and explains itself.
+/// Opens the Add sheet, with everything that adds: putting an asset on the
+/// watchlist first, then recording a purchase by voice, receipt or text.
+/// Speak and Scan appear only where the device can do them; a mic that's
+/// merely turned off still shows, and explains itself.
 Future<void> showAddSheet(BuildContext context) async {
   final cubit = context.read<AppCubit>();
   final tag = dictationLocaleTag(Localizations.localeOf(context));
@@ -77,6 +78,23 @@ class _AddSheet extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              Material(
+                color: colors.tileTop,
+                borderRadius: BorderRadius.circular(DS.radiusTile),
+                child: ListTile(
+                  key: const ValueKey('addSheetWatch'),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(DS.radiusTile)),
+                  leading: Icon(Icons.list_alt_outlined, size: 28, color: colors.brand),
+                  title: Text(
+                    l10n.addSheetWatch,
+                    style: TextStyle(color: colors.textPrimary, fontWeight: FontWeight.w600),
+                  ),
+                  subtitle: Text(l10n.addSheetWatchSubtitle, style: TextStyle(color: colors.textTertiary)),
+                  trailing: Icon(Icons.chevron_right, color: colors.textTertiary),
+                  onTap: () => choose(AddStart.search),
+                ),
+              ),
+              const SizedBox(height: DS.spaceLG),
               Text(
                 l10n.addSheetRecordTitle,
                 style: Theme.of(
@@ -117,20 +135,9 @@ class _AddSheet extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: DS.spaceMD),
-              Divider(height: 1, color: colors.textTertiary.withValues(alpha: 0.2)),
-              ListTile(
-                key: const ValueKey('addSheetFollow'),
-                contentPadding: EdgeInsets.zero,
-                leading: Icon(Icons.search, color: colors.textSecondary),
-                title: Text(l10n.addSheetFollow, style: TextStyle(color: colors.textPrimary)),
-                subtitle: Text(l10n.addSheetFollowSubtitle, style: TextStyle(color: colors.textTertiary)),
-                trailing: Icon(Icons.chevron_right, color: colors.textTertiary),
-                onTap: () => choose(AddStart.search),
-              ),
               if (_hasSiri)
                 Padding(
-                  padding: const EdgeInsets.only(top: DS.spaceXS),
+                  padding: const EdgeInsets.only(top: DS.spaceMD),
                   child: Row(
                     children: [
                       Icon(Icons.record_voice_over_outlined, size: 16, color: colors.textTertiary),

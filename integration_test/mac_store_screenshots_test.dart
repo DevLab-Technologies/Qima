@@ -93,7 +93,7 @@ void main() {
     await _wait(const Duration(seconds: 1));
     await tester.tap(find.byIcon(Icons.add).first);
     await _wait(const Duration(seconds: 1));
-    await tester.tap(find.byKey(const ValueKey('addSheetFollow')));
+    await tester.tap(find.byKey(const ValueKey('addSheetWatch')));
     await _wait(const Duration(seconds: 1));
     // No Settings frame: this throwaway build has no iCloud entitlement, so
     // its Settings would show "Not signed in to iCloud".

@@ -49,9 +49,9 @@ void main() {
     await tester.pumpAndSettle();
   }
 
-  testWidgets('offers speak, scan, type and follow where the device can', (tester) async {
+  testWidgets('offers the watchlist, speak, scan and type where the device can', (tester) async {
     await openSheet(tester, dictation: DictationAvailability.available, scan: true);
-    for (final label in [en.addSheetSpeak, en.addSheetScan, en.addSheetType, en.addSheetFollow]) {
+    for (final label in [en.addSheetSpeak, en.addSheetScan, en.addSheetType, en.addSheetWatch]) {
       expect(find.text(label), findsOneWidget, reason: label);
     }
   });
@@ -69,21 +69,25 @@ void main() {
   });
 
   testWidgets('Type it opens Add for recording, with an example', (tester) async {
-    await openSheet(tester, dictation: DictationAvailability.unsupported, scan: false);
+    await openSheet(tester, dictation: DictationAvailability.unsupported, scan: true);
     await tester.tap(find.text(en.addSheetType));
     await tester.pumpAndSettle();
     final screen = tester.widget<AddInstrumentScreen>(find.byType(AddInstrumentScreen));
     expect(screen.start, AddStart.type);
     expect(find.text(en.addSheetRecordTitle), findsOneWidget);
     expect(find.text(en.addTypeExample), findsOneWidget);
+    expect(find.text(en.addSearchHint), findsOneWidget);
+    expect(find.byIcon(Icons.document_scanner_outlined), findsOneWidget);
   });
 
-  testWidgets('Follow an asset opens the plain Add screen', (tester) async {
-    await openSheet(tester, dictation: DictationAvailability.unsupported, scan: false);
-    await tester.tap(find.text(en.addSheetFollow));
+  testWidgets('Add to watchlist opens a search, without the purchase tools', (tester) async {
+    await openSheet(tester, dictation: DictationAvailability.unsupported, scan: true);
+    await tester.tap(find.text(en.addSheetWatch));
     await tester.pumpAndSettle();
     expect(find.text(en.addTitle), findsOneWidget);
+    expect(find.text(en.addWatchSearchHint), findsOneWidget);
     expect(find.text(en.addTypeExample), findsNothing);
+    expect(find.byIcon(Icons.document_scanner_outlined), findsNothing);
   });
 
   test('every language example reads as a complete purchase', () {

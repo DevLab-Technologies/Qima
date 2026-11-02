@@ -15,7 +15,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get navWatchlist => 'Seguimiento';
 
   @override
-  String get watchlistAdd => 'Añadir activo';
+  String get watchlistAdd => 'Añadir a seguimiento';
 
   @override
   String get watchlistEmptyTitle => 'Tu lista de seguimiento está vacía';
@@ -28,10 +28,13 @@ class AppLocalizationsEs extends AppLocalizations {
   String get watchlistFilterAll => 'Todos';
 
   @override
-  String get addTitle => 'Añadir activo';
+  String get addTitle => 'Añadir a seguimiento';
 
   @override
   String get addSearchHint => 'Busca o describe una compra';
+
+  @override
+  String get addWatchSearchHint => 'Busca oro, Bitcoin, AAPL…';
 
   @override
   String addSearchCustomTickerTitle(String query) {
@@ -1389,7 +1392,7 @@ class AppLocalizationsEs extends AppLocalizations {
       'Edita o elimina una transacción cuando quieras desde el registro de la tenencia.';
 
   @override
-  String get helpAddAssetTitle => 'Añadir activo';
+  String get helpAddAssetTitle => 'Añadir a seguimiento';
 
   @override
   String get helpAddAssetSummary =>
@@ -1400,7 +1403,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get helpAddAssetStep1Body =>
-      'Escribe un nombre o símbolo, como oro, BTC o AAPL.';
+      'Toca + y luego Añadir a seguimiento. Escribe un nombre o símbolo, como oro, BTC o AAPL.';
 
   @override
   String get helpAddAssetStep2Title => 'Elige un resultado';
@@ -2940,11 +2943,10 @@ class AppLocalizationsEs extends AppLocalizations {
   String get addSheetType => 'Escribir';
 
   @override
-  String get addSheetFollow => 'Seguir un activo';
+  String get addSheetWatch => 'Añadir a seguimiento';
 
   @override
-  String get addSheetFollowSubtitle =>
-      'Añade su precio a tu lista de seguimiento';
+  String get addSheetWatchSubtitle => 'Sigue un precio. No hace falta comprar.';
 
   @override
   String get addSheetSiriTip =>
@@ -2972,5 +2974,5 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get helpAddAssetStep5Body =>
-      'Toca Añadir y luego dicta, escanea un recibo o escríbela. Revisa lo leído y confirma.';
+      'Toca + y luego dicta, escanea un recibo o escríbela. Revisa lo leído y confirma.';
 }

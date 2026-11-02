@@ -130,10 +130,10 @@ Future<void> _settle(WidgetTester tester) async {
   }
 }
 
-/// Opens Add for following an asset, as the Add sheet's "Follow an asset"
+/// Opens Add for the watchlist, as the Add sheet's "Add to watchlist"
 /// does, on top of the watchlist. The sheet itself is covered by
 /// `add_sheet_test.dart` and `home_shell_test.dart`.
-Future<void> _openFollow(WidgetTester tester) async {
+Future<void> _openWatch(WidgetTester tester) async {
   unawaited(Navigator.of(tester.element(find.byType(WatchlistScreen)))
       .push(MaterialPageRoute<void>(builder: (_) => const AddInstrumentScreen())));
   await tester.pumpAndSettle();
@@ -173,7 +173,7 @@ void main() {
 
   testWidgets('the custom-ticker row is always last, even with search matches', (tester) async {
     await tester.pumpWidget(_app(cubit));
-    await _openFollow(tester);
+    await _openWatch(tester);
 
     await tester.enterText(find.byType(TextField), 'gold');
     await tester.pumpAndSettle();
@@ -192,7 +192,7 @@ void main() {
 
   testWidgets('the no-results state prefills the custom ticker screen with the query', (tester) async {
     await tester.pumpWidget(_app(cubit));
-    await _openFollow(tester);
+    await _openWatch(tester);
 
     await tester.enterText(find.byType(TextField), 'zzznotfound');
     await tester.pumpAndSettle();
@@ -208,7 +208,7 @@ void main() {
 
   testWidgets('adding from card config lands on [Watchlist, Detail] and Back returns to Watchlist', (tester) async {
     await tester.pumpWidget(_app(cubit));
-    await _openFollow(tester);
+    await _openWatch(tester);
 
     final gold = InstrumentCatalog.instrument('metal.XAU')!;
     await tester.tap(find.text('Gold').first);
@@ -240,7 +240,7 @@ void main() {
 
   testWidgets('the snackbar Undo action removes the card and pops back to the watchlist', (tester) async {
     await tester.pumpWidget(_app(cubit));
-    await _openFollow(tester);
+    await _openWatch(tester);
 
     final gold = InstrumentCatalog.instrument('metal.XAU')!;
     await tester.tap(find.text('Gold').first);
@@ -277,7 +277,7 @@ void main() {
     });
 
     await tester.pumpWidget(_app(cubit));
-    await _openFollow(tester);
+    await _openWatch(tester);
 
     await tester.enterText(find.byType(TextField), 'NEWCO');
     await tester.pumpAndSettle();
@@ -335,7 +335,7 @@ void main() {
     });
 
     await tester.pumpWidget(_app(cubit));
-    await _openFollow(tester);
+    await _openWatch(tester);
 
     await tester.tap(find.text('Gold').first);
     await tester.pumpAndSettle();

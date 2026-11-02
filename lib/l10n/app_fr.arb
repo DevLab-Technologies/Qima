@@ -3,11 +3,12 @@
   "appTitle": "Qima",
   "navWatchlist": "Suivi",
   "watchlistFilterAll": "Tous",
-  "watchlistAdd": "Ajouter un actif",
+  "watchlistAdd": "Ajouter au suivi",
   "watchlistEmptyTitle": "Votre liste de suivi est vide",
   "watchlistEmptyMessage": "Ajoutez des métaux, cryptomonnaies, actions ou devises pour suivre leurs prix.",
-  "addTitle": "Ajouter un actif",
+  "addTitle": "Ajouter au suivi",
   "addSearchHint": "Rechercher ou décrire un achat",
+  "addWatchSearchHint": "Cherchez or, Bitcoin, AAPL…",
   "addSearchCustomTickerTitle": "Ajouter « {query} » comme symbole personnalisé",
   "@addSearchCustomTickerTitle": {
     "placeholders": {
@@ -429,10 +430,10 @@
   "helpLotEditorStep4Body": "Le jour où elle a eu lieu. Une vente ne peut pas être datée d’avant que vous déteniez assez.",
   "helpLotEditorStep5Title": "Enregistrez",
   "helpLotEditorStep5Body": "Modifiez ou supprimez une transaction à tout moment depuis le registre de l’avoir.",
-  "helpAddAssetTitle": "Ajouter un actif",
+  "helpAddAssetTitle": "Ajouter au suivi",
   "helpAddAssetSummary": "Trouvez un actif à suivre et ajoutez-le à votre liste de suivi.",
   "helpAddAssetStep1Title": "Recherchez",
-  "helpAddAssetStep1Body": "Saisissez un nom ou un symbole, comme or, BTC ou AAPL.",
+  "helpAddAssetStep1Body": "Touchez +, puis Ajouter au suivi. Saisissez un nom ou un symbole, comme or, BTC ou AAPL.",
   "helpAddAssetStep2Title": "Choisissez un résultat",
   "helpAddAssetStep2Body": "Choisissez la devise et l'unité de son prix, puis ajoutez-le à votre liste.",
   "helpAddAssetStep3Title": "Absent de la liste ?",
@@ -853,8 +854,8 @@
   "addSheetSpeak": "Dicter",
   "addSheetScan": "Scanner un reçu",
   "addSheetType": "Saisir",
-  "addSheetFollow": "Suivre un actif",
-  "addSheetFollowSubtitle": "Ajoutez son prix à votre liste de suivi",
+  "addSheetWatch": "Ajouter au suivi",
+  "addSheetWatchSubtitle": "Suivez un prix. Aucun achat nécessaire.",
   "addSheetSiriTip": "Demandez à Siri : « Combien vaut mon portefeuille Qima »",
   "addTypeExample": "Par exemple : acheté 20 g d'or 21K à 4100 EGP",
   "currencyFieldShowIn": "Afficher les prix en",
@@ -862,5 +863,5 @@
   "currencyFieldCount": "{count} devises disponibles",
   "currencyFieldMore": "Plus",
   "helpAddAssetStep5Title": "Enregistrer un achat",
-  "helpAddAssetStep5Body": "Touchez Ajouter, puis dictez, scannez un reçu ou saisissez-le. Vérifiez ce qui a été lu, puis confirmez."
+  "helpAddAssetStep5Body": "Touchez +, puis dictez, scannez un reçu ou saisissez-le. Vérifiez ce qui a été lu, puis confirmez."
 }

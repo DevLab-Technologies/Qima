@@ -102,13 +102,13 @@ class _AddInstrumentScreenState extends State<AddInstrumentScreen> {
                 autofocus: start == AddStart.search || start == AddStart.type,
                 style: TextStyle(color: colors.textPrimary),
                 decoration: InputDecoration(
-                  hintText: l10n.addSearchHint,
+                  hintText: records ? l10n.addSearchHint : l10n.addWatchSearchHint,
                   hintStyle: TextStyle(color: colors.textTertiary),
                   prefixIcon: Icon(Icons.search, color: colors.textTertiary),
                   suffixIcon: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      ReceiptScanButton(onText: _setQuery, autoStart: start == AddStart.scan),
+                      if (records) ReceiptScanButton(onText: _setQuery, autoStart: start == AddStart.scan),
                       DictationButton(onText: _setQuery, autoStart: start == AddStart.speak),
                     ],
                   ),

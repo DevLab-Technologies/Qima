@@ -15,7 +15,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get navWatchlist => 'Watchlist';
 
   @override
-  String get watchlistAdd => 'Add asset';
+  String get watchlistAdd => 'Add to watchlist';
 
   @override
   String get watchlistEmptyTitle => 'Your watchlist is empty';
@@ -28,10 +28,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get watchlistFilterAll => 'All';
 
   @override
-  String get addTitle => 'Add asset';
+  String get addTitle => 'Add to watchlist';
 
   @override
   String get addSearchHint => 'Search, or describe a purchase';
+
+  @override
+  String get addWatchSearchHint => 'Search gold, Bitcoin, AAPL…';
 
   @override
   String addSearchCustomTickerTitle(String query) {
@@ -1373,7 +1376,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Edit or delete a transaction any time from the holding’s ledger.';
 
   @override
-  String get helpAddAssetTitle => 'Add asset';
+  String get helpAddAssetTitle => 'Add to watchlist';
 
   @override
   String get helpAddAssetSummary =>
@@ -1384,7 +1387,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get helpAddAssetStep1Body =>
-      'Type a name or symbol, like gold, BTC or AAPL.';
+      'Tap +, then Add to watchlist. Type a name or symbol, like gold, BTC or AAPL.';
 
   @override
   String get helpAddAssetStep2Title => 'Pick a result';
@@ -2919,10 +2922,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get addSheetType => 'Type it';
 
   @override
-  String get addSheetFollow => 'Follow an asset';
+  String get addSheetWatch => 'Add to watchlist';
 
   @override
-  String get addSheetFollowSubtitle => 'Add its price to your watchlist';
+  String get addSheetWatchSubtitle => 'Track a price. No purchase needed.';
 
   @override
   String get addSheetSiriTip => 'Ask Siri: “What\'s my Qima portfolio worth”';
@@ -2950,5 +2953,5 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get helpAddAssetStep5Body =>
-      'Tap Add, then speak, scan a receipt or type it. Check what was read, then confirm.';
+      'Tap +, then speak, scan a receipt or type it. Check what was read, then confirm.';
 }
