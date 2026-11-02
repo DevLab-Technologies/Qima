@@ -1407,7 +1407,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get helpAddAssetStep2Body =>
-      'Se añade a tu lista de seguimiento y se abre su página.';
+      'Elige la moneda y la unidad en que se muestra su precio y añádelo a tu lista.';
 
   @override
   String get helpAddAssetStep3Title => '¿No está en la lista?';
@@ -2919,4 +2919,58 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get receiptNoText =>
       'No se encontró texto en esa foto. Inténtalo de nuevo más cerca, con el recibo plano y bien iluminado.';
+
+  @override
+  String get addButton => 'Añadir';
+
+  @override
+  String get addSheetRecordTitle => 'Registrar una compra';
+
+  @override
+  String get addSheetRecordSubtitle =>
+      'Se lee en este dispositivo. No se guarda nada hasta que confirmes.';
+
+  @override
+  String get addSheetSpeak => 'Dictar';
+
+  @override
+  String get addSheetScan => 'Escanear recibo';
+
+  @override
+  String get addSheetType => 'Escribir';
+
+  @override
+  String get addSheetFollow => 'Seguir un activo';
+
+  @override
+  String get addSheetFollowSubtitle =>
+      'Añade su precio a tu lista de seguimiento';
+
+  @override
+  String get addSheetSiriTip =>
+      'Pregunta a Siri: «Cuánto vale mi cartera de Qima»';
+
+  @override
+  String get addTypeExample => 'Por ejemplo: compré 20 g de oro 21K a 4100 EGP';
+
+  @override
+  String get currencyFieldShowIn => 'Mostrar precios en';
+
+  @override
+  String get currencyFieldTransaction => 'Moneda de la operación';
+
+  @override
+  String currencyFieldCount(int count) {
+    return '$count monedas disponibles';
+  }
+
+  @override
+  String get currencyFieldMore => 'Más';
+
+  @override
+  String get helpAddAssetStep5Title => 'Registrar una compra';
+
+  @override
+  String get helpAddAssetStep5Body =>
+      'Toca Añadir y luego dicta, escanea un recibo o escríbela. Revisa lo leído y confirma.';
 }

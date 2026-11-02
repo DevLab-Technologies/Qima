@@ -150,19 +150,33 @@ void main() {
   /// the Portfolio label text also appears elsewhere on screen (e.g. the
   /// watchlist's portfolio hero), so a text finder would be ambiguous.
   Future<void> tapNavDestination(WidgetTester tester, IconData icon) async {
-    await tester.tap(find.widgetWithIcon(NavigationDestination, icon).first);
+    await tester.tap(find.descendant(of: find.byType(BottomAppBar), matching: find.byIcon(icon)));
     await settle(tester);
   }
 
-  testWidgets('shows three tabs: Watchlist, Portfolio, Settings', (tester) async {
+  /// The bottom bar marks the tab labelled [label] as selected.
+  void expectTabSelected(WidgetTester tester, String label) {
+    final tab = find.descendant(of: find.byType(BottomAppBar), matching: find.bySemanticsLabel(label));
+    expect(tester.getSemantics(tab), isSemantics(isSelected: true, isButton: true));
+  }
+
+  testWidgets('the phone bar has Watchlist and Portfolio either side of +, and Settings opens from Watchlist',
+      (tester) async {
     setSurfaceSize(tester, const Size(400, 800));
     await tester.pumpWidget(app(cubit));
     await settle(tester);
 
     final l10n = await AppLocalizations.delegate.load(const Locale('en'));
-    final labels = tester.widgetList<NavigationDestination>(find.byType(NavigationDestination)).map((d) => d.label);
-    expect(labels, containsAll(<String>[l10n.navWatchlist, l10n.portfolioTitle, l10n.settingsTitle]));
-    expect(find.byType(WatchlistScreen), findsOneWidget);
+    final bar = find.byType(BottomAppBar);
+    expect(find.descendant(of: bar, matching: find.text(l10n.navWatchlist)), findsOneWidget);
+    expect(find.descendant(of: bar, matching: find.text(l10n.portfolioTitle)), findsOneWidget);
+    expect(find.descendant(of: bar, matching: find.text(l10n.settingsTitle)), findsNothing);
+    expect(find.byTooltip(l10n.addButton), findsOneWidget);
+
+    await tester.tap(find.byTooltip(l10n.settingsTitle));
+    await settle(tester);
+    expect(find.byType(SettingsScreen), findsOneWidget);
+    expect(find.byType(BackButton), findsOneWidget);
   });
 
   testWidgets('switching tabs preserves the watchlist asset-class filter and scroll state', (tester) async {
@@ -193,9 +207,6 @@ void main() {
     // offstage, and `find.byType` skips offstage widgets by default.
     expect(find.byType(WatchlistScreen, skipOffstage: false), findsOneWidget); // kept alive underneath
 
-    await tapNavDestination(tester, Icons.settings_outlined);
-    expect(find.byType(SettingsScreen), findsOneWidget);
-
     await tapNavDestination(tester, Icons.list_alt_outlined);
 
     // The Crypto filter chip is still selected (Gold/Silver rows are hidden).
@@ -203,15 +214,12 @@ void main() {
     expect(chipWidget.selected, isTrue);
   });
 
-  testWidgets('Portfolio and Settings tabs show no back button', (tester) async {
+  testWidgets('the Portfolio tab shows no back button', (tester) async {
     setSurfaceSize(tester, const Size(400, 800));
     await tester.pumpWidget(app(cubit));
     await settle(tester);
 
     await tapNavDestination(tester, Icons.pie_chart_outline);
-    expect(find.byType(BackButton), findsNothing);
-
-    await tapNavDestination(tester, Icons.settings_outlined);
     expect(find.byType(BackButton), findsNothing);
   });
 
@@ -227,8 +235,8 @@ void main() {
     await tester.binding.handlePopRoute();
     await settle(tester);
 
-    final navBar = tester.widget<NavigationBar>(find.byType(NavigationBar));
-    expect(navBar.selectedIndex, 0);
+    final l10n = await AppLocalizations.delegate.load(const Locale('en'));
+    expectTabSelected(tester, l10n.navWatchlist);
     // A second back press (now on Watchlist) is left for the platform to
     // exit the app — PopScope.canPop is true there rather than intercepted.
   });
@@ -244,8 +252,7 @@ void main() {
     await settle(tester);
 
     expect(find.byType(PortfolioDetailScreen), findsOneWidget);
-    final navBar = tester.widget<NavigationBar>(find.byType(NavigationBar));
-    expect(navBar.selectedIndex, 1);
+    expectTabSelected(tester, l10n.portfolioTitle);
   });
 
   testWidgets('add flow ends at [Shell(Watchlist), Detail] and Back shows the Watchlist tab', (tester) async {
@@ -254,6 +261,11 @@ void main() {
     await settle(tester);
 
     await tester.tap(find.byIcon(Icons.add));
+    final follow = find.text('Follow an asset').hitTestable();
+    for (var i = 0; i < 40 && follow.evaluate().isEmpty; i++) {
+      await tester.pump(const Duration(milliseconds: 100));
+    }
+    await tester.tap(follow);
     await settle(tester);
     expect(find.byType(AddInstrumentScreen), findsOneWidget);
 
@@ -285,13 +297,16 @@ void main() {
     expect(find.byType(InstrumentDetailScreen), findsNothing);
   });
 
-  testWidgets('a NavigationRail is used at width >= 600 instead of the bottom NavigationBar', (tester) async {
+  testWidgets('a NavigationRail with all three tabs and the + is used at width >= 600', (tester) async {
     setSurfaceSize(tester, const Size(900, 800));
     await tester.pumpWidget(app(cubit));
     await settle(tester);
 
+    final l10n = await AppLocalizations.delegate.load(const Locale('en'));
     expect(find.byType(NavigationRail), findsOneWidget);
-    expect(find.byType(NavigationBar), findsNothing);
+    expect(find.byType(BottomAppBar), findsNothing);
+    expect(find.byTooltip(l10n.addButton), findsOneWidget);
+    expect(find.byTooltip(l10n.settingsTitle), findsNothing);
   });
 
   testWidgets('refresh keeps running while a non-watchlist tab is showing', (tester) async {
@@ -301,7 +316,7 @@ void main() {
     final callsAfterMount = repository.refreshAllCallCount;
     expect(callsAfterMount, greaterThan(0));
 
-    await tapNavDestination(tester, Icons.settings_outlined);
+    await tapNavDestination(tester, Icons.pie_chart_outline);
 
     await tester.runAsync(() async {
       await cubit.refreshAll(silent: true);

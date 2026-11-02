@@ -11,9 +11,9 @@ import '../theme/design_system.dart';
 import '../theme/help_topics.dart';
 import '../theme/qima_colors.dart';
 import '../theme/strings.dart';
+import '../widgets/currency_field.dart';
 import '../widgets/help_button.dart';
 import 'add_flow_navigation.dart';
-import 'currency_picker.dart';
 
 /// Configure currency/unit/karat before adding an instrument to the
 /// watchlist. Mirrors `CardConfigView.swift`.
@@ -62,18 +62,12 @@ class _CardConfigScreenState extends State<CardConfigScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  ListTile(
-                    contentPadding: EdgeInsets.zero,
-                    title: Text(l10n.commonCurrency, style: TextStyle(color: colors.textPrimary)),
-                    trailing: Text(_currency, style: TextStyle(color: colors.textSecondary)),
-                    onTap: () async {
-                      final selected = await CurrencyPicker.show(
-                        context,
-                        selected: _currency,
-                        currencies: cubit.state.rates.availableCurrencies,
-                      );
-                      if (selected != null) setState(() => _currency = selected);
-                    },
+                  CurrencyField(
+                    label: l10n.currencyFieldShowIn,
+                    selected: _currency,
+                    baseCurrency: cubit.state.baseCurrency,
+                    currencies: cubit.state.rates.availableCurrencies,
+                    onChanged: (code) => setState(() => _currency = code),
                   ),
                   if (instrument.supportedUnits.length > 1) ...[
                     const SizedBox(height: DS.spaceSM),

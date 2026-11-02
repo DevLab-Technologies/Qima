@@ -105,6 +105,7 @@ HelpTopic helpTopicFor(BuildContext context, HelpTopicId id) {
           HelpStep(icon: Icons.touch_app_outlined, title: l10n.helpAddAssetStep2Title, body: l10n.helpAddAssetStep2Body),
           HelpStep(icon: Icons.add_circle_outline, title: l10n.helpAddAssetStep3Title, body: l10n.helpAddAssetStep3Body),
           HelpStep(icon: Icons.undo, title: l10n.helpAddAssetStep4Title, body: l10n.helpAddAssetStep4Body),
+          HelpStep(icon: Icons.edit_note, title: l10n.helpAddAssetStep5Title, body: l10n.helpAddAssetStep5Body),
         ],
       );
     case HelpTopicId.cardConfig:

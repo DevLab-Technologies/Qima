@@ -2507,7 +2507,7 @@ abstract class AppLocalizations {
   /// Add asset help step 2 body.
   ///
   /// In en, this message translates to:
-  /// **'It\'s added to your watchlist and its page opens.'**
+  /// **'Choose the currency and unit its price shows in, then add it to your watchlist.'**
   String get helpAddAssetStep2Body;
 
   /// Add asset help step 3 title.
@@ -4996,6 +4996,102 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No text found in that photo. Try again closer, with the receipt flat and well lit.'**
   String get receiptNoText;
+
+  /// No description provided for @addButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get addButton;
+
+  /// No description provided for @addSheetRecordTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Record a purchase'**
+  String get addSheetRecordTitle;
+
+  /// No description provided for @addSheetRecordSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Read on this device. Nothing is saved until you confirm.'**
+  String get addSheetRecordSubtitle;
+
+  /// No description provided for @addSheetSpeak.
+  ///
+  /// In en, this message translates to:
+  /// **'Speak'**
+  String get addSheetSpeak;
+
+  /// No description provided for @addSheetScan.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan receipt'**
+  String get addSheetScan;
+
+  /// No description provided for @addSheetType.
+  ///
+  /// In en, this message translates to:
+  /// **'Type it'**
+  String get addSheetType;
+
+  /// No description provided for @addSheetFollow.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow an asset'**
+  String get addSheetFollow;
+
+  /// No description provided for @addSheetFollowSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add its price to your watchlist'**
+  String get addSheetFollowSubtitle;
+
+  /// No description provided for @addSheetSiriTip.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask Siri: “What\'s my Qima portfolio worth”'**
+  String get addSheetSiriTip;
+
+  /// No description provided for @addTypeExample.
+  ///
+  /// In en, this message translates to:
+  /// **'For example: bought 20 g of 21K gold at 4,100 EGP'**
+  String get addTypeExample;
+
+  /// No description provided for @currencyFieldShowIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Show prices in'**
+  String get currencyFieldShowIn;
+
+  /// No description provided for @currencyFieldTransaction.
+  ///
+  /// In en, this message translates to:
+  /// **'Transaction currency'**
+  String get currencyFieldTransaction;
+
+  /// No description provided for @currencyFieldCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} currencies available'**
+  String currencyFieldCount(int count);
+
+  /// No description provided for @currencyFieldMore.
+  ///
+  /// In en, this message translates to:
+  /// **'More'**
+  String get currencyFieldMore;
+
+  /// No description provided for @helpAddAssetStep5Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Record a purchase'**
+  String get helpAddAssetStep5Title;
+
+  /// No description provided for @helpAddAssetStep5Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap Add, then speak, scan a receipt or type it. Check what was read, then confirm.'**
+  String get helpAddAssetStep5Body;
 }
 
 class _AppLocalizationsDelegate

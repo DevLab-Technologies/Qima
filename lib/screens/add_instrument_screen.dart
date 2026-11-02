@@ -23,6 +23,21 @@ import 'card_config_screen.dart';
 import 'custom_ticker_screen.dart';
 import 'holdings_screen.dart';
 
+/// How the Add screen opens from the Add sheet.
+enum AddStart {
+  /// Find an asset to follow.
+  search,
+
+  /// Type a purchase.
+  type,
+
+  /// Speak a purchase: the mic starts listening.
+  speak,
+
+  /// Scan a receipt: the photo choice opens.
+  scan,
+}
+
 /// Grouped-by-asset-class list of all catalog instruments, plus a "custom
 /// ticker" entry in the stock section. A pinned search field filters the
 /// catalog by localized name or symbol; when the query doesn't match
@@ -33,8 +48,13 @@ import 'holdings_screen.dart';
 /// reads as a transaction — "20 g 21K gold at 4,100 EGP" — a "Record this"
 /// card above the results opens it for checking. Same screen, same field;
 /// nothing new to find.
+///
+/// The Add sheet opens it at one of [AddStart]: speaking or scanning starts
+/// right away, typing shows an example sentence.
 class AddInstrumentScreen extends StatefulWidget {
-  const AddInstrumentScreen({super.key});
+  final AddStart start;
+
+  const AddInstrumentScreen({super.key, this.start = AddStart.search});
 
   @override
   State<AddInstrumentScreen> createState() => _AddInstrumentScreenState();
@@ -62,13 +82,15 @@ class _AddInstrumentScreenState extends State<AddInstrumentScreen> {
     final l10n = AppLocalizations.of(context)!;
     final colors = context.colors;
     final query = _query.trim();
+    final start = widget.start;
+    final records = start != AddStart.search;
 
     return ScreenBackground(
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
-          title: Text(l10n.addTitle),
+          title: Text(records ? l10n.addSheetRecordTitle : l10n.addTitle),
           actions: const [HelpButton(topic: HelpTopicId.addAsset)],
         ),
         body: Column(
@@ -77,7 +99,7 @@ class _AddInstrumentScreenState extends State<AddInstrumentScreen> {
               padding: const EdgeInsets.fromLTRB(DS.spaceMD, DS.spaceMD, DS.spaceMD, DS.spaceSM),
               child: TextField(
                 controller: _searchController,
-                autofocus: true,
+                autofocus: start == AddStart.search || start == AddStart.type,
                 style: TextStyle(color: colors.textPrimary),
                 decoration: InputDecoration(
                   hintText: l10n.addSearchHint,
@@ -86,8 +108,8 @@ class _AddInstrumentScreenState extends State<AddInstrumentScreen> {
                   suffixIcon: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      ReceiptScanButton(onText: _setQuery),
-                      DictationButton(onText: _setQuery),
+                      ReceiptScanButton(onText: _setQuery, autoStart: start == AddStart.scan),
+                      DictationButton(onText: _setQuery, autoStart: start == AddStart.speak),
                     ],
                   ),
                   filled: true,
@@ -97,6 +119,11 @@ class _AddInstrumentScreenState extends State<AddInstrumentScreen> {
                 onChanged: (v) => setState(() => _query = v),
               ),
             ),
+            if (records && query.isEmpty)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(DS.spaceMD, 0, DS.spaceMD, DS.spaceSM),
+                child: Text(l10n.addTypeExample, style: TextStyle(color: colors.textTertiary, fontSize: 13)),
+              ),
             Expanded(
               child: query.isEmpty
                   ? _catalogList(context, cubit)

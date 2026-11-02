@@ -91,7 +91,8 @@ class PortfolioDetailScreen extends StatelessWidget {
 
             return ListView(
               controller: scrollController,
-              padding: const EdgeInsets.all(DS.spaceMD),
+              // Extra room at the end so the docked + never covers the last row.
+              padding: EdgeInsets.fromLTRB(DS.spaceMD, DS.spaceMD, DS.spaceMD, asTab ? DS.spaceXL * 2 : DS.spaceMD),
               children: [
                 if (valuation != null)
                   DSHeroCard(

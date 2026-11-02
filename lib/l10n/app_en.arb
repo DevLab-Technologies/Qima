@@ -946,7 +946,7 @@
   "@helpAddAssetStep2Title": {
     "description": "Add asset help step 2 title."
   },
-  "helpAddAssetStep2Body": "It's added to your watchlist and its page opens.",
+  "helpAddAssetStep2Body": "Choose the currency and unit its price shows in, then add it to your watchlist.",
   "@helpAddAssetStep2Body": {
     "description": "Add asset help step 2 body."
   },
@@ -2217,5 +2217,28 @@
   "receiptScan": "Scan a receipt",
   "receiptTakePhoto": "Take a photo",
   "receiptChoosePhoto": "Choose a photo",
-  "receiptNoText": "No text found in that photo. Try again closer, with the receipt flat and well lit."
+  "receiptNoText": "No text found in that photo. Try again closer, with the receipt flat and well lit.",
+  "addButton": "Add",
+  "addSheetRecordTitle": "Record a purchase",
+  "addSheetRecordSubtitle": "Read on this device. Nothing is saved until you confirm.",
+  "addSheetSpeak": "Speak",
+  "addSheetScan": "Scan receipt",
+  "addSheetType": "Type it",
+  "addSheetFollow": "Follow an asset",
+  "addSheetFollowSubtitle": "Add its price to your watchlist",
+  "addSheetSiriTip": "Ask Siri: “What's my Qima portfolio worth”",
+  "addTypeExample": "For example: bought 20 g of 21K gold at 4,100 EGP",
+  "currencyFieldShowIn": "Show prices in",
+  "currencyFieldTransaction": "Transaction currency",
+  "currencyFieldCount": "{count} currencies available",
+  "@currencyFieldCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "currencyFieldMore": "More",
+  "helpAddAssetStep5Title": "Record a purchase",
+  "helpAddAssetStep5Body": "Tap Add, then speak, scan a receipt or type it. Check what was read, then confirm."
 }

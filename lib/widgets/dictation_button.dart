@@ -17,7 +17,10 @@ class DictationButton extends StatefulWidget {
   /// Called with the text so far while listening, and once more at the end.
   final ValueChanged<String> onText;
 
-  const DictationButton({super.key, required this.onText});
+  /// Starts listening as soon as availability is known.
+  final bool autoStart;
+
+  const DictationButton({super.key, required this.onText, this.autoStart = false});
 
   @override
   State<DictationButton> createState() => _DictationButtonState();
@@ -27,6 +30,7 @@ class _DictationButtonState extends State<DictationButton> {
   DictationAvailability? _availability;
   String? _checkedTag;
   StreamSubscription<DictationEvent>? _session;
+  bool _autoStarted = false;
 
   DictationService get _service => context.read<AppCubit>().dictation;
 
@@ -44,7 +48,12 @@ class _DictationButtonState extends State<DictationButton> {
 
   Future<void> _check(String tag) async {
     final availability = await _service.availability(tag);
-    if (mounted && tag == _checkedTag) setState(() => _availability = availability);
+    if (!mounted || tag != _checkedTag) return;
+    setState(() => _availability = availability);
+    if (widget.autoStart && !_autoStarted) {
+      _autoStarted = true;
+      _toggle();
+    }
   }
 
   @override

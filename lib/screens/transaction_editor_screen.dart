@@ -17,9 +17,9 @@ import '../theme/instrument_theme.dart';
 import '../theme/masking.dart';
 import '../theme/qima_colors.dart';
 import '../theme/strings.dart';
+import '../widgets/currency_field.dart';
 import '../widgets/help_button.dart';
 import '../widgets/section_header.dart';
-import 'currency_picker.dart';
 import 'holdings_screen.dart';
 
 /// The four choices at the top of the editor; [TransactionKind] splits
@@ -388,19 +388,15 @@ class _TransactionEditorScreenState extends State<TransactionEditorScreen> {
           _fee,
         ),
         const SizedBox(height: DS.spaceSM),
-        ListTile(
-          contentPadding: EdgeInsets.zero,
-          title: Text(l10n.commonCurrency, style: TextStyle(color: colors.textPrimary)),
-          trailing: Text(_currency, style: TextStyle(color: colors.textSecondary)),
-          onTap: () async {
-            final selected = await CurrencyPicker.show(
-              context,
-              selected: _currency,
-              currencies: cubit.state.rates.availableCurrencies,
-            );
-            if (selected != null) setState(() => _currency = selected);
-          },
+        CurrencyField(
+          label: l10n.currencyFieldTransaction,
+          selected: _currency,
+          baseCurrency: cubit.state.baseCurrency,
+          currencies: cubit.state.rates.availableCurrencies,
+          onChanged: (code) => setState(() => _currency = code),
+          accent: accent,
         ),
+        const SizedBox(height: DS.spaceSM),
         ListTile(
           contentPadding: EdgeInsets.zero,
           title: Text(l10n.holdingsDate, style: TextStyle(color: colors.textPrimary)),

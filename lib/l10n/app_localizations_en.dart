@@ -1391,7 +1391,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get helpAddAssetStep2Body =>
-      'It\'s added to your watchlist and its page opens.';
+      'Choose the currency and unit its price shows in, then add it to your watchlist.';
 
   @override
   String get helpAddAssetStep3Title => 'Not in the list?';
@@ -2898,4 +2898,57 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get receiptNoText =>
       'No text found in that photo. Try again closer, with the receipt flat and well lit.';
+
+  @override
+  String get addButton => 'Add';
+
+  @override
+  String get addSheetRecordTitle => 'Record a purchase';
+
+  @override
+  String get addSheetRecordSubtitle =>
+      'Read on this device. Nothing is saved until you confirm.';
+
+  @override
+  String get addSheetSpeak => 'Speak';
+
+  @override
+  String get addSheetScan => 'Scan receipt';
+
+  @override
+  String get addSheetType => 'Type it';
+
+  @override
+  String get addSheetFollow => 'Follow an asset';
+
+  @override
+  String get addSheetFollowSubtitle => 'Add its price to your watchlist';
+
+  @override
+  String get addSheetSiriTip => 'Ask Siri: “What\'s my Qima portfolio worth”';
+
+  @override
+  String get addTypeExample =>
+      'For example: bought 20 g of 21K gold at 4,100 EGP';
+
+  @override
+  String get currencyFieldShowIn => 'Show prices in';
+
+  @override
+  String get currencyFieldTransaction => 'Transaction currency';
+
+  @override
+  String currencyFieldCount(int count) {
+    return '$count currencies available';
+  }
+
+  @override
+  String get currencyFieldMore => 'More';
+
+  @override
+  String get helpAddAssetStep5Title => 'Record a purchase';
+
+  @override
+  String get helpAddAssetStep5Body =>
+      'Tap Add, then speak, scan a receipt or type it. Check what was read, then confirm.';
 }

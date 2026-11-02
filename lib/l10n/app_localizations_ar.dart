@@ -1393,7 +1393,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get helpAddAssetStep2Body =>
-      'تتم إضافته إلى قائمة متابعتك وتُفتح صفحته.';
+      'اختر العملة والوحدة التي يُعرض بها سعره، ثم أضفه إلى قائمة المتابعة.';
 
   @override
   String get helpAddAssetStep3Title => 'غير موجود في القائمة؟';
@@ -2916,4 +2916,57 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get receiptNoText =>
       'لم يُعثر على نص في هذه الصورة. حاول مرة أخرى من مسافة أقرب، والإيصال مسطّح وفي إضاءة جيدة.';
+
+  @override
+  String get addButton => 'إضافة';
+
+  @override
+  String get addSheetRecordTitle => 'سجّل عملية شراء';
+
+  @override
+  String get addSheetRecordSubtitle =>
+      'تُقرأ على هذا الجهاز، ولا يُحفظ شيء حتى تؤكد.';
+
+  @override
+  String get addSheetSpeak => 'تحدّث';
+
+  @override
+  String get addSheetScan => 'امسح إيصالًا';
+
+  @override
+  String get addSheetType => 'اكتبها';
+
+  @override
+  String get addSheetFollow => 'تابع أصلًا';
+
+  @override
+  String get addSheetFollowSubtitle => 'أضف سعره إلى قائمة المتابعة';
+
+  @override
+  String get addSheetSiriTip => 'اسأل Siri: «كم قيمة محفظتي في Qima»';
+
+  @override
+  String get addTypeExample =>
+      'مثال: اشتريت ٢٠ جرام ذهب عيار ٢١ بسعر ٤١٠٠ جنيه';
+
+  @override
+  String get currencyFieldShowIn => 'اعرض الأسعار بعملة';
+
+  @override
+  String get currencyFieldTransaction => 'عملة العملية';
+
+  @override
+  String currencyFieldCount(int count) {
+    return '$count عملة متاحة';
+  }
+
+  @override
+  String get currencyFieldMore => 'المزيد';
+
+  @override
+  String get helpAddAssetStep5Title => 'سجّل عملية شراء';
+
+  @override
+  String get helpAddAssetStep5Body =>
+      'اضغط إضافة، ثم تحدّث أو امسح إيصالًا أو اكتبها. راجع ما قُرئ ثم أكّد.';
 }
