@@ -1,4 +1,4 @@
-Qima 4.0
+Qima 4.0.0
 • Tap + to add to your watchlist or add a holding
 • Add a purchase in your own words: type it or say it. It's read on your phone and saved only when you confirm
 • Search assets in English, Arabic, Spanish or French

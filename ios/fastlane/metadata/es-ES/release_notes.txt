@@ -1,4 +1,4 @@
-Qima 4.0
+Qima 4.0.0
 • Toca + para añadir a tu seguimiento o añadir una posición
 • Registra una compra con tus palabras: escríbela, díctala o escanea el recibo. Se lee en tu dispositivo y solo se guarda cuando confirmas
 • Busca activos en español, inglés, árabe o francés
