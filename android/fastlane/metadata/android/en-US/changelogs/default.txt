@@ -1,2 +1,6 @@
-Qima 3.1.1
-• Shared images and captions now link to our new website, qima.money
+Qima 4.0
+• Tap + to add to your watchlist or add a holding
+• Add a purchase in your own words: type it or say it. It's read on your phone and saved only when you confirm
+• Search assets in English, Arabic, Spanish or French
+• A plain summary of your past month
+• Picking a currency is clearer when adding an asset or a transaction
