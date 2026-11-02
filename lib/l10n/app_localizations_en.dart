@@ -15,7 +15,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get navWatchlist => 'Watchlist';
 
   @override
-  String get watchlistAdd => 'Add asset';
+  String get watchlistAdd => 'Add to watchlist';
 
   @override
   String get watchlistEmptyTitle => 'Your watchlist is empty';
@@ -28,14 +28,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get watchlistFilterAll => 'All';
 
   @override
-  String get addTitle => 'Add asset';
+  String get addTitle => 'Add to watchlist';
 
   @override
-  String get addSearchHint => 'Search assets';
+  String get addSearchHint => 'Search, or describe a purchase';
+
+  @override
+  String get addWatchSearchHint => 'Search gold, Bitcoin, AAPL…';
 
   @override
   String addSearchCustomTickerTitle(String query) {
     return 'Add “$query” as a custom ticker';
+  }
+
+  @override
+  String addSearchMatchedAlias(String alias) {
+    return 'Also “$alias”';
   }
 
   @override
@@ -1092,21 +1100,21 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get onboardingStep1Body =>
-      'Gold, silver, crypto, stocks, indices and currencies, added up in your currency.';
+      'Gold, silver, crypto, stocks, indices and currencies, added up in your currency, with a plain summary of each month.';
 
   @override
   String get onboardingStep2Title => 'Prices the way you buy';
 
   @override
   String get onboardingStep2Body =>
-      'Live prices by gram, ounce or kilogram, 24K to 18K, in any currency. Tap + to add, tap a card for its chart.';
+      'Live prices by gram, ounce or kilogram, 24K to 18K, in any currency. Tap + to add to your watchlist, tap a card for its chart.';
 
   @override
   String get onboardingStep3Title => 'Know what you hold';
 
   @override
   String get onboardingStep3Body =>
-      'Record each purchase: quantity, unit, karat, cost and date. See what you hold, your average cost, value and gain.';
+      'Tap +, then Add holding, and type what you bought, or say it or scan a receipt. It is read on this device and saved only when you confirm. See what you hold, your average cost, value and gain.';
 
   @override
   String get onboardingStep4Title => 'Never miss a move';
@@ -1114,6 +1122,10 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get onboardingStep4Body =>
       'Get notified when a price crosses a level or moves by a percent. Put prices on your Home and Lock Screen.';
+
+  @override
+  String get onboardingStep4BodyApple =>
+      'Get notified when a price crosses a level or moves by a percent. Put prices on your Home and Lock Screen, or ask Siri what your portfolio is worth.';
 
   @override
   String get onboardingStep5Title => 'Private by design';
@@ -1219,7 +1231,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get helpWatchlistStep2Title => 'Add an asset';
 
   @override
-  String get helpWatchlistStep2Body => 'Tap + and search by name or symbol.';
+  String get helpWatchlistStep2Body =>
+      'Tap + at the bottom, then Add to watchlist.';
 
   @override
   String get helpWatchlistStep3Title => 'Filter the list';
@@ -1309,7 +1322,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get helpPortfolioStep3Title => 'Add a purchase';
 
   @override
-  String get helpPortfolioStep3Body => 'Open an asset, then tap +.';
+  String get helpPortfolioStep3Body =>
+      'Tap + at the bottom, then Add holding. Or open an asset and tap Holdings.';
 
   @override
   String get helpPortfolioStep4Title => 'Change the currency';
@@ -1324,6 +1338,20 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get helpPortfolioStep5Body =>
       'Turn on Hide balances in Settings to mask every value.';
+
+  @override
+  String get helpPortfolioStep6Title => 'Past month';
+
+  @override
+  String get helpPortfolioStep6Body =>
+      'A short summary of how your holdings moved, worked out from your own records. Turn it off in Settings.';
+
+  @override
+  String get helpPortfolioStep7Title => 'Ask Siri';
+
+  @override
+  String get helpPortfolioStep7Body =>
+      'Ask Siri or use Shortcuts to hear what your portfolio is worth or check a price, without opening Qima.';
 
   @override
   String get helpLotEditorTitle => 'Transaction';
@@ -1368,25 +1396,25 @@ class AppLocalizationsEn extends AppLocalizations {
       'Edit or delete a transaction any time from the holding’s ledger.';
 
   @override
-  String get helpAddAssetTitle => 'Add asset';
+  String get helpAddAssetTitle => 'Add to watchlist or holding';
 
   @override
   String get helpAddAssetSummary =>
-      'Find something to follow and add it to your watchlist.';
+      'Follow a price on your watchlist, or record something you bought.';
 
   @override
   String get helpAddAssetStep1Title => 'Search';
 
   @override
   String get helpAddAssetStep1Body =>
-      'Type a name or symbol, like gold, BTC or AAPL.';
+      'Tap +, then Add to watchlist. Search by name or symbol in any app language, like gold, ذهب or BTC.';
 
   @override
   String get helpAddAssetStep2Title => 'Pick a result';
 
   @override
   String get helpAddAssetStep2Body =>
-      'It\'s added to your watchlist and its page opens.';
+      'Choose the currency and unit its price shows in, then add it to your watchlist.';
 
   @override
   String get helpAddAssetStep3Title => 'Not in the list?';
@@ -1517,6 +1545,13 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get helpSettingsStep5Body =>
       'Base currency, chart range, widget refresh and language.';
+
+  @override
+  String get helpSettingsStep6Title => 'On-device intelligence';
+
+  @override
+  String get helpSettingsStep6Body =>
+      'Optionally let this device\'s own language model help read purchases and word the summary. It runs only here, never gives advice and never supplies a number.';
 
   @override
   String get helpBackupTitle => 'Backup & restore';
@@ -2703,4 +2738,253 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get helpAssetDetailStep6Body =>
       'Tap share to post the price and chart as an image sized for WhatsApp, Instagram, Facebook or LinkedIn, with a ready caption.';
+
+  @override
+  String get captureRecordThis => 'Record this';
+
+  @override
+  String get captureCheckTitle => 'Check this';
+
+  @override
+  String get captureYouWrote => 'You wrote';
+
+  @override
+  String get captureRead => 'Read as';
+
+  @override
+  String get captureFieldType => 'Type';
+
+  @override
+  String get captureFieldAsset => 'Asset';
+
+  @override
+  String get captureFieldQuantity => 'Quantity';
+
+  @override
+  String get captureFieldPrice => 'Price';
+
+  @override
+  String get captureFieldFee => 'Fee';
+
+  @override
+  String get captureFieldDate => 'Date';
+
+  @override
+  String captureFrom(String words) {
+    return 'from “$words”';
+  }
+
+  @override
+  String get captureBaseCurrency => 'your base currency';
+
+  @override
+  String get captureTotalDivided => 'total ÷ quantity';
+
+  @override
+  String get captureAssumed => 'assumed';
+
+  @override
+  String get captureToday => 'today';
+
+  @override
+  String get captureCheck => 'check';
+
+  @override
+  String get captureConfirm => 'Confirm';
+
+  @override
+  String get captureEditFields => 'Edit fields';
+
+  @override
+  String get captureFootnote =>
+      'Every field says where it came from, and nothing is saved until you confirm.';
+
+  @override
+  String get captureOnDevice => 'On device';
+
+  @override
+  String get captureNothingSent =>
+      'Read on this device. Nothing is sent anywhere.';
+
+  @override
+  String get captureNeedsPrice => 'No price found. Edit the fields to add one.';
+
+  @override
+  String captureRecorded(String summary) {
+    return 'Recorded: $summary';
+  }
+
+  @override
+  String get settingsSummaries => 'Summaries';
+
+  @override
+  String get settingsPlainSummaries => 'Month in a sentence';
+
+  @override
+  String get settingsPlainSummariesFooter =>
+      'Shows what moved your holdings over the past month as one sentence on Portfolio. Written on this device from your own numbers.';
+
+  @override
+  String get summaryTitle => 'Past month';
+
+  @override
+  String summaryUp(String amount, String percent) {
+    return 'Over the past month your holdings gained $amount ($percent).';
+  }
+
+  @override
+  String summaryDown(String amount, String percent) {
+    return 'Over the past month your holdings lost $amount ($percent).';
+  }
+
+  @override
+  String get summaryFlat => 'Your holdings barely moved over the past month.';
+
+  @override
+  String summaryTopMover(String asset, String amount) {
+    return '$asset moved them most, $amount.';
+  }
+
+  @override
+  String summaryTransactions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'You recorded $count transactions.',
+      one: 'You recorded 1 transaction.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String chartDescription(
+    String from,
+    String to,
+    String start,
+    String end,
+    String change,
+    String high,
+    String highDate,
+    String low,
+    String lowDate,
+  ) {
+    return '$from to $to: $start to $end, $change. High $high on $highDate, low $low on $lowDate.';
+  }
+
+  @override
+  String chartDescriptionHidden(String from, String to, String change) {
+    return '$from to $to: $change.';
+  }
+
+  @override
+  String get dictationStart => 'Speak a purchase';
+
+  @override
+  String get dictationStop => 'Stop listening';
+
+  @override
+  String get dictationUnsupported =>
+      'Voice input in this language isn\'t available on this device. Qima only listens on the device, never through a server.';
+
+  @override
+  String get dictationDenied =>
+      'Microphone or speech recognition is off for Qima. Turn them on in Settings to speak a purchase.';
+
+  @override
+  String get settingsIntelligence => 'On-device intelligence';
+
+  @override
+  String get settingsUseModel => 'Use the on-device model';
+
+  @override
+  String get settingsUseModelFooter =>
+      'Helps read purchases Qima can\'t place on its own, and words the month summary. It runs only on this device, never gives advice, and never supplies a number: every figure comes from your own records.';
+
+  @override
+  String get modelReady => 'Ready on this device';
+
+  @override
+  String get modelUnsupported => 'Not available on this device';
+
+  @override
+  String get modelTurnedOff =>
+      'Turn on Apple Intelligence in system Settings to use it';
+
+  @override
+  String get modelNotReady => 'The model is still downloading';
+
+  @override
+  String get modelUnsupportedLanguage => 'Not available in this language yet';
+
+  @override
+  String get receiptScan => 'Scan a receipt';
+
+  @override
+  String get receiptTakePhoto => 'Take a photo';
+
+  @override
+  String get receiptChoosePhoto => 'Choose a photo';
+
+  @override
+  String get receiptNoText =>
+      'No text found in that photo. Try again closer, with the receipt flat and well lit.';
+
+  @override
+  String get addButton => 'Add';
+
+  @override
+  String get addSheetWatch => 'Add to watchlist';
+
+  @override
+  String get addSheetWatchSubtitle => 'Track a price. No purchase needed.';
+
+  @override
+  String get addHoldingTitle => 'Add holding';
+
+  @override
+  String get addSheetHoldingSpeakScan => 'Speak, scan a receipt or type it.';
+
+  @override
+  String get addSheetHoldingSpeak => 'Speak or type what you bought.';
+
+  @override
+  String get addSheetHoldingScan => 'Scan a receipt or type it.';
+
+  @override
+  String get addSheetHoldingType => 'Type what you bought.';
+
+  @override
+  String get addSheetSiriTip => 'Ask Siri: “What\'s my Qima portfolio worth”';
+
+  @override
+  String get addTypeExample =>
+      'For example: bought 20 g of 21K gold at 4,100 EGP';
+
+  @override
+  String get currencyFieldShowIn => 'Show prices in';
+
+  @override
+  String get currencyFieldTransaction => 'Transaction currency';
+
+  @override
+  String currencyFieldCount(int count) {
+    return '$count currencies available';
+  }
+
+  @override
+  String get currencyFieldMore => 'More';
+
+  @override
+  String get helpAddAssetStep5Title => 'Add a holding';
+
+  @override
+  String get helpAddAssetStep5Body =>
+      'Tap +, then Add holding. Type what you bought, or speak it or scan a receipt where this device can. Check what was read, then confirm.';
+
+  @override
+  String get helpAddAssetStep6Title => 'Read on this device';
+
+  @override
+  String get helpAddAssetStep6Body =>
+      'Speech and receipts are read on this device and never sent anywhere. Nothing is saved until you confirm, and every number comes from what you typed, said or scanned.';
 }

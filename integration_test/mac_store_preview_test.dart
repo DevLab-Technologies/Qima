@@ -179,6 +179,8 @@ void main() {
     await _beat(900);
     await tester.tap(find.byIcon(Icons.add).first);
     await _beat(1200);
+    await tester.tap(find.byKey(const ValueKey('addSheetWatch')));
+    await _beat(1200);
     for (final prefix in ['E', 'Et', 'Eth']) {
       await tester.enterText(find.byType(TextField).first, prefix);
       await _beat(350);

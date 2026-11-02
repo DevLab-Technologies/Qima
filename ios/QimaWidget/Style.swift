@@ -196,12 +196,3 @@ enum Palette {
         #endif
     }
 }
-
-extension View {
-    /// The card surface every Qima widget sits on.
-    func qimaBackground() -> some View {
-        containerBackground(for: .widget) {
-            LinearGradient(colors: [Palette.surfaceTop, Palette.surfaceBottom], startPoint: .top, endPoint: .bottom)
-        }
-    }
-}

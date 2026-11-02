@@ -4,25 +4,53 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../blocs/app_cubit.dart';
 import '../l10n/app_localizations.dart';
 import '../models/asset.dart';
+import '../models/instrument_aliases.dart';
 import '../models/instrument_catalog.dart';
 import '../models/instrument_search.dart';
+import '../models/transaction_capture.dart';
+import '../services/ai_assist_provider.dart';
 import '../theme/design_system.dart';
 import '../theme/help_topics.dart';
 import '../theme/qima_colors.dart';
 import '../theme/strings.dart';
 import '../widgets/confirm_delete_dialog.dart';
+import '../widgets/dictation_button.dart';
+import '../widgets/receipt_scan_button.dart';
 import '../widgets/help_button.dart';
 import '../widgets/instrument_icon.dart';
+import 'capture_review_screen.dart';
 import 'card_config_screen.dart';
 import 'custom_ticker_screen.dart';
+import 'holdings_screen.dart';
+import 'transaction_editor_screen.dart';
+
+/// What the Add sheet opened the Add screen for.
+enum AddStart {
+  /// Find an asset to put on the watchlist.
+  watchlist,
+
+  /// Record something bought: typed, spoken or scanned into the field.
+  holding,
+}
 
 /// Grouped-by-asset-class list of all catalog instruments, plus a "custom
 /// ticker" entry in the stock section. A pinned search field filters the
 /// catalog by localized name or symbol; when the query doesn't match
 /// anything (or to add something genuinely missing), an "Add as custom
 /// ticker" row is always offered. Mirrors `AddInstrumentView.swift`.
+///
+/// The same field takes a purchase described in words (v4): when the query
+/// reads as a transaction — "20 g 21K gold at 4,100 EGP" — a "Record this"
+/// card above the results opens it for checking. Same screen, same field;
+/// nothing new to find.
+///
+/// The Add sheet opens it for one of [AddStart]: adding a holding shows an
+/// example sentence and the receipt scanner next to the mic, and picking an
+/// asset opens a new buy for it instead of a watchlist card.
 class AddInstrumentScreen extends StatefulWidget {
-  const AddInstrumentScreen({super.key});
+  final AddStart start;
+
+  const AddInstrumentScreen({super.key, this.start = AddStart.watchlist});
 
   @override
   State<AddInstrumentScreen> createState() => _AddInstrumentScreenState();
@@ -38,19 +66,26 @@ class _AddInstrumentScreenState extends State<AddInstrumentScreen> {
     super.dispose();
   }
 
+  /// Dictated or scanned text replaces the query, as if typed.
+  void _setQuery(String text) {
+    _searchController.value = TextEditingValue(text: text, selection: TextSelection.collapsed(offset: text.length));
+    setState(() => _query = text);
+  }
+
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<AppCubit>();
     final l10n = AppLocalizations.of(context)!;
     final colors = context.colors;
     final query = _query.trim();
+    final records = widget.start == AddStart.holding;
 
     return ScreenBackground(
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
-          title: Text(l10n.addTitle),
+          title: Text(records ? l10n.addHoldingTitle : l10n.addTitle),
           actions: const [HelpButton(topic: HelpTopicId.addAsset)],
         ),
         body: Column(
@@ -62,9 +97,16 @@ class _AddInstrumentScreenState extends State<AddInstrumentScreen> {
                 autofocus: true,
                 style: TextStyle(color: colors.textPrimary),
                 decoration: InputDecoration(
-                  hintText: l10n.addSearchHint,
+                  hintText: records ? l10n.addSearchHint : l10n.addWatchSearchHint,
                   hintStyle: TextStyle(color: colors.textTertiary),
                   prefixIcon: Icon(Icons.search, color: colors.textTertiary),
+                  suffixIcon: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (records) ReceiptScanButton(onText: _setQuery),
+                      DictationButton(onText: _setQuery),
+                    ],
+                  ),
                   filled: true,
                   fillColor: colors.tileTop,
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(DS.radiusTile), borderSide: BorderSide.none),
@@ -72,6 +114,11 @@ class _AddInstrumentScreenState extends State<AddInstrumentScreen> {
                 onChanged: (v) => setState(() => _query = v),
               ),
             ),
+            if (records && query.isEmpty)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(DS.spaceMD, 0, DS.spaceMD, DS.spaceSM),
+                child: Text(l10n.addTypeExample, style: TextStyle(color: colors.textTertiary, fontSize: 13)),
+              ),
             Expanded(
               child: query.isEmpty
                   ? _catalogList(context, cubit)
@@ -147,7 +194,22 @@ class _AddInstrumentScreenState extends State<AddInstrumentScreen> {
       InstrumentCatalog.all,
       query,
       displayName: (i) => displayLabel(context, i.nameKey),
+      aliases: (i) => [...labelsInAllLocales(i.nameKey), ...InstrumentAliases.of(i.id)],
     );
+    final draft = TransactionCapture.parse(query, captureContextOf(context, cubit.state));
+
+    if (draft != null) {
+      // A described purchase isn't a ticker to add, so no custom-ticker
+      // offer here; matching assets still show below.
+      return ListView(
+        padding: const EdgeInsets.fromLTRB(DS.spaceMD, 0, DS.spaceMD, DS.spaceMD),
+        children: [
+          _CaptureCard(draft: draft, onTap: () => _openCapture(context, cubit, query)),
+          const SizedBox(height: DS.spaceLG),
+          for (final group in groups) _searchGroup(context, cubit, group),
+        ],
+      );
+    }
 
     if (groups.isEmpty) {
       return ListView(
@@ -203,6 +265,8 @@ class _AddInstrumentScreenState extends State<AddInstrumentScreen> {
                     isCustom: cubit.isCustom(match.instrument.id),
                     nameRanges: match.nameRanges,
                     symbolRanges: match.symbolRanges,
+                    alias: match.alias,
+                    aliasRanges: match.aliasRanges,
                     onTap: () => _openConfig(context, match.instrument),
                     onDeleteCustom: () async {
                       await cubit.removeCustomInstrument(match.instrument.id);
@@ -217,9 +281,35 @@ class _AddInstrumentScreenState extends State<AddInstrumentScreen> {
     );
   }
 
+  /// Parses again with the model's help when one is available — the card
+  /// shows the deterministic parse, which a model can only add to.
+  Future<void> _openCapture(BuildContext context, AppCubit cubit, String query) async {
+    final captureContext = captureContextOf(context, cubit.state);
+    final navigator = Navigator.of(context);
+    final draft = await captureTransaction(
+      query,
+      captureContext,
+      provider: cubit.assist,
+      localeTag: Localizations.localeOf(context).toLanguageTag(),
+    );
+    if (draft == null || !mounted) return;
+    navigator.push(MaterialPageRoute(builder: (_) => CaptureReviewScreen(text: query, draft: draft)));
+  }
+
+  /// Watchlist: set up the card. Holding: the asset's holdings, with a new
+  /// buy open on top, so saving it lands on the holding.
   void _openConfig(BuildContext context, Instrument instrument) {
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => CardConfigScreen(instrument: instrument)),
+    final navigator = Navigator.of(context);
+    if (widget.start == AddStart.watchlist) {
+      navigator.push(MaterialPageRoute(builder: (_) => CardConfigScreen(instrument: instrument)));
+      return;
+    }
+    final currency = context.read<AppCubit>().state.baseCurrency;
+    navigator.pushReplacement(
+      MaterialPageRoute(builder: (_) => HoldingsScreen(instrument: instrument, displayCurrency: currency)),
+    );
+    navigator.push(
+      MaterialPageRoute(builder: (_) => TransactionEditorScreen(instrument: instrument, defaultCurrency: currency)),
     );
   }
 
@@ -230,6 +320,36 @@ class _AddInstrumentScreenState extends State<AddInstrumentScreen> {
       ),
     );
     if (mounted) setState(() {});
+  }
+}
+
+/// "Record this · Buy · 20 g · 21K · Gold" — the search query, read as a
+/// transaction.
+class _CaptureCard extends StatelessWidget {
+  final TransactionDraft draft;
+  final VoidCallback onTap;
+
+  const _CaptureCard({required this.draft, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final colors = context.colors;
+    final summary = [
+      transactionKindLabel(l10n, draft.kind.value),
+      quantityWithUnitKaratLabel(context, draft.quantity.value, draft.unit.value, draft.karat?.value),
+      displayLabel(context, draft.instrument.value.nameKey),
+    ].join(' · ');
+    return DSCard(
+      padding: EdgeInsets.zero,
+      child: ListTile(
+        leading: Icon(Icons.edit_note, color: colors.brand),
+        title: Text(l10n.captureRecordThis, style: TextStyle(color: colors.textPrimary, fontWeight: FontWeight.w700)),
+        subtitle: Text(summary, style: TextStyle(color: colors.textSecondary)),
+        trailing: Icon(Icons.chevron_right, color: colors.textTertiary),
+        onTap: onTap,
+      ),
+    );
   }
 }
 
@@ -282,6 +402,8 @@ class _InstrumentTile extends StatelessWidget {
   final VoidCallback onDeleteCustom;
   final List<MatchRange> nameRanges;
   final List<MatchRange> symbolRanges;
+  final String? alias;
+  final List<MatchRange> aliasRanges;
 
   const _InstrumentTile({
     required this.instrument,
@@ -290,6 +412,8 @@ class _InstrumentTile extends StatelessWidget {
     required this.onDeleteCustom,
     this.nameRanges = const [],
     this.symbolRanges = const [],
+    this.alias,
+    this.aliasRanges = const [],
   });
 
   @override
@@ -304,12 +428,14 @@ class _InstrumentTile extends StatelessWidget {
         style: TextStyle(color: colors.textPrimary),
         highlightColor: colors.brandText,
       ),
-      subtitle: _HighlightedText(
-        text: instrument.symbol,
-        ranges: symbolRanges,
-        style: TextStyle(color: colors.textTertiary, fontSize: 12),
-        highlightColor: colors.brandText,
-      ),
+      subtitle: alias == null
+          ? _HighlightedText(
+              text: instrument.symbol,
+              ranges: symbolRanges,
+              style: TextStyle(color: colors.textTertiary, fontSize: 12),
+              highlightColor: colors.brandText,
+            )
+          : _AliasNote(symbol: instrument.symbol, alias: alias!, ranges: aliasRanges),
       trailing: Icon(Icons.chevron_right, color: colors.textTertiary),
       onTap: onTap,
     );
@@ -333,6 +459,34 @@ class _InstrumentTile extends StatelessWidget {
         child: Icon(Icons.delete, color: colors.down),
       ),
       child: tile,
+    );
+  }
+}
+
+/// "XAU · also “دهب”": why a row matched when its name and symbol didn't.
+class _AliasNote extends StatelessWidget {
+  final String symbol;
+  final String alias;
+  final List<MatchRange> ranges;
+
+  const _AliasNote({required this.symbol, required this.alias, required this.ranges});
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+    final note = AppLocalizations.of(context)!.addSearchMatchedAlias(alias);
+    final text = '$symbol · $note';
+    // The alias's ranges, moved to where the alias sits in the full line.
+    final at = text.indexOf(alias, symbol.length);
+    final offset = at < 0 ? -1 : text.substring(0, at).runes.length;
+    return _HighlightedText(
+      text: text,
+      ranges: [
+        if (offset >= 0)
+          for (final r in ranges) MatchRange(r.start + offset, r.end + offset),
+      ],
+      style: TextStyle(color: colors.textTertiary, fontSize: 12),
+      highlightColor: colors.brandText,
     );
   }
 }

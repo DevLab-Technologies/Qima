@@ -71,6 +71,9 @@ HelpTopic helpTopicFor(BuildContext context, HelpTopicId id) {
           HelpStep(icon: Icons.add_circle_outline, title: l10n.helpPortfolioStep3Title, body: l10n.helpPortfolioStep3Body),
           HelpStep(icon: Icons.currency_exchange, title: l10n.helpPortfolioStep4Title, body: l10n.helpPortfolioStep4Body),
           HelpStep(icon: Icons.visibility_off_outlined, title: l10n.helpPortfolioStep5Title, body: l10n.helpPortfolioStep5Body),
+          HelpStep(icon: Icons.notes, title: l10n.helpPortfolioStep6Title, body: l10n.helpPortfolioStep6Body),
+          if (assistantSupportedOnThisPlatform)
+            HelpStep(icon: Icons.record_voice_over_outlined, title: l10n.helpPortfolioStep7Title, body: l10n.helpPortfolioStep7Body),
         ],
       );
     case HelpTopicId.holdings:
@@ -105,6 +108,8 @@ HelpTopic helpTopicFor(BuildContext context, HelpTopicId id) {
           HelpStep(icon: Icons.touch_app_outlined, title: l10n.helpAddAssetStep2Title, body: l10n.helpAddAssetStep2Body),
           HelpStep(icon: Icons.add_circle_outline, title: l10n.helpAddAssetStep3Title, body: l10n.helpAddAssetStep3Body),
           HelpStep(icon: Icons.undo, title: l10n.helpAddAssetStep4Title, body: l10n.helpAddAssetStep4Body),
+          HelpStep(icon: Icons.edit_note, title: l10n.helpAddAssetStep5Title, body: l10n.helpAddAssetStep5Body),
+          HelpStep(icon: Icons.phonelink_lock_outlined, title: l10n.helpAddAssetStep6Title, body: l10n.helpAddAssetStep6Body),
         ],
       );
     case HelpTopicId.cardConfig:
@@ -170,6 +175,7 @@ HelpTopic helpTopicFor(BuildContext context, HelpTopicId id) {
           HelpStep(icon: Icons.notifications_outlined, title: l10n.helpSettingsStep3Title, body: l10n.helpSettingsStep3Body),
           HelpStep(icon: Icons.backup_outlined, title: l10n.helpSettingsStep4Title, body: l10n.helpSettingsStep4Body),
           HelpStep(icon: Icons.tune, title: l10n.helpSettingsStep5Title, body: l10n.helpSettingsStep5Body),
+          HelpStep(icon: Icons.memory_outlined, title: l10n.helpSettingsStep6Title, body: l10n.helpSettingsStep6Body),
         ],
       );
     case HelpTopicId.zakat:
@@ -226,3 +232,8 @@ HelpTopic helpTopicFor(BuildContext context, HelpTopicId id) {
 /// the Settings Help group (spec "Settings gets a Help group ... on iOS
 /// only 'Add a widget'").
 bool get widgetsSupportedOnThisPlatform => !kIsWeb && defaultTargetPlatform == TargetPlatform.iOS;
+
+/// Whether Siri and Shortcuts can answer about Qima here: iOS and macOS,
+/// matching the App Intents the Apple targets ship.
+bool get assistantSupportedOnThisPlatform =>
+    !kIsWeb && (defaultTargetPlatform == TargetPlatform.iOS || defaultTargetPlatform == TargetPlatform.macOS);

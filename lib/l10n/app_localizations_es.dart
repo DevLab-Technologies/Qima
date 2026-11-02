@@ -15,7 +15,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get navWatchlist => 'Seguimiento';
 
   @override
-  String get watchlistAdd => 'Añadir activo';
+  String get watchlistAdd => 'Añadir a seguimiento';
 
   @override
   String get watchlistEmptyTitle => 'Tu lista de seguimiento está vacía';
@@ -28,14 +28,22 @@ class AppLocalizationsEs extends AppLocalizations {
   String get watchlistFilterAll => 'Todos';
 
   @override
-  String get addTitle => 'Añadir activo';
+  String get addTitle => 'Añadir a seguimiento';
 
   @override
-  String get addSearchHint => 'Buscar activos';
+  String get addSearchHint => 'Busca o describe una compra';
+
+  @override
+  String get addWatchSearchHint => 'Busca oro, Bitcoin, AAPL…';
 
   @override
   String addSearchCustomTickerTitle(String query) {
     return 'Añadir “$query” como símbolo personalizado';
+  }
+
+  @override
+  String addSearchMatchedAlias(String alias) {
+    return 'También «$alias»';
   }
 
   @override
@@ -1107,21 +1115,21 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get onboardingStep1Body =>
-      'Oro, plata, cripto, acciones, índices y divisas, sumados en tu moneda.';
+      'Oro, plata, cripto, acciones, índices y divisas, sumados en tu moneda, con un resumen claro de cada mes.';
 
   @override
   String get onboardingStep2Title => 'Precios como los compras';
 
   @override
   String get onboardingStep2Body =>
-      'Precios en vivo por gramo, onza o kilogramo, de 24K a 18K, en cualquier moneda. Toca + para añadir, toca una tarjeta para ver su gráfico.';
+      'Precios en vivo por gramo, onza o kilo, de 24K a 18K, en cualquier moneda. Toca + para añadir a tu seguimiento y una tarjeta para ver su gráfico.';
 
   @override
   String get onboardingStep3Title => 'Sabe lo que tienes';
 
   @override
   String get onboardingStep3Body =>
-      'Registra cada compra: cantidad, unidad, quilate, coste y fecha. Consulta lo que tienes, tu coste medio, valor y ganancia.';
+      'Toca + y luego Añadir posición, y escribe lo que compraste, o díctalo o escanea un recibo. Se lee en este dispositivo y solo se guarda cuando confirmas. Ve lo que tienes, tu coste medio, valor y ganancia.';
 
   @override
   String get onboardingStep4Title => 'No te pierdas ningún movimiento';
@@ -1129,6 +1137,10 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get onboardingStep4Body =>
       'Recibe un aviso cuando un precio cruce un nivel o se mueva un porcentaje. Pon los precios en tu pantalla de inicio y de bloqueo.';
+
+  @override
+  String get onboardingStep4BodyApple =>
+      'Recibe un aviso cuando un precio cruce un nivel o se mueva un porcentaje. Pon precios en tu pantalla de inicio y de bloqueo, o pregunta a Siri cuánto vale tu cartera.';
 
   @override
   String get onboardingStep5Title => 'Privado por diseño';
@@ -1234,7 +1246,8 @@ class AppLocalizationsEs extends AppLocalizations {
   String get helpWatchlistStep2Title => 'Añade un activo';
 
   @override
-  String get helpWatchlistStep2Body => 'Toca + y busca por nombre o símbolo.';
+  String get helpWatchlistStep2Body =>
+      'Toca + abajo y luego Añadir a seguimiento.';
 
   @override
   String get helpWatchlistStep3Title => 'Filtra la lista';
@@ -1325,7 +1338,8 @@ class AppLocalizationsEs extends AppLocalizations {
   String get helpPortfolioStep3Title => 'Añade una compra';
 
   @override
-  String get helpPortfolioStep3Body => 'Abre un activo y toca +.';
+  String get helpPortfolioStep3Body =>
+      'Toca + abajo y luego Añadir posición. O abre un activo y toca Posiciones.';
 
   @override
   String get helpPortfolioStep4Title => 'Cambia la moneda';
@@ -1340,6 +1354,20 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get helpPortfolioStep5Body =>
       'Activa Ocultar saldos en Ajustes para enmascarar todos los valores.';
+
+  @override
+  String get helpPortfolioStep6Title => 'Último mes';
+
+  @override
+  String get helpPortfolioStep6Body =>
+      'Un breve resumen de cómo se movieron tus posiciones, calculado con tus propios registros. Desactívalo en Ajustes.';
+
+  @override
+  String get helpPortfolioStep7Title => 'Pregunta a Siri';
+
+  @override
+  String get helpPortfolioStep7Body =>
+      'Pregunta a Siri o usa Atajos para saber cuánto vale tu cartera o consultar un precio sin abrir Qima.';
 
   @override
   String get helpLotEditorTitle => 'Transacción';
@@ -1384,25 +1412,25 @@ class AppLocalizationsEs extends AppLocalizations {
       'Edita o elimina una transacción cuando quieras desde el registro de la tenencia.';
 
   @override
-  String get helpAddAssetTitle => 'Añadir activo';
+  String get helpAddAssetTitle => 'Añadir a seguimiento o posición';
 
   @override
   String get helpAddAssetSummary =>
-      'Encuentra algo que seguir y añádelo a tu lista de seguimiento.';
+      'Sigue un precio en tu lista de seguimiento o registra algo que compraste.';
 
   @override
   String get helpAddAssetStep1Title => 'Busca';
 
   @override
   String get helpAddAssetStep1Body =>
-      'Escribe un nombre o símbolo, como oro, BTC o AAPL.';
+      'Toca + y luego Añadir a seguimiento. Busca por nombre o símbolo en cualquier idioma de la app, como oro, ذهب o BTC.';
 
   @override
   String get helpAddAssetStep2Title => 'Elige un resultado';
 
   @override
   String get helpAddAssetStep2Body =>
-      'Se añade a tu lista de seguimiento y se abre su página.';
+      'Elige la moneda y la unidad en que se muestra su precio y añádelo a tu lista.';
 
   @override
   String get helpAddAssetStep3Title => '¿No está en la lista?';
@@ -1534,6 +1562,13 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get helpSettingsStep5Body =>
       'Moneda base, rango del gráfico, actualización del widget e idioma.';
+
+  @override
+  String get helpSettingsStep6Title => 'Inteligencia en el dispositivo';
+
+  @override
+  String get helpSettingsStep6Body =>
+      'Si quieres, deja que el modelo de lenguaje de este dispositivo ayude a leer compras y a redactar el resumen. Funciona solo aquí, nunca da consejos y nunca aporta un número.';
 
   @override
   String get helpBackupTitle => 'Copia de seguridad y restauración';
@@ -2723,4 +2758,255 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get helpAssetDetailStep6Body =>
       'Toca compartir para publicar el precio y el gráfico como una imagen a la medida de WhatsApp, Instagram, Facebook o LinkedIn, con un texto listo.';
+
+  @override
+  String get captureRecordThis => 'Registrar esto';
+
+  @override
+  String get captureCheckTitle => 'Revisa esto';
+
+  @override
+  String get captureYouWrote => 'Escribiste';
+
+  @override
+  String get captureRead => 'Entendido como';
+
+  @override
+  String get captureFieldType => 'Tipo';
+
+  @override
+  String get captureFieldAsset => 'Activo';
+
+  @override
+  String get captureFieldQuantity => 'Cantidad';
+
+  @override
+  String get captureFieldPrice => 'Precio';
+
+  @override
+  String get captureFieldFee => 'Comisión';
+
+  @override
+  String get captureFieldDate => 'Fecha';
+
+  @override
+  String captureFrom(String words) {
+    return 'de «$words»';
+  }
+
+  @override
+  String get captureBaseCurrency => 'tu moneda base';
+
+  @override
+  String get captureTotalDivided => 'total ÷ cantidad';
+
+  @override
+  String get captureAssumed => 'supuesto';
+
+  @override
+  String get captureToday => 'hoy';
+
+  @override
+  String get captureCheck => 'revisar';
+
+  @override
+  String get captureConfirm => 'Confirmar';
+
+  @override
+  String get captureEditFields => 'Editar campos';
+
+  @override
+  String get captureFootnote =>
+      'Cada campo indica de dónde salió, y no se guarda nada hasta que confirmes.';
+
+  @override
+  String get captureOnDevice => 'En el dispositivo';
+
+  @override
+  String get captureNothingSent =>
+      'Se lee en este dispositivo. No se envía nada a ningún sitio.';
+
+  @override
+  String get captureNeedsPrice =>
+      'No se encontró un precio. Edita los campos para añadirlo.';
+
+  @override
+  String captureRecorded(String summary) {
+    return 'Registrado: $summary';
+  }
+
+  @override
+  String get settingsSummaries => 'Resúmenes';
+
+  @override
+  String get settingsPlainSummaries => 'El mes en una frase';
+
+  @override
+  String get settingsPlainSummariesFooter =>
+      'Muestra en Cartera, en una frase, qué movió tus activos el último mes. Se escribe en este dispositivo con tus propios números.';
+
+  @override
+  String get summaryTitle => 'Último mes';
+
+  @override
+  String summaryUp(String amount, String percent) {
+    return 'En el último mes tus activos ganaron $amount ($percent).';
+  }
+
+  @override
+  String summaryDown(String amount, String percent) {
+    return 'En el último mes tus activos perdieron $amount ($percent).';
+  }
+
+  @override
+  String get summaryFlat => 'Tus activos apenas se movieron en el último mes.';
+
+  @override
+  String summaryTopMover(String asset, String amount) {
+    return '$asset fue lo que más los movió, $amount.';
+  }
+
+  @override
+  String summaryTransactions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Registraste $count transacciones.',
+      one: 'Registraste 1 transacción.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String chartDescription(
+    String from,
+    String to,
+    String start,
+    String end,
+    String change,
+    String high,
+    String highDate,
+    String low,
+    String lowDate,
+  ) {
+    return 'Del $from al $to: de $start a $end, $change. Máximo $high el $highDate, mínimo $low el $lowDate.';
+  }
+
+  @override
+  String chartDescriptionHidden(String from, String to, String change) {
+    return 'Del $from al $to: $change.';
+  }
+
+  @override
+  String get dictationStart => 'Dicta una compra';
+
+  @override
+  String get dictationStop => 'Dejar de escuchar';
+
+  @override
+  String get dictationUnsupported =>
+      'La entrada de voz en este idioma no está disponible en este dispositivo. Qima solo escucha en el dispositivo, nunca a través de un servidor.';
+
+  @override
+  String get dictationDenied =>
+      'El micrófono o el reconocimiento de voz están desactivados para Qima. Actívalos en Ajustes para dictar una compra.';
+
+  @override
+  String get settingsIntelligence => 'Inteligencia en el dispositivo';
+
+  @override
+  String get settingsUseModel => 'Usar el modelo del dispositivo';
+
+  @override
+  String get settingsUseModelFooter =>
+      'Ayuda a leer compras que Qima no puede entender por sí sola y redacta el resumen del mes. Funciona solo en este dispositivo, nunca da consejos y nunca aporta un número: cada cifra sale de tus propios registros.';
+
+  @override
+  String get modelReady => 'Listo en este dispositivo';
+
+  @override
+  String get modelUnsupported => 'No disponible en este dispositivo';
+
+  @override
+  String get modelTurnedOff =>
+      'Activa Apple Intelligence en los Ajustes del sistema para usarlo';
+
+  @override
+  String get modelNotReady => 'El modelo aún se está descargando';
+
+  @override
+  String get modelUnsupportedLanguage => 'Aún no disponible en este idioma';
+
+  @override
+  String get receiptScan => 'Escanear un recibo';
+
+  @override
+  String get receiptTakePhoto => 'Hacer una foto';
+
+  @override
+  String get receiptChoosePhoto => 'Elegir una foto';
+
+  @override
+  String get receiptNoText =>
+      'No se encontró texto en esa foto. Inténtalo de nuevo más cerca, con el recibo plano y bien iluminado.';
+
+  @override
+  String get addButton => 'Añadir';
+
+  @override
+  String get addSheetWatch => 'Añadir a seguimiento';
+
+  @override
+  String get addSheetWatchSubtitle => 'Sigue un precio. No hace falta comprar.';
+
+  @override
+  String get addHoldingTitle => 'Añadir posición';
+
+  @override
+  String get addSheetHoldingSpeakScan =>
+      'Dicta, escanea un recibo o escríbelo.';
+
+  @override
+  String get addSheetHoldingSpeak => 'Dicta o escribe lo que compraste.';
+
+  @override
+  String get addSheetHoldingScan => 'Escanea un recibo o escríbelo.';
+
+  @override
+  String get addSheetHoldingType => 'Escribe lo que compraste.';
+
+  @override
+  String get addSheetSiriTip =>
+      'Pregunta a Siri: «Cuánto vale mi cartera de Qima»';
+
+  @override
+  String get addTypeExample => 'Por ejemplo: compré 20 g de oro 21K a 4100 EGP';
+
+  @override
+  String get currencyFieldShowIn => 'Mostrar precios en';
+
+  @override
+  String get currencyFieldTransaction => 'Moneda de la operación';
+
+  @override
+  String currencyFieldCount(int count) {
+    return '$count monedas disponibles';
+  }
+
+  @override
+  String get currencyFieldMore => 'Más';
+
+  @override
+  String get helpAddAssetStep5Title => 'Añadir una posición';
+
+  @override
+  String get helpAddAssetStep5Body =>
+      'Toca + y luego Añadir posición. Escribe lo que compraste, o díctalo o escanea un recibo si este dispositivo puede. Revisa lo leído y confirma.';
+
+  @override
+  String get helpAddAssetStep6Title => 'Leído en este dispositivo';
+
+  @override
+  String get helpAddAssetStep6Body =>
+      'La voz y los recibos se leen en este dispositivo y nunca se envían. No se guarda nada hasta que confirmes, y cada número sale de lo que escribiste, dijiste o escaneaste.';
 }

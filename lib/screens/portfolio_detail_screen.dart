@@ -14,6 +14,7 @@ import '../theme/help_topics.dart';
 import '../theme/masking.dart';
 import '../theme/qima_colors.dart';
 import '../theme/strings.dart';
+import '../theme/summaries.dart';
 import '../widgets/allocation_donut.dart';
 import '../widgets/help_button.dart';
 import '../widgets/instrument_icon.dart';
@@ -90,7 +91,8 @@ class PortfolioDetailScreen extends StatelessWidget {
 
             return ListView(
               controller: scrollController,
-              padding: const EdgeInsets.all(DS.spaceMD),
+              // Extra room at the end so the docked + never covers the last row.
+              padding: EdgeInsets.fromLTRB(DS.spaceMD, DS.spaceMD, DS.spaceMD, asTab ? DS.spaceXL * 2 : DS.spaceMD),
               children: [
                 if (valuation != null)
                   DSHeroCard(
@@ -164,6 +166,14 @@ class PortfolioDetailScreen extends StatelessWidget {
                     child: Text(l10n.portfolioEmpty,
                         style: TextStyle(color: colors.textTertiary)),
                   ),
+                if (state.plainSummaries)
+                  if (cubit.periodSummary() case final summary?) ...[
+                    const SizedBox(height: DS.spaceSM),
+                    _SummaryCard(
+                      sentence: periodSummarySentence(context, summary, currency: state.baseCurrency, hidden: hidden),
+                      hidden: hidden,
+                    ),
+                  ],
                 if (state.lots.isNotEmpty) ...[
                   const SizedBox(height: DS.spaceSM),
                   _ZakatEntry(assessment: cubit.zakatAssessment, hidden: hidden),
@@ -217,6 +227,66 @@ class PortfolioDetailScreen extends StatelessWidget {
             );
           },
         ),
+      ),
+    );
+  }
+}
+
+/// The past month in a sentence (v4 phase 3), when turned on in Settings.
+/// Shows the template sentence at once; with the on-device model on, swaps
+/// in its wording once that passes `acceptPhrasing` (phase 6).
+class _SummaryCard extends StatefulWidget {
+  final String sentence;
+  final bool hidden;
+
+  const _SummaryCard({required this.sentence, required this.hidden});
+
+  @override
+  State<_SummaryCard> createState() => _SummaryCardState();
+}
+
+class _SummaryCardState extends State<_SummaryCard> {
+  String? _phrased;
+  String? _for;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _phrase();
+  }
+
+  @override
+  void didUpdateWidget(covariant _SummaryCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _phrase();
+  }
+
+  void _phrase() {
+    // Masked sentences have nothing to word better.
+    final cubit = context.read<AppCubit>();
+    // Turning the model on or off words the same sentence again.
+    final key = '${cubit.state.onDeviceModel}|${widget.sentence}';
+    if (widget.hidden || key == _for) return;
+    _for = key;
+    _phrased = null;
+    cubit.phrased(widget.sentence, Localizations.localeOf(context).toLanguageTag()).then((value) {
+      if (mounted && _for == key) setState(() => _phrased = value);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final colors = context.colors;
+    final sentence = widget.hidden ? widget.sentence : (_phrased ?? widget.sentence);
+    return DSCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(l10n.summaryTitle, style: TextStyle(color: colors.textTertiary, fontSize: 12)),
+          const SizedBox(height: DS.space2XS),
+          Text(sentence, style: TextStyle(color: colors.textPrimary, fontSize: 15, height: 1.4)),
+        ],
       ),
     );
   }

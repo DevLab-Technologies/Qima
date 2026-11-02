@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../blocs/app_cubit.dart';
 import '../l10n/app_localizations.dart';
+import '../widgets/add_sheet.dart';
 import 'portfolio_detail_screen.dart';
 import 'settings_screen.dart';
 import 'watchlist_screen.dart';
@@ -105,6 +106,13 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
 
   /// Android/predictive back: from Portfolio or Settings, go to Watchlist
   /// first; only exit the app from Watchlist itself (spec §v2-C).
+  /// Settings from the Watchlist title bar on phones, where the bottom bar
+  /// holds only Watchlist, the + and Portfolio. The side rail keeps it as a
+  /// tab instead.
+  void _openSettings() {
+    Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => const SettingsScreen()));
+  }
+
   void _handleBack() {
     if (_index != 0) {
       setState(() => _index = 0);
@@ -120,12 +128,14 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
       NavigationDestination(icon: const Icon(Icons.settings_outlined), selectedIcon: const Icon(Icons.settings), label: l10n.settingsTitle),
     ];
 
-    final tabs = IndexedStack(
+    // [phone]: Settings opens from the Watchlist title bar instead of a tab.
+    Widget tabs({required bool phone}) => IndexedStack(
       index: _index,
       children: [
         WatchlistScreen(
           manageRefreshLifecycle: false,
           onOpenPortfolio: () => _selectTab(1),
+          onOpenSettings: phone ? _openSettings : null,
           scrollController: _watchlistScroll,
         ),
         PortfolioDetailScreen(asTab: true, scrollController: _portfolioScroll),
@@ -142,13 +152,17 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
       child: LayoutBuilder(
         builder: (context, constraints) {
           final useRail = constraints.maxWidth >= _kRailBreakpoint;
+          // Phones: Watchlist and Portfolio either side of a round + docked
+          // in the bar's centre. Settings opens from the Watchlist title bar.
           if (!useRail) {
             return Scaffold(
-              body: tabs,
-              bottomNavigationBar: NavigationBar(
+              body: tabs(phone: true),
+              floatingActionButton: const AddButton(),
+              floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+              bottomNavigationBar: _TabBar(
+                destinations: destinations.take(2).toList(),
                 selectedIndex: _index,
-                onDestinationSelected: _selectTab,
-                destinations: destinations,
+                onSelected: _selectTab,
               ),
             );
           }
@@ -165,17 +179,82 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
                   selectedIndex: _index,
                   onDestinationSelected: _selectTab,
                   labelType: NavigationRailLabelType.all,
+                  leading: const Padding(
+                    padding: EdgeInsets.only(bottom: 8),
+                    child: AddButton(),
+                  ),
                   destinations: [
                     for (final d in destinations)
                       NavigationRailDestination(icon: d.icon, selectedIcon: d.selectedIcon, label: Text(d.label)),
                   ],
                 ),
                 const VerticalDivider(width: 1, thickness: 1),
-                Expanded(child: tabs),
+                Expanded(child: tabs(phone: false)),
               ],
             ),
           );
         },
+      ),
+    );
+  }
+}
+
+/// The phone bottom bar: two tabs either side of the docked + notch, drawn
+/// like the theme's NavigationBar (transparent indicator, brand-colored
+/// selection).
+class _TabBar extends StatelessWidget {
+  final List<NavigationDestination> destinations;
+  final int selectedIndex;
+  final ValueChanged<int> onSelected;
+
+  const _TabBar({required this.destinations, required this.selectedIndex, required this.onSelected});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = NavigationBarTheme.of(context);
+    Widget tab(int index) {
+      final destination = destinations[index];
+      final selected = index == selectedIndex;
+      final states = {if (selected) WidgetState.selected};
+      return Expanded(
+        child: Semantics(
+          button: true,
+          selected: selected,
+          label: destination.label,
+          excludeSemantics: true,
+          child: InkResponse(
+            onTap: () => onSelected(index),
+            highlightShape: BoxShape.rectangle,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                IconTheme(
+                  data: theme.iconTheme?.resolve(states) ?? const IconThemeData(),
+                  child: selected ? (destination.selectedIcon ?? destination.icon) : destination.icon,
+                ),
+                const SizedBox(height: 4),
+                Text(destination.label, style: theme.labelTextStyle?.resolve(states)),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
+    return BottomAppBar(
+      color: theme.backgroundColor,
+      surfaceTintColor: Colors.transparent,
+      height: theme.height,
+      padding: EdgeInsets.zero,
+      shape: const CircularNotchedRectangle(),
+      notchMargin: 6,
+      child: Row(
+        children: [
+          tab(0),
+          // Room for the docked + between the two tabs.
+          const SizedBox(width: 88),
+          tab(1),
+        ],
       ),
     );
   }

@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:qima/models/asset.dart';
+import 'package:qima/models/instrument_aliases.dart';
 import 'package:qima/models/instrument_catalog.dart';
 import 'package:qima/models/instrument_search.dart';
 
@@ -103,5 +104,55 @@ void main() {
     final custom = InstrumentCatalog.builtIn.first.copyWith(id: 'stock.MYCO', symbol: 'MYCO', nameKey: 'My Custom Co');
     final groups = InstrumentSearch.search([...catalog, custom], 'myco', displayName: (i) => i.nameKey);
     expect(groups.expand((g) => g.matches).map((m) => m.instrument.id), contains('stock.MYCO'));
+  });
+
+  group('aliases', () {
+    List<InstrumentMatch> matches(String query) => InstrumentSearch.search(
+          catalog,
+          query,
+          displayName: _englishName,
+          aliases: (i) => InstrumentAliases.of(i.id),
+        ).expand((g) => g.matches).toList();
+
+    test('an Arabic everyday word finds gold from an English name, and says which word', () {
+      final m = matches('دهب').single;
+      expect(m.instrument.id, 'metal.XAU');
+      expect(m.alias, 'دهب');
+      expect(m.aliasRanges, [const MatchRange(0, 3)]);
+      expect(m.nameRanges, isEmpty);
+    });
+
+    test('a Spanish name finds silver', () {
+      expect(matches('plata').single.instrument.id, 'metal.XAG');
+    });
+
+    test('a name or symbol match takes precedence and carries no alias', () {
+      final gold = matches('gold').single;
+      expect(gold.alias, isNull);
+      expect(gold.nameRanges, isNotEmpty);
+    });
+
+    test('one family word lists every currency in it', () {
+      final ids = matches('ريال').map((m) => m.instrument.id).toSet();
+      expect(ids, {'fx.SAR', 'fx.QAR', 'fx.OMR'});
+    });
+
+    test('a prefix shows the alias it starts', () {
+      expect(matches('dól').single.alias, 'dólar');
+    });
+
+    test('Arabic hamza variants still fold', () {
+      expect(matches('ايثريوم').single.instrument.id, 'crypto.ETH');
+      expect(matches('إنفيديا').single.instrument.id, 'stock.NVDA');
+    });
+
+    test('without aliases, nothing extra matches', () {
+      expect(InstrumentSearch.search(catalog, 'دهب', displayName: _englishName), isEmpty);
+    });
+
+    test('every alias belongs to a built-in instrument', () {
+      final ids = InstrumentCatalog.builtIn.map((i) => i.id).toSet();
+      expect(InstrumentAliases.everyday.keys.where((id) => !ids.contains(id)), isEmpty);
+    });
   });
 }

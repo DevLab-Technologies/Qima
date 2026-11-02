@@ -1,2 +1,7 @@
-Qima 3.1.1
-• Les images et légendes partagées renvoient désormais vers notre nouveau site, qima.money
+Qima 4.0
+• Touchez + pour ajouter au suivi ou ajouter une position
+• Enregistrez un achat avec vos mots : saisissez-le, dictez-le ou scannez le reçu. Il est lu sur votre appareil et enregistré seulement quand vous confirmez
+• Cherchez des actifs en français, anglais, arabe ou espagnol
+• Un résumé simple de votre dernier mois
+• Demandez à Siri la valeur de votre portefeuille
+• Choisir la devise est plus clair en ajoutant un actif ou une transaction

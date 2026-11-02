@@ -3,10 +3,12 @@ import 'package:intl/intl.dart' hide TextDirection;
 
 import '../models/display_point.dart';
 import '../models/money.dart';
+import '../models/period_summary.dart';
 import '../services/chart_sampling.dart';
 import '../services/scrub_resolver.dart';
 import 'design_system.dart';
 import 'qima_colors.dart';
+import 'summaries.dart';
 
 // Re-exported so callers only need to import price_chart.dart for the
 // granularity/resolver types used alongside the chart.
@@ -174,7 +176,13 @@ class _PriceChartViewState extends State<PriceChartView> {
       );
     }
 
-    return chart;
+    final facts = ChartFacts.of(points);
+    return Semantics(
+      label: facts == null
+          ? null
+          : chartDescription(context, facts, currencyCode: widget.currencyCode, hidden: widget.maskValues),
+      child: chart,
+    );
   }
 }
 

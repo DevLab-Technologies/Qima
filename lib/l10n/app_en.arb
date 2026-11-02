@@ -8,16 +8,26 @@
   "@navWatchlist": {
     "description": "Bottom navigation / navigation rail label for the watchlist tab."
   },
-  "watchlistAdd": "Add asset",
+  "watchlistAdd": "Add to watchlist",
   "watchlistEmptyTitle": "Your watchlist is empty",
   "watchlistEmptyMessage": "Add metals, crypto, stocks, or currencies to start tracking prices.",
   "watchlistFilterAll": "All",
-  "addTitle": "Add asset",
-  "addSearchHint": "Search assets",
+  "addTitle": "Add to watchlist",
+  "addSearchHint": "Search, or describe a purchase",
+  "addWatchSearchHint": "Search gold, Bitcoin, AAPL…",
   "addSearchCustomTickerTitle": "Add “{query}” as a custom ticker",
   "@addSearchCustomTickerTitle": {
     "placeholders": {
       "query": {
+        "type": "String"
+      }
+    }
+  },
+  "addSearchMatchedAlias": "Also “{alias}”",
+  "@addSearchMatchedAlias": {
+    "description": "Under a search result that matched by another name, e.g. Spanish \"Oro\" for Gold",
+    "placeholders": {
+      "alias": {
         "type": "String"
       }
     }
@@ -589,7 +599,7 @@
   "@onboardingStep1Title": {
     "description": "Onboarding step 1 (Welcome) title."
   },
-  "onboardingStep1Body": "Gold, silver, crypto, stocks, indices and currencies, added up in your currency.",
+  "onboardingStep1Body": "Gold, silver, crypto, stocks, indices and currencies, added up in your currency, with a plain summary of each month.",
   "@onboardingStep1Body": {
     "description": "Onboarding step 1 (Welcome) body."
   },
@@ -597,7 +607,7 @@
   "@onboardingStep2Title": {
     "description": "Onboarding step 2 (Watchlist) title."
   },
-  "onboardingStep2Body": "Live prices by gram, ounce or kilogram, 24K to 18K, in any currency. Tap + to add, tap a card for its chart.",
+  "onboardingStep2Body": "Live prices by gram, ounce or kilogram, 24K to 18K, in any currency. Tap + to add to your watchlist, tap a card for its chart.",
   "@onboardingStep2Body": {
     "description": "Onboarding step 2 (Watchlist) body."
   },
@@ -605,7 +615,7 @@
   "@onboardingStep3Title": {
     "description": "Onboarding step 3 (Holdings) title."
   },
-  "onboardingStep3Body": "Record each purchase: quantity, unit, karat, cost and date. See what you hold, your average cost, value and gain.",
+  "onboardingStep3Body": "Tap +, then Add holding, and type what you bought, or say it or scan a receipt. It is read on this device and saved only when you confirm. See what you hold, your average cost, value and gain.",
   "@onboardingStep3Body": {
     "description": "Onboarding step 3 (Holdings) body."
   },
@@ -617,6 +627,7 @@
   "@onboardingStep4Body": {
     "description": "Onboarding step 4 (Alerts & widgets) title."
   },
+  "onboardingStep4BodyApple": "Get notified when a price crosses a level or moves by a percent. Put prices on your Home and Lock Screen, or ask Siri what your portfolio is worth.",
   "onboardingStep5Title": "Private by design",
   "@onboardingStep5Title": {
     "description": "Onboarding step 5 (Private by design) title."
@@ -745,7 +756,7 @@
   "@helpWatchlistStep2Title": {
     "description": "Watchlist help step 2 title."
   },
-  "helpWatchlistStep2Body": "Tap + and search by name or symbol.",
+  "helpWatchlistStep2Body": "Tap + at the bottom, then Add to watchlist.",
   "@helpWatchlistStep2Body": {
     "description": "Watchlist help step 2 body."
   },
@@ -849,7 +860,7 @@
   "@helpPortfolioStep3Title": {
     "description": "Portfolio help step 3 title."
   },
-  "helpPortfolioStep3Body": "Open an asset, then tap +.",
+  "helpPortfolioStep3Body": "Tap + at the bottom, then Add holding. Or open an asset and tap Holdings.",
   "@helpPortfolioStep3Body": {
     "description": "Portfolio help step 3 body."
   },
@@ -869,6 +880,10 @@
   "@helpPortfolioStep5Body": {
     "description": "Portfolio help step 5 body."
   },
+  "helpPortfolioStep6Title": "Past month",
+  "helpPortfolioStep6Body": "A short summary of how your holdings moved, worked out from your own records. Turn it off in Settings.",
+  "helpPortfolioStep7Title": "Ask Siri",
+  "helpPortfolioStep7Body": "Ask Siri or use Shortcuts to hear what your portfolio is worth or check a price, without opening Qima.",
   "helpLotEditorTitle": "Transaction",
   "@helpLotEditorTitle": {
     "description": "Lot editor help topic title."
@@ -917,11 +932,11 @@
   "@helpLotEditorStep5Body": {
     "description": "Lot editor help step 5 body."
   },
-  "helpAddAssetTitle": "Add asset",
+  "helpAddAssetTitle": "Add to watchlist or holding",
   "@helpAddAssetTitle": {
     "description": "Add asset help topic title."
   },
-  "helpAddAssetSummary": "Find something to follow and add it to your watchlist.",
+  "helpAddAssetSummary": "Follow a price on your watchlist, or record something you bought.",
   "@helpAddAssetSummary": {
     "description": "Add asset help topic summary line."
   },
@@ -929,7 +944,7 @@
   "@helpAddAssetStep1Title": {
     "description": "Add asset help step 1 title."
   },
-  "helpAddAssetStep1Body": "Type a name or symbol, like gold, BTC or AAPL.",
+  "helpAddAssetStep1Body": "Tap +, then Add to watchlist. Search by name or symbol in any app language, like gold, ذهب or BTC.",
   "@helpAddAssetStep1Body": {
     "description": "Add asset help step 1 body."
   },
@@ -937,7 +952,7 @@
   "@helpAddAssetStep2Title": {
     "description": "Add asset help step 2 title."
   },
-  "helpAddAssetStep2Body": "It's added to your watchlist and its page opens.",
+  "helpAddAssetStep2Body": "Choose the currency and unit its price shows in, then add it to your watchlist.",
   "@helpAddAssetStep2Body": {
     "description": "Add asset help step 2 body."
   },
@@ -1093,6 +1108,8 @@
   "@helpSettingsStep5Body": {
     "description": "Settings help step 5 body."
   },
+  "helpSettingsStep6Title": "On-device intelligence",
+  "helpSettingsStep6Body": "Optionally let this device's own language model help read purchases and word the summary. It runs only here, never gives advice and never supplies a number.",
   "helpBackupTitle": "Backup & restore",
   "@helpBackupTitle": {
     "description": "Backup & restore help topic title."
@@ -2063,5 +2080,175 @@
   "helpWatchlistStep6Title": "Change the order",
   "helpWatchlistStep6Body": "Tap the arrows at the top to drag cards by their handles, or sort by name, performance or asset class. You can also press and hold a card to drag it.",
   "helpAssetDetailStep6Title": "Share it",
-  "helpAssetDetailStep6Body": "Tap share to post the price and chart as an image sized for WhatsApp, Instagram, Facebook or LinkedIn, with a ready caption."
+  "helpAssetDetailStep6Body": "Tap share to post the price and chart as an image sized for WhatsApp, Instagram, Facebook or LinkedIn, with a ready caption.",
+  "captureRecordThis": "Record this",
+  "captureCheckTitle": "Check this",
+  "captureYouWrote": "You wrote",
+  "captureRead": "Read as",
+  "captureFieldType": "Type",
+  "captureFieldAsset": "Asset",
+  "captureFieldQuantity": "Quantity",
+  "captureFieldPrice": "Price",
+  "captureFieldFee": "Fee",
+  "captureFieldDate": "Date",
+  "captureFrom": "from “{words}”",
+  "@captureFrom": {
+    "placeholders": {
+      "words": {
+        "type": "String"
+      }
+    }
+  },
+  "captureBaseCurrency": "your base currency",
+  "captureTotalDivided": "total ÷ quantity",
+  "captureAssumed": "assumed",
+  "captureToday": "today",
+  "captureCheck": "check",
+  "captureConfirm": "Confirm",
+  "captureEditFields": "Edit fields",
+  "captureFootnote": "Every field says where it came from, and nothing is saved until you confirm.",
+  "captureOnDevice": "On device",
+  "captureNothingSent": "Read on this device. Nothing is sent anywhere.",
+  "captureNeedsPrice": "No price found. Edit the fields to add one.",
+  "captureRecorded": "Recorded: {summary}",
+  "@captureRecorded": {
+    "placeholders": {
+      "summary": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsSummaries": "Summaries",
+  "settingsPlainSummaries": "Month in a sentence",
+  "settingsPlainSummariesFooter": "Shows what moved your holdings over the past month as one sentence on Portfolio. Written on this device from your own numbers.",
+  "summaryTitle": "Past month",
+  "summaryUp": "Over the past month your holdings gained {amount} ({percent}).",
+  "@summaryUp": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "summaryDown": "Over the past month your holdings lost {amount} ({percent}).",
+  "@summaryDown": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "summaryFlat": "Your holdings barely moved over the past month.",
+  "summaryTopMover": "{asset} moved them most, {amount}.",
+  "@summaryTopMover": {
+    "placeholders": {
+      "asset": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "summaryTransactions": "{count, plural, =1{You recorded 1 transaction.} other{You recorded {count} transactions.}}",
+  "@summaryTransactions": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chartDescription": "{from} to {to}: {start} to {end}, {change}. High {high} on {highDate}, low {low} on {lowDate}.",
+  "@chartDescription": {
+    "placeholders": {
+      "from": {
+        "type": "String"
+      },
+      "to": {
+        "type": "String"
+      },
+      "start": {
+        "type": "String"
+      },
+      "end": {
+        "type": "String"
+      },
+      "change": {
+        "type": "String"
+      },
+      "high": {
+        "type": "String"
+      },
+      "highDate": {
+        "type": "String"
+      },
+      "low": {
+        "type": "String"
+      },
+      "lowDate": {
+        "type": "String"
+      }
+    }
+  },
+  "chartDescriptionHidden": "{from} to {to}: {change}.",
+  "@chartDescriptionHidden": {
+    "placeholders": {
+      "from": {
+        "type": "String"
+      },
+      "to": {
+        "type": "String"
+      },
+      "change": {
+        "type": "String"
+      }
+    }
+  },
+  "dictationStart": "Speak a purchase",
+  "dictationStop": "Stop listening",
+  "dictationUnsupported": "Voice input in this language isn't available on this device. Qima only listens on the device, never through a server.",
+  "dictationDenied": "Microphone or speech recognition is off for Qima. Turn them on in Settings to speak a purchase.",
+  "settingsIntelligence": "On-device intelligence",
+  "settingsUseModel": "Use the on-device model",
+  "settingsUseModelFooter": "Helps read purchases Qima can't place on its own, and words the month summary. It runs only on this device, never gives advice, and never supplies a number: every figure comes from your own records.",
+  "modelReady": "Ready on this device",
+  "modelUnsupported": "Not available on this device",
+  "modelTurnedOff": "Turn on Apple Intelligence in system Settings to use it",
+  "modelNotReady": "The model is still downloading",
+  "modelUnsupportedLanguage": "Not available in this language yet",
+  "receiptScan": "Scan a receipt",
+  "receiptTakePhoto": "Take a photo",
+  "receiptChoosePhoto": "Choose a photo",
+  "receiptNoText": "No text found in that photo. Try again closer, with the receipt flat and well lit.",
+  "addButton": "Add",
+  "addSheetWatch": "Add to watchlist",
+  "addSheetWatchSubtitle": "Track a price. No purchase needed.",
+  "addHoldingTitle": "Add holding",
+  "addSheetHoldingSpeakScan": "Speak, scan a receipt or type it.",
+  "addSheetHoldingSpeak": "Speak or type what you bought.",
+  "addSheetHoldingScan": "Scan a receipt or type it.",
+  "addSheetHoldingType": "Type what you bought.",
+  "addSheetSiriTip": "Ask Siri: “What's my Qima portfolio worth”",
+  "addTypeExample": "For example: bought 20 g of 21K gold at 4,100 EGP",
+  "currencyFieldShowIn": "Show prices in",
+  "currencyFieldTransaction": "Transaction currency",
+  "currencyFieldCount": "{count} currencies available",
+  "@currencyFieldCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "currencyFieldMore": "More",
+  "helpAddAssetStep5Title": "Add a holding",
+  "helpAddAssetStep5Body": "Tap +, then Add holding. Type what you bought, or speak it or scan a receipt where this device can. Check what was read, then confirm.",
+  "helpAddAssetStep6Title": "Read on this device",
+  "helpAddAssetStep6Body": "Speech and receipts are read on this device and never sent anywhere. Nothing is saved until you confirm, and every number comes from what you typed, said or scanned."
 }
