@@ -5009,36 +5009,6 @@ abstract class AppLocalizations {
   /// **'Add'**
   String get addButton;
 
-  /// No description provided for @addSheetRecordTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Record a purchase'**
-  String get addSheetRecordTitle;
-
-  /// No description provided for @addSheetRecordSubtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Read on this device. Nothing is saved until you confirm.'**
-  String get addSheetRecordSubtitle;
-
-  /// No description provided for @addSheetSpeak.
-  ///
-  /// In en, this message translates to:
-  /// **'Speak'**
-  String get addSheetSpeak;
-
-  /// No description provided for @addSheetScan.
-  ///
-  /// In en, this message translates to:
-  /// **'Scan receipt'**
-  String get addSheetScan;
-
-  /// No description provided for @addSheetType.
-  ///
-  /// In en, this message translates to:
-  /// **'Type it'**
-  String get addSheetType;
-
   /// No description provided for @addSheetWatch.
   ///
   /// In en, this message translates to:
@@ -5050,6 +5020,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Track a price. No purchase needed.'**
   String get addSheetWatchSubtitle;
+
+  /// No description provided for @addHoldingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add holding'**
+  String get addHoldingTitle;
+
+  /// No description provided for @addSheetHoldingSpeakScan.
+  ///
+  /// In en, this message translates to:
+  /// **'Speak, scan a receipt or type it.'**
+  String get addSheetHoldingSpeakScan;
+
+  /// No description provided for @addSheetHoldingSpeak.
+  ///
+  /// In en, this message translates to:
+  /// **'Speak or type what you bought.'**
+  String get addSheetHoldingSpeak;
+
+  /// No description provided for @addSheetHoldingScan.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan a receipt or type it.'**
+  String get addSheetHoldingScan;
+
+  /// No description provided for @addSheetHoldingType.
+  ///
+  /// In en, this message translates to:
+  /// **'Type what you bought.'**
+  String get addSheetHoldingType;
 
   /// No description provided for @addSheetSiriTip.
   ///
@@ -5090,13 +5090,13 @@ abstract class AppLocalizations {
   /// No description provided for @helpAddAssetStep5Title.
   ///
   /// In en, this message translates to:
-  /// **'Record a purchase'**
+  /// **'Add a holding'**
   String get helpAddAssetStep5Title;
 
   /// No description provided for @helpAddAssetStep5Body.
   ///
   /// In en, this message translates to:
-  /// **'Tap +, then speak, scan a receipt or type it. Check what was read, then confirm.'**
+  /// **'Tap +, then Add holding. Type, speak or scan a receipt, check what was read, then confirm.'**
   String get helpAddAssetStep5Body;
 }
 

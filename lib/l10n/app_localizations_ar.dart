@@ -2924,26 +2924,25 @@ class AppLocalizationsAr extends AppLocalizations {
   String get addButton => 'إضافة';
 
   @override
-  String get addSheetRecordTitle => 'سجّل عملية شراء';
-
-  @override
-  String get addSheetRecordSubtitle =>
-      'تُقرأ على هذا الجهاز، ولا يُحفظ شيء حتى تؤكد.';
-
-  @override
-  String get addSheetSpeak => 'تحدّث';
-
-  @override
-  String get addSheetScan => 'امسح إيصالًا';
-
-  @override
-  String get addSheetType => 'اكتبها';
-
-  @override
   String get addSheetWatch => 'أضف إلى قائمة المتابعة';
 
   @override
   String get addSheetWatchSubtitle => 'تابع سعرًا دون الحاجة إلى شراء.';
+
+  @override
+  String get addHoldingTitle => 'أضف حيازة';
+
+  @override
+  String get addSheetHoldingSpeakScan => 'تحدّث أو امسح إيصالًا أو اكتبه.';
+
+  @override
+  String get addSheetHoldingSpeak => 'تحدّث أو اكتب ما اشتريته.';
+
+  @override
+  String get addSheetHoldingScan => 'امسح إيصالًا أو اكتبه.';
+
+  @override
+  String get addSheetHoldingType => 'اكتب ما اشتريته.';
 
   @override
   String get addSheetSiriTip => 'اسأل Siri: «كم قيمة محفظتي في Qima»';
@@ -2967,9 +2966,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get currencyFieldMore => 'المزيد';
 
   @override
-  String get helpAddAssetStep5Title => 'سجّل عملية شراء';
+  String get helpAddAssetStep5Title => 'أضف حيازة';
 
   @override
   String get helpAddAssetStep5Body =>
-      'اضغط +، ثم تحدّث أو امسح إيصالًا أو اكتبها. راجع ما قُرئ ثم أكّد.';
+      'اضغط +، ثم «أضف حيازة». اكتب أو تحدّث أو امسح إيصالًا، وراجع ما قُرئ ثم أكّد.';
 }

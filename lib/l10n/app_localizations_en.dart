@@ -2906,26 +2906,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get addButton => 'Add';
 
   @override
-  String get addSheetRecordTitle => 'Record a purchase';
-
-  @override
-  String get addSheetRecordSubtitle =>
-      'Read on this device. Nothing is saved until you confirm.';
-
-  @override
-  String get addSheetSpeak => 'Speak';
-
-  @override
-  String get addSheetScan => 'Scan receipt';
-
-  @override
-  String get addSheetType => 'Type it';
-
-  @override
   String get addSheetWatch => 'Add to watchlist';
 
   @override
   String get addSheetWatchSubtitle => 'Track a price. No purchase needed.';
+
+  @override
+  String get addHoldingTitle => 'Add holding';
+
+  @override
+  String get addSheetHoldingSpeakScan => 'Speak, scan a receipt or type it.';
+
+  @override
+  String get addSheetHoldingSpeak => 'Speak or type what you bought.';
+
+  @override
+  String get addSheetHoldingScan => 'Scan a receipt or type it.';
+
+  @override
+  String get addSheetHoldingType => 'Type what you bought.';
 
   @override
   String get addSheetSiriTip => 'Ask Siri: “What\'s my Qima portfolio worth”';
@@ -2949,9 +2948,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get currencyFieldMore => 'More';
 
   @override
-  String get helpAddAssetStep5Title => 'Record a purchase';
+  String get helpAddAssetStep5Title => 'Add a holding';
 
   @override
   String get helpAddAssetStep5Body =>
-      'Tap +, then speak, scan a receipt or type it. Check what was read, then confirm.';
+      'Tap +, then Add holding. Type, speak or scan a receipt, check what was read, then confirm.';
 }

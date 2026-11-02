@@ -2932,26 +2932,26 @@ class AppLocalizationsFr extends AppLocalizations {
   String get addButton => 'Ajouter';
 
   @override
-  String get addSheetRecordTitle => 'Enregistrer un achat';
-
-  @override
-  String get addSheetRecordSubtitle =>
-      'Lu sur cet appareil. Rien n\'est enregistré avant votre confirmation.';
-
-  @override
-  String get addSheetSpeak => 'Dicter';
-
-  @override
-  String get addSheetScan => 'Scanner un reçu';
-
-  @override
-  String get addSheetType => 'Saisir';
-
-  @override
   String get addSheetWatch => 'Ajouter au suivi';
 
   @override
   String get addSheetWatchSubtitle => 'Suivez un prix. Aucun achat nécessaire.';
+
+  @override
+  String get addHoldingTitle => 'Ajouter une position';
+
+  @override
+  String get addSheetHoldingSpeakScan =>
+      'Dictez, scannez un reçu ou saisissez-le.';
+
+  @override
+  String get addSheetHoldingSpeak => 'Dictez ou saisissez votre achat.';
+
+  @override
+  String get addSheetHoldingScan => 'Scannez un reçu ou saisissez-le.';
+
+  @override
+  String get addSheetHoldingType => 'Saisissez votre achat.';
 
   @override
   String get addSheetSiriTip =>
@@ -2975,9 +2975,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get currencyFieldMore => 'Plus';
 
   @override
-  String get helpAddAssetStep5Title => 'Enregistrer un achat';
+  String get helpAddAssetStep5Title => 'Ajouter une position';
 
   @override
   String get helpAddAssetStep5Body =>
-      'Touchez +, puis dictez, scannez un reçu ou saisissez-le. Vérifiez ce qui a été lu, puis confirmez.';
+      'Touchez +, puis Ajouter une position. Saisissez, dictez ou scannez un reçu, vérifiez ce qui a été lu, puis confirmez.';
 }

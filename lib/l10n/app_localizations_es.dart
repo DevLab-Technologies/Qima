@@ -2927,26 +2927,26 @@ class AppLocalizationsEs extends AppLocalizations {
   String get addButton => 'Añadir';
 
   @override
-  String get addSheetRecordTitle => 'Registrar una compra';
-
-  @override
-  String get addSheetRecordSubtitle =>
-      'Se lee en este dispositivo. No se guarda nada hasta que confirmes.';
-
-  @override
-  String get addSheetSpeak => 'Dictar';
-
-  @override
-  String get addSheetScan => 'Escanear recibo';
-
-  @override
-  String get addSheetType => 'Escribir';
-
-  @override
   String get addSheetWatch => 'Añadir a seguimiento';
 
   @override
   String get addSheetWatchSubtitle => 'Sigue un precio. No hace falta comprar.';
+
+  @override
+  String get addHoldingTitle => 'Añadir posición';
+
+  @override
+  String get addSheetHoldingSpeakScan =>
+      'Dicta, escanea un recibo o escríbelo.';
+
+  @override
+  String get addSheetHoldingSpeak => 'Dicta o escribe lo que compraste.';
+
+  @override
+  String get addSheetHoldingScan => 'Escanea un recibo o escríbelo.';
+
+  @override
+  String get addSheetHoldingType => 'Escribe lo que compraste.';
 
   @override
   String get addSheetSiriTip =>
@@ -2970,9 +2970,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get currencyFieldMore => 'Más';
 
   @override
-  String get helpAddAssetStep5Title => 'Registrar una compra';
+  String get helpAddAssetStep5Title => 'Añadir una posición';
 
   @override
   String get helpAddAssetStep5Body =>
-      'Toca + y luego dicta, escanea un recibo o escríbela. Revisa lo leído y confirma.';
+      'Toca + y luego Añadir posición. Escribe, dicta o escanea un recibo, revisa lo leído y confirma.';
 }

@@ -15,7 +15,9 @@ import 'package:qima/models/watch_card.dart';
 import 'package:qima/screens/add_instrument_screen.dart';
 import 'package:qima/screens/card_config_screen.dart';
 import 'package:qima/screens/custom_ticker_screen.dart';
+import 'package:qima/screens/holdings_screen.dart';
 import 'package:qima/screens/instrument_detail_screen.dart';
+import 'package:qima/screens/transaction_editor_screen.dart';
 import 'package:qima/screens/watchlist_screen.dart';
 import 'package:qima/services/local_file_store.dart';
 import 'package:qima/services/price_repository.dart';
@@ -133,9 +135,9 @@ Future<void> _settle(WidgetTester tester) async {
 /// Opens Add for the watchlist, as the Add sheet's "Add to watchlist"
 /// does, on top of the watchlist. The sheet itself is covered by
 /// `add_sheet_test.dart` and `home_shell_test.dart`.
-Future<void> _openWatch(WidgetTester tester) async {
+Future<void> _openWatch(WidgetTester tester, {AddStart start = AddStart.watchlist}) async {
   unawaited(Navigator.of(tester.element(find.byType(WatchlistScreen)))
-      .push(MaterialPageRoute<void>(builder: (_) => const AddInstrumentScreen())));
+      .push(MaterialPageRoute<void>(builder: (_) => AddInstrumentScreen(start: start))));
   await tester.pumpAndSettle();
 }
 
@@ -169,6 +171,21 @@ void main() {
     if (await tempDir.exists()) {
       await tempDir.delete(recursive: true);
     }
+  });
+
+  testWidgets('picking an asset to add a holding opens a new buy over its holdings', (tester) async {
+    await tester.pumpWidget(_app(cubit));
+    await _openWatch(tester, start: AddStart.holding);
+
+    await tester.tap(find.text('Gold').first);
+    await tester.pumpAndSettle();
+    expect(find.byType(TransactionEditorScreen), findsOneWidget);
+    expect(find.byType(CardConfigScreen), findsNothing);
+    expect(find.byType(AddInstrumentScreen), findsNothing);
+
+    await tester.pageBack();
+    await tester.pumpAndSettle();
+    expect(find.byType(HoldingsScreen), findsOneWidget);
   });
 
   testWidgets('the custom-ticker row is always last, even with search matches', (tester) async {

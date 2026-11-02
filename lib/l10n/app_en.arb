@@ -2220,13 +2220,13 @@
   "receiptChoosePhoto": "Choose a photo",
   "receiptNoText": "No text found in that photo. Try again closer, with the receipt flat and well lit.",
   "addButton": "Add",
-  "addSheetRecordTitle": "Record a purchase",
-  "addSheetRecordSubtitle": "Read on this device. Nothing is saved until you confirm.",
-  "addSheetSpeak": "Speak",
-  "addSheetScan": "Scan receipt",
-  "addSheetType": "Type it",
   "addSheetWatch": "Add to watchlist",
   "addSheetWatchSubtitle": "Track a price. No purchase needed.",
+  "addHoldingTitle": "Add holding",
+  "addSheetHoldingSpeakScan": "Speak, scan a receipt or type it.",
+  "addSheetHoldingSpeak": "Speak or type what you bought.",
+  "addSheetHoldingScan": "Scan a receipt or type it.",
+  "addSheetHoldingType": "Type what you bought.",
   "addSheetSiriTip": "Ask Siri: “What's my Qima portfolio worth”",
   "addTypeExample": "For example: bought 20 g of 21K gold at 4,100 EGP",
   "currencyFieldShowIn": "Show prices in",
@@ -2240,6 +2240,6 @@
     }
   },
   "currencyFieldMore": "More",
-  "helpAddAssetStep5Title": "Record a purchase",
-  "helpAddAssetStep5Body": "Tap +, then speak, scan a receipt or type it. Check what was read, then confirm."
+  "helpAddAssetStep5Title": "Add a holding",
+  "helpAddAssetStep5Body": "Tap +, then Add holding. Type, speak or scan a receipt, check what was read, then confirm."
 }

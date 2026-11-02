@@ -49,32 +49,35 @@ void main() {
     await tester.pumpAndSettle();
   }
 
-  testWidgets('offers the watchlist, speak, scan and type where the device can', (tester) async {
+  testWidgets('offers the watchlist and a holding, naming what the device can do', (tester) async {
     await openSheet(tester, dictation: DictationAvailability.available, scan: true);
-    for (final label in [en.addSheetSpeak, en.addSheetScan, en.addSheetType, en.addSheetWatch]) {
-      expect(find.text(label), findsOneWidget, reason: label);
-    }
+    expect(find.text(en.addSheetWatch), findsOneWidget);
+    expect(find.text(en.addHoldingTitle), findsOneWidget);
+    expect(find.text(en.addSheetHoldingSpeakScan), findsOneWidget);
   });
 
-  testWidgets('leaves out what the device cannot do', (tester) async {
+  testWidgets('leaves out of the holding row what the device cannot do', (tester) async {
     await openSheet(tester, dictation: DictationAvailability.unsupported, scan: false);
-    expect(find.text(en.addSheetSpeak), findsNothing);
-    expect(find.text(en.addSheetScan), findsNothing);
-    expect(find.text(en.addSheetType), findsOneWidget);
+    expect(find.text(en.addSheetHoldingType), findsOneWidget);
   });
 
-  testWidgets('keeps a mic that is only turned off, which explains itself in Add', (tester) async {
+  testWidgets('counts a mic that is only turned off, which explains itself in Add', (tester) async {
     await openSheet(tester, dictation: DictationAvailability.denied, scan: false);
-    expect(find.text(en.addSheetSpeak), findsOneWidget);
+    expect(find.text(en.addSheetHoldingSpeak), findsOneWidget);
   });
 
-  testWidgets('Type it opens Add for recording, with an example', (tester) async {
+  testWidgets('names scanning alone where there is no mic', (tester) async {
     await openSheet(tester, dictation: DictationAvailability.unsupported, scan: true);
-    await tester.tap(find.text(en.addSheetType));
+    expect(find.text(en.addSheetHoldingScan), findsOneWidget);
+  });
+
+  testWidgets('Add holding opens Add for recording, with an example and the scanner', (tester) async {
+    await openSheet(tester, dictation: DictationAvailability.unsupported, scan: true);
+    await tester.tap(find.text(en.addHoldingTitle));
     await tester.pumpAndSettle();
     final screen = tester.widget<AddInstrumentScreen>(find.byType(AddInstrumentScreen));
-    expect(screen.start, AddStart.type);
-    expect(find.text(en.addSheetRecordTitle), findsOneWidget);
+    expect(screen.start, AddStart.holding);
+    expect(find.text(en.addHoldingTitle), findsOneWidget);
     expect(find.text(en.addTypeExample), findsOneWidget);
     expect(find.text(en.addSearchHint), findsOneWidget);
     expect(find.byIcon(Icons.document_scanner_outlined), findsOneWidget);
@@ -84,6 +87,8 @@ void main() {
     await openSheet(tester, dictation: DictationAvailability.unsupported, scan: true);
     await tester.tap(find.text(en.addSheetWatch));
     await tester.pumpAndSettle();
+    final screen = tester.widget<AddInstrumentScreen>(find.byType(AddInstrumentScreen));
+    expect(screen.start, AddStart.watchlist);
     expect(find.text(en.addTitle), findsOneWidget);
     expect(find.text(en.addWatchSearchHint), findsOneWidget);
     expect(find.text(en.addTypeExample), findsNothing);

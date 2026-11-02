@@ -18,10 +18,7 @@ class ReceiptScanButton extends StatefulWidget {
   /// Picks the photo; replaced in tests.
   final Future<String?> Function(BuildContext context)? pickImage;
 
-  /// Opens the photo choice as soon as recognition is known to be available.
-  final bool autoStart;
-
-  const ReceiptScanButton({super.key, required this.onText, this.pickImage, this.autoStart = false});
+  const ReceiptScanButton({super.key, required this.onText, this.pickImage});
 
   @override
   State<ReceiptScanButton> createState() => _ReceiptScanButtonState();
@@ -37,9 +34,7 @@ class _ReceiptScanButtonState extends State<ReceiptScanButton> {
   void initState() {
     super.initState();
     _service.isAvailable().then((value) {
-      if (!mounted) return;
-      setState(() => _available = value);
-      if (value && widget.autoStart) _scan();
+      if (mounted) setState(() => _available = value);
     });
   }
 

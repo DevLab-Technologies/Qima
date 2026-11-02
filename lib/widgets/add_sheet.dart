@@ -32,10 +32,10 @@ class AddButton extends StatelessWidget {
   }
 }
 
-/// Opens the Add sheet, with everything that adds: putting an asset on the
-/// watchlist first, then recording a purchase by voice, receipt or text.
-/// Speak and Scan appear only where the device can do them; a mic that's
-/// merely turned off still shows, and explains itself.
+/// Opens the Add sheet: put an asset on the watchlist, or add a holding by
+/// typing, speaking or scanning a receipt. The holding row names only what
+/// this device can do; a mic that's merely turned off still counts, and
+/// explains itself on the Add screen.
 Future<void> showAddSheet(BuildContext context) async {
   final cubit = context.read<AppCubit>();
   final tag = dictationLocaleTag(Localizations.localeOf(context));
@@ -65,6 +65,13 @@ class _AddSheet extends StatelessWidget {
   static bool get _hasSiri =>
       !kIsWeb && (defaultTargetPlatform == TargetPlatform.iOS || defaultTargetPlatform == TargetPlatform.macOS);
 
+  String _holdingSubtitle(AppLocalizations l10n) => switch ((canSpeak, canScan)) {
+    (true, true) => l10n.addSheetHoldingSpeakScan,
+    (true, false) => l10n.addSheetHoldingSpeak,
+    (false, true) => l10n.addSheetHoldingScan,
+    (false, false) => l10n.addSheetHoldingType,
+  };
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -78,62 +85,20 @@ class _AddSheet extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Material(
-                color: colors.tileTop,
-                borderRadius: BorderRadius.circular(DS.radiusTile),
-                child: ListTile(
-                  key: const ValueKey('addSheetWatch'),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(DS.radiusTile)),
-                  leading: Icon(Icons.list_alt_outlined, size: 28, color: colors.brand),
-                  title: Text(
-                    l10n.addSheetWatch,
-                    style: TextStyle(color: colors.textPrimary, fontWeight: FontWeight.w600),
-                  ),
-                  subtitle: Text(l10n.addSheetWatchSubtitle, style: TextStyle(color: colors.textTertiary)),
-                  trailing: Icon(Icons.chevron_right, color: colors.textTertiary),
-                  onTap: () => choose(AddStart.search),
-                ),
+              _Choice(
+                key: const ValueKey('addSheetWatch'),
+                icon: Icons.list_alt_outlined,
+                title: l10n.addSheetWatch,
+                subtitle: l10n.addSheetWatchSubtitle,
+                onTap: () => choose(AddStart.watchlist),
               ),
-              const SizedBox(height: DS.spaceLG),
-              Text(
-                l10n.addSheetRecordTitle,
-                style: Theme.of(
-                  context,
-                ).textTheme.titleMedium?.copyWith(color: colors.textPrimary, fontWeight: FontWeight.w600),
-              ),
-              const SizedBox(height: 2),
-              Text(l10n.addSheetRecordSubtitle, style: TextStyle(color: colors.textTertiary, fontSize: 13)),
-              const SizedBox(height: DS.spaceMD),
-              Row(
-                children: [
-                  if (canSpeak) ...[
-                    Expanded(
-                      child: _Choice(
-                        icon: Icons.mic_none,
-                        label: l10n.addSheetSpeak,
-                        onTap: () => choose(AddStart.speak),
-                      ),
-                    ),
-                    const SizedBox(width: DS.spaceSM),
-                  ],
-                  if (canScan) ...[
-                    Expanded(
-                      child: _Choice(
-                        icon: Icons.document_scanner_outlined,
-                        label: l10n.addSheetScan,
-                        onTap: () => choose(AddStart.scan),
-                      ),
-                    ),
-                    const SizedBox(width: DS.spaceSM),
-                  ],
-                  Expanded(
-                    child: _Choice(
-                      icon: Icons.keyboard_outlined,
-                      label: l10n.addSheetType,
-                      onTap: () => choose(AddStart.type),
-                    ),
-                  ),
-                ],
+              const SizedBox(height: DS.spaceSM),
+              _Choice(
+                key: const ValueKey('addSheetHolding'),
+                icon: Icons.pie_chart_outline,
+                title: l10n.addHoldingTitle,
+                subtitle: _holdingSubtitle(l10n),
+                onTap: () => choose(AddStart.holding),
               ),
               if (_hasSiri)
                 Padding(
@@ -156,13 +121,14 @@ class _AddSheet extends StatelessWidget {
   }
 }
 
-/// One of the large Speak / Scan / Type choices.
+/// One of the two rows: Add to watchlist, Add holding.
 class _Choice extends StatelessWidget {
   final IconData icon;
-  final String label;
+  final String title;
+  final String subtitle;
   final VoidCallback onTap;
 
-  const _Choice({required this.icon, required this.label, required this.onTap});
+  const _Choice({super.key, required this.icon, required this.title, required this.subtitle, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -170,23 +136,14 @@ class _Choice extends StatelessWidget {
     return Material(
       color: colors.tileTop,
       borderRadius: BorderRadius.circular(DS.radiusTile),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(DS.radiusTile),
+      child: ListTile(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(DS.radiusTile)),
+        contentPadding: const EdgeInsets.symmetric(horizontal: DS.spaceMD, vertical: DS.spaceXS),
+        leading: Icon(icon, size: 28, color: colors.brand),
+        title: Text(title, style: TextStyle(color: colors.textPrimary, fontWeight: FontWeight.w600)),
+        subtitle: Text(subtitle, style: TextStyle(color: colors.textTertiary)),
+        trailing: Icon(Icons.chevron_right, color: colors.textTertiary),
         onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: DS.spaceMD, horizontal: DS.spaceXS),
-          child: Column(
-            children: [
-              Icon(icon, size: 28, color: colors.brand),
-              const SizedBox(height: DS.spaceXS),
-              Text(
-                label,
-                textAlign: TextAlign.center,
-                style: TextStyle(color: colors.textPrimary, fontWeight: FontWeight.w500),
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }

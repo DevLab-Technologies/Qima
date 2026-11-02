@@ -22,20 +22,15 @@ import 'capture_review_screen.dart';
 import 'card_config_screen.dart';
 import 'custom_ticker_screen.dart';
 import 'holdings_screen.dart';
+import 'transaction_editor_screen.dart';
 
-/// How the Add screen opens from the Add sheet.
+/// What the Add sheet opened the Add screen for.
 enum AddStart {
-  /// Find an asset to follow.
-  search,
+  /// Find an asset to put on the watchlist.
+  watchlist,
 
-  /// Type a purchase.
-  type,
-
-  /// Speak a purchase: the mic starts listening.
-  speak,
-
-  /// Scan a receipt: the photo choice opens.
-  scan,
+  /// Record something bought: typed, spoken or scanned into the field.
+  holding,
 }
 
 /// Grouped-by-asset-class list of all catalog instruments, plus a "custom
@@ -49,12 +44,13 @@ enum AddStart {
 /// card above the results opens it for checking. Same screen, same field;
 /// nothing new to find.
 ///
-/// The Add sheet opens it at one of [AddStart]: speaking or scanning starts
-/// right away, typing shows an example sentence.
+/// The Add sheet opens it for one of [AddStart]: adding a holding shows an
+/// example sentence and the receipt scanner next to the mic, and picking an
+/// asset opens a new buy for it instead of a watchlist card.
 class AddInstrumentScreen extends StatefulWidget {
   final AddStart start;
 
-  const AddInstrumentScreen({super.key, this.start = AddStart.search});
+  const AddInstrumentScreen({super.key, this.start = AddStart.watchlist});
 
   @override
   State<AddInstrumentScreen> createState() => _AddInstrumentScreenState();
@@ -82,15 +78,14 @@ class _AddInstrumentScreenState extends State<AddInstrumentScreen> {
     final l10n = AppLocalizations.of(context)!;
     final colors = context.colors;
     final query = _query.trim();
-    final start = widget.start;
-    final records = start != AddStart.search;
+    final records = widget.start == AddStart.holding;
 
     return ScreenBackground(
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
-          title: Text(records ? l10n.addSheetRecordTitle : l10n.addTitle),
+          title: Text(records ? l10n.addHoldingTitle : l10n.addTitle),
           actions: const [HelpButton(topic: HelpTopicId.addAsset)],
         ),
         body: Column(
@@ -99,7 +94,7 @@ class _AddInstrumentScreenState extends State<AddInstrumentScreen> {
               padding: const EdgeInsets.fromLTRB(DS.spaceMD, DS.spaceMD, DS.spaceMD, DS.spaceSM),
               child: TextField(
                 controller: _searchController,
-                autofocus: start == AddStart.search || start == AddStart.type,
+                autofocus: true,
                 style: TextStyle(color: colors.textPrimary),
                 decoration: InputDecoration(
                   hintText: records ? l10n.addSearchHint : l10n.addWatchSearchHint,
@@ -108,8 +103,8 @@ class _AddInstrumentScreenState extends State<AddInstrumentScreen> {
                   suffixIcon: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      if (records) ReceiptScanButton(onText: _setQuery, autoStart: start == AddStart.scan),
-                      DictationButton(onText: _setQuery, autoStart: start == AddStart.speak),
+                      if (records) ReceiptScanButton(onText: _setQuery),
+                      DictationButton(onText: _setQuery),
                     ],
                   ),
                   filled: true,
@@ -301,9 +296,20 @@ class _AddInstrumentScreenState extends State<AddInstrumentScreen> {
     navigator.push(MaterialPageRoute(builder: (_) => CaptureReviewScreen(text: query, draft: draft)));
   }
 
+  /// Watchlist: set up the card. Holding: the asset's holdings, with a new
+  /// buy open on top, so saving it lands on the holding.
   void _openConfig(BuildContext context, Instrument instrument) {
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => CardConfigScreen(instrument: instrument)),
+    final navigator = Navigator.of(context);
+    if (widget.start == AddStart.watchlist) {
+      navigator.push(MaterialPageRoute(builder: (_) => CardConfigScreen(instrument: instrument)));
+      return;
+    }
+    final currency = context.read<AppCubit>().state.baseCurrency;
+    navigator.pushReplacement(
+      MaterialPageRoute(builder: (_) => HoldingsScreen(instrument: instrument, displayCurrency: currency)),
+    );
+    navigator.push(
+      MaterialPageRoute(builder: (_) => TransactionEditorScreen(instrument: instrument, defaultCurrency: currency)),
     );
   }
 
