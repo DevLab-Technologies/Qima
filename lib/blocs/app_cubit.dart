@@ -1018,7 +1018,8 @@ class AppCubit extends Cubit<AppState> {
     final cached = _phrased[key];
     if (cached != null) return cached;
     final candidate = await aiAssist.phrase(sentence, localeTag);
-    final result = candidate != null && acceptPhrasing(sentence, candidate) ? candidate.trim() : sentence;
+    final result =
+        candidate != null && acceptPhrasing(sentence, candidate) ? restoreIsolates(sentence, candidate.trim()) : sentence;
     return _phrased[key] = result;
   }
 

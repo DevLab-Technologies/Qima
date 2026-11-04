@@ -76,6 +76,23 @@ bool acceptPhrasing(String original, String candidate) {
   return !advice.any((word) => lower.contains(word) && !original.toLowerCase().contains(word));
 }
 
+/// [candidate] with each left-to-right isolated figure of [original] (an
+/// amount, a signed amount, a percent) isolated again. Models drop these
+/// invisible marks, and without them Arabic shows "$792.07+" for
+/// "+$792.07". A figure the model reworded is left as it is.
+String restoreIsolates(String original, String candidate) {
+  var text = candidate.replaceAll(RegExp('[\u2066\u2069]'), '');
+  var from = 0;
+  for (final match in RegExp('\u2066(.*?)\u2069').allMatches(original)) {
+    final figure = match[1]!;
+    final at = figure.isEmpty ? -1 : text.indexOf(figure, from);
+    if (at < 0) continue;
+    text = '${text.substring(0, at)}\u2066$figure\u2069${text.substring(at + figure.length)}';
+    from = at + figure.length + 2;
+  }
+  return text;
+}
+
 /// The default: no model. Every feature takes its deterministic path.
 class NullAiAssistProvider implements AiAssistProvider {
   const NullAiAssistProvider();

@@ -130,6 +130,20 @@ void main() {
       expect(text, contains('1 transaction.'));
     });
 
+    testWidgets('in Arabic every amount still reads left-to-right when laid out', (tester) async {
+      final context = await contextIn(tester, const Locale('ar'));
+      final text = periodSummarySentence(context, summary, currency: 'USD', hidden: false);
+      final painter = TextPainter(text: TextSpan(text: text), textDirection: TextDirection.rtl)..layout();
+      double left(int i) => painter.getBoxesForSelection(TextSelection(baseOffset: i, extentOffset: i + 1)).first.left;
+      final amounts = RegExp(r'\+?\$[\d,]+\.\d+').allMatches(text).toList();
+      expect(amounts.map((m) => m[0]), ['\$280.00', '+\$300.00']);
+      for (final amount in amounts) {
+        final xs = [for (var i = amount.start; i < amount.end; i++) left(i)];
+        expect(xs, orderedEquals([...xs]..sort()), reason: '${amount[0]} is out of order');
+      }
+      painter.dispose();
+    });
+
     testWidgets('hidden balances hide the amounts but keep the direction', (tester) async {
       final context = await contextIn(tester, const Locale('ar'));
       final text = periodSummarySentence(context, summary, currency: 'USD', hidden: true);
