@@ -24,7 +24,9 @@ String periodSummarySentence(
   if (summary.percent.abs() < _flatPercent) {
     sentences.add(l10n.summaryFlat);
   } else {
-    final amount = Masking.amount(Money(summary.gainDelta.abs(), currency), hidden: hidden);
+    // Isolated left-to-right like the percent and the mover's amount, so
+    // Arabic doesn't move the symbol to the far side of the number.
+    final amount = '\u2066${Masking.amount(Money(summary.gainDelta.abs(), currency), hidden: hidden)}\u2069';
     final percent = percentLabel(context, double.parse((summary.percent.abs() * 100).toStringAsFixed(1)));
     sentences.add(summary.isUp ? l10n.summaryUp(amount, percent) : l10n.summaryDown(amount, percent));
     final mover = summary.topMoverID == null ? null : InstrumentCatalog.instrument(summary.topMoverID!);

@@ -65,6 +65,22 @@ void main() {
     });
   });
 
+  group('restoreIsolates', () {
+    const isolated = 'ربحت مقتنياتك \u2066\$792.07\u2069 (\u206653.5%\u2069). كان الذهب الأكثر تأثيرًا، \u2066+\$792.07\u2069.';
+
+    test('a wording that dropped the marks gets them back, figure by figure', () {
+      expect(
+        restoreIsolates(isolated, 'زادت مقتنياتك \$792.07 (53.5%)، وكان الذهب الأكثر تأثيرًا، +\$792.07.'),
+        'زادت مقتنياتك \u2066\$792.07\u2069 (\u206653.5%\u2069)، وكان الذهب الأكثر تأثيرًا، \u2066+\$792.07\u2069.',
+      );
+    });
+
+    test('marks the model kept are not doubled, and a reworded figure is left alone', () {
+      expect(restoreIsolates(isolated, isolated), isolated);
+      expect(restoreIsolates('gained \u2066\$5\u2069.', 'gained 5 dollars.'), 'gained 5 dollars.');
+    });
+  });
+
   group('AppCubit.phrased', () {
     Future<AppCubit> cubitWith(AiAssistProvider provider, {required bool on}) async {
       SharedPreferences.setMockInitialValues({'onDeviceModel': on});
@@ -90,6 +106,12 @@ void main() {
       expect(await cubit.phrased(original, 'en'), wording);
       expect(model.calls, 1);
       expect(cubit.assist, same(model));
+    });
+
+    test('on: an accepted wording keeps the template\'s isolated figures', () async {
+      const template = 'ربحت \u2066\$280.00\u2069 (\u20669.3%\u2069).';
+      final cubit = await cubitWith(_Wording('زادت مقتنياتك \$280.00 (9.3%).'), on: true);
+      expect(await cubit.phrased(template, 'ar'), 'زادت مقتنياتك \u2066\$280.00\u2069 (\u20669.3%\u2069).');
     });
 
     test('on: a wording that invents a number falls back to the template', () async {
