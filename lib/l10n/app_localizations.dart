@@ -117,7 +117,7 @@ abstract class AppLocalizations {
   /// No description provided for @watchlistAdd.
   ///
   /// In en, this message translates to:
-  /// **'Add asset'**
+  /// **'Add to watchlist'**
   String get watchlistAdd;
 
   /// No description provided for @watchlistEmptyTitle.
@@ -141,20 +141,32 @@ abstract class AppLocalizations {
   /// No description provided for @addTitle.
   ///
   /// In en, this message translates to:
-  /// **'Add asset'**
+  /// **'Add to watchlist'**
   String get addTitle;
 
   /// No description provided for @addSearchHint.
   ///
   /// In en, this message translates to:
-  /// **'Search assets'**
+  /// **'Search, or describe a purchase'**
   String get addSearchHint;
+
+  /// No description provided for @addWatchSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search gold, Bitcoin, AAPL…'**
+  String get addWatchSearchHint;
 
   /// No description provided for @addSearchCustomTickerTitle.
   ///
   /// In en, this message translates to:
   /// **'Add “{query}” as a custom ticker'**
   String addSearchCustomTickerTitle(String query);
+
+  /// Under a search result that matched by another name, e.g. Spanish "Oro" for Gold
+  ///
+  /// In en, this message translates to:
+  /// **'Also “{alias}”'**
+  String addSearchMatchedAlias(String alias);
 
   /// No description provided for @addSearchCustomTickerSubtitle.
   ///
@@ -1991,7 +2003,7 @@ abstract class AppLocalizations {
   /// Onboarding step 1 (Welcome) body.
   ///
   /// In en, this message translates to:
-  /// **'Gold, silver, crypto, stocks, indices and currencies, added up in your currency.'**
+  /// **'Gold, silver, crypto, stocks, indices and currencies, added up in your currency, with a plain summary of each month.'**
   String get onboardingStep1Body;
 
   /// Onboarding step 2 (Watchlist) title.
@@ -2003,7 +2015,7 @@ abstract class AppLocalizations {
   /// Onboarding step 2 (Watchlist) body.
   ///
   /// In en, this message translates to:
-  /// **'Live prices by gram, ounce or kilogram, 24K to 18K, in any currency. Tap + to add, tap a card for its chart.'**
+  /// **'Live prices by gram, ounce or kilogram, 24K to 18K, in any currency. Tap + to add to your watchlist, tap a card for its chart.'**
   String get onboardingStep2Body;
 
   /// Onboarding step 3 (Holdings) title.
@@ -2015,7 +2027,7 @@ abstract class AppLocalizations {
   /// Onboarding step 3 (Holdings) body.
   ///
   /// In en, this message translates to:
-  /// **'Record each purchase: quantity, unit, karat, cost and date. See what you hold, your average cost, value and gain.'**
+  /// **'Tap +, then Add holding, and type what you bought, or say it or scan a receipt. It is read on this device and saved only when you confirm. See what you hold, your average cost, value and gain.'**
   String get onboardingStep3Body;
 
   /// Onboarding step 4 (Alerts & widgets) title.
@@ -2029,6 +2041,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Get notified when a price crosses a level or moves by a percent. Put prices on your Home and Lock Screen.'**
   String get onboardingStep4Body;
+
+  /// No description provided for @onboardingStep4BodyApple.
+  ///
+  /// In en, this message translates to:
+  /// **'Get notified when a price crosses a level or moves by a percent. Put prices on your Home and Lock Screen, or ask Siri what your portfolio is worth.'**
+  String get onboardingStep4BodyApple;
 
   /// Onboarding step 5 (Private by design) title.
   ///
@@ -2213,7 +2231,7 @@ abstract class AppLocalizations {
   /// Watchlist help step 2 body.
   ///
   /// In en, this message translates to:
-  /// **'Tap + and search by name or symbol.'**
+  /// **'Tap + at the bottom, then Add to watchlist.'**
   String get helpWatchlistStep2Body;
 
   /// Watchlist help step 3 title.
@@ -2369,7 +2387,7 @@ abstract class AppLocalizations {
   /// Portfolio help step 3 body.
   ///
   /// In en, this message translates to:
-  /// **'Open an asset, then tap +.'**
+  /// **'Tap + at the bottom, then Add holding. Or open an asset and tap Holdings.'**
   String get helpPortfolioStep3Body;
 
   /// Portfolio help step 4 title.
@@ -2395,6 +2413,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Turn on Hide balances in Settings to mask every value.'**
   String get helpPortfolioStep5Body;
+
+  /// No description provided for @helpPortfolioStep6Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Past month'**
+  String get helpPortfolioStep6Title;
+
+  /// No description provided for @helpPortfolioStep6Body.
+  ///
+  /// In en, this message translates to:
+  /// **'A short summary of how your holdings moved, worked out from your own records. Turn it off in Settings.'**
+  String get helpPortfolioStep6Body;
+
+  /// No description provided for @helpPortfolioStep7Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask Siri'**
+  String get helpPortfolioStep7Title;
+
+  /// No description provided for @helpPortfolioStep7Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask Siri or use Shortcuts to hear what your portfolio is worth or check a price, without opening Qima.'**
+  String get helpPortfolioStep7Body;
 
   /// Lot editor help topic title.
   ///
@@ -2471,13 +2513,13 @@ abstract class AppLocalizations {
   /// Add asset help topic title.
   ///
   /// In en, this message translates to:
-  /// **'Add asset'**
+  /// **'Add to watchlist or holding'**
   String get helpAddAssetTitle;
 
   /// Add asset help topic summary line.
   ///
   /// In en, this message translates to:
-  /// **'Find something to follow and add it to your watchlist.'**
+  /// **'Follow a price on your watchlist, or record something you bought.'**
   String get helpAddAssetSummary;
 
   /// Add asset help step 1 title.
@@ -2489,7 +2531,7 @@ abstract class AppLocalizations {
   /// Add asset help step 1 body.
   ///
   /// In en, this message translates to:
-  /// **'Type a name or symbol, like gold, BTC or AAPL.'**
+  /// **'Tap +, then Add to watchlist. Search by name or symbol in any app language, like gold, ذهب or BTC.'**
   String get helpAddAssetStep1Body;
 
   /// Add asset help step 2 title.
@@ -2501,7 +2543,7 @@ abstract class AppLocalizations {
   /// Add asset help step 2 body.
   ///
   /// In en, this message translates to:
-  /// **'It\'s added to your watchlist and its page opens.'**
+  /// **'Choose the currency and unit its price shows in, then add it to your watchlist.'**
   String get helpAddAssetStep2Body;
 
   /// Add asset help step 3 title.
@@ -2731,6 +2773,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Base currency, chart range, widget refresh and language.'**
   String get helpSettingsStep5Body;
+
+  /// No description provided for @helpSettingsStep6Title.
+  ///
+  /// In en, this message translates to:
+  /// **'On-device intelligence'**
+  String get helpSettingsStep6Title;
+
+  /// No description provided for @helpSettingsStep6Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Optionally let this device\'s own language model help read purchases and word the summary. It runs only here, never gives advice and never supplies a number.'**
+  String get helpSettingsStep6Body;
 
   /// Backup & restore help topic title.
   ///
@@ -4680,6 +4734,424 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Tap share to post the price and chart as an image sized for WhatsApp, Instagram, Facebook or LinkedIn, with a ready caption.'**
   String get helpAssetDetailStep6Body;
+
+  /// No description provided for @captureRecordThis.
+  ///
+  /// In en, this message translates to:
+  /// **'Record this'**
+  String get captureRecordThis;
+
+  /// No description provided for @captureCheckTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Check this'**
+  String get captureCheckTitle;
+
+  /// No description provided for @captureYouWrote.
+  ///
+  /// In en, this message translates to:
+  /// **'You wrote'**
+  String get captureYouWrote;
+
+  /// No description provided for @captureRead.
+  ///
+  /// In en, this message translates to:
+  /// **'Read as'**
+  String get captureRead;
+
+  /// No description provided for @captureFieldType.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get captureFieldType;
+
+  /// No description provided for @captureFieldAsset.
+  ///
+  /// In en, this message translates to:
+  /// **'Asset'**
+  String get captureFieldAsset;
+
+  /// No description provided for @captureFieldQuantity.
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity'**
+  String get captureFieldQuantity;
+
+  /// No description provided for @captureFieldPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Price'**
+  String get captureFieldPrice;
+
+  /// No description provided for @captureFieldFee.
+  ///
+  /// In en, this message translates to:
+  /// **'Fee'**
+  String get captureFieldFee;
+
+  /// No description provided for @captureFieldDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get captureFieldDate;
+
+  /// No description provided for @captureFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'from “{words}”'**
+  String captureFrom(String words);
+
+  /// No description provided for @captureBaseCurrency.
+  ///
+  /// In en, this message translates to:
+  /// **'your base currency'**
+  String get captureBaseCurrency;
+
+  /// No description provided for @captureTotalDivided.
+  ///
+  /// In en, this message translates to:
+  /// **'total ÷ quantity'**
+  String get captureTotalDivided;
+
+  /// No description provided for @captureAssumed.
+  ///
+  /// In en, this message translates to:
+  /// **'assumed'**
+  String get captureAssumed;
+
+  /// No description provided for @captureToday.
+  ///
+  /// In en, this message translates to:
+  /// **'today'**
+  String get captureToday;
+
+  /// No description provided for @captureCheck.
+  ///
+  /// In en, this message translates to:
+  /// **'check'**
+  String get captureCheck;
+
+  /// No description provided for @captureConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm'**
+  String get captureConfirm;
+
+  /// No description provided for @captureEditFields.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit fields'**
+  String get captureEditFields;
+
+  /// No description provided for @captureFootnote.
+  ///
+  /// In en, this message translates to:
+  /// **'Every field says where it came from, and nothing is saved until you confirm.'**
+  String get captureFootnote;
+
+  /// No description provided for @captureOnDevice.
+  ///
+  /// In en, this message translates to:
+  /// **'On device'**
+  String get captureOnDevice;
+
+  /// No description provided for @captureNothingSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Read on this device. Nothing is sent anywhere.'**
+  String get captureNothingSent;
+
+  /// No description provided for @captureNeedsPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'No price found. Edit the fields to add one.'**
+  String get captureNeedsPrice;
+
+  /// No description provided for @captureRecorded.
+  ///
+  /// In en, this message translates to:
+  /// **'Recorded: {summary}'**
+  String captureRecorded(String summary);
+
+  /// No description provided for @settingsSummaries.
+  ///
+  /// In en, this message translates to:
+  /// **'Summaries'**
+  String get settingsSummaries;
+
+  /// No description provided for @settingsPlainSummaries.
+  ///
+  /// In en, this message translates to:
+  /// **'Month in a sentence'**
+  String get settingsPlainSummaries;
+
+  /// No description provided for @settingsPlainSummariesFooter.
+  ///
+  /// In en, this message translates to:
+  /// **'Shows what moved your holdings over the past month as one sentence on Portfolio. Written on this device from your own numbers.'**
+  String get settingsPlainSummariesFooter;
+
+  /// No description provided for @summaryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Past month'**
+  String get summaryTitle;
+
+  /// No description provided for @summaryUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Over the past month your holdings gained {amount} ({percent}).'**
+  String summaryUp(String amount, String percent);
+
+  /// No description provided for @summaryDown.
+  ///
+  /// In en, this message translates to:
+  /// **'Over the past month your holdings lost {amount} ({percent}).'**
+  String summaryDown(String amount, String percent);
+
+  /// No description provided for @summaryFlat.
+  ///
+  /// In en, this message translates to:
+  /// **'Your holdings barely moved over the past month.'**
+  String get summaryFlat;
+
+  /// No description provided for @summaryTopMover.
+  ///
+  /// In en, this message translates to:
+  /// **'{asset} moved them most, {amount}.'**
+  String summaryTopMover(String asset, String amount);
+
+  /// No description provided for @summaryTransactions.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{You recorded 1 transaction.} other{You recorded {count} transactions.}}'**
+  String summaryTransactions(int count);
+
+  /// No description provided for @chartDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'{from} to {to}: {start} to {end}, {change}. High {high} on {highDate}, low {low} on {lowDate}.'**
+  String chartDescription(
+    String from,
+    String to,
+    String start,
+    String end,
+    String change,
+    String high,
+    String highDate,
+    String low,
+    String lowDate,
+  );
+
+  /// No description provided for @chartDescriptionHidden.
+  ///
+  /// In en, this message translates to:
+  /// **'{from} to {to}: {change}.'**
+  String chartDescriptionHidden(String from, String to, String change);
+
+  /// No description provided for @dictationStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Speak a purchase'**
+  String get dictationStart;
+
+  /// No description provided for @dictationStop.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop listening'**
+  String get dictationStop;
+
+  /// No description provided for @dictationUnsupported.
+  ///
+  /// In en, this message translates to:
+  /// **'Voice input in this language isn\'t available on this device. Qima only listens on the device, never through a server.'**
+  String get dictationUnsupported;
+
+  /// No description provided for @dictationDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Microphone or speech recognition is off for Qima. Turn them on in Settings to speak a purchase.'**
+  String get dictationDenied;
+
+  /// No description provided for @settingsIntelligence.
+  ///
+  /// In en, this message translates to:
+  /// **'On-device intelligence'**
+  String get settingsIntelligence;
+
+  /// No description provided for @settingsUseModel.
+  ///
+  /// In en, this message translates to:
+  /// **'Use the on-device model'**
+  String get settingsUseModel;
+
+  /// No description provided for @settingsUseModelFooter.
+  ///
+  /// In en, this message translates to:
+  /// **'Helps read purchases Qima can\'t place on its own, and words the month summary. It runs only on this device, never gives advice, and never supplies a number: every figure comes from your own records.'**
+  String get settingsUseModelFooter;
+
+  /// No description provided for @modelReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready on this device'**
+  String get modelReady;
+
+  /// No description provided for @modelUnsupported.
+  ///
+  /// In en, this message translates to:
+  /// **'Not available on this device'**
+  String get modelUnsupported;
+
+  /// No description provided for @modelTurnedOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn on Apple Intelligence in system Settings to use it'**
+  String get modelTurnedOff;
+
+  /// No description provided for @modelNotReady.
+  ///
+  /// In en, this message translates to:
+  /// **'The model is still downloading'**
+  String get modelNotReady;
+
+  /// No description provided for @modelUnsupportedLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Not available in this language yet'**
+  String get modelUnsupportedLanguage;
+
+  /// No description provided for @receiptScan.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan a receipt'**
+  String get receiptScan;
+
+  /// No description provided for @receiptTakePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Take a photo'**
+  String get receiptTakePhoto;
+
+  /// No description provided for @receiptChoosePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a photo'**
+  String get receiptChoosePhoto;
+
+  /// No description provided for @receiptNoText.
+  ///
+  /// In en, this message translates to:
+  /// **'No text found in that photo. Try again closer, with the receipt flat and well lit.'**
+  String get receiptNoText;
+
+  /// No description provided for @addButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get addButton;
+
+  /// No description provided for @addSheetWatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to watchlist'**
+  String get addSheetWatch;
+
+  /// No description provided for @addSheetWatchSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Track a price. No purchase needed.'**
+  String get addSheetWatchSubtitle;
+
+  /// No description provided for @addHoldingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add holding'**
+  String get addHoldingTitle;
+
+  /// No description provided for @addSheetHoldingSpeakScan.
+  ///
+  /// In en, this message translates to:
+  /// **'Speak, scan a receipt or type it.'**
+  String get addSheetHoldingSpeakScan;
+
+  /// No description provided for @addSheetHoldingSpeak.
+  ///
+  /// In en, this message translates to:
+  /// **'Speak or type what you bought.'**
+  String get addSheetHoldingSpeak;
+
+  /// No description provided for @addSheetHoldingScan.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan a receipt or type it.'**
+  String get addSheetHoldingScan;
+
+  /// No description provided for @addSheetHoldingType.
+  ///
+  /// In en, this message translates to:
+  /// **'Type what you bought.'**
+  String get addSheetHoldingType;
+
+  /// No description provided for @addSheetSiriTip.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask Siri: “What\'s my Qima portfolio worth”'**
+  String get addSheetSiriTip;
+
+  /// No description provided for @addTypeExample.
+  ///
+  /// In en, this message translates to:
+  /// **'For example: bought 20 g of 21K gold at 4,100 EGP'**
+  String get addTypeExample;
+
+  /// No description provided for @currencyFieldShowIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Show prices in'**
+  String get currencyFieldShowIn;
+
+  /// No description provided for @currencyFieldTransaction.
+  ///
+  /// In en, this message translates to:
+  /// **'Transaction currency'**
+  String get currencyFieldTransaction;
+
+  /// No description provided for @currencyFieldCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} currencies available'**
+  String currencyFieldCount(int count);
+
+  /// No description provided for @currencyFieldMore.
+  ///
+  /// In en, this message translates to:
+  /// **'More'**
+  String get currencyFieldMore;
+
+  /// No description provided for @helpAddAssetStep5Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a holding'**
+  String get helpAddAssetStep5Title;
+
+  /// No description provided for @helpAddAssetStep5Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap +, then Add holding. Type what you bought, or speak it or scan a receipt where this device can. Check what was read, then confirm.'**
+  String get helpAddAssetStep5Body;
+
+  /// No description provided for @helpAddAssetStep6Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Read on this device'**
+  String get helpAddAssetStep6Title;
+
+  /// No description provided for @helpAddAssetStep6Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Speech and receipts are read on this device and never sent anywhere. Nothing is saved until you confirm, and every number comes from what you typed, said or scanned.'**
+  String get helpAddAssetStep6Body;
 }
 
 class _AppLocalizationsDelegate

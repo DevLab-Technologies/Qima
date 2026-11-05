@@ -7,6 +7,7 @@ import 'package:qima/blocs/app_cubit.dart';
 import 'package:qima/l10n/app_localizations.dart';
 import 'package:qima/models/fx_history.dart';
 import 'package:qima/models/money.dart';
+import 'package:qima/screens/settings_screen.dart';
 import 'package:qima/screens/home_shell.dart';
 import 'package:qima/screens/onboarding_tour_screen.dart';
 import 'package:qima/services/local_file_store.dart';
@@ -178,7 +179,7 @@ void main() {
     expect(cubit.state.baseCurrency, 'GBP');
   });
 
-  testWidgets('replaying from Settings shows the tour again and popping returns to the shell', (tester) async {
+  testWidgets('replaying from Settings shows the tour again and popping returns to Settings', (tester) async {
     setSurfaceSize(tester, const Size(400, 800));
     await tester.pumpWidget(BlocProvider<AppCubit>.value(
       value: cubit,
@@ -198,7 +199,7 @@ void main() {
       await tester.pump(const Duration(milliseconds: 100));
     }
 
-    // `HomeShell` (underneath both the settings tab and, after replaying,
+    // `HomeShell` (underneath both the settings page and, after replaying,
     // the pushed tour route) runs its own periodic price-refresh `Timer`,
     // which never completes on its own and would make `pumpAndSettle()`
     // time out from here on (same pattern as `home_shell_test.dart`).
@@ -219,7 +220,9 @@ void main() {
     await settle();
 
     expect(find.byType(OnboardingTourScreen), findsNothing);
-    expect(find.byType(HomeShell), findsOneWidget);
+    // On phones Settings is pushed over the shell from the Watchlist title bar.
+    expect(find.byType(SettingsScreen), findsOneWidget);
+    expect(find.byType(HomeShell, skipOffstage: false), findsOneWidget);
   });
 
   testWidgets('builds under RTL (Arabic locale) without exceptions', (tester) async {

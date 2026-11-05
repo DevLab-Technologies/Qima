@@ -36,12 +36,17 @@ import 'portfolio_detail_screen.dart';
 class WatchlistScreen extends StatefulWidget {
   final bool manageRefreshLifecycle;
   final VoidCallback? onOpenPortfolio;
+
+  /// Shows a Settings button in the title bar (phones, where Settings is not
+  /// in the bottom bar).
+  final VoidCallback? onOpenSettings;
   final ScrollController? scrollController;
 
   const WatchlistScreen({
     super.key,
     this.manageRefreshLifecycle = true,
     this.onOpenPortfolio,
+    this.onOpenSettings,
     this.scrollController,
   });
 
@@ -153,12 +158,12 @@ class _WatchlistScreenState extends State<WatchlistScreen> with WidgetsBindingOb
                         );
                       },
                     ),
-                    IconButton(
-                      icon: const Icon(Icons.add),
-                      onPressed: () => Navigator.of(context).push(
-                        MaterialPageRoute(builder: (_) => const AddInstrumentScreen()),
+                    if (widget.onOpenSettings != null)
+                      IconButton(
+                        icon: const Icon(Icons.settings_outlined),
+                        tooltip: l10n.settingsTitle,
+                        onPressed: widget.onOpenSettings,
                       ),
-                    ),
                   ],
                 ),
           body: BlocBuilder<AppCubit, AppState>(
@@ -240,7 +245,8 @@ class _WatchlistScreenState extends State<WatchlistScreen> with WidgetsBindingOb
   
               return ListView(
                 controller: widget.scrollController,
-                padding: const EdgeInsets.all(DS.spaceMD),
+                // Extra room at the end so the docked + never covers the last row.
+                padding: const EdgeInsets.fromLTRB(DS.spaceMD, DS.spaceMD, DS.spaceMD, DS.spaceXL * 2),
                 children: [
                   if (valuation != null) ...[
                     PortfolioHero(

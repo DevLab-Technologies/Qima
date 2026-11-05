@@ -3,10 +3,12 @@ import 'package:intl/intl.dart' hide TextDirection;
 
 import '../models/display_point.dart';
 import '../models/money.dart';
+import '../models/period_summary.dart';
 import '../services/chart_sampling.dart';
 import '../services/scrub_resolver.dart';
 import 'design_system.dart';
 import 'qima_colors.dart';
+import 'summaries.dart';
 
 // Re-exported so callers only need to import price_chart.dart for the
 // granularity/resolver types used alongside the chart.
@@ -76,7 +78,7 @@ class _PriceChartViewState extends State<PriceChartView> {
     final rightPad = widget.showsAxes ? 24.0 : 0.0;
     final plotWidth = size.width - leftPad - rightPad;
     if (plotWidth <= 0) return;
-    final fraction = ((localPosition.dx - leftPad) / plotWidth).clamp(0.0, 1.4);
+    final fraction = ((localPosition.dx - leftPad) / plotWidth).clamp(0.0, 1.0);
     final micros = (span * fraction).round();
     final date = first.add(Duration(microseconds: micros));
     final sample = ScrubResolver.sample(date, fullPoints);
@@ -174,7 +176,13 @@ class _PriceChartViewState extends State<PriceChartView> {
       );
     }
 
-    return chart;
+    final facts = ChartFacts.of(points);
+    return Semantics(
+      label: facts == null
+          ? null
+          : chartDescription(context, facts, currencyCode: widget.currencyCode, hidden: widget.maskValues),
+      child: chart,
+    );
   }
 }
 
@@ -416,23 +424,52 @@ class _PriceChartPainter extends CustomPainter {
     tp.paint(canvas, Offset(dx, dy.clamp(0.0, plotHeight - tp.height)));
   }
 
-  /// Builds a smooth path through [points] via cubic Bezier segments
-  /// approximating Catmull-Rom interpolation (Swift Charts' `.catmullRom`).
+  /// Builds a smooth path through [points] via monotone cubic (Fritsch-Carlson)
+  /// interpolation (Swift Charts' `.monotone`). Unlike uniform Catmull-Rom it
+  /// respects uneven x spacing, so it never overshoots a point or loops back
+  /// where samples are irregularly spaced in time.
   Path _smoothPath(List<Offset> points) {
     final path = Path()..moveTo(points.first.dx, points.first.dy);
-    if (points.length == 2) {
+    final n = points.length;
+    if (n == 2) {
       path.lineTo(points[1].dx, points[1].dy);
       return path;
     }
-    for (var i = 0; i < points.length - 1; i++) {
-      final p0 = i == 0 ? points[i] : points[i - 1];
+
+    // Secant slope of each segment; a zero-width segment counts as flat.
+    final secants = List<double>.generate(n - 1, (i) {
+      final dx = points[i + 1].dx - points[i].dx;
+      return dx == 0 ? 0 : (points[i + 1].dy - points[i].dy) / dx;
+    });
+
+    // Tangent at each point: zero at local extrema, harmonic mean of the
+    // neighbouring secants (weighted by segment width) elsewhere.
+    final tangents = List<double>.filled(n, 0);
+    tangents[0] = secants.first;
+    tangents[n - 1] = secants.last;
+    for (var i = 1; i < n - 1; i++) {
+      final s0 = secants[i - 1];
+      final s1 = secants[i];
+      if (s0 * s1 <= 0) continue;
+      final h0 = points[i].dx - points[i - 1].dx;
+      final h1 = points[i + 1].dx - points[i].dx;
+      final w0 = 2 * h1 + h0;
+      final w1 = h1 + 2 * h0;
+      tangents[i] = (w0 + w1) / (w0 / s0 + w1 / s1);
+    }
+
+    for (var i = 0; i < n - 1; i++) {
       final p1 = points[i];
       final p2 = points[i + 1];
-      final p3 = i + 2 < points.length ? points[i + 2] : p2;
-
-      final c1 = Offset(p1.dx + (p2.dx - p0.dx) / 6, p1.dy + (p2.dy - p0.dy) / 6);
-      final c2 = Offset(p2.dx - (p3.dx - p1.dx) / 6, p2.dy - (p3.dy - p1.dy) / 6);
-      path.cubicTo(c1.dx, c1.dy, c2.dx, c2.dy, p2.dx, p2.dy);
+      final third = (p2.dx - p1.dx) / 3;
+      path.cubicTo(
+        p1.dx + third,
+        p1.dy + tangents[i] * third,
+        p2.dx - third,
+        p2.dy - tangents[i + 1] * third,
+        p2.dx,
+        p2.dy,
+      );
     }
     return path;
   }

@@ -115,3 +115,14 @@ enum Freshness {
     /// markers); new numbers arrive when the app reloads the widgets.
     static let rerenderEvery: TimeInterval = 30 * 60
 }
+
+extension View {
+    /// The card surface every Qima widget sits on. Here rather than in
+    /// Style.swift, which the app also compiles for its assistant intents
+    /// (iOS 15 target, where `containerBackground` doesn't exist).
+    func qimaBackground() -> some View {
+        containerBackground(for: .widget) {
+            LinearGradient(colors: [Palette.surfaceTop, Palette.surfaceBottom], startPoint: .top, endPoint: .bottom)
+        }
+    }
+}

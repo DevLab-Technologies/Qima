@@ -128,4 +128,27 @@ void main() {
       expect(merged.quotes.single.canonicalUSD, 110);
     });
   });
+
+  group('QuoteSeries.merging replacing a span', () {
+    test('a re-fetched sample replaces the stored copy at the same time', () {
+      final now = DateTime(2024, 6, 10);
+      final day = DateTime(2024, 1, 1, 5);
+      final existing = QuoteSeries(instrumentID: 'metal.XAU', quotes: [Quote(instrumentID: 'metal.XAU', timestamp: day, canonicalUSD: 100)]);
+      final merged = existing.merging([Quote(instrumentID: 'metal.XAU', timestamp: day, canonicalUSD: 120)], now);
+      expect(merged.quotes.single.canonicalUSD, 120);
+    });
+
+    test('drops every stored sample inside the span, and keeps those outside it', () {
+      final now = DateTime(2024, 6, 10, 12);
+      Quote at(int hour, int minute, double value) =>
+          Quote(instrumentID: 'metal.XAU', timestamp: DateTime(2024, 6, 10, hour, minute), canonicalUSD: value);
+      final existing = QuoteSeries(instrumentID: 'metal.XAU', quotes: [at(8, 59, 1), at(9, 7, 2), at(9, 22, 3), at(11, 40, 4)]);
+      final merged = existing.merging(
+        [at(9, 0, 10), at(9, 15, 11), at(9, 30, 12)],
+        now,
+        replacing: (from: DateTime(2024, 6, 10, 9), to: DateTime(2024, 6, 10, 9, 30)),
+      );
+      expect(merged.quotes.map((q) => q.canonicalUSD), [1, 10, 11, 12, 4]);
+    });
+  });
 }

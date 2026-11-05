@@ -1,6 +1,7 @@
 package com.devlabtechnologies.qima
 
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
@@ -21,11 +22,13 @@ import io.flutter.plugin.common.MethodChannel
  * `LockGate` whenever either setting (or the locked/hidden state) changes.
  *
  * And the `system_settings` channel `SystemSettings` (Dart) uses to open
- * Qima's notification settings from the "Notifications are off" banner.
+ * Qima's notification settings from the "Notifications are off" banner,
+ * and on-device dictation ([DictationChannel]).
  */
 class MainActivity : FlutterFragmentActivity() {
     private val channelName = "com.devlabtechnologies.qima/privacy"
     private val systemSettingsChannelName = "com.devlabtechnologies.qima/system_settings"
+    private var dictation: DictationChannel? = null
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
@@ -43,6 +46,7 @@ class MainActivity : FlutterFragmentActivity() {
                 else -> result.notImplemented()
             }
         }
+        dictation = DictationChannel(this, flutterEngine.dartExecutor.binaryMessenger)
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, systemSettingsChannelName).setMethodCallHandler { call, result ->
             when (call.method) {
                 "openNotificationSettings" -> {
@@ -51,6 +55,13 @@ class MainActivity : FlutterFragmentActivity() {
                 }
                 else -> result.notImplemented()
             }
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == DictationChannel.PERMISSION_REQUEST) {
+            dictation?.onPermissionResult(grantResults.firstOrNull() == PackageManager.PERMISSION_GRANTED)
         }
     }
 

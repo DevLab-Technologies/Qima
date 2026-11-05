@@ -15,7 +15,9 @@ import 'package:qima/models/watch_card.dart';
 import 'package:qima/screens/add_instrument_screen.dart';
 import 'package:qima/screens/card_config_screen.dart';
 import 'package:qima/screens/custom_ticker_screen.dart';
+import 'package:qima/screens/holdings_screen.dart';
 import 'package:qima/screens/instrument_detail_screen.dart';
+import 'package:qima/screens/transaction_editor_screen.dart';
 import 'package:qima/screens/watchlist_screen.dart';
 import 'package:qima/services/local_file_store.dart';
 import 'package:qima/services/price_repository.dart';
@@ -130,6 +132,15 @@ Future<void> _settle(WidgetTester tester) async {
   }
 }
 
+/// Opens Add for the watchlist, as the Add sheet's "Add to watchlist"
+/// does, on top of the watchlist. The sheet itself is covered by
+/// `add_sheet_test.dart` and `home_shell_test.dart`.
+Future<void> _openWatch(WidgetTester tester, {AddStart start = AddStart.watchlist}) async {
+  unawaited(Navigator.of(tester.element(find.byType(WatchlistScreen)))
+      .push(MaterialPageRoute<void>(builder: (_) => AddInstrumentScreen(start: start))));
+  await tester.pumpAndSettle();
+}
+
 Widget _app(AppCubit cubit, {Locale locale = const Locale('en')}) {
   return BlocProvider<AppCubit>.value(
     value: cubit,
@@ -162,10 +173,24 @@ void main() {
     }
   });
 
+  testWidgets('picking an asset to add a holding opens a new buy over its holdings', (tester) async {
+    await tester.pumpWidget(_app(cubit));
+    await _openWatch(tester, start: AddStart.holding);
+
+    await tester.tap(find.text('Gold').first);
+    await tester.pumpAndSettle();
+    expect(find.byType(TransactionEditorScreen), findsOneWidget);
+    expect(find.byType(CardConfigScreen), findsNothing);
+    expect(find.byType(AddInstrumentScreen), findsNothing);
+
+    await tester.pageBack();
+    await tester.pumpAndSettle();
+    expect(find.byType(HoldingsScreen), findsOneWidget);
+  });
+
   testWidgets('the custom-ticker row is always last, even with search matches', (tester) async {
     await tester.pumpWidget(_app(cubit));
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pumpAndSettle();
+    await _openWatch(tester);
 
     await tester.enterText(find.byType(TextField), 'gold');
     await tester.pumpAndSettle();
@@ -184,8 +209,7 @@ void main() {
 
   testWidgets('the no-results state prefills the custom ticker screen with the query', (tester) async {
     await tester.pumpWidget(_app(cubit));
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pumpAndSettle();
+    await _openWatch(tester);
 
     await tester.enterText(find.byType(TextField), 'zzznotfound');
     await tester.pumpAndSettle();
@@ -201,8 +225,7 @@ void main() {
 
   testWidgets('adding from card config lands on [Watchlist, Detail] and Back returns to Watchlist', (tester) async {
     await tester.pumpWidget(_app(cubit));
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pumpAndSettle();
+    await _openWatch(tester);
 
     final gold = InstrumentCatalog.instrument('metal.XAU')!;
     await tester.tap(find.text('Gold').first);
@@ -234,8 +257,7 @@ void main() {
 
   testWidgets('the snackbar Undo action removes the card and pops back to the watchlist', (tester) async {
     await tester.pumpWidget(_app(cubit));
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pumpAndSettle();
+    await _openWatch(tester);
 
     final gold = InstrumentCatalog.instrument('metal.XAU')!;
     await tester.tap(find.text('Gold').first);
@@ -272,8 +294,7 @@ void main() {
     });
 
     await tester.pumpWidget(_app(cubit));
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pumpAndSettle();
+    await _openWatch(tester);
 
     await tester.enterText(find.byType(TextField), 'NEWCO');
     await tester.pumpAndSettle();
@@ -331,8 +352,7 @@ void main() {
     });
 
     await tester.pumpWidget(_app(cubit));
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pumpAndSettle();
+    await _openWatch(tester);
 
     await tester.tap(find.text('Gold').first);
     await tester.pumpAndSettle();

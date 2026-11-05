@@ -37,15 +37,22 @@ import workmanager_apple
       withIdentifier: "com.devlabtechnologies.qima.refresh",
       earliestBeginInSeconds: NSNumber(value: 15 * 60)
     )
+    // Refreshes the assets Siri can name in "price of …" (assistant intents).
+    if #available(iOS 17.0, *) {
+      QimaShortcuts.updateAppShortcutParameters()
+    }
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 
   func didInitializeImplicitFlutterEngine(_ engineBridge: FlutterImplicitEngineBridge) {
     GeneratedPluginRegistrant.register(with: engineBridge.pluginRegistry)
-    // `CloudKVPlugin` and `SystemSettingsPlugin` live directly in this target (not pub
+    // `CloudKVPlugin`, `SystemSettingsPlugin`, `DictationPlugin`, `OnDeviceModelPlugin` and `TextRecognitionPlugin` live directly in this target (not pub
     // packages), so `GeneratedPluginRegistrant` never picks them up — they have to
     // be registered by hand, same as any other app-target-local plugin.
     CloudKVPlugin.register(with: engineBridge.pluginRegistry.registrar(forPlugin: "CloudKVPlugin")!)
     SystemSettingsPlugin.register(with: engineBridge.pluginRegistry.registrar(forPlugin: "SystemSettingsPlugin")!)
+    DictationPlugin.register(with: engineBridge.pluginRegistry.registrar(forPlugin: "DictationPlugin")!)
+    OnDeviceModelPlugin.register(with: engineBridge.pluginRegistry.registrar(forPlugin: "OnDeviceModelPlugin")!)
+    TextRecognitionPlugin.register(with: engineBridge.pluginRegistry.registrar(forPlugin: "TextRecognitionPlugin")!)
   }
 }

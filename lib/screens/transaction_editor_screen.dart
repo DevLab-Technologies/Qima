@@ -17,9 +17,9 @@ import '../theme/instrument_theme.dart';
 import '../theme/masking.dart';
 import '../theme/qima_colors.dart';
 import '../theme/strings.dart';
+import '../widgets/currency_field.dart';
 import '../widgets/help_button.dart';
 import '../widgets/section_header.dart';
-import 'currency_picker.dart';
 import 'holdings_screen.dart';
 
 /// The four choices at the top of the editor; [TransactionKind] splits
@@ -43,6 +43,11 @@ class TransactionEditorScreen extends StatefulWidget {
   final PriceUnit? defaultUnit;
   final GoldKarat? defaultKarat;
 
+  /// A new row to start from — a captured sentence the user chose to edit
+  /// before saving (v4). Saved under its own id; unlike [existing], it
+  /// isn't in the ledger yet.
+  final HoldingTransaction? draft;
+
   const TransactionEditorScreen({
     super.key,
     required this.instrument,
@@ -50,14 +55,15 @@ class TransactionEditorScreen extends StatefulWidget {
     this.defaultUnit,
     this.defaultKarat,
     this.existing,
-  });
+    this.draft,
+  }) : assert(existing == null || draft == null);
 
   @override
   State<TransactionEditorScreen> createState() => _TransactionEditorScreenState();
 }
 
 class _TransactionEditorScreenState extends State<TransactionEditorScreen> {
-  late final String _id = widget.existing?.id ?? const Uuid().v4();
+  late final String _id = widget.existing?.id ?? widget.draft?.id ?? const Uuid().v4();
   late _Kind _kind;
   bool _transferIn = true;
   late final TextEditingController _quantity;
@@ -73,7 +79,7 @@ class _TransactionEditorScreenState extends State<TransactionEditorScreen> {
   @override
   void initState() {
     super.initState();
-    final e = widget.existing;
+    final e = widget.existing ?? widget.draft;
     _kind = switch (e?.kind) {
       TransactionKind.sell => _Kind.sell,
       TransactionKind.transferIn || TransactionKind.transferOut => _Kind.transfer,
@@ -382,19 +388,15 @@ class _TransactionEditorScreenState extends State<TransactionEditorScreen> {
           _fee,
         ),
         const SizedBox(height: DS.spaceSM),
-        ListTile(
-          contentPadding: EdgeInsets.zero,
-          title: Text(l10n.commonCurrency, style: TextStyle(color: colors.textPrimary)),
-          trailing: Text(_currency, style: TextStyle(color: colors.textSecondary)),
-          onTap: () async {
-            final selected = await CurrencyPicker.show(
-              context,
-              selected: _currency,
-              currencies: cubit.state.rates.availableCurrencies,
-            );
-            if (selected != null) setState(() => _currency = selected);
-          },
+        CurrencyField(
+          label: l10n.currencyFieldTransaction,
+          selected: _currency,
+          baseCurrency: cubit.state.baseCurrency,
+          currencies: cubit.state.rates.availableCurrencies,
+          onChanged: (code) => setState(() => _currency = code),
+          accent: accent,
         ),
+        const SizedBox(height: DS.spaceSM),
         ListTile(
           contentPadding: EdgeInsets.zero,
           title: Text(l10n.holdingsDate, style: TextStyle(color: colors.textPrimary)),

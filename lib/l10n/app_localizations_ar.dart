@@ -15,7 +15,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get navWatchlist => 'قائمة المتابعة';
 
   @override
-  String get watchlistAdd => 'إضافة أصل';
+  String get watchlistAdd => 'أضف إلى قائمة المتابعة';
 
   @override
   String get watchlistEmptyTitle => 'قائمة المتابعة فارغة';
@@ -28,14 +28,22 @@ class AppLocalizationsAr extends AppLocalizations {
   String get watchlistFilterAll => 'الكل';
 
   @override
-  String get addTitle => 'إضافة أصل';
+  String get addTitle => 'أضف إلى قائمة المتابعة';
 
   @override
-  String get addSearchHint => 'ابحث عن أصل';
+  String get addSearchHint => 'ابحث، أو صِف عملية شراء';
+
+  @override
+  String get addWatchSearchHint => 'ابحث عن الذهب أو بيتكوين أو AAPL…';
 
   @override
   String addSearchCustomTickerTitle(String query) {
     return 'إضافة ”$query“ كرمز مخصص';
+  }
+
+  @override
+  String addSearchMatchedAlias(String alias) {
+    return 'أو «$alias»';
   }
 
   @override
@@ -1099,21 +1107,21 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get onboardingStep1Body =>
-      'الذهب والفضة والعملات الرقمية والأسهم والمؤشرات والعملات، مجموعةً بعملتك.';
+      'الذهب والفضة والعملات الرقمية والأسهم والمؤشرات والعملات، مجموعة بعملتك، مع ملخص واضح لكل شهر.';
 
   @override
   String get onboardingStep2Title => 'الأسعار بالطريقة التي تشتري بها';
 
   @override
   String get onboardingStep2Body =>
-      'أسعار مباشرة بالجرام أو الأونصة أو الكيلوغرام، من عيار 24 إلى 18، بأي عملة. اضغط + للإضافة، واضغط على بطاقة لعرض مخططها.';
+      'أسعار مباشرة بالجرام أو الأونصة أو الكيلوجرام، من عيار 24 إلى 18، بأي عملة. اضغط + لتضيف إلى قائمة المتابعة، واضغط أي بطاقة لترى رسمها البياني.';
 
   @override
   String get onboardingStep3Title => 'اعرف ما تملكه';
 
   @override
   String get onboardingStep3Body =>
-      'سجّل كل عملية شراء: الكمية والوحدة والعيار والتكلفة والتاريخ. اطّلع على ما تملكه ومتوسط تكلفتك وقيمتك وأرباحك.';
+      'اضغط +، ثم «أضف حيازة»، واكتب ما اشتريته، أو قُله أو امسح إيصالًا. يُقرأ على هذا الجهاز ولا يُحفظ إلا حين تؤكد. اعرف ما تملكه ومتوسط تكلفتك وقيمته وربحك.';
 
   @override
   String get onboardingStep4Title => 'لا تفوّت أي تحرك';
@@ -1121,6 +1129,10 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get onboardingStep4Body =>
       'احصل على إشعار عند تجاوز السعر لمستوى معيّن أو تحرّكه بنسبة مئوية. أضف الأسعار إلى الشاشة الرئيسية وشاشة القفل.';
+
+  @override
+  String get onboardingStep4BodyApple =>
+      'تلقَّ تنبيهًا حين يتجاوز السعر مستوى معينًا أو يتحرك بنسبة ما. ضع الأسعار على الشاشة الرئيسية وشاشة القفل، أو اسأل Siri عن قيمة محفظتك.';
 
   @override
   String get onboardingStep5Title => 'خاص بتصميمه';
@@ -1223,7 +1235,8 @@ class AppLocalizationsAr extends AppLocalizations {
   String get helpWatchlistStep2Title => 'أضف أصلًا';
 
   @override
-  String get helpWatchlistStep2Body => 'اضغط على + وابحث بالاسم أو الرمز.';
+  String get helpWatchlistStep2Body =>
+      'اضغط + في الأسفل، ثم «أضف إلى قائمة المتابعة».';
 
   @override
   String get helpWatchlistStep3Title => 'صفِّ القائمة';
@@ -1311,7 +1324,8 @@ class AppLocalizationsAr extends AppLocalizations {
   String get helpPortfolioStep3Title => 'أضف عملية شراء';
 
   @override
-  String get helpPortfolioStep3Body => 'افتح أصلًا، ثم اضغط على +.';
+  String get helpPortfolioStep3Body =>
+      'اضغط + في الأسفل، ثم «أضف حيازة». أو افتح أصلًا واضغط المقتنيات.';
 
   @override
   String get helpPortfolioStep4Title => 'غيّر العملة';
@@ -1326,6 +1340,20 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get helpPortfolioStep5Body =>
       'فعّل إخفاء الأرصدة في الإعدادات لإخفاء كل القيم.';
+
+  @override
+  String get helpPortfolioStep6Title => 'الشهر الماضي';
+
+  @override
+  String get helpPortfolioStep6Body =>
+      'ملخص قصير لتحرّك مقتنياتك، محسوب من سجلاتك أنت. يمكنك إيقافه من الإعدادات.';
+
+  @override
+  String get helpPortfolioStep7Title => 'اسأل Siri';
+
+  @override
+  String get helpPortfolioStep7Body =>
+      'اسأل Siri أو استخدم الاختصارات لتعرف قيمة محفظتك أو سعرًا ما دون فتح Qima.';
 
   @override
   String get helpLotEditorTitle => 'المعاملة';
@@ -1370,25 +1398,25 @@ class AppLocalizationsAr extends AppLocalizations {
       'عدّل أي معاملة أو احذفها في أي وقت من سجل الحيازة.';
 
   @override
-  String get helpAddAssetTitle => 'إضافة أصل';
+  String get helpAddAssetTitle => 'أضف إلى المتابعة أو حيازة';
 
   @override
   String get helpAddAssetSummary =>
-      'ابحث عن شيء لمتابعته وأضفه إلى قائمة متابعتك.';
+      'تابع سعرًا في قائمة المتابعة، أو سجّل شيئًا اشتريته.';
 
   @override
   String get helpAddAssetStep1Title => 'ابحث';
 
   @override
   String get helpAddAssetStep1Body =>
-      'اكتب اسمًا أو رمزًا، مثل الذهب أو BTC أو AAPL.';
+      'اضغط +، ثم «أضف إلى قائمة المتابعة». ابحث بالاسم أو الرمز بأي لغة من لغات التطبيق، مثل ذهب أو gold أو BTC.';
 
   @override
   String get helpAddAssetStep2Title => 'اختر نتيجة';
 
   @override
   String get helpAddAssetStep2Body =>
-      'تتم إضافته إلى قائمة متابعتك وتُفتح صفحته.';
+      'اختر العملة والوحدة التي يُعرض بها سعره، ثم أضفه إلى قائمة المتابعة.';
 
   @override
   String get helpAddAssetStep3Title => 'غير موجود في القائمة؟';
@@ -1517,6 +1545,13 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get helpSettingsStep5Body =>
       'العملة الأساسية ومدى المخطط وتحديث الودجت واللغة.';
+
+  @override
+  String get helpSettingsStep6Title => 'الذكاء على الجهاز';
+
+  @override
+  String get helpSettingsStep6Body =>
+      'يمكنك أن تسمح لنموذج اللغة في هذا الجهاز بالمساعدة في قراءة المشتريات وصياغة الملخص. يعمل هنا فقط، ولا يقدّم نصيحة، ولا يضع أي رقم.';
 
   @override
   String get helpBackupTitle => 'النسخ الاحتياطي والاستعادة';
@@ -2719,4 +2754,255 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get helpAssetDetailStep6Body =>
       'اضغط على المشاركة لنشر السعر والرسم البياني كصورة بمقاس واتساب أو إنستغرام أو فيسبوك أو لينكدإن، مع نص جاهز.';
+
+  @override
+  String get captureRecordThis => 'سجّل هذه العملية';
+
+  @override
+  String get captureCheckTitle => 'راجِع العملية';
+
+  @override
+  String get captureYouWrote => 'كتبت';
+
+  @override
+  String get captureRead => 'فُهمت هكذا';
+
+  @override
+  String get captureFieldType => 'النوع';
+
+  @override
+  String get captureFieldAsset => 'الأصل';
+
+  @override
+  String get captureFieldQuantity => 'الكمية';
+
+  @override
+  String get captureFieldPrice => 'السعر';
+
+  @override
+  String get captureFieldFee => 'الرسوم';
+
+  @override
+  String get captureFieldDate => 'التاريخ';
+
+  @override
+  String captureFrom(String words) {
+    return 'من «$words»';
+  }
+
+  @override
+  String get captureBaseCurrency => 'عملتك الأساسية';
+
+  @override
+  String get captureTotalDivided => 'الإجمالي ÷ الكمية';
+
+  @override
+  String get captureAssumed => 'افتراض';
+
+  @override
+  String get captureToday => 'اليوم';
+
+  @override
+  String get captureCheck => 'تحقّق';
+
+  @override
+  String get captureConfirm => 'تأكيد';
+
+  @override
+  String get captureEditFields => 'تعديل الحقول';
+
+  @override
+  String get captureFootnote =>
+      'كل حقل يوضّح من أين جاء، ولا يُحفظ شيء حتى تؤكّد.';
+
+  @override
+  String get captureOnDevice => 'على الجهاز';
+
+  @override
+  String get captureNothingSent =>
+      'تُقرأ على هذا الجهاز. لا يُرسل أي شيء إلى أي مكان.';
+
+  @override
+  String get captureNeedsPrice => 'لم يُعثر على سعر. عدّل الحقول لإضافته.';
+
+  @override
+  String captureRecorded(String summary) {
+    return 'سُجّلت: $summary';
+  }
+
+  @override
+  String get settingsSummaries => 'الملخصات';
+
+  @override
+  String get settingsPlainSummaries => 'الشهر في جملة';
+
+  @override
+  String get settingsPlainSummariesFooter =>
+      'يعرض في المحفظة جملة واحدة عمّا حرّك مقتنياتك خلال الشهر الماضي. تُكتب على هذا الجهاز من أرقامك أنت.';
+
+  @override
+  String get summaryTitle => 'الشهر الماضي';
+
+  @override
+  String summaryUp(String amount, String percent) {
+    return 'خلال الشهر الماضي ربحت مقتنياتك $amount ($percent).';
+  }
+
+  @override
+  String summaryDown(String amount, String percent) {
+    return 'خلال الشهر الماضي خسرت مقتنياتك $amount ($percent).';
+  }
+
+  @override
+  String get summaryFlat => 'لم تتحرك مقتنياتك تقريبًا خلال الشهر الماضي.';
+
+  @override
+  String summaryTopMover(String asset, String amount) {
+    return 'كان $asset الأكثر تأثيرًا، $amount.';
+  }
+
+  @override
+  String summaryTransactions(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'سجّلت $count معاملة.',
+      few: 'سجّلت $count معاملات.',
+      two: 'سجّلت معاملتين.',
+      one: 'سجّلت معاملة واحدة.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String chartDescription(
+    String from,
+    String to,
+    String start,
+    String end,
+    String change,
+    String high,
+    String highDate,
+    String low,
+    String lowDate,
+  ) {
+    return 'من $from إلى $to: من $start إلى $end، $change. الأعلى $high في $highDate، والأدنى $low في $lowDate.';
+  }
+
+  @override
+  String chartDescriptionHidden(String from, String to, String change) {
+    return 'من $from إلى $to: $change.';
+  }
+
+  @override
+  String get dictationStart => 'قل عملية الشراء';
+
+  @override
+  String get dictationStop => 'إيقاف الاستماع';
+
+  @override
+  String get dictationUnsupported =>
+      'الإدخال الصوتي بهذه اللغة غير متاح على هذا الجهاز. قيمة تستمع على الجهاز فقط، ولا تستخدم أي خادم.';
+
+  @override
+  String get dictationDenied =>
+      'الميكروفون أو التعرّف على الكلام متوقف لقيمة. فعّلهما من الإعدادات لتقول عملية الشراء.';
+
+  @override
+  String get settingsIntelligence => 'الذكاء على الجهاز';
+
+  @override
+  String get settingsUseModel => 'استخدام النموذج على الجهاز';
+
+  @override
+  String get settingsUseModelFooter =>
+      'يساعد في قراءة عمليات الشراء التي لا تستطيع قيمة فهمها وحدها، ويصوغ ملخص الشهر. يعمل على هذا الجهاز فقط، ولا يقدّم نصائح، ولا يضع أي رقم: كل رقم يأتي من سجلاتك أنت.';
+
+  @override
+  String get modelReady => 'جاهز على هذا الجهاز';
+
+  @override
+  String get modelUnsupported => 'غير متاح على هذا الجهاز';
+
+  @override
+  String get modelTurnedOff =>
+      'فعّل Apple Intelligence من إعدادات النظام لاستخدامه';
+
+  @override
+  String get modelNotReady => 'ما زال النموذج يُنزَّل';
+
+  @override
+  String get modelUnsupportedLanguage => 'غير متاح بهذه اللغة بعد';
+
+  @override
+  String get receiptScan => 'مسح إيصال';
+
+  @override
+  String get receiptTakePhoto => 'التقاط صورة';
+
+  @override
+  String get receiptChoosePhoto => 'اختيار صورة';
+
+  @override
+  String get receiptNoText =>
+      'لم يُعثر على نص في هذه الصورة. حاول مرة أخرى من مسافة أقرب، والإيصال مسطّح وفي إضاءة جيدة.';
+
+  @override
+  String get addButton => 'إضافة';
+
+  @override
+  String get addSheetWatch => 'أضف إلى قائمة المتابعة';
+
+  @override
+  String get addSheetWatchSubtitle => 'تابع سعرًا دون الحاجة إلى شراء.';
+
+  @override
+  String get addHoldingTitle => 'أضف حيازة';
+
+  @override
+  String get addSheetHoldingSpeakScan => 'تحدّث أو امسح إيصالًا أو اكتبه.';
+
+  @override
+  String get addSheetHoldingSpeak => 'تحدّث أو اكتب ما اشتريته.';
+
+  @override
+  String get addSheetHoldingScan => 'امسح إيصالًا أو اكتبه.';
+
+  @override
+  String get addSheetHoldingType => 'اكتب ما اشتريته.';
+
+  @override
+  String get addSheetSiriTip => 'اسأل Siri: «كم قيمة محفظتي في Qima»';
+
+  @override
+  String get addTypeExample =>
+      'مثال: اشتريت ٢٠ جرام ذهب عيار ٢١ بسعر ٤١٠٠ جنيه';
+
+  @override
+  String get currencyFieldShowIn => 'اعرض الأسعار بعملة';
+
+  @override
+  String get currencyFieldTransaction => 'عملة العملية';
+
+  @override
+  String currencyFieldCount(int count) {
+    return '$count عملة متاحة';
+  }
+
+  @override
+  String get currencyFieldMore => 'المزيد';
+
+  @override
+  String get helpAddAssetStep5Title => 'أضف حيازة';
+
+  @override
+  String get helpAddAssetStep5Body =>
+      'اضغط +، ثم «أضف حيازة». اكتب ما اشتريته، أو قُله أو امسح إيصالًا إن كان جهازك يدعم ذلك. راجع ما قُرئ ثم أكّد.';
+
+  @override
+  String get helpAddAssetStep6Title => 'يُقرأ على هذا الجهاز';
+
+  @override
+  String get helpAddAssetStep6Body =>
+      'يُقرأ الكلام والإيصالات على هذا الجهاز ولا يُرسل شيء منها. لا يُحفظ شيء حتى تؤكد، وكل رقم يأتي مما كتبته أو قلته أو مسحته.';
 }

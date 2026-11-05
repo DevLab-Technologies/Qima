@@ -18,6 +18,7 @@ import '../models/instrument_catalog.dart';
 import '../models/instrument_presentation.dart';
 import '../models/metal_breakdown.dart';
 import '../models/money.dart';
+import '../models/period_summary.dart';
 import '../models/portfolio_history.dart';
 import '../models/price_alert.dart';
 import '../models/quote.dart';
@@ -25,6 +26,8 @@ import '../models/watch_card.dart';
 import '../models/watchlist_sort.dart';
 import '../models/zakat.dart';
 import '../models/chart_range.dart';
+import '../services/ai_assist_provider.dart';
+import '../services/dictation_service.dart';
 import '../services/alert_runtime_store.dart';
 import '../services/alerts_store.dart';
 import '../services/app_lock_service.dart';
@@ -41,6 +44,7 @@ import '../services/price_converter.dart';
 import '../services/price_repository.dart';
 import '../services/refresh_pipeline.dart';
 import '../services/switchable_cloud_kv_store.dart';
+import '../services/text_recognition_service.dart';
 import '../services/watchlist_store.dart';
 import '../services/zakat_reminder_notifier.dart';
 import 'app_state.dart';
@@ -60,6 +64,18 @@ class AppCubit extends Cubit<AppState> {
   final AlertsStore alertsStore;
   final AlertRuntimeStore alertRuntimeStore;
   final NotificationService notificationService;
+
+  /// The OS's on-device language model (v4). Features reach it through
+  /// [assist], which is the null provider unless Settings · On-device
+  /// intelligence is on; every feature has a deterministic path that never
+  /// consults it.
+  final AiAssistProvider aiAssist;
+
+  /// On-device speech to text for the Add field (v4 phase 4).
+  final DictationService dictation;
+
+  /// On-device text recognition for receipt scans (v4 phase 7).
+  final TextRecognitionService textRecognition;
   late Preferences preferences;
   late BackupService backupService;
   RefreshPipeline? _pipeline;
@@ -99,6 +115,9 @@ class AppCubit extends Cubit<AppState> {
     AlertRuntimeStore? alertRuntimeStore,
     NotificationService? notificationService,
     SwitchableCloudKVStore? cloudStore,
+    AiAssistProvider? aiAssist,
+    DictationService? dictation,
+    TextRecognitionService? textRecognition,
     Locale? deviceLocale,
   }) {
     // Built once up front so every default-constructed store below shares
@@ -117,6 +136,9 @@ class AppCubit extends Cubit<AppState> {
       alertRuntimeStore: alertRuntimeStore ?? AlertRuntimeStore(),
       notificationService: notificationService ?? NotificationService(),
       cloudStore: resolvedCloudStore,
+      aiAssist: aiAssist ?? const PlatformAiAssistProvider(),
+      dictation: dictation ?? const PlatformDictation(),
+      textRecognition: textRecognition ?? const PlatformTextRecognition(),
       deviceLocale: deviceLocale,
     );
   }
@@ -132,6 +154,9 @@ class AppCubit extends Cubit<AppState> {
     required this.alertRuntimeStore,
     required this.notificationService,
     required this.cloudStore,
+    required this.aiAssist,
+    required this.dictation,
+    required this.textRecognition,
     Locale? deviceLocale,
   })  : _deviceLocale = deviceLocale,
         super(AppState());
@@ -180,6 +205,8 @@ class AppCubit extends Cubit<AppState> {
     final preferredChartRange = preferences.preferredChartRange;
     final preferredPortfolioRange = preferences.preferredPortfolioRange;
     final hideBalances = preferences.hideBalances;
+    final plainSummaries = preferences.plainSummaries;
+    final onDeviceModel = preferences.onDeviceModel;
     final appLockEnabled = preferences.appLockEnabled;
     final lockGrace = preferences.lockGrace;
     final deliverAlertsOnThisDevice = preferences.deliverAlertsOnThisDevice;
@@ -259,6 +286,8 @@ class AppCubit extends Cubit<AppState> {
       fxHistory: fxHistory,
       seriesByID: seriesByID,
       hideBalances: hideBalances,
+      plainSummaries: plainSummaries,
+      onDeviceModel: onDeviceModel,
       appLockEnabled: appLockEnabled,
       lockGrace: lockGrace,
       backupReminderDue: backupService.isReminderDue(),
@@ -962,6 +991,38 @@ class AppCubit extends Cubit<AppState> {
     emit(state.copyWith(hideBalances: value));
   }
 
+  Future<void> setPlainSummaries(bool value) async {
+    if (value == state.plainSummaries) return;
+    await preferences.setPlainSummaries(value);
+    emit(state.copyWith(plainSummaries: value));
+  }
+
+  Future<void> setOnDeviceModel(bool value) async {
+    if (value == state.onDeviceModel) return;
+    await preferences.setOnDeviceModel(value);
+    emit(state.copyWith(onDeviceModel: value));
+  }
+
+  /// The model features may consult: [aiAssist] when the user turned it on,
+  /// else nothing.
+  AiAssistProvider get assist => state.onDeviceModel ? aiAssist : const NullAiAssistProvider();
+
+  final Map<String, String> _phrased = {};
+
+  /// [sentence] reworded by the on-device model, or [sentence] itself when
+  /// the model is off, unavailable, or its wording fails [acceptPhrasing].
+  /// Remembered per sentence, so a rebuild never asks twice.
+  Future<String> phrased(String sentence, String localeTag) async {
+    if (!state.onDeviceModel) return sentence;
+    final key = '$localeTag|$sentence';
+    final cached = _phrased[key];
+    if (cached != null) return cached;
+    final candidate = await aiAssist.phrase(sentence, localeTag);
+    final result =
+        candidate != null && acceptPhrasing(sentence, candidate) ? restoreIsolates(sentence, candidate.trim()) : sentence;
+    return _phrased[key] = result;
+  }
+
   /// Enabling app lock requires a successful authentication first — the
   /// user proves they can actually unlock before the app starts depending on
   /// it. Returns whether the setting ended up enabled: `true` on success,
@@ -1404,6 +1465,37 @@ class AppCubit extends Cubit<AppState> {
   /// [PortfolioRangeChange.from].
   PortfolioRangeChange? portfolioChange(ChartRange range) =>
       PortfolioRangeChange.from(portfolioHistory(range), range);
+
+  (Ledger, Map<String, QuoteSeries>, FXHistory, FXRates, String, DateTime)? _summaryKey;
+  PeriodSummary? _summary;
+
+  /// The past month as facts for the summary sentence (v4 phase 3), or null
+  /// when nothing was held. One history walk per held instrument, so it is
+  /// memoized like [portfolioHistory].
+  PeriodSummary? periodSummary() {
+    final now = DateTime.now();
+    final key = (state.ledger, state.seriesByID, state.fxHistory, state.rates, state.baseCurrency, DateTime(now.year, now.month, now.day));
+    final cached = _summaryKey;
+    if (cached != null &&
+        identical(cached.$1, key.$1) &&
+        identical(cached.$2, key.$2) &&
+        identical(cached.$3, key.$3) &&
+        identical(cached.$4, key.$4) &&
+        cached.$5 == key.$5 &&
+        cached.$6 == key.$6) {
+      return _summary;
+    }
+    _summaryKey = key;
+    return _summary = PeriodSummary.build(
+      ledger: state.ledger,
+      transactions: state.transactions,
+      seriesByID: state.seriesByID,
+      rates: state.rates,
+      fxHistory: state.fxHistory,
+      baseCurrency: state.baseCurrency,
+      now: now,
+    );
+  }
 
   // ---------------------------------------------------------------------
   // Home-screen widgets (Android Glance + iOS/macOS WidgetKit)

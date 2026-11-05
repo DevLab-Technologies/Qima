@@ -1,2 +1,6 @@
-Qima 3.1.1
-• Las imágenes y los textos que compartes ahora enlazan a nuestra nueva web, qima.money
+Qima 4.0.0
+• Toca + para añadir a tu seguimiento o añadir una posición
+• Registra una compra con tus palabras: escríbela o díctala. Se lee en tu teléfono y solo se guarda cuando confirmas
+• Busca activos en español, inglés, árabe o francés
+• Un resumen claro de tu último mes
+• Elegir la moneda es más claro al añadir un activo o una transacción

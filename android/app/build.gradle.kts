@@ -1,4 +1,5 @@
 import java.util.Properties
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     id("com.android.application")
@@ -7,6 +8,7 @@ plugins {
     // src/main/kotlin/.../widget/ (androidx.glance is Compose-based even
     // though it renders to RemoteViews, not a real view hierarchy).
     id("org.jetbrains.kotlin.plugin.compose")
+    id("com.google.devtools.ksp")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
 }
@@ -36,7 +38,9 @@ val hasReleaseSigning = releaseStoreFile != null &&
 
 android {
     namespace = "com.devlabtechnologies.qima"
-    compileSdk = flutter.compileSdkVersion
+    // 37 rather than Flutter's default: androidx.appfunctions (the read-only
+    // assistant answers in AssistantFunctions.kt) needs it to compile.
+    compileSdk = 37
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
@@ -46,10 +50,6 @@ android {
         // scheduled (not just immediate) notifications are used — see its
         // README "Android Setup · Gradle setup".
         isCoreLibraryDesugaringEnabled = true
-    }
-
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_17.toString()
     }
 
     buildFeatures {
@@ -97,6 +97,12 @@ android {
     }
 }
 
+kotlin {
+    compilerOptions {
+        jvmTarget = JvmTarget.JVM_17
+    }
+}
+
 flutter {
     source = "../.."
 }
@@ -114,9 +120,19 @@ dependencies {
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-tooling-preview")
+    // Read-only App Functions for the system assistant (AssistantFunctions.kt);
+    // the compiler generates the service and its XML description.
+    implementation("androidx.appfunctions:appfunctions:1.0.0-beta01")
+    ksp("androidx.appfunctions:appfunctions-compiler:1.0.0-beta01")
     // flutter_local_notifications' core-library desugaring requirement (see
     // compileOptions above).
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
+
+    // integration_test (in debug builds) asks for espresso 3.2, whose core
+    // and idling-resource modules share a namespace, an error since AGP 9.
+    constraints {
+        debugImplementation("androidx.test.espresso:espresso-core:3.6.1")
+    }
 
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.json:json:20240303")

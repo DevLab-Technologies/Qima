@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -214,5 +215,41 @@ void main() {
     await settle(tester);
     expect(tester.takeException(), isNull);
     expect(find.byType(HelpSheet), findsOneWidget);
+  });
+
+  group('v4 help', () {
+    Future<List<String>> stepTitles(WidgetTester tester, HelpTopicId id) async {
+      late List<String> titles;
+      await tester.pumpWidget(MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: Builder(builder: (context) {
+          titles = helpTopicFor(context, id).steps.map((s) => s.title).toList();
+          return const SizedBox();
+        }),
+      ));
+      return titles;
+    }
+
+    final en = lookupAppLocalizations(const Locale('en'));
+
+    testWidgets('Add covers the watchlist, a holding, and reading on the device', (tester) async {
+      final titles = await stepTitles(tester, HelpTopicId.addAsset);
+      expect(titles, containsAll([en.helpAddAssetStep1Title, en.helpAddAssetStep5Title, en.helpAddAssetStep6Title]));
+    });
+
+    testWidgets('Portfolio explains the past month, and Siri only where it answers', (tester) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+      expect(await stepTitles(tester, HelpTopicId.portfolio), containsAll([en.helpPortfolioStep6Title, en.helpPortfolioStep7Title]));
+      debugDefaultTargetPlatformOverride = TargetPlatform.android;
+      final android = await stepTitles(tester, HelpTopicId.portfolio);
+      expect(android, contains(en.helpPortfolioStep6Title));
+      expect(android, isNot(contains(en.helpPortfolioStep7Title)));
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    testWidgets('Settings explains the on-device model', (tester) async {
+      expect(await stepTitles(tester, HelpTopicId.settings), contains(en.helpSettingsStep6Title));
+    });
   });
 }

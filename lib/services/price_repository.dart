@@ -20,6 +20,12 @@ class PriceRepository {
   static const Duration fxFullPullInterval = Duration(hours: 12);
   static const Duration quoteTailRefreshInterval = Duration(hours: 12);
   static const Duration quoteRetryBackoff = Duration(minutes: 10);
+  static const Duration intradayRefreshInterval = Duration(minutes: 15);
+
+  /// The widest gap between the live price and the latest history bar that
+  /// is still the same market (gold futures sit within a percent or two of
+  /// spot).
+  static const double maxLevelGap = 0.05;
 
   static const Map<String, String> metalHistorySymbols = {
     'XAU': 'GC=F',
@@ -264,7 +270,7 @@ class PriceRepository {
   /// series with a months-long hole would look current the moment one
   /// live price landed.
   DateTime? _lastDailyClose(QuoteSeries series, DateTime now) {
-    final intradayCutoff = now.subtract(const Duration(days: 2));
+    final intradayCutoff = now.subtract(QuoteSeries.intradayWindow);
     for (final quote in series.quotes.reversed) {
       if (quote.timestamp.isBefore(intradayCutoff)) return quote.timestamp;
     }
@@ -285,11 +291,24 @@ class PriceRepository {
 
   /// Backfills quote history for [instruments], per spec §2.2.
   ///
-  /// A series without [backfillMinSpanDays] of history gets the full pull.
-  /// A series that already has it gets a tail refresh at most every
-  /// [quoteTailRefreshInterval], reaching back to its last daily close —
-  /// otherwise a gap opened while the app was closed (or while live quotes
-  /// were failing) would never be filled.
+  /// Daily bars: a series without [backfillMinSpanDays] of history gets the
+  /// full pull. A series that already has it gets a tail refresh at most
+  /// every [quoteTailRefreshInterval], reaching back to its last daily
+  /// close — otherwise a gap opened while the app was closed (or while live
+  /// quotes were failing) would never be filled.
+  ///
+  /// Intraday bars, at most every [intradayRefreshInterval]: the last few
+  /// days come from 15-minute bars rather than daily ones. A daily bar is
+  /// dated at the session's open but carries its close, or today's latest
+  /// price, so on a one- or three-day chart it sits hours from the price it
+  /// shows. The intraday bars replace every sample stored over the span
+  /// they cover, live ones included, so a short chart draws one source and
+  /// only live quotes newer than the last bar extend it.
+  ///
+  /// Metals and crypto are priced live by another provider than their
+  /// history (gold's history is the futures contract, not spot), so their
+  /// bars are scaled to the live price at fetch time and the line meets it
+  /// without a step.
   Future<Map<String, QuoteSeries>> backfillInstruments(
     List<Instrument> instruments,
     FXHistory fxHistory, {
@@ -298,6 +317,7 @@ class PriceRepository {
   }) async {
     final effectiveNow = now ?? DateTime.now();
     final cutoff = effectiveNow.subtract(const Duration(days: backfillMinSpanDays));
+    final intradayCutoff = effectiveNow.subtract(QuoteSeries.intradayWindow);
     final rates = await cachedRates();
     final prefs = await prefsProvider();
     final result = <String, QuoteSeries>{};
@@ -305,51 +325,128 @@ class PriceRepository {
     for (final instrument in instruments) {
       final existing = await quoteHistoryStore.load(instrument.id);
       final deep = _isDeepQuotes(existing, cutoff);
-
       final tailKey = 'quoteTailRefreshedAt.${instrument.id}';
       final attemptedKey = 'quoteFetchAttemptedAt.${instrument.id}';
-      final doTail = !force &&
-          deep &&
-          _dueSince(await _attemptedAt(prefs, tailKey), quoteTailRefreshInterval, effectiveNow) &&
-          _dueSince(await _attemptedAt(prefs, attemptedKey), quoteRetryBackoff, effectiveNow);
-      if (!force && deep && !doTail) continue;
+      final retryDue = _dueSince(await _attemptedAt(prefs, attemptedKey), quoteRetryBackoff, effectiveNow);
+      final tailDue = retryDue && _dueSince(await _attemptedAt(prefs, tailKey), quoteTailRefreshInterval, effectiveNow);
 
-      List<Quote> newQuotes;
+      // Fiat history is derived from FX history, with no network.
       if (instrument.assetClass == AssetClass.fiat) {
-        newQuotes = fiatQuotes(instrument, fxHistory, fxHistory.allDates());
-      } else {
-        final symbol = _historySymbol(instrument);
-        if (symbol == null) continue;
-        if (doTail) await _stamp(prefs, attemptedKey, effectiveNow);
-        final bars = await historyProvider.bars(
-          symbol,
-          range: doTail ? _tailRange(_lastDailyClose(existing, effectiveNow), effectiveNow) : '5y',
-        );
-        newQuotes = [
-          for (final bar in bars)
-            Quote(
-              instrumentID: instrument.id,
-              timestamp: bar.date,
-              canonicalUSD: () {
-                try {
-                  return usdFromPrice(bar.close, bar.currency, rates);
-                } catch (_) {
-                  return double.nan;
-                }
-              }(),
-            ),
-        ].where((q) => !q.canonicalUSD.isNaN).toList();
+        if (!force && deep && !tailDue) continue;
+        final quotes = fiatQuotes(instrument, fxHistory, fxHistory.allDates());
+        if (quotes.isEmpty) continue;
+        final merged = existing.merging(quotes, effectiveNow);
+        final persisted = await quoteHistoryStore.save(merged);
+        result[instrument.id] = merged;
+        if (!force && deep && persisted) await _stamp(prefs, tailKey, effectiveNow);
+        continue;
       }
 
-      if (newQuotes.isEmpty) continue;
-      final merged = existing.merging(newQuotes, effectiveNow);
+      final symbol = _historySymbol(instrument);
+      if (symbol == null) continue;
+
+      final intradayKey = 'quoteIntradayAt.${instrument.id}';
+      final levelKey = 'quoteHistoryLevel.${instrument.id}';
+      final scaled = _pricedByAnotherSource(instrument);
+      // History stored before it was scaled to the live price is pulled
+      // again in full, once, so old and new bars sit at the same level.
+      final relevel = !force && deep && scaled && prefs.getString(levelKey) != _historyLevel && retryDue;
+      final doTail = !force && deep && !relevel && tailDue;
+      final doDaily = force || !deep || relevel || doTail;
+      // Daily bars always come with intraday ones: the newest intraday bar
+      // is what a scaled series is leveled against.
+      final doIntraday =
+          doDaily || _dueSince(await _attemptedAt(prefs, intradayKey), intradayRefreshInterval, effectiveNow);
+      if (!doDaily && !doIntraday) continue;
+
+      if (doTail || relevel) await _stamp(prefs, attemptedKey, effectiveNow);
+      if (doIntraday) await _stamp(prefs, intradayKey, effectiveNow);
+
+      List<Quote> quotesOf(List<Bar> bars) => [
+            for (final bar in bars)
+              Quote(
+                instrumentID: instrument.id,
+                timestamp: bar.date,
+                canonicalUSD: () {
+                  try {
+                    return usdFromPrice(bar.close, bar.currency, rates);
+                  } catch (_) {
+                    return double.nan;
+                  }
+                }(),
+              ),
+          ].where((q) => !q.canonicalUSD.isNaN).toList();
+
+      // Daily bars inside the intraday window are the mis-dated ones; live
+      // quotes and intraday bars cover that span.
+      final daily = doDaily
+          ? quotesOf(await historyProvider.bars(
+              symbol,
+              range: doTail ? _tailRange(_lastDailyClose(existing, effectiveNow), effectiveNow) : '5y',
+            )).where((q) => q.timestamp.isBefore(intradayCutoff)).toList()
+          : const <Quote>[];
+      final intraday =
+          doIntraday ? quotesOf(await historyProvider.bars(symbol, range: '5d', interval: '15m')) : const <Quote>[];
+      if (daily.isEmpty && intraday.isEmpty) continue;
+
+      var factor = 1.0;
+      if (scaled) {
+        // Without a current bar and a live price to meet, store nothing
+        // rather than bars at another level; the next pass tries again.
+        final level = intraday.isEmpty ? null : await _levelFactor(instrument, intraday.last, rates);
+        if (level == null) continue;
+        factor = level;
+      }
+      List<Quote> leveled(List<Quote> quotes) => factor == 1.0
+          ? quotes
+          : [
+              for (final q in quotes)
+                Quote(instrumentID: q.instrumentID, timestamp: q.timestamp, canonicalUSD: q.canonicalUSD * factor),
+            ];
+
+      var merged = existing;
+      if (daily.isNotEmpty) merged = merged.merging(leveled(daily), effectiveNow);
+      if (intraday.isNotEmpty) {
+        merged = merged.merging(
+          leveled(intraday),
+          effectiveNow,
+          replacing: (from: intraday.first.timestamp, to: intraday.last.timestamp),
+        );
+      }
       final persisted = await quoteHistoryStore.save(merged);
       result[instrument.id] = merged;
-      if (doTail && persisted) await _stamp(prefs, tailKey, effectiveNow);
+      if (!persisted || daily.isEmpty) continue;
+      // A full pull is as fresh as a tail refresh, so the tail waits its
+      // interval after one too.
+      if (doDaily) await _stamp(prefs, tailKey, effectiveNow);
+      if (scaled && !doTail) await prefs.setString(levelKey, _historyLevel);
     }
 
     if (result.isNotEmpty) _maybeReloadWidgets();
     return result;
+  }
+
+  /// Bumped when stored history must be pulled again to match how new bars
+  /// are stored.
+  static const String _historyLevel = 'live-v1';
+
+  /// Whether [instrument]'s live price comes from another provider than its
+  /// history bars.
+  bool _pricedByAnotherSource(Instrument instrument) =>
+      instrument.assetClass == AssetClass.metal || instrument.assetClass == AssetClass.crypto;
+
+  /// What to multiply [instrument]'s history bars by so the latest one,
+  /// [reference], meets the live price. Null when there's no live price, or
+  /// it's so far off that one of the two sources must be wrong.
+  Future<double?> _levelFactor(Instrument instrument, Quote reference, FXRates rates) async {
+    if (reference.canonicalUSD <= 0) return null;
+    try {
+      final live = await provider(instrument, rates).canonicalUSDPrice(instrument);
+      final factor = live / reference.canonicalUSD;
+      return (factor - 1).abs() <= maxLevelGap ? factor : null;
+    } catch (_) {
+      return null;
+    }
   }
 
   /// Force-repulls FX history for [currency]/[baseCurrency] (+ the

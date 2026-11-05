@@ -40,6 +40,15 @@ String displayLabelFor(AppLocalizations loc, String key) {
   return key;
 }
 
+final Map<String, List<String>> _labelsEverywhere = {};
+
+/// [key]'s label in every language the app ships, so a search finds "Oro"
+/// or "الذهب" from an English UI. A custom instrument's literal name comes
+/// back once.
+List<String> labelsInAllLocales(String key) => _labelsEverywhere[key] ??= {
+      for (final locale in AppLocalizations.supportedLocales) displayLabelFor(lookupAppLocalizations(locale), key),
+    }.toList();
+
 String? _resolve(AppLocalizations loc, String key) {
   switch (key) {
     // Asset classes

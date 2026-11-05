@@ -205,6 +205,33 @@ watchlist data are stored locally on your device. The only network traffic is
 anonymous HTTPS price and FX requests to the endpoints listed above; no user
 data is attached to them.
 
+### On-device model
+
+With Settings · On-device intelligence turned on, iOS and macOS 26 use
+Apple's on-device Foundation Model (`SystemLanguageModel.default`, never
+Private Cloud Compute) to read purchases the built-in parser can't and to
+word the month summary. Qima accepts the model's output only when it keeps
+the user's own numbers unchanged and adds none.
+
+### Voice input
+
+The mic in Add uses the operating system's **on-device** speech recognizer
+only: `requiresOnDeviceRecognition` on iOS and macOS, and the on-device
+`SpeechRecognizer` on Android 12 and later. Audio and text never leave the
+device. When the device has no on-device model for the app's language, the
+mic says so and stays off; there is no server fallback. Web, Windows and
+Linux have no voice input. Qima asks for microphone and speech recognition
+access the first time you tap the mic, and listens only until you tap it
+again or stop speaking.
+
+### Receipt scan
+
+The scan button in Add reads a receipt photo with Apple's on-device Vision
+text recognition (iOS and macOS). The photo is not uploaded and not kept:
+the app's copy is deleted as soon as its text is read. The text goes into
+the Add field, and nothing is saved until you confirm the preview. Qima asks
+for camera access the first time you take a photo.
+
 ---
 
 ## Contributing
