@@ -51,6 +51,10 @@ class QuoteSeries extends Equatable {
 
   static QuoteSeries empty(String instrumentID) => QuoteSeries(instrumentID: instrumentID);
 
+  /// How far back samples keep their minute; older ones collapse to one a
+  /// calendar day.
+  static const Duration intradayWindow = Duration(days: 2);
+
   bool get isEmpty => quotes.isEmpty;
 
   Quote? get latest => quotes.isEmpty ? null : quotes.last;
@@ -80,17 +84,16 @@ class QuoteSeries extends Equatable {
   /// Keeps at most [limit] most-recent samples after collapsing.
   QuoteSeries appending(Quote quote, {int limit = 2000, DateTime? now}) {
     final effectiveNow = now ?? quote.timestamp;
-    final intradayCutoff = effectiveNow.subtract(const Duration(days: 2));
+    final intradayCutoff = effectiveNow.subtract(intradayWindow);
     String keyFor(Quote q) => q.timestamp.isBefore(intradayCutoff) ? _dayKey(q.timestamp) : _minuteKey(q.timestamp);
 
     // Same collision rule as [merging]: the sample with the greatest
-    // timestamp wins any bucket collision (ties broken arbitrarily, since
-    // the values are then identical for tie purposes).
+    // timestamp wins any bucket collision, and on a tie the new one does.
     final byKey = <String, Quote>{};
     for (final q in [...quotes, quote]) {
       final key = keyFor(q);
       final existing = byKey[key];
-      if (existing == null || q.timestamp.isAfter(existing.timestamp)) {
+      if (existing == null || !q.timestamp.isBefore(existing.timestamp)) {
         byKey[key] = q;
       }
     }
@@ -100,20 +103,29 @@ class QuoteSeries extends Equatable {
   }
 
   /// Backfill merge: samples within 2 days of [now] are keyed per-minute;
-  /// older samples collapse to one per calendar day. Ties are broken by
-  /// keeping the greater timestamp.
-  QuoteSeries merging(List<Quote> newQuotes, DateTime now, {int limit = 2000}) {
-    final intradayCutoff = now.subtract(const Duration(days: 2));
+  /// older samples collapse to one per calendar day. The greater timestamp
+  /// wins a collision, and on a tie the new sample does, so a re-fetched
+  /// bar replaces the copy stored while it was still forming.
+  ///
+  /// With [replacing], every existing sample inside that span is dropped
+  /// first: the new samples are the whole record of it, so samples from
+  /// another source never interleave with them.
+  QuoteSeries merging(
+    List<Quote> newQuotes,
+    DateTime now, {
+    int limit = 2000,
+    ({DateTime from, DateTime to})? replacing,
+  }) {
+    final intradayCutoff = now.subtract(intradayWindow);
     String keyFor(Quote q) => q.timestamp.isBefore(intradayCutoff) ? _dayKey(q.timestamp) : _minuteKey(q.timestamp);
+    bool replaced(Quote q) =>
+        replacing != null && !q.timestamp.isBefore(replacing.from) && !q.timestamp.isAfter(replacing.to);
 
-    // For each bucket key, the sample with the greatest timestamp wins any
-    // collision (ties broken arbitrarily, per the spec's "greater or equal"
-    // rule since the values are then identical for tie purposes).
     final byKey = <String, Quote>{};
-    for (final q in [...quotes, ...newQuotes]) {
+    for (final q in [...quotes.where((q) => !replaced(q)), ...newQuotes]) {
       final key = keyFor(q);
       final existing = byKey[key];
-      if (existing == null || q.timestamp.isAfter(existing.timestamp)) {
+      if (existing == null || !q.timestamp.isBefore(existing.timestamp)) {
         byKey[key] = q;
       }
     }
