@@ -4061,6 +4061,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get importFromPhotosHint => 'Your banking app\'s transactions';
 
   @override
+  String get importFromClipboard => 'Paste screenshot';
+
+  @override
+  String get importFromClipboardHint =>
+      'A copied screenshot, such as your account balance';
+
+  @override
+  String get importPastedName => 'Pasted screenshot';
+
+  @override
   String get importShareTip => 'You can also share files to Qima from any app.';
 
   @override
@@ -4085,6 +4095,9 @@ class AppLocalizationsEn extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get importReadyBalance => 'A balance to check';
 
   @override
   String get importBannerTitle => 'Shared to Qima';

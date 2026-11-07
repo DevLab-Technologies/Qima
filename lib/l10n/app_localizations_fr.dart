@@ -4086,6 +4086,16 @@ class AppLocalizationsFr extends AppLocalizations {
   String get importFromPhotosHint => 'Les opérations de votre appli bancaire';
 
   @override
+  String get importFromClipboard => 'Coller une capture';
+
+  @override
+  String get importFromClipboardHint =>
+      'Une capture copiée, comme le solde de votre compte';
+
+  @override
+  String get importPastedName => 'Capture collée';
+
+  @override
   String get importShareTip =>
       'Vous pouvez aussi partager des fichiers vers Qima depuis n’importe quelle appli.';
 
@@ -4111,6 +4121,9 @@ class AppLocalizationsFr extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get importReadyBalance => 'Un solde à vérifier';
 
   @override
   String get importBannerTitle => 'Partagé avec Qima';

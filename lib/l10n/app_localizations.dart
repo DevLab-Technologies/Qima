@@ -7031,6 +7031,24 @@ abstract class AppLocalizations {
   /// **'Your banking app\'s transactions'**
   String get importFromPhotosHint;
 
+  /// No description provided for @importFromClipboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Paste screenshot'**
+  String get importFromClipboard;
+
+  /// No description provided for @importFromClipboardHint.
+  ///
+  /// In en, this message translates to:
+  /// **'A copied screenshot, such as your account balance'**
+  String get importFromClipboardHint;
+
+  /// No description provided for @importPastedName.
+  ///
+  /// In en, this message translates to:
+  /// **'Pasted screenshot'**
+  String get importPastedName;
+
   /// No description provided for @importShareTip.
   ///
   /// In en, this message translates to:
@@ -7048,6 +7066,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count, plural, =0{Nothing found to add} =1{1 transaction to review} other{{count} transactions to review}}'**
   String importReadyRows(int count);
+
+  /// No description provided for @importReadyBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'A balance to check'**
+  String get importReadyBalance;
 
   /// No description provided for @importBannerTitle.
   ///

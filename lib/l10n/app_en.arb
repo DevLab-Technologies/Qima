@@ -2844,6 +2844,9 @@
   "importFromFilesHint": "Statements as PDF, Excel or CSV",
   "importFromPhotos": "Screenshots from Photos",
   "importFromPhotosHint": "Your banking app's transactions",
+  "importFromClipboard": "Paste screenshot",
+  "importFromClipboardHint": "A copied screenshot, such as your account balance",
+  "importPastedName": "Pasted screenshot",
   "importShareTip": "You can also share files to Qima from any app.",
   "importReadingFiles": "{count, plural, =1{Reading 1 file…} other{Reading {count} files…}}",
   "@importReadingFiles": {
@@ -2861,6 +2864,7 @@
       }
     }
   },
+  "importReadyBalance": "A balance to check",
   "importBannerTitle": "Shared to Qima",
   "importReviewTitle": "Review import",
   "importIntoAccount": "Statement of",

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +19,7 @@ import '../../models/import_plan.dart';
 import '../../models/minor_units.dart';
 import '../../models/statement_facts.dart';
 import '../../models/statement_reader.dart';
+import '../../services/import/pasted_image.dart';
 import '../../services/import/statement_files.dart';
 import '../../theme/design_system.dart';
 import '../../theme/money_labels.dart';
@@ -25,12 +27,24 @@ import '../../theme/qima_colors.dart';
 import '../../widgets/money_widgets.dart';
 import 'accounts_screens.dart';
 
-/// Import a statement: from Files (PDF, Excel, CSV) or screenshots from
-/// Photos. Share › Qima from another app lands in the same place.
+/// Import a statement: from Files (PDF, Excel, CSV), screenshots from
+/// Photos, or a screenshot on the clipboard. Share › Qima from another app
+/// lands in the same place.
 Future<void> showImportSheet(BuildContext context) async {
   final l10n = AppLocalizations.of(context)!;
   final importer = context.read<ImportCubit>();
-  final choice = await showModalBottomSheet<String>(
+  final canPaste = await PastedImage.hasImage();
+  if (!context.mounted) return;
+  // The system Paste button hands the image over while the sheet, the top
+  // route of this navigator, is open.
+  final navigator = Navigator.of(context);
+  if (canPaste) {
+    PastedImage.listen((png) {
+      PastedImage.stopListening();
+      navigator.pop(png);
+    });
+  }
+  final choice = await showModalBottomSheet<Object>(
     context: context,
     showDragHandle: true,
     isScrollControlled: true,
@@ -50,6 +64,14 @@ Future<void> showImportSheet(BuildContext context) async {
             subtitle: Text(l10n.importFromPhotosHint),
             onTap: () => Navigator.of(sheet).pop('photos'),
           ),
+          if (canPaste)
+            ListTile(
+              key: const ValueKey('importPaste'),
+              leading: const Icon(Icons.content_paste_outlined),
+              title: Text(l10n.importFromClipboard),
+              subtitle: Text(l10n.importFromClipboardHint),
+              trailing: PastedImage.button(background: sheet.colors.brand, foreground: sheet.colors.onBrand),
+            ),
           Padding(
             padding: const EdgeInsets.fromLTRB(DS.spaceMD, DS.spaceXS, DS.spaceMD, DS.spaceMD),
             child: Row(children: [
@@ -62,6 +84,7 @@ Future<void> showImportSheet(BuildContext context) async {
       ),
     ),
   );
+  if (canPaste) PastedImage.stopListening();
   if (choice == null || !context.mounted) return;
   final picked = <(String, List<int>)>[];
   if (choice == 'files') {
@@ -82,6 +105,8 @@ Future<void> showImportSheet(BuildContext context) async {
     for (final f in files) {
       picked.add((f.name, await f.readAsBytes()));
     }
+  } else if (choice is Uint8List) {
+    picked.add(('${l10n.importPastedName} ${DateFormat('yyyy-MM-dd HH.mm').format(DateTime.now())}.png', choice));
   } else {
     final images = await ImagePicker().pickMultiImage(requestFullMetadata: false);
     for (final f in images) {
@@ -133,7 +158,12 @@ class ImportBanner extends StatelessWidget {
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   Text(l10n.importBannerTitle, style: TextStyle(color: colors.textPrimary, fontSize: 15, fontWeight: FontWeight.w700)),
                   Text(
-                    state.reading ? l10n.importReadingFiles(waiting) : l10n.importReadyRows(state.rowCount),
+                    state.reading
+                        ? l10n.importReadingFiles(waiting)
+                        // A screenshot of an account screen: a balance and no rows.
+                        : state.rowCount == 0 && state.items.any((i) => i.facts.closing != null)
+                            ? l10n.importReadyBalance
+                            : l10n.importReadyRows(state.rowCount),
                     style: TextStyle(color: colors.textSecondary, fontSize: 13),
                   ),
                 ]),
@@ -190,7 +220,7 @@ class _ImportReviewScreenState extends State<ImportReviewScreen> {
     final chosen = [for (final c in candidates) if (ticked(c)) c];
     final balance = account == null || imports.reading ? null : _balance(account, chosen, imports, money.book, context.read<MoneyCubit>().builder);
     // A statement or loan screen with no new rows can still set the balance.
-    final applyBalance = balance != null && (_fixBalance ?? balance.opening);
+    final applyBalance = balance != null && (_fixBalance ?? balance.suggested);
 
     final body = <Widget>[];
     if (account == null) {
@@ -384,7 +414,7 @@ class _ImportReviewScreenState extends State<ImportReviewScreen> {
       final builder = money.builder;
       final entries = _entries(account, chosen, book, builder);
       final balance = _balance(account, chosen, imports, book, builder, entries: entries);
-      final fix = balance != null && (_fixBalance ?? balance.opening) ? balance.entry : null;
+      final fix = balance != null && (_fixBalance ?? balance.suggested) ? balance.entry : null;
       final finished = [for (final i in imports.items) if (i.done) i];
       await money.importEntries([...entries, ?fix], fileHashes: [for (final i in finished) if (i.status == ImportStatus.read) ?i.hash]);
       await _keepRefs(money, account, [for (final i in finished) if (i.status == ImportStatus.read) i.facts]);
@@ -430,8 +460,8 @@ class _ImportReviewScreenState extends State<ImportReviewScreen> {
   /// statements give no balance or the book already agrees.
   _BalanceFix? _balance(BookAccount account, List<ImportCandidate> chosen, ImportState imports, Book book, EntryBuilder builder,
       {List<BookEntry>? entries}) {
-    final balance = ImportPlanner.statementBalance(
-        [for (final i in imports.items) if (i.status == ImportStatus.read) (i.facts, i.rows)], account);
+    final readFiles = [for (final i in imports.items) if (i.status == ImportStatus.read) i];
+    final balance = ImportPlanner.statementBalance([for (final i in readFiles) (i.facts, i.rows)], account);
     if (balance == null) return null;
     final added = entries ?? _entries(account, chosen, book, builder);
     final entry = ImportPlanner.balanceEntry(builder: builder, book: book, account: account, added: added, balance: balance);
@@ -439,7 +469,7 @@ class _ImportReviewScreenState extends State<ImportReviewScreen> {
     final currency = account.currency ?? '';
     final delta = entry.lines.where((l) => l.accountId == account.id).fold(0, (n, l) => n + l.amount) * account.side.shownSign;
     final statement = MinorUnits.fromMajor(balance.closing, currency);
-    return _BalanceFix(entry, balance, currency, delta: delta, tracked: statement - delta);
+    return _BalanceFix(entry, balance, currency, delta: delta, tracked: statement - delta, balanceOnly: readFiles.every((i) => i.rows.isEmpty));
   }
 
   Widget _balanceTile(BookAccount account, _BalanceFix fix) {
@@ -451,7 +481,7 @@ class _ImportReviewScreenState extends State<ImportReviewScreen> {
       key: const ValueKey('importBalance'),
       contentPadding: EdgeInsets.zero,
       controlAffinity: ListTileControlAffinity.leading,
-      value: _fixBalance ?? fix.opening,
+      value: _fixBalance ?? fix.suggested,
       onChanged: _saving ? null : (v) => setState(() => _fixBalance = v ?? false),
       title: Text(
         fix.opening ? l10n.importOpeningBalance(amount(fix.delta)) : l10n.importMatchBalance(amount(fix.delta + fix.tracked)),
@@ -582,11 +612,20 @@ class _BalanceFix {
   /// The account's balance on the statement's last day without the entry.
   final int tracked;
 
-  const _BalanceFix(this.entry, this.balance, this.currency, {required this.delta, required this.tracked});
+  /// The files gave a balance and no transactions, such as a screenshot of
+  /// a banking app's account screen: setting the balance is why they came.
+  final bool balanceOnly;
+
+  const _BalanceFix(this.entry, this.balance, this.currency, {required this.delta, required this.tracked, required this.balanceOnly});
 
   /// The account had nothing before this import: the entry is its opening
-  /// balance, offered ticked.
+  /// balance.
   bool get opening => entry.template == EntryTemplate.opening;
+
+  /// Offered ticked: an opening balance, or a balance that came alone.
+  /// A correction next to imported rows stays unticked, as the rows may
+  /// already explain it.
+  bool get suggested => opening || balanceOnly;
 }
 
 /// What a statement says about itself, under its file name: the account,

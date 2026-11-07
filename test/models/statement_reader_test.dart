@@ -243,6 +243,21 @@ void main() {
       expect(rows[2].signGuessed, isTrue);
     });
 
+    test('an account screen: the large balance under its small label is the balance, not a transaction', () {
+      // Vision's positions for an account screen: the figure is far wider
+      // than its label.
+      final page = DocPage(const [
+        DocToken('Current account', 0.069, 0.109, 0.324, 0.016),
+        DocToken('Account ending 7731', 0.069, 0.137, 0.302, 0.016),
+        DocToken('Available balance', 0.066, 0.189, 0.274, 0.015),
+        DocToken('25,000.00 SAR', 0.069, 0.223, 0.695, 0.049),
+      ]);
+      final (rows, facts) = reader.read([page]);
+      expect(rows, isEmpty);
+      expect(facts.closing, 25000);
+      expect(facts.to, DateTime(2026, 11, 7));
+    });
+
     test('Arabic: Arabic digits, months and currency', () {
       final page = DocPage([
         ...line(0.10, [('اليوم', 0.75, 0.15)], h: 0.02),

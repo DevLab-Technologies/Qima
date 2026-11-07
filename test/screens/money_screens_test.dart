@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:qima/blocs/app_cubit.dart';
@@ -26,6 +27,7 @@ import 'package:qima/screens/money/entry_editor_screen.dart';
 import 'package:qima/screens/money/home_screen.dart';
 import 'package:qima/screens/money/import_screens.dart';
 import 'package:qima/services/import/import_inbox_io.dart';
+import 'package:qima/services/import/pasted_image.dart';
 import 'package:qima/models/statement_reader.dart';
 import 'package:qima/services/text_recognition_service.dart';
 import 'package:qima/screens/money/money_screen.dart';
@@ -66,6 +68,23 @@ class _PdfRecognition implements TextRecognitionService {
           const DocToken('-23.00 SAR', 0.7, 0.14, 0.25, 0.025),
           const DocToken('Amazon', 0.05, 0.18, 0.3, 0.025),
           const DocToken('USD 1,234,567.89', 0.6, 0.18, 0.35, 0.025),
+        ]),
+      ];
+}
+
+/// A banking app's account screen: the account and its balance, no
+/// transactions.
+class _AccountScreen implements TextRecognitionService {
+  @override
+  Future<bool> isAvailable() async => true;
+  @override
+  Future<List<String>?> recognize(String imagePath, List<String> languageTags) async => null;
+  @override
+  Future<List<DocPage>?> readDocument(String path, List<String> languageTags) async => [
+        DocPage([
+          const DocToken('Current account', 0.069, 0.109, 0.324, 0.016),
+          const DocToken('Available balance', 0.066, 0.189, 0.274, 0.015),
+          const DocToken('25,000.00 SAR', 0.069, 0.223, 0.695, 0.049),
         ]),
       ];
 }
@@ -345,6 +364,94 @@ void main() {
     await tester.pump(const Duration(milliseconds: 300));
     expect(find.byKey(const ValueKey('importBalance')), findsOneWidget);
     expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('a screenshot of only a balance offers the correction ticked, and applies it', (tester) async {
+    await tester.runAsync(seed);
+    size(tester, const Size(390, 1200));
+    final l10n = await AppLocalizations.delegate.load(const Locale('en'));
+    await tester.runAsync(() async {
+      await importer.close();
+      importer = ImportCubit(
+        inbox: FolderInbox(folders: [Directory('${dir.path}/screen')..createSync()]),
+        recognition: _AccountScreen(),
+        wasImported: money.wasImported,
+        languages: () => const ['en-US'],
+      );
+      await importer.addFiles([('IMG_3001.png', [4, 5, 6])]);
+      for (var i = 0; i < 40 && importer.state.reading; i++) {
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+      }
+    });
+    expect(importer.state.items.single.rows, isEmpty);
+    // Home says there is a balance to check, not that nothing was found.
+    await tester.pumpWidget(wrap(const Scaffold(body: ImportBanner()), const Locale('en')));
+    await tester.pump();
+    expect(find.text(l10n.importReadyBalance), findsOneWidget);
+    await tester.pumpWidget(wrap(const ImportReviewScreen(), const Locale('en')));
+    await tester.pump(const Duration(milliseconds: 300));
+    // No account number on the screen: the account with the most
+    // statements is offered.
+    expect(find.byKey(const ValueKey('importAccount-rajhi')), findsOneWidget);
+    final offer = tester.widget<CheckboxListTile>(find.byKey(const ValueKey('importBalance')));
+    expect(offer.value, isTrue);
+    expect(find.text(l10n.importApplyBalance), findsOneWidget);
+    await tester.runAsync(() async {
+      await tester.tap(find.byKey(const ValueKey('importAdd')));
+      for (var i = 0; i < 40 && importer.state.items.isNotEmpty; i++) {
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+      }
+    });
+    await tester.pump();
+    expect(money.state.book.balanceOf('rajhi'), sar(25000));
+    expect(tester.takeException(), isNull);
+  });
+
+  group('pasting a screenshot', () {
+    final messenger = TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
+    tearDown(() => messenger.setMockMethodCallHandler(PastedImage.channel, null));
+
+    Widget opener() => Builder(builder: (context) => Scaffold(body: TextButton(onPressed: () => showImportSheet(context), child: const Text('open'))));
+
+    testWidgets('is offered when the clipboard has an image, and imports it', (tester) async {
+      await tester.runAsync(seed);
+      size(tester, const Size(390, 1200));
+      final l10n = await AppLocalizations.delegate.load(const Locale('en'));
+      messenger.setMockMethodCallHandler(PastedImage.channel, (call) async => call.method == 'hasPastedImage');
+      final before = importer.state.items.length;
+      await tester.pumpWidget(wrap(opener(), const Locale('en')));
+      await tester.tap(find.text('open'));
+      await tester.pumpAndSettle();
+      expect(find.text(l10n.importFromClipboard), findsOneWidget);
+      expect(find.byKey(const ValueKey('importPaste')), findsOneWidget);
+      // The system Paste button sends the image; the sheet closes and the
+      // file is added.
+      await messenger.handlePlatformMessage(
+        PastedImage.pastes.name,
+        PastedImage.pastes.codec.encodeMethodCall(MethodCall('pasted', Uint8List.fromList([9, 9, 9]))),
+        (_) {},
+      );
+      for (var i = 0; i < 40 && importer.state.items.length == before; i++) {
+        await tester.pump(const Duration(milliseconds: 100));
+        await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 20)));
+      }
+      await tester.pump(const Duration(milliseconds: 300));
+      final pasted = importer.state.items.where((i) => i.file.name.startsWith(l10n.importPastedName)).single.file;
+      expect(pasted.extension, 'png');
+      expect(find.byType(ImportReviewScreen), findsOneWidget);
+    });
+
+    testWidgets('is not offered when the clipboard has no image', (tester) async {
+      await tester.runAsync(seed);
+      size(tester, const Size(390, 1200));
+      final l10n = await AppLocalizations.delegate.load(const Locale('en'));
+      messenger.setMockMethodCallHandler(PastedImage.channel, (call) async => call.method == 'hasPastedImage' ? false : null);
+      await tester.pumpWidget(wrap(opener(), const Locale('en')));
+      await tester.tap(find.text('open'));
+      await tester.pumpAndSettle();
+      expect(find.text(l10n.importFromPhotos), findsOneWidget);
+      expect(find.text(l10n.importFromClipboard), findsNothing);
+    });
   });
 
   testWidgets('to categorize: one pick sorts a merchant\'s entries, is remembered, and can be forgotten', (tester) async {

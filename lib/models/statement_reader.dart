@@ -1355,18 +1355,27 @@ class StatementReader {
         // Where in its cell the label and each figure sit: a summary box
         // can come out as one wide cell of six labels over one of six
         // figures.
-        double at(DocToken cell, String text, int start, int end) => cell.x + cell.w * ((start + end) / 2 / math.max(text.length, 1));
+        (double, double) extent(DocToken cell, String text, int start, int end) {
+          final n = math.max(text.length, 1);
+          return (cell.x + cell.w * start / n, cell.x + cell.w * end / n);
+        }
         final labelCell = line.cells.firstWhere((c) => label.hasMatch(normalize(c.text)), orElse: () => line.cells.first);
         final labelText = normalize(labelCell.text);
         final lm = label.firstMatch(labelText);
-        final mid = lm == null ? labelCell.x + labelCell.w / 2 : at(labelCell, labelText, lm.start, lm.end);
+        final (l0, l1) = lm == null ? (labelCell.x, labelCell.x + labelCell.w) : extent(labelCell, labelText, lm.start, lm.end);
+        // A figure under the label overlaps it across the page, however
+        // wide it is (a banking app prints the balance large under a small
+        // label); among those, and failing that, the nearest middle wins.
         _Found<_Money>? best;
         var bestD = double.infinity;
         for (final c in below.cells) {
           final t = normalize(c.text);
           for (final a in _amounts(t, _dates(t).$2, loose: true)) {
-            final d = (at(c, t, a.span.start, a.span.end) - mid).abs();
-            if (d < bestD && d < 0.2) {
+            final (f0, f1) = extent(c, t, a.span.start, a.span.end);
+            final apart = ((f0 + f1) - (l0 + l1)).abs() / 2;
+            final overlaps = f0 < l1 && l0 < f1;
+            final d = overlaps ? apart : 1 + apart;
+            if (d < bestD && (overlaps || apart < 0.2)) {
               bestD = d;
               best = a;
             }

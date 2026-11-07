@@ -4071,6 +4071,15 @@ class AppLocalizationsAr extends AppLocalizations {
   String get importFromPhotosHint => 'عمليات تطبيق بنكك';
 
   @override
+  String get importFromClipboard => 'لصق لقطة شاشة';
+
+  @override
+  String get importFromClipboardHint => 'لقطة شاشة منسوخة، مثل رصيد حسابك';
+
+  @override
+  String get importPastedName => 'لقطة شاشة ملصقة';
+
+  @override
   String get importShareTip =>
       'يمكنك أيضًا مشاركة الملفات مع قيمة من أي تطبيق.';
 
@@ -4100,6 +4109,9 @@ class AppLocalizationsAr extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get importReadyBalance => 'رصيد للمراجعة';
 
   @override
   String get importBannerTitle => 'مُشارك مع قيمة';
