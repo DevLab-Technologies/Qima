@@ -419,7 +419,7 @@
   "helpAccountsStep1Title": "Añadir una cuenta",
   "helpAccountsStep1Body": "Dale un nombre, un tipo y su saldo de hoy. Qima empieza desde esa cifra.",
   "helpAccountsStep2Title": "Comprobar el saldo",
-  "helpAccountsStep2Body": "Abre una cuenta e introduce lo que muestra tu banco. Qima te enseña la diferencia y puede igualar el saldo.",
+  "helpAccountsStep2Body": "Abre una cuenta e introduce lo que muestra tu banco. Si hay diferencia, elige: añadir un movimiento, o cambiar el saldo inicial para que nada cuente como gasto.",
   "helpAccountsStep3Title": "Contar el efectivo",
   "helpAccountsStep3Body": "Para el efectivo, cuenta lo que hay en tu cartera y Qima ajusta el saldo.",
   "helpAccountsStep4Title": "Pagar una tarjeta o un préstamo",
@@ -450,7 +450,7 @@
   "helpImportStatementStep2Title": "Revisa cada fila",
   "helpImportStatementStep2Body": "Elige la cuenta, desmarca lo que no quieras y corrige las categorías. Las filas que ya están en Qima empiezan desmarcadas.",
   "helpImportStatementStep3Title": "Iguala el saldo",
-  "helpImportStatementStep3Body": "Cuando el extracto muestre un saldo, marca Ajustar el saldo a para que Qima coincida con tu banco.",
+  "helpImportStatementStep3Body": "Cuando el extracto muestre un saldo, marca Ajustar el saldo. Luego elige: cambiar el saldo inicial, o añadir un movimiento por la diferencia.",
   "helpImportStatementStep4Title": "Añádelos",
   "helpImportStatementStep4Body": "Toca Añadir. Los archivos se eliminan una vez importados.",
   "helpBankMessagesSummary": "Añade compras desde los mensajes que te envía tu banco, después de revisar cada uno.",
@@ -1387,5 +1387,11 @@
   "marketClosed": "Cerrado",
   "marketClosedOpens": "Mercado cerrado · abre {time}",
   "marketOpenCloses": "Mercado abierto · cierra {time}",
-  "marketClosedLong": "Mercado cerrado"
+  "marketClosedLong": "Mercado cerrado",
+  "holdingsCount": "{count, plural, =1{1 inversión} other{{count} inversiones}}",
+  "pricesAt": "precios {time}",
+  "balanceWayTransaction": "Añadir un movimiento",
+  "balanceWayTransactionDetail": "La diferencia cuenta como gasto o ingreso en {other}",
+  "balanceWayOpening": "Cambiar el saldo inicial",
+  "balanceWayOpeningDetail": "Desde su primer día, ni gasto ni ingreso"
 }

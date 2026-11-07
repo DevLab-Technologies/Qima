@@ -5,7 +5,7 @@ import '../../blocs/app_cubit.dart';
 import '../../blocs/money_cubit.dart';
 import '../../l10n/app_localizations.dart';
 import '../../models/book_account.dart';
-import '../../models/default_categories.dart';
+import '../../models/entry_builder.dart';
 import '../../models/money_settings.dart';
 import '../../models/net_worth.dart';
 import '../../theme/design_system.dart';
@@ -369,53 +369,76 @@ class AccountDetailScreen extends StatelessWidget {
     );
   }
 
-  /// A cash count, or checking a bank or card against its statement. A
-  /// difference becomes spending in Other (or income) so the books match.
+  /// A cash count, or checking a bank or card against its statement. The
+  /// person picks how a difference comes in: a transaction (spending or
+  /// income in Other) or a changed opening balance.
   static Future<void> _reconcile(BuildContext context, BookAccount a, int tracked) async {
     final l10n = AppLocalizations.of(context)!;
     final money = context.read<MoneyCubit>();
-    final controller = TextEditingController(text: minorFieldText(tracked, a.currency!));
-    final counted = await showDialog<int>(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: Text(a.type == AccountType.cash ? l10n.accountCountCash : l10n.accountCheckBalance),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(l10n.reconcileTracked(minorText(tracked, a.currency!, hidden: false))),
-            const SizedBox(height: DS.spaceSM),
-            AmountField(
-              controller: controller,
-              autofocus: true,
-              label: a.type == AccountType.cash ? l10n.reconcileCounted : l10n.reconcileStatement,
-              currency: a.currency!,
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(onPressed: () => Navigator.of(dialogContext).pop(), child: Text(l10n.commonCancel)),
-          FilledButton(onPressed: () => Navigator.of(dialogContext).pop(parseMinor(controller.text, a.currency!)), child: Text(l10n.commonDone)),
-        ],
-      ),
-    );
-    controller.dispose();
-    if (counted == null || counted == tracked || !context.mounted) return;
-    final book = money.state.book;
-    final other = book.accounts[DefaultCategories.other] ?? money.state.categories(AccountSide.spending).first;
-    final otherIncome = book.accounts[DefaultCategories.otherIncome] ?? money.state.categories(AccountSide.income).first;
-    final now = DateTime.now();
-    if (a.side == AccountSide.own) {
-      final e = money.builder.cashCount(a, tracked: tracked, counted: counted, short: other, over: otherIncome, date: now);
-      if (e != null) await money.saveEntry(e);
-    } else {
-      // A card: owing more than tracked is unrecorded spending; less is money back.
-      final d = counted - tracked;
-      final e = d > 0 ? money.builder.spend(a, other, d, now) : money.builder.income(a, otherIncome, -d, now);
-      await money.saveEntry(e);
-    }
+    final answer = await showDialog<(int, BalanceWay)>(context: context, builder: (_) => _ReconcileDialog(account: a, tracked: tracked));
+    if (answer == null || !context.mounted) return;
+    final (counted, way) = answer;
+    final e = money.builder.balanceBy(way, book: money.state.book, account: a, tracked: tracked, target: counted, date: DateTime.now());
+    if (e == null) return;
+    await money.saveEntry(e);
     if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.reconcileDone)));
     }
+  }
+}
+
+/// The count or statement figure, and how a difference comes in. Owns its
+/// field, so the field outlives the closing animation.
+class _ReconcileDialog extends StatefulWidget {
+  final BookAccount account;
+  final int tracked;
+
+  const _ReconcileDialog({required this.account, required this.tracked});
+
+  @override
+  State<_ReconcileDialog> createState() => _ReconcileDialogState();
+}
+
+class _ReconcileDialogState extends State<_ReconcileDialog> {
+  late final _controller = TextEditingController(text: minorFieldText(widget.tracked, widget.account.currency!));
+  var _way = BalanceWay.transaction;
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final a = widget.account;
+    final cash = a.type == AccountType.cash;
+    return AlertDialog(
+      title: Text(cash ? l10n.accountCountCash : l10n.accountCheckBalance),
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(l10n.reconcileTracked(minorText(widget.tracked, a.currency!, hidden: false))),
+            const SizedBox(height: DS.spaceSM),
+            AmountField(controller: _controller, autofocus: true, label: cash ? l10n.reconcileCounted : l10n.reconcileStatement, currency: a.currency!),
+            const SizedBox(height: DS.spaceSM),
+            BalanceWayPicker(value: _way, onChanged: (w) => setState(() => _way = w)),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(onPressed: () => Navigator.of(context).pop(), child: Text(l10n.commonCancel)),
+        FilledButton(
+          onPressed: () {
+            final counted = parseMinor(_controller.text, a.currency!);
+            Navigator.of(context).pop(counted == null ? null : (counted, _way));
+          },
+          child: Text(l10n.commonDone),
+        ),
+      ],
+    );
   }
 }
 

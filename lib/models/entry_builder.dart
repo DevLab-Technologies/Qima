@@ -1,5 +1,7 @@
+import 'book.dart';
 import 'book_account.dart';
 import 'book_entry.dart';
+import 'default_categories.dart';
 import 'minor_units.dart';
 import 'money.dart';
 
@@ -162,14 +164,32 @@ class EntryBuilder {
     return _entry(EntryTemplate.cashCount, date, [_line(cash, d), _line(flow, -d, currency: cash.currency)], source: EntrySource.count);
   }
 
-  /// Brings [account] to the balance a statement shows: [tracked] is what
-  /// the book has, [statement] what the bank says, both as people read them.
-  /// The difference goes to Opening balances, so it is never counted as
-  /// spending or income. Null when they already agree.
-  BookEntry? balanceTo(BookAccount account, {required int tracked, required int statement, required DateTime date}) {
-    final stored = (statement - tracked) * account.side.shownSign;
-    if (stored == 0) return null;
-    return _entry(EntryTemplate.adjustment, date, [_line(account, stored), _line(_opening, -stored, currency: account.currency)]);
+  /// Brings [account] from [tracked] to [target] (both as people read
+  /// them, [tracked] being the book's balance on [date]) the way the person
+  /// chose. Null when they already agree.
+  ///
+  /// [BalanceWay.opening] changes the account's opening balance by the
+  /// difference, so every day from its first moves with it and nothing
+  /// counts as spending or income; an account with no opening balance gets
+  /// one on its first day. [BalanceWay.transaction] records the difference
+  /// on [date]: spending or income in Other for money held (a cash count),
+  /// and for what is owed, spending when it is more, money back when less.
+  BookEntry? balanceBy(BalanceWay way, {required Book book, required BookAccount account, required int tracked, required int target, required DateTime date}) {
+    final d = target - tracked;
+    if (d == 0) return null;
+    if (way == BalanceWay.opening) {
+      final own = [for (final e in book.entries) if (e.lines.any((l) => l.accountId == account.id)) e]..sort((a, b) => a.date.compareTo(b.date));
+      final existing = own.where((e) => e.template == EntryTemplate.opening).firstOrNull;
+      if (existing == null) return opening(account, d, own.firstOrNull?.date ?? date);
+      final shown = existing.lines.where((l) => l.accountId == account.id).fold(0, (n, l) => n + l.amount) * account.side.shownSign;
+      return existing.copyWith(lines: opening(account, shown + d, existing.date).lines);
+    }
+    final other = book.accounts[DefaultCategories.other] ?? book.accounts.values.firstWhere((a) => a.side == AccountSide.spending);
+    final otherIncome = book.accounts[DefaultCategories.otherIncome] ?? book.accounts.values.firstWhere((a) => a.side == AccountSide.income);
+    if (account.side == AccountSide.own) {
+      return cashCount(account, tracked: tracked, counted: target, short: other, over: otherIncome, date: date);
+    }
+    return d > 0 ? spend(account, other, d, date) : income(account, otherIncome, -d, date);
   }
 
   /// A bill the person paid in full from [paidFrom] and split: only their
@@ -204,4 +224,13 @@ class EntryBuilder {
       if (intoBase != assetBase) _line(_change, assetBase - intoBase, currency: baseCurrency),
     ]);
   }
+}
+
+/// How a balance someone checked is brought into the book.
+enum BalanceWay {
+  /// The account started with a different balance.
+  opening,
+
+  /// The difference happened: spending or income, dated.
+  transaction,
 }

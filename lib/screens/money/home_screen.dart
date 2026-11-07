@@ -7,18 +7,28 @@ import '../../blocs/app_cubit.dart';
 import '../../blocs/app_state.dart';
 import '../../blocs/money_cubit.dart';
 import '../../l10n/app_localizations.dart';
+import '../../models/book.dart';
 import '../../models/book_account.dart';
+import '../../models/chart_range.dart';
+import '../../models/display_point.dart';
+import '../../models/holding.dart';
+import '../../models/net_worth_history.dart';
+import '../../models/portfolio_history.dart';
 import '../../models/money_analysis.dart';
 import '../../models/money_settings.dart';
 import '../../models/net_worth.dart';
 import '../../models/zakat_book.dart';
 import '../../theme/design_system.dart';
 import '../../theme/help_topics.dart';
+import '../../theme/instrument_theme.dart';
+import '../../theme/price_chart.dart';
 import '../../theme/money_labels.dart';
 import '../../theme/qima_colors.dart';
+import '../../theme/strings.dart';
 import '../../widgets/help_button.dart';
 import '../../widgets/money_widgets.dart';
 import '../../widgets/portfolio_hero.dart';
+import '../../widgets/range_selector.dart';
 import '../add_instrument_screen.dart';
 import '../portfolio_detail_screen.dart';
 import '../zakat_screen.dart';
@@ -63,7 +73,14 @@ class HomeScreen extends StatelessWidget {
             onToggleHideBalances: cubit.toggleHideBalances,
           ));
         } else if (money.hasBook) {
-          children.add(_NetWorthCard(summary: summary, hidden: hidden));
+          children.add(_NetWorthCard(
+            summary: summary,
+            hidden: hidden,
+            book: money.book,
+            holdings: cubit.portfolioHistory(app.preferredPortfolioRange),
+            app: app,
+            onSelectRange: cubit.setPreferredPortfolioRange,
+          ));
         } else {
           children.add(const _StartCard());
         }
@@ -161,20 +178,16 @@ class HomeScreen extends StatelessWidget {
           ],
         );
       case HomeCard.holdings:
-        final v = context.read<AppCubit>().portfolioValuation;
+        final appCubit = context.read<AppCubit>();
+        final v = appCubit.portfolioValuation;
         // Before the first account, the total above already is the holdings.
         if (v == null || !money.hasBook) return null;
-        return MoneySection(
-          title: l10n.sheetHoldings,
-          onTitleTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const PortfolioDetailScreen())),
-          children: [
-            MoneyRow(
-              icon: Icons.pie_chart_outline,
-              title: moneyText(v.value.amount, v.value.currencyCode, hidden: hidden),
-              subtitle: l10n.holdingsGainLine(moneyText(v.gain.amount, v.gain.currencyCode, hidden: hidden)),
-              onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const PortfolioDetailScreen())),
-            ),
-          ],
+        return _HoldingsCard(
+          valuation: v,
+          held: appCubit.heldInstruments,
+          history: appCubit.portfolioHistory(app.preferredPortfolioRange),
+          pricesAt: app.lastRefresh,
+          hidden: hidden,
         );
       case HomeCard.accounts:
         final accounts = [
@@ -251,17 +264,65 @@ List<(BookAccount, DateTime?)> staleAssets(MoneyState money, MoneyCubit cubit, D
   ];
 }
 
-class _NetWorthCard extends StatelessWidget {
+/// The total on Home (S.2): net worth, what's owned and owed, its chart
+/// and the ranges. The ranges are the Portfolio's, so the holdings card
+/// below moves with them. Tapping anywhere but the ranges opens the
+/// balance sheet.
+class _NetWorthCard extends StatefulWidget {
   final NetWorthSummary summary;
   final bool hidden;
+  final Book book;
+  final List<PortfolioHistoryPoint> holdings;
+  final AppState app;
+  final ValueChanged<ChartRange> onSelectRange;
 
-  const _NetWorthCard({required this.summary, required this.hidden});
+  const _NetWorthCard({
+    required this.summary,
+    required this.hidden,
+    required this.book,
+    required this.holdings,
+    required this.app,
+    required this.onSelectRange,
+  });
+
+  @override
+  State<_NetWorthCard> createState() => _NetWorthCardState();
+}
+
+class _NetWorthCardState extends State<_NetWorthCard> {
+  // One walk over the book per change, not per rebuild: the inputs are
+  // immutable, so identity says when they changed.
+  List<Object?> _inputs = const [];
+  List<DisplayPoint> _points = const [];
+
+  List<DisplayPoint> get points {
+    final app = widget.app;
+    final now = DateTime.now();
+    final inputs = [widget.book, widget.holdings, app.fxHistory, app.rates, app.preferredPortfolioRange, app.baseCurrency, DateUtils.dateOnly(now)];
+    final same = _inputs.length == inputs.length &&
+        [for (var i = 0; i < inputs.length; i++) i < 4 ? identical(_inputs[i], inputs[i]) : _inputs[i] == inputs[i]].every((x) => x);
+    if (same) return _points;
+    _inputs = inputs;
+    return _points = NetWorthHistory.build(
+      book: widget.book,
+      holdings: widget.holdings,
+      currency: app.baseCurrency,
+      rates: app.rates,
+      fxHistory: app.fxHistory,
+      range: app.preferredPortfolioRange,
+      now: now,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final colors = context.colors;
+    final summary = widget.summary;
+    final hidden = widget.hidden;
     final ccy = summary.currency;
+    final points = this.points;
+    final up = points.length < 2 || points.last.value >= points.first.value;
     return Semantics(
       button: true,
       child: GestureDetector(
@@ -289,6 +350,143 @@ class _NetWorthCard extends StatelessWidget {
                 Expanded(child: _Side(label: l10n.youOwn, value: moneyText(summary.owned, ccy, hidden: hidden))),
                 Expanded(child: _Side(label: l10n.youOweSide, value: moneyText(summary.owed, ccy, hidden: hidden))),
               ]),
+              const SizedBox(height: DS.spaceSM),
+              SizedBox(
+                key: const ValueKey('netWorthChart'),
+                height: 100,
+                child: points.length >= 2
+                    ? PriceChartView(
+                        points: points,
+                        isTrendingUp: up,
+                        accent: colors.brand,
+                        lineColor: colors.accentGold,
+                        showsAxes: false,
+                        lineWidth: 2.25,
+                        maskValues: hidden,
+                      )
+                    : Center(child: Text(l10n.portfolioNoHistory, style: TextStyle(color: colors.textTertiary, fontSize: 12))),
+              ),
+              const SizedBox(height: DS.spaceSM),
+              // Keeps a tap on the ranges from opening the balance sheet.
+              GestureDetector(
+                onTap: () {},
+                child: RangeSelector(
+                  ranges: ChartRange.portfolioSelectable,
+                  selected: widget.app.preferredPortfolioRange,
+                  onSelected: widget.onSelectRange,
+                  accent: colors.brand,
+                  fill: true,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Holdings on Home (S.2): the total, how many and when prices came, the
+/// chart for the same range as the total, and the split: the two largest
+/// holdings and the rest as Other.
+class _HoldingsCard extends StatelessWidget {
+  final HoldingValuation valuation;
+  final List<HeldInstrument> held;
+  final List<PortfolioHistoryPoint> history;
+  final DateTime? pricesAt;
+  final bool hidden;
+
+  const _HoldingsCard({required this.valuation, required this.held, required this.history, required this.pricesAt, required this.hidden});
+
+  static void _open(BuildContext context) => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const PortfolioDetailScreen()));
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final colors = context.colors;
+    final total = valuation.value;
+    final points = [for (final p in history) DisplayPoint(date: p.date, value: p.value)];
+    final up = points.length < 2 || points.last.value >= points.first.value;
+
+    // held is largest first. Three or fewer show by name; more keep the
+    // two largest and fold the rest into Other.
+    final parts = <(String, Color, double)>[];
+    final sum = held.fold(0.0, (x, h) => x + h.valuation.value.amount);
+    if (sum > 0) {
+      final named = held.length <= 3 ? held : held.take(2).toList();
+      for (final h in named) {
+        parts.add((displayLabel(context, h.instrument.nameKey), InstrumentTheme.accentColor(h.instrument, colors), h.valuation.value.amount));
+      }
+      if (held.length > 3) {
+        parts.add((l10n.catOther, colors.textTertiary, held.skip(2).fold(0.0, (x, h) => x + h.valuation.value.amount)));
+      }
+    }
+    final caption = [
+      l10n.holdingsCount(held.length),
+      if (pricesAt != null) l10n.pricesAt(DateFormat.Hm(Localizations.localeOf(context).toLanguageTag()).format(pricesAt!)),
+    ].join(' · ');
+
+    return Semantics(
+      button: true,
+      child: GestureDetector(
+        key: const ValueKey('holdingsCard'),
+        onTap: () => _open(context),
+        child: DSCard(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Row(children: [
+                Expanded(child: Text(l10n.sheetHoldings, style: TextStyle(color: colors.textPrimary, fontWeight: FontWeight.w700))),
+                Icon(Icons.chevron_right, size: 18, color: colors.textTertiary),
+              ]),
+              const SizedBox(height: DS.space2XS),
+              Row(crossAxisAlignment: CrossAxisAlignment.baseline, textBaseline: TextBaseline.alphabetic, children: [
+                Directionality(
+                  textDirection: TextDirection.ltr,
+                  child: Text(moneyText(total.amount, total.currencyCode, hidden: hidden),
+                      style: TextStyle(color: colors.textPrimary, fontSize: 20, fontWeight: FontWeight.w800)),
+                ),
+                const SizedBox(width: DS.spaceSM),
+                Expanded(
+                  child: Text(caption,
+                      textAlign: TextAlign.end, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: colors.textTertiary, fontSize: 12)),
+                ),
+              ]),
+              if (points.length >= 2) ...[
+                const SizedBox(height: DS.spaceSM),
+                SizedBox(
+                  height: 72,
+                  child: PriceChartView(points: points, isTrendingUp: up, accent: colors.brand, lineColor: colors.accentGold, showsAxes: false, lineWidth: 2, maskValues: hidden),
+                ),
+              ],
+              if (parts.isNotEmpty) ...[
+                const SizedBox(height: DS.spaceSM),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(4),
+                  child: SizedBox(
+                    key: const ValueKey('holdingsSplit'),
+                    height: 8,
+                    child: Row(children: [
+                      for (final (_, color, value) in parts)
+                        if (value > 0) Expanded(flex: (value / sum * 1000).round().clamp(1, 1000), child: ColoredBox(color: color)),
+                    ]),
+                  ),
+                ),
+                const SizedBox(height: DS.spaceXS),
+                Wrap(spacing: DS.spaceMD, runSpacing: 4, children: [
+                  for (final (name, color, value) in parts)
+                    Row(mainAxisSize: MainAxisSize.min, children: [
+                      Container(width: 8, height: 8, decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
+                      const SizedBox(width: 6),
+                      Text(name, style: TextStyle(color: colors.textSecondary, fontSize: 12)),
+                      const SizedBox(width: 4),
+                      Directionality(
+                        textDirection: TextDirection.ltr,
+                        child: Text('${(value / sum * 100).round()}%', style: TextStyle(color: colors.textSecondary, fontSize: 12, fontWeight: FontWeight.w600)),
+                      ),
+                    ]),
+                ]),
+              ],
             ],
           ),
         ),

@@ -754,7 +754,7 @@
   "helpAccountsStep1Title": "Add an account",
   "helpAccountsStep1Body": "Give it a name, a type and its balance today. Qima starts from that figure.",
   "helpAccountsStep2Title": "Check the balance",
-  "helpAccountsStep2Body": "Open an account and enter what your bank shows. Qima shows any difference and can bring its balance to match.",
+  "helpAccountsStep2Body": "Open an account and enter what your bank shows. For a difference, choose: add a transaction for it, or change the opening balance so nothing counts as spending.",
   "helpAccountsStep3Title": "Count cash",
   "helpAccountsStep3Body": "For cash, count what’s in your wallet and Qima sets the balance to it.",
   "helpAccountsStep4Title": "Pay a card or loan",
@@ -785,7 +785,7 @@
   "helpImportStatementStep2Title": "Check every row",
   "helpImportStatementStep2Body": "Pick the account, untick what you don’t want and fix any category. Rows already in Qima start unticked.",
   "helpImportStatementStep3Title": "Match the balance",
-  "helpImportStatementStep3Body": "When the statement shows a balance, tick Bring the balance to it so Qima agrees with your bank.",
+  "helpImportStatementStep3Body": "When the statement shows a balance, tick Bring the balance to it. Then choose how: change the opening balance, or add a transaction for the difference.",
   "helpImportStatementStep4Title": "Add them",
   "helpImportStatementStep4Body": "Tap Add. The files are deleted once imported.",
   "helpBankMessagesSummary": "Add purchases from the messages your bank sends you, after you check each one.",
@@ -3236,5 +3236,33 @@
   },
   "@marketClosedLong": {
     "description": "The detail screen's line when the next opening is unknown."
-  }
+  },
+  "holdingsCount": "{count, plural, =1{1 holding} other{{count} holdings}}",
+  "@holdingsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "pricesAt": "prices {time}",
+  "@pricesAt": {
+    "description": "Under the holdings total on Home: when prices were last fetched.",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "balanceWayTransaction": "Add a transaction",
+  "balanceWayTransactionDetail": "The difference counts as spending or income in {other}",
+  "@balanceWayTransactionDetail": {
+    "placeholders": {
+      "other": {
+        "type": "String"
+      }
+    }
+  },
+  "balanceWayOpening": "Change the opening balance",
+  "balanceWayOpeningDetail": "From its first day, not as spending or income"
 }

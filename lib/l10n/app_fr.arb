@@ -419,7 +419,7 @@
   "helpAccountsStep1Title": "Ajouter un compte",
   "helpAccountsStep1Body": "Donnez-lui un nom, un type et son solde du jour. Qima part de ce chiffre.",
   "helpAccountsStep2Title": "Vérifier le solde",
-  "helpAccountsStep2Body": "Ouvrez un compte et saisissez ce qu’affiche votre banque. Qima montre l’écart et peut aligner son solde.",
+  "helpAccountsStep2Body": "Ouvrez un compte et saisissez ce qu’affiche votre banque. En cas d’écart, choisissez : ajouter une opération, ou modifier le solde d’ouverture pour que rien ne compte comme dépense.",
   "helpAccountsStep3Title": "Compter les espèces",
   "helpAccountsStep3Body": "Pour les espèces, comptez ce qu’il y a dans votre portefeuille et Qima ajuste le solde.",
   "helpAccountsStep4Title": "Payer une carte ou un prêt",
@@ -450,7 +450,7 @@
   "helpImportStatementStep2Title": "Vérifier chaque ligne",
   "helpImportStatementStep2Body": "Choisissez le compte, décochez ce que vous ne voulez pas et corrigez les catégories. Les lignes déjà dans Qima sont décochées.",
   "helpImportStatementStep3Title": "Aligner le solde",
-  "helpImportStatementStep3Body": "Quand le relevé affiche un solde, cochez Ramener le solde pour que Qima soit d’accord avec votre banque.",
+  "helpImportStatementStep3Body": "Quand le relevé affiche un solde, cochez Ramener le solde. Puis choisissez : modifier le solde d’ouverture, ou ajouter une opération pour l’écart.",
   "helpImportStatementStep4Title": "Les ajouter",
   "helpImportStatementStep4Body": "Touchez Ajouter. Les fichiers sont supprimés une fois importés.",
   "helpBankMessagesSummary": "Ajoutez les achats depuis les messages de votre banque, après les avoir vérifiés un par un.",
@@ -1387,5 +1387,11 @@
   "marketClosed": "Fermé",
   "marketClosedOpens": "Marché fermé · ouvre {time}",
   "marketOpenCloses": "Marché ouvert · ferme {time}",
-  "marketClosedLong": "Marché fermé"
+  "marketClosedLong": "Marché fermé",
+  "holdingsCount": "{count, plural, =1{1 placement} other{{count} placements}}",
+  "pricesAt": "cours {time}",
+  "balanceWayTransaction": "Ajouter une opération",
+  "balanceWayTransactionDetail": "L’écart compte comme dépense ou revenu dans {other}",
+  "balanceWayOpening": "Modifier le solde d’ouverture",
+  "balanceWayOpeningDetail": "Depuis son premier jour, ni dépense ni revenu"
 }

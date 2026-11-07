@@ -2417,7 +2417,7 @@ abstract class AppLocalizations {
   /// No description provided for @helpAccountsStep2Body.
   ///
   /// In en, this message translates to:
-  /// **'Open an account and enter what your bank shows. Qima shows any difference and can bring its balance to match.'**
+  /// **'Open an account and enter what your bank shows. For a difference, choose: add a transaction for it, or change the opening balance so nothing counts as spending.'**
   String get helpAccountsStep2Body;
 
   /// No description provided for @helpAccountsStep3Title.
@@ -2603,7 +2603,7 @@ abstract class AppLocalizations {
   /// No description provided for @helpImportStatementStep3Body.
   ///
   /// In en, this message translates to:
-  /// **'When the statement shows a balance, tick Bring the balance to it so Qima agrees with your bank.'**
+  /// **'When the statement shows a balance, tick Bring the balance to it. Then choose how: change the opening balance, or add a transaction for the difference.'**
   String get helpImportStatementStep3Body;
 
   /// No description provided for @helpImportStatementStep4Title.
@@ -8242,6 +8242,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Market closed'**
   String get marketClosedLong;
+
+  /// No description provided for @holdingsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 holding} other{{count} holdings}}'**
+  String holdingsCount(int count);
+
+  /// Under the holdings total on Home: when prices were last fetched.
+  ///
+  /// In en, this message translates to:
+  /// **'prices {time}'**
+  String pricesAt(String time);
+
+  /// No description provided for @balanceWayTransaction.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a transaction'**
+  String get balanceWayTransaction;
+
+  /// No description provided for @balanceWayTransactionDetail.
+  ///
+  /// In en, this message translates to:
+  /// **'The difference counts as spending or income in {other}'**
+  String balanceWayTransactionDetail(String other);
+
+  /// No description provided for @balanceWayOpening.
+  ///
+  /// In en, this message translates to:
+  /// **'Change the opening balance'**
+  String get balanceWayOpening;
+
+  /// No description provided for @balanceWayOpeningDetail.
+  ///
+  /// In en, this message translates to:
+  /// **'From its first day, not as spending or income'**
+  String get balanceWayOpeningDetail;
 }
 
 class _AppLocalizationsDelegate

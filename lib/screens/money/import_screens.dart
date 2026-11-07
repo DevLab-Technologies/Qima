@@ -211,6 +211,7 @@ class _ImportReviewScreenState extends State<ImportReviewScreen> {
   final Map<String, bool> _isIn = {};
   final Map<String, String> _category = {};
   bool? _fixBalance;
+  BalanceWay _balanceWay = BalanceWay.opening;
   bool _saving = false;
 
   @override
@@ -258,6 +259,7 @@ class _ImportReviewScreenState extends State<ImportReviewScreen> {
           onChanged: (a) => setState(() {
             _accountId = a?.id;
             _fixBalance = null;
+            _balanceWay = BalanceWay.opening;
           }),
         ),
       ));
@@ -481,12 +483,10 @@ class _ImportReviewScreenState extends State<ImportReviewScreen> {
     final balance = ImportPlanner.statementBalance([for (final i in readFiles) (i.facts, i.rows)], account);
     if (balance == null) return null;
     final added = entries ?? _entries(account, chosen, book, builder);
-    final entry = ImportPlanner.balanceEntry(builder: builder, book: book, account: account, added: added, balance: balance);
-    if (entry == null) return null;
-    final currency = account.currency ?? '';
-    final delta = entry.lines.where((l) => l.accountId == account.id).fold(0, (n, l) => n + l.amount) * account.side.shownSign;
-    final statement = MinorUnits.fromMajor(balance.closing, currency);
-    return _BalanceFix(entry, balance, currency, delta: delta, tracked: statement - delta, balanceOnly: readFiles.every((i) => i.rows.isEmpty));
+    final fix = ImportPlanner.balanceEntry(builder: builder, book: book, account: account, added: added, balance: balance, way: _balanceWay);
+    if (fix == null) return null;
+    return _BalanceFix(fix.entry, balance, account.currency ?? '',
+        delta: fix.statement - fix.tracked, tracked: fix.tracked, opening: fix.fresh, balanceOnly: readFiles.every((i) => i.rows.isEmpty));
   }
 
   Widget _balanceTile(BookAccount account, _BalanceFix fix) {
@@ -494,20 +494,32 @@ class _ImportReviewScreenState extends State<ImportReviewScreen> {
     final colors = context.colors;
     final locale = Localizations.localeOf(context).toLanguageTag();
     String amount(int minor) => moneyText(MinorUnits.toMajor(minor, fix.currency), fix.currency, hidden: false);
-    return CheckboxListTile(
-      key: const ValueKey('importBalance'),
-      contentPadding: EdgeInsets.zero,
-      controlAffinity: ListTileControlAffinity.leading,
-      value: _fixBalance ?? fix.suggested,
-      onChanged: _saving ? null : (v) => setState(() => _fixBalance = v ?? false),
-      title: Text(
-        fix.opening ? l10n.importOpeningBalance(amount(fix.delta)) : l10n.importMatchBalance(amount(fix.delta + fix.tracked)),
-        style: TextStyle(color: colors.textPrimary, fontSize: 15, fontWeight: FontWeight.w500),
-      ),
-      subtitle: Text(
-        l10n.importBalanceDetail(DateFormat.yMMMd(locale).format(fix.balance.date), amount(fix.tracked)),
-        style: TextStyle(color: colors.textTertiary, fontSize: 12),
-      ),
+    final on = _fixBalance ?? fix.suggested;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        CheckboxListTile(
+          key: const ValueKey('importBalance'),
+          contentPadding: EdgeInsets.zero,
+          controlAffinity: ListTileControlAffinity.leading,
+          value: on,
+          onChanged: _saving ? null : (v) => setState(() => _fixBalance = v ?? false),
+          title: Text(
+            fix.opening ? l10n.importOpeningBalance(amount(fix.delta)) : l10n.importMatchBalance(amount(fix.delta + fix.tracked)),
+            style: TextStyle(color: colors.textPrimary, fontSize: 15, fontWeight: FontWeight.w500),
+          ),
+          subtitle: Text(
+            l10n.importBalanceDetail(DateFormat.yMMMd(locale).format(fix.balance.date), amount(fix.tracked)),
+            style: TextStyle(color: colors.textTertiary, fontSize: 12),
+          ),
+        ),
+        // A first balance is simply the opening; a later one can be either.
+        if (on && !fix.opening)
+          Padding(
+            padding: const EdgeInsetsDirectional.only(start: 40),
+            child: BalanceWayPicker(value: _balanceWay, onChanged: _saving ? null : (w) => setState(() => _balanceWay = w)),
+          ),
+      ],
     );
   }
 
@@ -633,11 +645,11 @@ class _BalanceFix {
   /// a banking app's account screen: setting the balance is why they came.
   final bool balanceOnly;
 
-  const _BalanceFix(this.entry, this.balance, this.currency, {required this.delta, required this.tracked, required this.balanceOnly});
-
   /// The account had nothing before this import: the entry is its opening
   /// balance.
-  bool get opening => entry.template == EntryTemplate.opening;
+  final bool opening;
+
+  const _BalanceFix(this.entry, this.balance, this.currency, {required this.delta, required this.tracked, required this.opening, required this.balanceOnly});
 
   /// Offered ticked: an opening balance, or a balance that came alone.
   /// A correction next to imported rows stays unticked, as the rows may

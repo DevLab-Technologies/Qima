@@ -180,17 +180,30 @@ void main() {
           const BookAccount(id: 'category.other', name: 'Other', side: AccountSide.spending, type: AccountType.category);
       final spend = builder.spend(bank, category, 10000, DateTime(2026, 11, 3));
 
-      final fresh = ImportPlanner.balanceEntry(builder: builder, book: Book([bank, category], const []), account: bank, added: [spend], balance: balance)!;
+      final fresh = ImportPlanner.balanceEntry(builder: builder, book: Book([bank, category], const []), account: bank, added: [spend], balance: balance)!.entry;
       expect(fresh.template, EntryTemplate.opening);
       expect(fresh.lines.firstWhere((l) => l.accountId == bank.id).amount, 100000, reason: '1,000 before the 100 spent');
 
+      // With history, the person's choice: the opening balance changes by
+      // the difference (the same entry, from its first day)...
       final earlier = builder.opening(bank, 50000, DateTime(2026, 10, 1));
-      final fix = ImportPlanner.balanceEntry(
-          builder: builder, book: Book([bank, category], [earlier]), account: bank, added: [spend], balance: balance)!;
-      expect(fix.template, EntryTemplate.adjustment);
-      expect(fix.date, DateTime(2026, 11, 3));
-      expect(fix.lines.firstWhere((l) => l.accountId == bank.id).amount, 50000);
-      expect(fix.lines.firstWhere((l) => l.accountId == SystemAccount.openingBalances.id).amount, -50000, reason: 'never spending or income');
+      final book = Book([bank, category], [earlier]);
+      final fix = ImportPlanner.balanceEntry(builder: builder, book: book, account: bank, added: [spend], balance: balance)!;
+      expect(fix.fresh, isFalse);
+      expect((fix.tracked, fix.statement), (40000, 90000));
+      expect(fix.entry.id, earlier.id);
+      expect(fix.entry.date, DateTime(2026, 10, 1));
+      expect(fix.entry.lines.firstWhere((l) => l.accountId == bank.id).amount, 100000);
+      expect(fix.entry.lines.firstWhere((l) => l.accountId == SystemAccount.openingBalances.id).amount, -100000, reason: 'never spending or income');
+
+      // ...or the difference is income on the statement's last day.
+      final income = Book([bank, category, const BookAccount(id: 'category.other_income', name: 'Other income', side: AccountSide.income, type: AccountType.category)], [earlier]);
+      final tx = ImportPlanner.balanceEntry(builder: builder, book: income, account: bank, added: [spend], balance: balance, way: BalanceWay.transaction)!.entry;
+      expect(tx.id, isNot(earlier.id));
+      expect(tx.date, DateTime(2026, 11, 3));
+      expect(tx.source, EntrySource.import);
+      expect(tx.lines.firstWhere((l) => l.accountId == bank.id).amount, 50000);
+      expect(tx.lines.firstWhere((l) => l.accountId == 'category.other_income').amount, -50000);
 
       final agreeing = builder.opening(bank, 100000, DateTime(2026, 10, 1));
       expect(
@@ -208,11 +221,33 @@ void main() {
       expect(ImportPlanner.statementBalance([(StatementFacts(closing: 5, currency: 'USD', to: DateTime(2026)), const <StatementRow>[])], bank), isNull);
     });
 
-    test('a card balance is what is owed', () {
+    test('a card balance is what is owed, either way', () {
       final owed = BookAccount(id: 'c', name: 'Card', side: AccountSide.owe, type: AccountType.credit, currency: 'SAR');
-      final e = builder.balanceTo(owed, tracked: 0, statement: 125000, date: DateTime(2026, 11, 30))!;
-      final book = Book([owed], [e]);
-      expect(book.balanceOf(owed.id), 125000);
+      const other = BookAccount(id: 'category.other', name: 'Other', side: AccountSide.spending, type: AccountType.category);
+      const back = BookAccount(id: 'category.other_income', name: 'Other income', side: AccountSide.income, type: AccountType.category);
+      final empty = Book([owed, other, back], const []);
+      final opening = builder.balanceBy(BalanceWay.opening, book: empty, account: owed, tracked: 0, target: 125000, date: DateTime(2026, 11, 30))!;
+      expect(opening.template, EntryTemplate.opening);
+      expect(Book([owed, other, back], [opening]).balanceOf(owed.id), 125000);
+
+      // Owing more than tracked is spending; less is money back.
+      final more = builder.balanceBy(BalanceWay.transaction, book: empty, account: owed, tracked: 100000, target: 125000, date: DateTime(2026, 11, 30))!;
+      expect(more.template, EntryTemplate.spend);
+      expect(more.lines.firstWhere((l) => l.accountId == other.id).amount, 25000);
+      final less = builder.balanceBy(BalanceWay.transaction, book: empty, account: owed, tracked: 100000, target: 90000, date: DateTime(2026, 11, 30))!;
+      expect(less.lines.firstWhere((l) => l.accountId == back.id).amount, -10000);
+      expect(builder.balanceBy(BalanceWay.opening, book: empty, account: owed, tracked: 5, target: 5, date: DateTime(2026, 11, 30)), isNull);
+    });
+
+    test('an account with entries but no opening balance gets one on its first day', () {
+      const other = BookAccount(id: 'category.other', name: 'Other', side: AccountSide.spending, type: AccountType.category);
+      final spend = builder.spend(bank, other, 10000, DateTime(2026, 9, 5));
+      final later = builder.spend(bank, other, 10000, DateTime(2026, 10, 5));
+      final book = Book([bank, other], [later, spend]);
+      final e = builder.balanceBy(BalanceWay.opening, book: book, account: bank, tracked: -20000, target: 30000, date: DateTime(2026, 11, 1))!;
+      expect(e.template, EntryTemplate.opening);
+      expect(e.date, DateTime(2026, 9, 5));
+      expect(Book([bank, other], [spend, later, e]).balanceOf(bank.id), 30000);
     });
 
     test('numbers are remembered only when the files agree', () {

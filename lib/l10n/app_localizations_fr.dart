@@ -1359,7 +1359,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get helpAccountsStep2Body =>
-      'Ouvrez un compte et saisissez ce qu’affiche votre banque. Qima montre l’écart et peut aligner son solde.';
+      'Ouvrez un compte et saisissez ce qu’affiche votre banque. En cas d’écart, choisissez : ajouter une opération, ou modifier le solde d’ouverture pour que rien ne compte comme dépense.';
 
   @override
   String get helpAccountsStep3Title => 'Compter les espèces';
@@ -1469,7 +1469,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get helpImportStatementStep3Body =>
-      'Quand le relevé affiche un solde, cochez Ramener le solde pour que Qima soit d’accord avec votre banque.';
+      'Quand le relevé affiche un solde, cochez Ramener le solde. Puis choisissez : modifier le solde d’ouverture, ou ajouter une opération pour l’écart.';
 
   @override
   String get helpImportStatementStep4Title => 'Les ajouter';
@@ -4875,4 +4875,35 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get marketClosedLong => 'Marché fermé';
+
+  @override
+  String holdingsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count placements',
+      one: '1 placement',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String pricesAt(String time) {
+    return 'cours $time';
+  }
+
+  @override
+  String get balanceWayTransaction => 'Ajouter une opération';
+
+  @override
+  String balanceWayTransactionDetail(String other) {
+    return 'L’écart compte comme dépense ou revenu dans $other';
+  }
+
+  @override
+  String get balanceWayOpening => 'Modifier le solde d’ouverture';
+
+  @override
+  String get balanceWayOpeningDetail =>
+      'Depuis son premier jour, ni dépense ni revenu';
 }

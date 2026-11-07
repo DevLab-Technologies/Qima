@@ -419,7 +419,7 @@
   "helpAccountsStep1Title": "أضف حسابًا",
   "helpAccountsStep1Body": "أعطه اسمًا ونوعًا ورصيده اليوم. تبدأ قيمة من هذا الرقم.",
   "helpAccountsStep2Title": "مطابقة الرصيد",
-  "helpAccountsStep2Body": "افتح الحساب وأدخل ما يظهره بنكك. تُظهر قيمة أي فرق ويمكنها مطابقة الرصيد.",
+  "helpAccountsStep2Body": "افتح الحساب وأدخل ما يظهره بنكك. عند وجود فرق اختر: أضف معاملة به، أو عدّل الرصيد الافتتاحي فلا يُحسب إنفاقًا.",
   "helpAccountsStep3Title": "جرد النقد",
   "helpAccountsStep3Body": "للنقد، عُدّ ما في محفظتك وتضبط قيمة الرصيد عليه.",
   "helpAccountsStep4Title": "سدّد بطاقة أو قرضًا",
@@ -450,7 +450,7 @@
   "helpImportStatementStep2Title": "راجع كل سطر",
   "helpImportStatementStep2Body": "اختر الحساب، وألغِ تحديد ما لا تريده، وصحّح أي فئة. الأسطر الموجودة في قيمة تبدأ غير محددة.",
   "helpImportStatementStep3Title": "طابق الرصيد",
-  "helpImportStatementStep3Body": "عندما يُظهر الكشف رصيدًا، حدّد «اجعل الرصيد» ليتطابق قيمة مع بنكك.",
+  "helpImportStatementStep3Body": "عندما يُظهر الكشف رصيدًا، حدّد «اجعل الرصيد». ثم اختر: عدّل الرصيد الافتتاحي، أو أضف معاملة بالفرق.",
   "helpImportStatementStep4Title": "أضفها",
   "helpImportStatementStep4Body": "اضغط إضافة. تُحذف الملفات بعد الاستيراد.",
   "helpBankMessagesSummary": "أضف المشتريات من الرسائل التي يرسلها بنكك، بعد مراجعة كل واحدة.",
@@ -1387,5 +1387,11 @@
   "marketClosed": "مغلق",
   "marketClosedOpens": "السوق مغلق · يفتح {time}",
   "marketOpenCloses": "السوق مفتوح · يغلق {time}",
-  "marketClosedLong": "السوق مغلق"
+  "marketClosedLong": "السوق مغلق",
+  "holdingsCount": "{count, plural, =1{أصل واحد} =2{أصلان} few{{count} أصول} many{{count} أصلًا} other{{count} أصل}}",
+  "pricesAt": "الأسعار {time}",
+  "balanceWayTransaction": "أضف معاملة",
+  "balanceWayTransactionDetail": "يُحسب الفرق إنفاقًا أو دخلًا في {other}",
+  "balanceWayOpening": "عدّل الرصيد الافتتاحي",
+  "balanceWayOpeningDetail": "من يومه الأول، لا إنفاقًا ولا دخلًا"
 }

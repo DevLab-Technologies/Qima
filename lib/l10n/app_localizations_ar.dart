@@ -1347,7 +1347,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get helpAccountsStep2Body =>
-      'افتح الحساب وأدخل ما يظهره بنكك. تُظهر قيمة أي فرق ويمكنها مطابقة الرصيد.';
+      'افتح الحساب وأدخل ما يظهره بنكك. عند وجود فرق اختر: أضف معاملة به، أو عدّل الرصيد الافتتاحي فلا يُحسب إنفاقًا.';
 
   @override
   String get helpAccountsStep3Title => 'جرد النقد';
@@ -1457,7 +1457,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get helpImportStatementStep3Body =>
-      'عندما يُظهر الكشف رصيدًا، حدّد «اجعل الرصيد» ليتطابق قيمة مع بنكك.';
+      'عندما يُظهر الكشف رصيدًا، حدّد «اجعل الرصيد». ثم اختر: عدّل الرصيد الافتتاحي، أو أضف معاملة بالفرق.';
 
   @override
   String get helpImportStatementStep4Title => 'أضفها';
@@ -4859,4 +4859,37 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get marketClosedLong => 'السوق مغلق';
+
+  @override
+  String holdingsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count أصل',
+      many: '$count أصلًا',
+      few: '$count أصول',
+      two: 'أصلان',
+      one: 'أصل واحد',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String pricesAt(String time) {
+    return 'الأسعار $time';
+  }
+
+  @override
+  String get balanceWayTransaction => 'أضف معاملة';
+
+  @override
+  String balanceWayTransactionDetail(String other) {
+    return 'يُحسب الفرق إنفاقًا أو دخلًا في $other';
+  }
+
+  @override
+  String get balanceWayOpening => 'عدّل الرصيد الافتتاحي';
+
+  @override
+  String get balanceWayOpeningDetail => 'من يومه الأول، لا إنفاقًا ولا دخلًا';
 }

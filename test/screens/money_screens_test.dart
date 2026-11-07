@@ -12,6 +12,10 @@ import 'package:qima/blocs/import_cubit.dart';
 import 'package:qima/blocs/money_cubit.dart';
 import 'package:qima/l10n/app_localizations.dart';
 import 'package:qima/models/asset.dart';
+import 'package:qima/models/chart_range.dart';
+import 'package:qima/models/entry_builder.dart';
+import 'package:qima/models/holding.dart';
+import 'package:qima/models/instrument_catalog.dart';
 import 'package:qima/models/book_account.dart';
 import 'package:qima/models/book_entry.dart';
 import 'package:qima/models/fx_history.dart';
@@ -24,6 +28,8 @@ import 'package:qima/screens/help_sheet.dart';
 import 'package:qima/screens/money/accounts_screens.dart';
 import 'package:qima/screens/money/asset_screens.dart';
 import 'package:qima/screens/money/balance_sheet_screen.dart';
+import 'package:qima/theme/price_chart.dart';
+import 'package:qima/theme/strings.dart';
 import 'package:qima/screens/money/bank_messages_screen.dart';
 import 'package:qima/screens/money/categorize_screen.dart';
 import 'package:qima/screens/money/entry_detail_screen.dart';
@@ -44,6 +50,8 @@ import 'package:qima/services/price_repository.dart';
 import 'package:qima/theme/app_theme.dart';
 import 'package:qima/theme/help_topics.dart';
 import 'package:qima/widgets/help_button.dart';
+import 'package:qima/services/preferences.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// A recognizer the test speaks through.
 class _SpokenWords implements DictationService {
@@ -425,6 +433,10 @@ void main() {
     final offer = tester.widget<CheckboxListTile>(find.byKey(const ValueKey('importBalance')));
     expect(offer.value, isTrue);
     expect(find.text(l10n.importApplyBalance), findsOneWidget);
+    // The account has history, so the difference can go either way; the
+    // opening balance is offered first.
+    expect(tester.widget<RadioGroup<BalanceWay>>(find.byType(RadioGroup<BalanceWay>)).groupValue, BalanceWay.opening);
+    final entriesBefore = money.state.book.entries.length;
     await tester.runAsync(() async {
       await tester.tap(find.byKey(const ValueKey('importAdd')));
       for (var i = 0; i < 40 && importer.state.items.isNotEmpty; i++) {
@@ -433,8 +445,43 @@ void main() {
     });
     await tester.pump();
     expect(money.state.book.balanceOf('rajhi'), sar(25000));
+    expect(money.state.book.entries, hasLength(entriesBefore), reason: 'the opening balance changed; nothing was added');
     expect(tester.takeException(), isNull);
   });
+
+  for (final way in BalanceWay.values) {
+    testWidgets('checking a balance by ${way.name}', (tester) async {
+      await tester.runAsync(seed);
+      size(tester, const Size(390, 1600));
+      final l10n = await AppLocalizations.delegate.load(const Locale('en'));
+      await tester.pumpWidget(wrap(const AccountDetailScreen(accountId: 'wallet'), const Locale('en')));
+      await tester.pump(const Duration(milliseconds: 300));
+      final entriesBefore = money.state.book.entries.length;
+      final spentBefore = money.state.book.balanceOf('category.other');
+      await tester.tap(find.text(l10n.accountCountCash));
+      await tester.pumpAndSettle();
+      expect(tester.widget<RadioGroup<BalanceWay>>(find.byType(RadioGroup<BalanceWay>)).groupValue, BalanceWay.transaction);
+      await tester.enterText(find.byType(TextField).last, '800');
+      if (way == BalanceWay.opening) await tester.tap(find.byKey(const ValueKey('balanceWay-opening')));
+      await tester.pump();
+      await tester.tap(find.text(l10n.commonDone));
+      await tester.pump();
+      for (var i = 0; i < 40 && money.state.book.balanceOf('wallet') != sar(800); i++) {
+        await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 50)));
+        await tester.pump();
+      }
+      expect(money.state.book.balanceOf('wallet'), sar(800));
+      if (way == BalanceWay.opening) {
+        expect(money.state.book.entries, hasLength(entriesBefore));
+        expect(money.state.book.balanceOf('category.other'), spentBefore);
+      } else {
+        expect(money.state.book.entries, hasLength(entriesBefore + 1));
+        expect(money.state.book.balanceOf('category.other'), spentBefore + sar(92.31));
+      }
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+    });
+  }
 
   group('pasting a screenshot', () {
     final messenger = TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
@@ -694,6 +741,47 @@ void main() {
     await tester.runAsync(() => money.setCardHidden(HomeCard.assets, true));
     await tester.pump(const Duration(milliseconds: 300));
     expect(money.state.settings.visibleCards, isNot(contains(HomeCard.assets)));
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Home draws net worth over time with the ranges, and holdings with their split', (tester) async {
+    await tester.runAsync(seed);
+    SharedPreferences.setMockInitialValues({});
+    app.preferences = (await tester.runAsync(Preferences.create))!;
+    final gold = InstrumentCatalog.instrument('metal.XAU')!;
+    final silver = InstrumentCatalog.instrument('metal.XAG')!;
+    final now = DateTime.now();
+    app.emit(app.state.copyWith(
+      rates: FXRates(base: 'SAR', rates: const {'SAR': 1, 'EGP': 13, 'USD': 0.2667}, updatedAt: now),
+      lots: [
+        HoldingLot(id: 'l1', instrumentID: gold.id, quantity: 2, unit: PriceUnit.troyOunce, unitCost: 1900, costCurrency: 'USD', date: DateTime(now.year, now.month - 1)),
+        HoldingLot(id: 'l2', instrumentID: silver.id, quantity: 10, unit: PriceUnit.troyOunce, unitCost: 22, costCurrency: 'USD', date: DateTime(now.year, now.month - 1)),
+      ],
+      seriesByID: {
+        gold.id: QuoteSeries(instrumentID: gold.id, quotes: [Quote(instrumentID: gold.id, timestamp: now, canonicalUSD: 2000)]),
+        silver.id: QuoteSeries(instrumentID: silver.id, quotes: [Quote(instrumentID: silver.id, timestamp: now, canonicalUSD: 25)]),
+      },
+      lastRefresh: DateTime(now.year, now.month, now.day, 9, 38),
+    ));
+    size(tester, const Size(390, 3000));
+    final l10n = await AppLocalizations.delegate.load(const Locale('en'));
+    await tester.pumpWidget(wrap(const HomeScreen(), const Locale('en')));
+    await tester.pump(const Duration(milliseconds: 600));
+
+    // The net worth chart, and the ranges switch it without leaving Home.
+    expect(find.descendant(of: find.byKey(const ValueKey('netWorthChart')), matching: find.byType(PriceChartView)), findsOneWidget);
+    await tester.tap(find.text(displayLabelFor(l10n, ChartRange.year1.labelKey)).first);
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(app.state.preferredPortfolioRange, ChartRange.year1);
+    expect(find.byType(BalanceSheetScreen), findsNothing);
+
+    // Holdings: count and price time, then each holding's share.
+    final card = find.byKey(const ValueKey('holdingsCard'));
+    expect(card, findsOneWidget);
+    expect(find.descendant(of: card, matching: find.textContaining('${l10n.holdingsCount(2)} · ${l10n.pricesAt('09:38')}')), findsOneWidget);
+    expect(find.byKey(const ValueKey('holdingsSplit')), findsOneWidget);
+    expect(find.descendant(of: card, matching: find.text('94%')), findsOneWidget);
+    expect(find.descendant(of: card, matching: find.text('6%')), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 }

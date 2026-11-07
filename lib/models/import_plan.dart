@@ -147,14 +147,16 @@ class ImportPlanner {
 
   /// What brings [account] to the statement's [balance] once [added] are in
   /// [book]: an opening balance when the account had nothing before (dated
-  /// at its first row), else a correction on the statement's last day.
-  /// Null when the book already agrees.
-  static BookEntry? balanceEntry({
+  /// at its first row), else the difference brought in [way]: a changed
+  /// opening balance, or a transaction on the statement's last day. Null
+  /// when the book already agrees.
+  static BalanceEntry? balanceEntry({
     required EntryBuilder builder,
     required Book book,
     required BookAccount account,
     required List<BookEntry> added,
     required StatementBalance balance,
+    BalanceWay way = BalanceWay.opening,
   }) {
     final currency = account.currency ?? 'SAR';
     final ids = {for (final e in added) e.id};
@@ -167,9 +169,13 @@ class ImportPlanner {
     if (statement == tracked) return null;
     if (fresh) {
       final first = added.map((e) => e.date).fold<DateTime>(balance.date, (a, b) => b.isBefore(a) ? b : a);
-      return builder.opening(account, statement - tracked, first).copyWith(source: EntrySource.import);
+      return (entry: builder.opening(account, statement - tracked, first).copyWith(source: EntrySource.import), tracked: tracked, statement: statement, fresh: true);
     }
-    return builder.balanceTo(account, tracked: tracked, statement: statement, date: balance.date)?.copyWith(source: EntrySource.import);
+    final entry = builder.balanceBy(way, book: withAdded, account: account, tracked: tracked, target: statement, date: balance.date);
+    if (entry == null) return null;
+    // A changed opening balance keeps where it came from.
+    final isNew = !book.entries.any((e) => e.id == entry.id);
+    return (entry: isNew ? entry.copyWith(source: EntrySource.import) : entry, tracked: tracked, statement: statement, fresh: false);
   }
 
   /// The numbers of the statements a batch came from, to remember on the
@@ -233,3 +239,9 @@ class ImportPlanner {
     return made.copyWith(source: EntrySource.import, rawMerchant: [row.description, row.detail].where((s) => s.isNotEmpty).join(' · '));
   }
 }
+
+/// The entry that brings an account to a statement's balance, with the
+/// balances it bridges, as people read them, in minor units. [fresh]: the
+/// account had nothing before, so the entry is simply its opening balance
+/// and there is no way to choose.
+typedef BalanceEntry = ({BookEntry entry, int tracked, int statement, bool fresh});

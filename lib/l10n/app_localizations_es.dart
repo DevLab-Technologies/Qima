@@ -1359,7 +1359,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get helpAccountsStep2Body =>
-      'Abre una cuenta e introduce lo que muestra tu banco. Qima te enseña la diferencia y puede igualar el saldo.';
+      'Abre una cuenta e introduce lo que muestra tu banco. Si hay diferencia, elige: añadir un movimiento, o cambiar el saldo inicial para que nada cuente como gasto.';
 
   @override
   String get helpAccountsStep3Title => 'Contar el efectivo';
@@ -1469,7 +1469,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get helpImportStatementStep3Body =>
-      'Cuando el extracto muestre un saldo, marca Ajustar el saldo a para que Qima coincida con tu banco.';
+      'Cuando el extracto muestre un saldo, marca Ajustar el saldo. Luego elige: cambiar el saldo inicial, o añadir un movimiento por la diferencia.';
 
   @override
   String get helpImportStatementStep4Title => 'Añádelos';
@@ -4874,4 +4874,35 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get marketClosedLong => 'Mercado cerrado';
+
+  @override
+  String holdingsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count inversiones',
+      one: '1 inversión',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String pricesAt(String time) {
+    return 'precios $time';
+  }
+
+  @override
+  String get balanceWayTransaction => 'Añadir un movimiento';
+
+  @override
+  String balanceWayTransactionDetail(String other) {
+    return 'La diferencia cuenta como gasto o ingreso en $other';
+  }
+
+  @override
+  String get balanceWayOpening => 'Cambiar el saldo inicial';
+
+  @override
+  String get balanceWayOpeningDetail =>
+      'Desde su primer día, ni gasto ni ingreso';
 }

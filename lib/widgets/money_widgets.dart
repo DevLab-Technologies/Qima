@@ -6,6 +6,7 @@ import '../l10n/app_localizations.dart';
 import '../models/book.dart';
 import '../models/book_account.dart';
 import '../models/book_entry.dart';
+import '../models/entry_builder.dart';
 import '../theme/design_system.dart';
 import '../theme/money_labels.dart';
 import '../theme/qima_colors.dart';
@@ -374,4 +375,43 @@ void showFeatureTurnedOn(BuildContext context, String featureName, VoidCallback 
     content: Text(l10n.featureTurnedOn(featureName)),
     action: SnackBarAction(label: l10n.commonUndo, onPressed: undo),
   ));
+}
+
+/// How a checked balance comes into the book: a changed opening balance,
+/// or a transaction for the difference. Used by Check the balance, Count
+/// cash and the import review.
+class BalanceWayPicker extends StatelessWidget {
+  final BalanceWay value;
+  final ValueChanged<BalanceWay>? onChanged;
+
+  const BalanceWayPicker({super.key, required this.value, required this.onChanged});
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final colors = context.colors;
+    Widget option(BalanceWay way, String title, String detail) => RadioListTile<BalanceWay>(
+          key: ValueKey('balanceWay-${way.name}'),
+          value: way,
+          enabled: onChanged != null,
+          contentPadding: EdgeInsets.zero,
+          dense: true,
+          visualDensity: VisualDensity.compact,
+          title: Text(title, style: TextStyle(color: colors.textPrimary, fontSize: 14, fontWeight: FontWeight.w500)),
+          subtitle: Text(detail, style: TextStyle(color: colors.textTertiary, fontSize: 12)),
+        );
+    return RadioGroup<BalanceWay>(
+      groupValue: value,
+      onChanged: (w) {
+        if (w != null) onChanged?.call(w);
+      },
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          option(BalanceWay.transaction, l10n.balanceWayTransaction, l10n.balanceWayTransactionDetail(l10n.catOther)),
+          option(BalanceWay.opening, l10n.balanceWayOpening, l10n.balanceWayOpeningDetail),
+        ],
+      ),
+    );
+  }
 }

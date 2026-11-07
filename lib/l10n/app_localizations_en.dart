@@ -1344,7 +1344,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get helpAccountsStep2Body =>
-      'Open an account and enter what your bank shows. Qima shows any difference and can bring its balance to match.';
+      'Open an account and enter what your bank shows. For a difference, choose: add a transaction for it, or change the opening balance so nothing counts as spending.';
 
   @override
   String get helpAccountsStep3Title => 'Count cash';
@@ -1454,7 +1454,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get helpImportStatementStep3Body =>
-      'When the statement shows a balance, tick Bring the balance to it so Qima agrees with your bank.';
+      'When the statement shows a balance, tick Bring the balance to it. Then choose how: change the opening balance, or add a transaction for the difference.';
 
   @override
   String get helpImportStatementStep4Title => 'Add them';
@@ -4843,4 +4843,35 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get marketClosedLong => 'Market closed';
+
+  @override
+  String holdingsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count holdings',
+      one: '1 holding',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String pricesAt(String time) {
+    return 'prices $time';
+  }
+
+  @override
+  String get balanceWayTransaction => 'Add a transaction';
+
+  @override
+  String balanceWayTransactionDetail(String other) {
+    return 'The difference counts as spending or income in $other';
+  }
+
+  @override
+  String get balanceWayOpening => 'Change the opening balance';
+
+  @override
+  String get balanceWayOpeningDetail =>
+      'From its first day, not as spending or income';
 }
