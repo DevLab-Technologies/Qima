@@ -20,6 +20,7 @@ import 'package:qima/models/quote.dart';
 import 'package:qima/screens/money/accounts_screens.dart';
 import 'package:qima/screens/money/asset_screens.dart';
 import 'package:qima/screens/money/balance_sheet_screen.dart';
+import 'package:qima/screens/money/categorize_screen.dart';
 import 'package:qima/screens/money/entry_detail_screen.dart';
 import 'package:qima/screens/money/entry_editor_screen.dart';
 import 'package:qima/screens/money/home_screen.dart';
@@ -311,9 +312,18 @@ void main() {
     final offer = tester.widget<CheckboxListTile>(find.byKey(const ValueKey('importBalance')));
     expect(offer.value, isFalse);
 
-    // Untick the coffee, then add.
-    await tester.tap(find.byType(Checkbox).at(3));
-    await tester.pump();
+    // With no row ticked, the balance alone can still be applied.
+    for (final i in [0, 1, 2, 3]) {
+      await tester.tap(find.byType(Checkbox).at(i));
+      await tester.pump();
+    }
+    expect(find.text(l10n.importApplyBalance), findsOneWidget);
+
+    // Panda and the salary back, the coffee and the balance left out, then add.
+    for (final i in [0, 1, 2]) {
+      await tester.tap(find.byType(Checkbox).at(i));
+      await tester.pump();
+    }
     expect(find.text(l10n.importAddCount(2)), findsOneWidget);
     await tester.runAsync(() async {
       await tester.tap(find.byKey(const ValueKey('importAdd')));
@@ -334,6 +344,54 @@ void main() {
     await tester.pumpWidget(wrap(const ImportReviewScreen(), const Locale('ar')));
     await tester.pump(const Duration(milliseconds: 300));
     expect(find.byKey(const ValueKey('importBalance')), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('to categorize: one pick sorts a merchant\'s entries, is remembered, and can be forgotten', (tester) async {
+    await tester.runAsync(seed);
+    size(tester, const Size(390, 2400));
+    final l10n = await AppLocalizations.delegate.load(const Locale('en'));
+    final rajhi = money.state.book.accounts['rajhi']!;
+    final un = money.state.book.accounts[SystemAccount.uncategorized.id]!;
+    await tester.runAsync(() async {
+      await money.saveEntry(money.builder.spend(rajhi, un, sar(40), DateTime(2026, 11, 1), merchant: 'FT26AA01 - PayeeName Gym Club'));
+      await money.saveEntry(money.builder.spend(rajhi, un, sar(40), DateTime(2026, 11, 8), merchant: 'FT26AA02 - PayeeName Gym Club'));
+    });
+
+    await tester.pumpWidget(wrap(const MoneyScreen(), const Locale('en')));
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(find.text(l10n.toCategorizeCount(2)), findsOneWidget);
+
+    await tester.pumpWidget(wrap(const ToCategorizeScreen(), const Locale('en')));
+    await tester.pump(const Duration(milliseconds: 300));
+    await tester.tap(find.text(l10n.importCategory));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(l10n.catHealth));
+    await tester.pumpAndSettle();
+    // The save started from the tap: let its storage finish between frames.
+    for (var i = 0; i < 40 && money.state.uncategorized.isNotEmpty; i++) {
+      await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 50)));
+      await tester.pump();
+    }
+    await tester.pumpAndSettle();
+    expect(money.state.uncategorized, isEmpty);
+    expect(money.state.settings.categoryRules, {'out:gym club': 'category.health'});
+    expect(find.text(l10n.toCategorizeEmpty), findsOneWidget);
+
+    await tester.pumpWidget(wrap(const CategoriesScreen(), const Locale('en')));
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(find.text(l10n.categoriesLearned), findsOneWidget);
+    await tester.tap(find.byKey(const ValueKey('rule:out:gym club')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(l10n.categoriesForget));
+    await tester.pumpAndSettle();
+    // The save started from the tap: let its storage finish between frames.
+    for (var i = 0; i < 40 && money.state.settings.categoryRules.isNotEmpty; i++) {
+      await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 50)));
+      await tester.pump();
+    }
+    await tester.pumpAndSettle();
+    expect(money.state.settings.categoryRules, isEmpty);
     expect(tester.takeException(), isNull);
   });
 

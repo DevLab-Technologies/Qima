@@ -4154,6 +4154,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get importDiscardAll => 'Descartar todo';
 
   @override
+  String get importApplyBalance => 'Aplicar el saldo';
+
+  @override
   String get importDiscardConfirm =>
       '¿Descartar estos archivos? No se añadirá nada.';
 
@@ -4275,4 +4278,66 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get importEmpty => 'Nada pendiente';
+
+  @override
+  String get catUncategorized => 'Sin categoría';
+
+  @override
+  String get catUncategorizedIncome => 'Ingresos sin categoría';
+
+  @override
+  String get toCategorizeTitle => 'Por clasificar';
+
+  @override
+  String toCategorizeCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count por clasificar',
+      one: '1 por clasificar',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get toCategorizeHint =>
+      'Elige una categoría una vez por nombre. Las importaciones de ese nombre la usarán desde ahora.';
+
+  @override
+  String get toCategorizeEmpty => 'Todo tiene categoría.';
+
+  @override
+  String toCategorizeAlso(
+    int count,
+    String name,
+    String category,
+    String from,
+  ) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          '¿Poner también $count movimientos anteriores de $name en $category? Ahora están en $from.',
+      one:
+          '¿Poner también 1 movimiento anterior de $name en $category? Ahora está en $from.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get toCategorizeAlsoYes => 'Moverlos';
+
+  @override
+  String get categoriesLearned => 'Aprendido de tus elecciones';
+
+  @override
+  String get categoriesForgetTitle => '¿Olvidar esta elección?';
+
+  @override
+  String categoriesForgetMessage(String name, String category) {
+    return 'Las importaciones de $name ya no irán solas a $category. Los movimientos que ya están allí se quedan.';
+  }
+
+  @override
+  String get categoriesForget => 'Olvidar';
 }

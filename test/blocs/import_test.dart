@@ -7,9 +7,11 @@ import 'package:qima/blocs/import_cubit.dart';
 import 'package:qima/blocs/money_cubit.dart';
 import 'package:qima/models/book_account.dart';
 import 'package:qima/models/book_entry.dart';
+import 'package:qima/models/categorizer.dart';
 import 'package:qima/models/import_plan.dart';
 import 'package:qima/models/minor_units.dart';
 import 'package:qima/models/money.dart';
+import 'package:qima/models/money_settings.dart';
 import 'package:qima/models/statement_reader.dart';
 import 'package:qima/services/book_store.dart';
 import 'package:qima/services/csv/xlsx_reader.dart';
@@ -208,17 +210,74 @@ void main() {
       expect(plan.map((c) => c.key), ['f1:0', 'f1:1', 'f1:2', 'f2:0']);
     });
 
-    test('categories: history first, then known names, then Other', () async {
+    test('categories: the person\'s rule, then their usual choice, then known names, then Uncategorized', () async {
       await money.addAccount(bank, opening: sar(100), openedOn: DateTime(2026, 10, 1));
       final cats = money.state.book.accounts;
       await money.saveEntry(money.builder.spend(bank, cats['category.health']!, sar(5), DateTime(2026, 11, 1), merchant: 'Carrefour Express'));
-      final book = money.state.book;
-      expect(ImportPlanner.guessCategory('CARREFOUR EXPRESS OLAYA', isIn: false, book: book), 'category.health');
-      expect(ImportPlanner.guessCategory('Uber trip', isIn: false, book: book), 'category.transport');
-      expect(ImportPlanner.guessCategory('ستاربكس العليا', isIn: false, book: book), 'category.dining');
-      expect(ImportPlanner.guessCategory('راتب شهر نوفمبر', isIn: true, book: book), 'category.salary');
-      expect(ImportPlanner.guessCategory('Something', isIn: false, book: book), 'category.other');
-      expect(ImportPlanner.guessCategory('Something', isIn: true, book: book), 'category.other_income');
+      CategoryGuess guess(String text, {bool isIn = false, Map<String, String> rules = const {}}) =>
+          ImportPlanner.guessCategory(text, isIn: isIn, categorizer: Categorizer(money.state.book, rules: rules));
+      expect(guess('CARREFOUR EXPRESS OLAYA').categoryId, 'category.health');
+      expect(guess('CARREFOUR EXPRESS OLAYA').source, CategorySource.history);
+      expect(guess('Uber trip').categoryId, 'category.transport');
+      expect(guess('ستاربكس العليا').categoryId, 'category.dining');
+      expect(guess('راتب شهر نوفمبر', isIn: true).categoryId, 'category.salary');
+      // Nothing places it: Uncategorized, not Other.
+      expect(guess('Something').categoryId, SystemAccount.uncategorized.id);
+      expect(guess('Something').sure, isFalse);
+      expect(guess('Something', isIn: true).categoryId, SystemAccount.uncategorizedIncome.id);
+      // A rule the person taught beats their history.
+      expect(guess('Carrefour Express', rules: {'out:carrefour express': 'category.groceries'}).source, CategorySource.rule);
+      expect(guess('Carrefour Express', rules: {'out:carrefour express': 'category.groceries'}).categoryId, 'category.groceries');
+    });
+
+    test('their usual choice wins over one odd entry, and reference codes don\'t split a payee', () async {
+      await money.addAccount(bank, opening: sar(1000), openedOn: DateTime(2026, 10, 1));
+      final cats = money.state.book.accounts;
+      final b = money.builder;
+      await money.saveEntry(b.spend(bank, cats['category.dining']!, sar(5), DateTime(2026, 10, 1), merchant: 'FT26101AB1 - PayeeName Sara'));
+      await money.saveEntry(b.spend(bank, cats['category.dining']!, sar(5), DateTime(2026, 10, 8), merchant: 'FT26108CD2 - PayeeName Sara'));
+      await money.saveEntry(b.spend(bank, cats['category.home']!, sar(5), DateTime(2026, 10, 9), merchant: 'FT26109EF3 - PayeeName Sara'));
+      final guess = ImportPlanner.guessCategory('FT26312Q1LQJ - PayeeName Sara', isIn: false, categorizer: Categorizer(money.state.book));
+      expect(guess.categoryId, 'category.dining');
+    });
+
+    test('merchant keys drop codes, numbers, masks, labels and the country', () {
+      expect(Categorizer.merchantKey('FT26312Q1LQJ - PayeeName احمد'), 'احمد');
+      expect(Categorizer.merchantKey('PANDA RIYADH 4412'), 'panda riyadh');
+      expect(Categorizer.merchantKey('Panda Riyadh SAU'), 'panda riyadh');
+      expect(Categorizer.merchantKey('SLACK T0BL3BUVA94 SLACK.COM USA'), 'slack slackcom');
+      expect(Categorizer.merchantKey('Mohamed M..... S.......'), 'mohamed');
+      expect(Categorizer.merchantKey('PayerMobNo:00201062270277'), '');
+    });
+  });
+
+  group('to categorize', () {
+    test('uncategorized entries group by merchant, one choice sorts the group and is remembered', () async {
+      await money.addAccount(bank, opening: sar(1000), openedOn: DateTime(2026, 10, 1));
+      final cats = money.state.book.accounts;
+      final b = money.builder;
+      final un = cats[SystemAccount.uncategorized.id]!;
+      await money.saveEntry(b.spend(bank, un, sar(10), DateTime(2026, 10, 2), merchant: 'FT26AA01 - PayeeName Gym Club'));
+      await money.saveEntry(b.spend(bank, un, sar(10), DateTime(2026, 11, 2), merchant: 'FT26AA02 - PayeeName Gym Club'));
+      await money.saveEntry(b.spend(bank, un, sar(3), DateTime(2026, 11, 3), merchant: 'Kiosk'));
+      final groups = money.state.uncategorized;
+      expect(groups.map((g) => g.key), ['gym club', 'kiosk']);
+      expect(groups.first.entries, hasLength(2));
+
+      await money.categorize([for (final e in groups.first.entries) e.id], 'category.health', ruleKey: groups.first.ruleKey);
+      expect(money.state.uncategorized.map((g) => g.key), ['kiosk']);
+      expect(money.state.settings.categoryRules, {'out:gym club': 'category.health'});
+      expect(money.state.book.balanceOf('category.health'), sar(20));
+      // The next import from the club goes straight to Health.
+      final next = ImportPlanner.guessCategory('FT26AA03 - PayeeName Gym Club',
+          isIn: false, categorizer: Categorizer(money.state.book, rules: money.state.settings.categoryRules));
+      expect(next.categoryId, 'category.health');
+
+      await money.forgetCategory('out:gym club');
+      expect(money.state.settings.categoryRules, isEmpty);
+      // The rules survive a round trip through storage.
+      final s = money.state.settings.copyWith(categoryRules: {'in:acme': 'category.salary'});
+      expect(MoneySettings.fromJson(s.toJson()).categoryRules, {'in:acme': 'category.salary'});
     });
   });
 

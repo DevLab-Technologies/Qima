@@ -139,7 +139,11 @@ class _Found<T> {
 
   /// A date written in the Hijri calendar (and converted).
   final bool hijri;
-  const _Found(this.value, this.span, this.x, {this.hijri = false});
+
+  /// A day and month in figures with no year ("24/3"): often the Hijri
+  /// date a Saudi statement prints under the real one.
+  final bool loose;
+  const _Found(this.value, this.span, this.x, {this.hijri = false, this.loose = false});
 }
 
 class _Money {
@@ -285,7 +289,7 @@ class StatementReader {
   // Header words, per column.
   static const Map<_Column, List<String>> _headerWords = {
     _Column.date: ['date', 'posting date', 'transaction date', 'value date', 'التاريخ', 'تاريخ', 'تاريخ العملية', 'fecha', 'date opération', 'datum'],
-    _Column.description: ['description', 'details', 'narrative', 'particulars', 'merchant', 'transaction', 'البيان', 'الوصف', 'التفاصيل', 'تفاصيل', 'العملية', 'libellé', 'libelle', 'concepto', 'descripción', 'descripcion'],
+    _Column.description: ['description', 'details', 'narrative', 'narratives', 'particulars', 'merchant', 'transaction', 'البيان', 'الوصف', 'التفاصيل', 'تفاصيل', 'العملية', 'libellé', 'libelle', 'concepto', 'descripción', 'descripcion'],
     _Column.debit: ['debit', 'debits', 'withdrawal', 'withdrawals', 'money out', 'paid out', 'out', 'مدين', 'سحب', 'مسحوبات', 'المدين', 'خصم', 'débit', 'debito', 'débito', 'cargo', 'cargos'],
     _Column.credit: ['credit', 'credits', 'deposit', 'deposits', 'money in', 'paid in', 'in', 'دائن', 'إيداع', 'ايداع', 'إيداعات', 'الدائن', 'crédit', 'credito', 'crédito', 'abono', 'abonos'],
     _Column.amount: ['amount', 'value', 'المبلغ', 'مبلغ', 'القيمة', 'montant', 'importe', 'monto'],
@@ -296,6 +300,14 @@ class StatementReader {
     r'opening balance|closing balance|balance brought forward|balance carried forward|brought forward|carried forward|'
     r'previous balance|total|subtotal|statement period|page \d|الرصيد الافتتاحي|الرصيد الختامي|رصيد افتتاحي|رصيد ختامي|الرصيد السابق|'
     r'المجموع|الإجمالي|اجمالي|إجمالي|solde initial|solde final|saldo inicial|saldo final|total',
+    caseSensitive: false,
+  );
+
+  static final _summaryWords = RegExp(
+    r'credit limit|available limit|available credit|minimum payment|minimum due|payment due|due date|outstanding|overdue|'
+    r'installment amount|instalment amount|final installment|finance amount|amount paid|tenure|deferment|last payment received|'
+    r'الحد الائتماني|الحد المتاح|الحد الأدنى|تاريخ الاستحقاق|المبلغ المستحق|المبلغ المتبقي|قيمة القسط|'
+    r'plafond|paiement minimum|límite de crédito|pago mínimo',
     caseSensitive: false,
   );
 
@@ -401,17 +413,21 @@ class StatementReader {
 
   /// The dates in [text], and every span that looked like one (a far year
   /// included), so those digits aren't read as money.
-  (List<_Found<DateTime>>, List<_Span>) _dates(String text) {
+  (List<_Found<DateTime>>, List<_Span>) _dates(String text0) {
+    var text = text0;
     final out = <_Found<DateTime>>[];
     final taken = <_Span>[];
     bool free(int s, int e) => !taken.any((t) => s < t.end && e > t.start);
-    void take(RegExpMatch m, DateTime? d, {bool hijri = false}) {
+    void take(RegExpMatch m, DateTime? d, {bool hijri = false, bool loose = false}) {
       if (!free(m.start, m.end)) return;
       final span = _Span(m.start, m.end);
       // Not a usable day (a far year): the digits still aren't money.
       taken.add(span);
-      if (d != null) out.add(_Found(d, span, 0, hijri: hijri));
+      if (d != null) out.add(_Found(d, span, 0, hijri: hijri, loose: loose));
     }
+
+    // Text recognition reads a leading zero as the letter O ("O6SEP").
+    text = text.replaceAllMapped(RegExp('(?<![\\p{L}\\d])[Oo](?=\\d\\s?(?:$_monthAlt)(?![\\p{L}]))', caseSensitive: false, unicode: true), (_) => '0');
 
     for (final m in _isoDate.allMatches(text)) {
       final y = int.parse(m[1]!);
@@ -436,7 +452,7 @@ class StatementReader {
       // or a dash.
       if (m[3] == null && text.substring(m.start, m.end).contains('.')) continue;
       final y = _year(m[3], mo, d);
-      take(m, _day(y, mo, d), hijri: _isHijriYear(y));
+      take(m, _day(y, mo, d), hijri: _isHijriYear(y), loose: m[3] == null);
     }
     for (final m in _misreadDate.allMatches(text)) {
       final (a, b) = (int.parse(m[1]!), int.parse(m[2]!));
@@ -538,7 +554,8 @@ class StatementReader {
     for (final c in line.cells) {
       final t = normalize(c.text).toLowerCase().trim();
       for (final e in _headerWords.entries) {
-        if (e.value.any((w) => t == w || (w.length > 3 && t.split(RegExp(r'\s*[/(]\s*')).any((p) => p.trim() == w)))) {
+        // Long words match with one letter misread ("Vithdrawals").
+        if (e.value.any((w) => t == w || (w.length >= 6 && _oneEdit(t, w)) || (w.length > 3 && t.split(RegExp(r'\s*[/(]\s*')).any((p) => p.trim() == w)))) {
           final had = spans[e.key];
           spans[e.key] = had == null ? (c.x, c.x + c.w) : (math.min(had.$1, c.x), math.max(had.$2, c.x + c.w));
           break;
@@ -548,6 +565,29 @@ class StatementReader {
     final found = {for (final e in spans.entries) e.key: (e.value.$1 + e.value.$2) / 2};
     final money = found.keys.where((k) => k == _Column.debit || k == _Column.credit || k == _Column.amount || k == _Column.balance);
     return found.length >= 2 && money.isNotEmpty ? found : null;
+  }
+
+  /// Whether [a] is [b] with at most one letter added, dropped or changed.
+  static bool _oneEdit(String a, String b) {
+    if ((a.length - b.length).abs() > 1) return false;
+    var i = 0, j = 0, edits = 0;
+    while (i < a.length && j < b.length) {
+      if (a[i] == b[j]) {
+        i++;
+        j++;
+        continue;
+      }
+      if (++edits > 1) return false;
+      if (a.length > b.length) {
+        i++;
+      } else if (a.length < b.length) {
+        j++;
+      } else {
+        i++;
+        j++;
+      }
+    }
+    return edits + (a.length - i) + (b.length - j) <= 1;
   }
 
   _Column? _columnAt(Map<_Column, double> header, double x) {
@@ -605,6 +645,20 @@ class StatementReader {
     DateTime? sectionDate;
     String pendingText = '';
     double? pendingBottom;
+    // Tables whose cells centre their lines on the dated one: a row's
+    // reference sits on the line above its date, so a line between two
+    // rows belongs to the nearer one. Decided by the table's first row.
+    bool? centred;
+    _Line? rowAnchor;
+    // The last line of a page, with more pages to come, heads the next
+    // page's first row.
+    bool nearerNext(List<_Line> lines, _Line line, _Line anchor, {required bool morePages}) {
+      for (final next in lines.skip(lines.indexOf(line) + 1)) {
+        if (_dates(normalize(next.text)).$1.isEmpty) continue;
+        return next.top - line.bottom < line.top - anchor.bottom;
+      }
+      return morePages && identical(line, lines.last);
+    }
 
     var lineBase = 0;
     for (final lines in allLines) {
@@ -650,7 +704,7 @@ class StatementReader {
           final moneyColumn = column == _Column.debit || column == _Column.credit || column == _Column.amount || column == _Column.balance;
           final ams = _amounts(text, taken, loose: moneyColumn);
           for (final d in ds) {
-            dates.add(_Found(d.value, d.span, cell.x + cell.w / 2, hijri: d.hijri));
+            dates.add(_Found(d.value, d.span, cell.x + cell.w / 2, hijri: d.hijri, loose: d.loose));
           }
           for (final a in ams) {
             final at = cell.x + cell.w * ((a.span.start + a.span.end) / 2 / math.max(text.length, 1));
@@ -676,6 +730,20 @@ class StatementReader {
         }
         final description = _clean(words.join(' '));
 
+        // The day a line gives the rows under it. In a table only the date
+        // column's dates count (a transfer's details carry their own
+        // timestamps), and a day and month with no year never replaces a
+        // full date: it is the Hijri date printed under it.
+        DateTime? heading(List<_Found<DateTime>> found) {
+          final dateColumn = header?[_Column.date];
+          for (final d in found) {
+            if (d.hijri || (d.loose && sectionDate != null)) continue;
+            if (dateColumn != null && header != null && _columnAt(header, d.x) != _Column.date) continue;
+            return d.value;
+          }
+          return null;
+        }
+
         if (_skipWords.hasMatch(description)) {
           pendingText = '';
           continue;
@@ -690,12 +758,13 @@ class StatementReader {
               rowLines.last = line;
             } else {
               // A date on its own heads a group of rows (banking apps).
-              sectionDate = dates.first.value;
+              sectionDate = heading(dates) ?? sectionDate;
             }
             pendingText = '';
           } else if (description.isNotEmpty) {
             final prev = rowLines.isEmpty ? null : rowLines.last;
-            final under = prev != null && rows.isNotEmpty && line.top - prev.bottom < prev.height * 1.2 && line.top > prev.top;
+            final close = prev != null && rows.isNotEmpty && line.top - prev.bottom < prev.height * 1.2 && line.top > prev.top;
+            final under = close && !(centred == true && rowAnchor != null && nearerNext(lines, line, rowAnchor, morePages: !identical(lines, allLines.last)));
             if (under && pendingText.isEmpty && dates.isEmpty) {
               final last = rows.removeLast();
               rows.add(StatementRow(
@@ -716,7 +785,7 @@ class StatementReader {
               pendingText = wraps ? '$pendingText $description' : description;
               pendingBottom = line.bottom;
               pendingLeft = line.left;
-              if (dates.isNotEmpty) sectionDate = dates.first.value;
+              sectionDate = heading(dates) ?? sectionDate;
             }
           }
           continue;
@@ -728,29 +797,34 @@ class StatementReader {
         var sign = 0;
         (_Money, double)? flip;
         final byColumn = header != null && amounts.any((a) => a.$2 != null);
+        // A card row in a foreign currency gives that amount and then the
+        // local one: the local one is the transaction, the foreign one its
+        // detail.
+        _Money? foreign;
+        // A figure with decimals or a currency beats a bare number in a
+        // name ("Branch 101"), and the local amount beats a foreign one.
+        bool better(_Money a, _Money than) => (than.bare && !a.bare) || (than.currency != null && a.currency == null && !a.bare);
         if (byColumn) {
           for (final (a, col) in amounts) {
-            switch (col) {
-              case _Column.balance:
-                balance = a.value.major * (a.value.sign == 0 ? 1 : a.value.sign);
-              case _Column.debit:
-                money ??= a.value;
-                sign = -1;
-              case _Column.credit:
-                money ??= a.value;
-                sign = 1;
-              case _Column.amount:
-              case null:
-                if (money == null) {
-                  money = a.value;
-                  sign = a.value.sign;
-                }
-              default:
-                break;
+            final s = switch (col) {
+              _Column.debit => -1,
+              _Column.credit => 1,
+              _Column.amount || null => a.value.sign,
+              _ => null,
+            };
+            if (col == _Column.balance) {
+              balance = a.value.major * (a.value.sign == 0 ? 1 : a.value.sign);
+            } else if (s != null && (money == null || better(a.value, money))) {
+              if (money?.currency != null && a.value.currency == null) foreign = money;
+              money = a.value;
+              sign = s;
             }
           }
         } else {
-          final list = [for (final a in amounts) a.$1.value];
+          // A bare number in a name ("Branch 101") is not the amount when the
+          // line has figures with decimals.
+          final all = [for (final a in amounts) a.$1.value];
+          final list = all.any((m) => !m.bare) ? all.where((m) => !m.bare).toList() : all;
           money = list.first;
           sign = money.sign;
           if (list.length >= 2) {
@@ -765,6 +839,8 @@ class StatementReader {
 
         // The day: the date column's, else a Gregorian one, else the first.
         final dateColumn = header?[_Column.date];
+        // Ties keep the line's order: a transaction date comes before the
+        // posting date.
         final ownDates = [...dates]
           ..sort((a, b) {
             if (dateColumn != null) {
@@ -772,7 +848,8 @@ class StatementReader {
               if (c != 0) return c;
             }
             if (a.hijri != b.hijri) return a.hijri ? 1 : -1;
-            return 0;
+            if (a.loose != b.loose) return a.loose ? 1 : -1;
+            return a.x.compareTo(b.x) != 0 ? a.x.compareTo(b.x) : a.span.start - b.span.start;
           });
         // In a statement table every transaction carries its date. A line
         // without one is the bank's address, register number or terms at
@@ -783,9 +860,22 @@ class StatementReader {
           continue;
         }
 
-        var text = description;
+        // A name with no word in it is a mask ("A.. E. K...") or a misread
+        // figure, not a name.
+        var text = RegExp(r'\p{L}{2,}', unicode: true).hasMatch(description) ? description : '';
+        if (header != null && centred == null) {
+          // A line just above the first row and one just below it, before
+          // the next row: the row's text is centred on its date.
+          final i = lines.indexOf(line);
+          final next = i + 1 < lines.length ? lines[i + 1] : null;
+          centred = pendingText.isNotEmpty &&
+              pendingBottom != null &&
+              line.top - pendingBottom < line.height * 1.5 &&
+              next != null &&
+              _dates(normalize(next.text)).$1.isEmpty;
+        }
         final wrapped = pendingText.isNotEmpty && pendingBottom != null && pendingLeft != null && line.top - pendingBottom < line.height * 0.5 && (line.left - pendingLeft).abs() < 0.03;
-        if (text.isNotEmpty && wrapped) {
+        if (text.isNotEmpty && pendingText.isNotEmpty && (wrapped || centred == true)) {
           // The name's first line sits above, its second on this line.
           text = '$pendingText $text';
         } else if (text.isEmpty && pendingText.isNotEmpty) {
@@ -793,19 +883,32 @@ class StatementReader {
         }
         pendingText = '';
 
+        // The statement's summary (limit, minimum payment, what is still
+        // owed) is not a transaction, nor an undated line of bare figures.
+        // A dated row stays even when its name came out unreadable.
+        if (_summaryWords.hasMatch(text) || (ownDates.isEmpty && text.isEmpty)) continue;
+
         var signGuessed = false;
         if (sign == 0) {
           signGuessed = true;
           sign = _incomeWords.hasMatch(text) && !_spendWords.hasMatch(text) ? 1 : -1;
         }
         final ccy = money?.currency ?? lineCurrency;
-        final date = ownDates.isNotEmpty ? ownDates.first.value : sectionDate;
+        // A row that starts (or, right to left, ends) with two dates gives
+        // the transaction and posting dates: it happened on the earlier.
+        final paired = _edgeDates(line);
+        final date = paired.length >= 2
+            ? paired.reduce((a, b) => a.isBefore(b) ? a : b)
+            : ownDates.isNotEmpty
+                ? ownDates.first.value
+                : sectionDate;
         if (flip != null) balanceFirst[rows.length] = flip;
         if (balanceOnly) fromBalance.add(rows.length);
         rows.add(StatementRow(
           date: date ?? DateTime(received.year, received.month, received.day),
           dateGuessed: date == null,
           description: text,
+          detail: foreign == null ? '' : '${foreign.major.toStringAsFixed(2)} ${foreign.currency}',
           amount: (money?.major ?? 0) * sign,
           signGuessed: signGuessed,
           currency: ccy,
@@ -813,9 +916,77 @@ class StatementReader {
           line: base + lines.indexOf(line),
         ));
         rowLines.add(line);
+        rowAnchor = line;
       }
     }
-    return _signsFromBalances(_withDocumentCurrency(_amountsFromBalances(_balanceSide(rows, balanceFirst), fromBalance)));
+    return _signsFromMarkers(_signsFromBalances(_withDocumentCurrency(_amountsFromBalances(_balanceSide(_localAmounts(rows), balanceFirst), fromBalance))));
+  }
+
+  /// The full Gregorian dates in the cells at the start of a line and at
+  /// its end that hold nothing but dates.
+  List<DateTime> _edgeDates(_Line line) {
+    List<DateTime>? only(DocToken cell) {
+      final t = normalize(cell.text);
+      final (ds, spans) = _dates(t);
+      if (ds.isEmpty) return null;
+      var rest = t;
+      for (final s in [...spans]..sort((a, b) => b.start - a.start)) {
+        rest = rest.replaceRange(s.start, s.end, ' ');
+      }
+      if (RegExp(r'[\p{L}\d]', unicode: true).hasMatch(rest)) return null;
+      return [for (final d in ds) if (!d.hijri && !d.loose) d.value];
+    }
+
+    List<DateTime> run(Iterable<DocToken> cells) {
+      final out = <DateTime>[];
+      for (final c in cells) {
+        final ds = only(c);
+        if (ds == null) break;
+        out.addAll(ds);
+      }
+      return out;
+    }
+
+    final start = run(line.cells);
+    return start.length >= 2 ? start : run(line.cells.reversed);
+  }
+
+  /// Rows read without columns whose figures are a foreign amount and then
+  /// another figure, in a list whose rows carry no balance: the other
+  /// figure is the amount in the statement's own currency (card rows), not
+  /// a balance.
+  List<StatementRow> _localAmounts(List<StatementRow> rows) {
+    final foreign = rows.where((r) => r.currency != null && r.balance != null).length;
+    if (foreign == 0) return rows;
+    final plain = rows.where((r) => r.currency == null && r.balance == null).length;
+    if (plain < rows.length / 2) return rows;
+    return [
+      for (final r in rows)
+        r.currency == null || r.balance == null
+            ? r
+            : StatementRow(
+                date: r.date,
+                dateGuessed: r.dateGuessed,
+                description: r.description,
+                detail: [r.detail, '${r.amount.abs().toStringAsFixed(2)} ${r.currency}'].where((s) => s.isNotEmpty).join(' '),
+                amount: r.balance!.abs() * (r.amount < 0 ? -1 : 1),
+                signGuessed: r.signGuessed,
+                line: r.line,
+                doubtful: r.doubtful,
+              ),
+    ];
+  }
+
+  /// A list that marks only one direction (refunds and payments "CR" on a
+  /// card, or money in "+" in an app): its unmarked rows went the other way.
+  List<StatementRow> _signsFromMarkers(List<StatementRow> rows) {
+    final marked = rows.where((r) => !r.signGuessed).toList();
+    final guessed = rows.length - marked.length;
+    // Two marked rows at least: one is no pattern.
+    if (marked.length < 2 || guessed < marked.length) return rows;
+    final sign = marked.first.amount.sign;
+    if (sign == 0 || marked.any((r) => r.amount.sign != sign)) return rows;
+    return [for (final r in rows) r.signGuessed ? r.copyWith(amount: -sign * r.amount.abs(), signGuessed: false) : r];
   }
 
   /// Rows whose only figure was read as the amount but is really their
@@ -950,8 +1121,10 @@ class StatementReader {
       if (r.currency != null) counts[r.currency!] = (counts[r.currency!] ?? 0) + 1;
     }
     if (counts.isEmpty) return rows;
-    final top = (counts.entries.toList()..sort((a, b) => b.value - a.value)).first.key;
-    return [for (final r in rows) r.currency == null ? r.copyWith(currency: top) : r];
+    final top = (counts.entries.toList()..sort((a, b) => b.value - a.value)).first;
+    // One foreign row on a card doesn't make the card foreign.
+    if (top.value * 2 < rows.length) return rows;
+    return [for (final r in rows) r.currency == null ? r.copyWith(currency: top.key) : r];
   }
 
   static bool _same(double a, double b) => (a * 1000).round() == (b * 1000).round();
@@ -959,8 +1132,9 @@ class StatementReader {
   /// Where rows carry a running balance, it says which way each amount went.
   /// Tries the rows oldest first and newest first and keeps whichever order
   /// the balances fit.
-  List<StatementRow> _signsFromBalances(List<StatementRow> rows) {
-    if (rows.where((r) => r.balance != null).length < 2) return rows;
+  /// How many neighbouring rows the running balance links, read oldest
+  /// first and newest first.
+  static (int, int) _balanceFits(List<StatementRow> rows) {
     int fits(bool newestFirst) {
       var n = 0;
       for (var i = 1; i < rows.length; i++) {
@@ -971,7 +1145,12 @@ class StatementReader {
       return n;
     }
 
-    final forward = fits(false), backward = fits(true);
+    return (fits(false), fits(true));
+  }
+
+  List<StatementRow> _signsFromBalances(List<StatementRow> rows) {
+    if (rows.where((r) => r.balance != null).length < 2) return rows;
+    final (forward, backward) = _balanceFits(rows);
     if (forward == 0 && backward == 0) return rows;
     final newestFirst = backward > forward;
     final out = [...rows];
@@ -1068,7 +1247,18 @@ class StatementReader {
     r'solde final|nouveau solde|solde actuel|saldo final|saldo actual|saldo disponible',
     caseSensitive: false,
   );
+  /// What is still owed on a loan or card, when no closing balance is
+  /// labelled.
+  static final _outstandingLabel = RegExp(
+    r'outstanding amount|outstanding balance|amount outstanding|remaining balance|'
+    r'المبلغ المتبقي|الرصيد المتبقي|المبلغ المستحق المتبقي|montant restant|solde restant|saldo pendiente',
+    caseSensitive: false,
+  );
+  // Miles and points have balances of their own.
+  static final _rewards = RegExp(r'\bmiles\b|\bpoints\b|\brewards\b|أميال|نقاط|مكافآت|\bpuntos\b', caseSensitive: false);
   static final _available = RegExp(r'available|المتاح|المتوفر|disponible', caseSensitive: false);
+  static final _from = RegExp(r'^(?:.*\s)?(?:from|du|desde|من)(?:\s|$)', caseSensitive: false);
+  static final _to = RegExp(r'^(?:.*\s)?(?:to|au|hasta|إلى|الى)(?:\s|$)', caseSensitive: false);
   static final _periodLabel = RegExp(
     r'\bperiod\b|\bfrom\b.*\bto\b|statement date|الفترة|من تاريخ|للفترة|\bpériode\b|\bdu\b.*\bau\b|\bperíodo\b|\bdel\b.*\bal\b',
     caseSensitive: false,
@@ -1103,7 +1293,7 @@ class StatementReader {
     final out = <StatementRef>{};
     for (final m in _iban.allMatches(text.toUpperCase())) {
       final digits = m[1]!.replaceAll(RegExp(r'\D'), '');
-      if (_validIban(m[1]!) && digits.length >= 4) out.add(StatementRef(StatementRefKind.iban, digits.substring(digits.length - 4)));
+      if (_validIban(m[1]!) && digits.length >= 4) out.add(StatementRef(StatementRefKind.iban, digits.substring(digits.length - 4), digits.length));
     }
     final card = cardContext || _cardLabel.hasMatch(text);
     final account = _accountLabel.hasMatch(text);
@@ -1118,7 +1308,7 @@ class StatementReader {
     if (account && out.isEmpty) {
       final i = _accountLabel.firstMatch(text)!.end;
       final m = _longNumber.firstMatch(text.substring(i).replaceAll(RegExp(r'(?<=\d)[\s-](?=\d)'), ''));
-      if (m != null) out.add(StatementRef(StatementRefKind.account, m[0]!.substring(m[0]!.length - 4)));
+      if (m != null) out.add(StatementRef(StatementRefKind.account, m[0]!.substring(m[0]!.length - 4), m[0]!.length));
     }
     return out.toList();
   }
@@ -1162,14 +1352,20 @@ class StatementReader {
     if (i + 1 < lines.length) {
       final below = lines[i + 1];
       if (below.top - line.bottom < line.height * 1.5) {
+        // Where in its cell the label and each figure sit: a summary box
+        // can come out as one wide cell of six labels over one of six
+        // figures.
+        double at(DocToken cell, String text, int start, int end) => cell.x + cell.w * ((start + end) / 2 / math.max(text.length, 1));
         final labelCell = line.cells.firstWhere((c) => label.hasMatch(normalize(c.text)), orElse: () => line.cells.first);
-        final mid = labelCell.x + labelCell.w / 2;
+        final labelText = normalize(labelCell.text);
+        final lm = label.firstMatch(labelText);
+        final mid = lm == null ? labelCell.x + labelCell.w / 2 : at(labelCell, labelText, lm.start, lm.end);
         _Found<_Money>? best;
         var bestD = double.infinity;
         for (final c in below.cells) {
           final t = normalize(c.text);
           for (final a in _amounts(t, _dates(t).$2, loose: true)) {
-            final d = ((c.x + c.w / 2) - mid).abs();
+            final d = (at(c, t, a.span.start, a.span.end) - mid).abs();
             if (d < bestD && d < 0.2) {
               bestD = d;
               best = a;
@@ -1187,8 +1383,15 @@ class StatementReader {
   /// [facts] apart.
   (List<StatementRow>, StatementFacts) read(List<DocPage> pages) {
     var rows = readPages(pages);
+    // A banking app's account screen shows the balance large at its top;
+    // that figure is the balance its labels give, not a transaction, and
+    // the screen is no receipt.
+    final hasTable = pages.any((p) => _lines(p.tokens).any((l) => _header(l) != null));
+    final shown = hasTable ? null : this.facts(pages, const []).closing;
+    final headline = shown == null ? const <StatementRow>[] : rows.where((r) => r.dateGuessed && _same(r.amount.abs(), shown.abs())).toList();
+    if (headline.isNotEmpty) rows = [for (final r in rows) if (!headline.contains(r)) r];
     // A receipt, a bill or a transfer confirmation: one transaction.
-    final single = rows.length <= 2 && rows.map((r) => _dayKey(r.date)).toSet().length <= 1 ? _receipt(pages) : null;
+    final single = headline.isEmpty && rows.length <= 2 && rows.map((r) => _dayKey(r.date)).toSet().length <= 1 ? _receipt(pages) : null;
     // Only when the rows found are that one transaction read in pieces; a
     // short list with a "Total" line under it keeps its rows.
     if (single != null && (rows.isEmpty || rows.any((r) => _same(r.amount.abs(), single.$1.single.amount.abs())))) return single;
@@ -1197,6 +1400,11 @@ class StatementReader {
     if (!identical(settled, rows)) {
       rows = settled;
       facts = this.facts(pages, rows);
+    }
+    // A balance with no transactions and no period (a loan's screen) is
+    // the balance on the day the document was received.
+    if (rows.isEmpty && facts.closing != null && facts.to == null) {
+      facts = facts.copyWith(to: DateTime(received.year, received.month, received.day));
     }
     return (rows, facts);
   }
@@ -1317,7 +1525,7 @@ class StatementReader {
         if (ref.isNotEmpty) {
           refs.addAll(ref);
         } else if (number != null) {
-          refs.add(StatementRef(StatementRefKind.account, number[0]!.substring(number[0]!.length - 4)));
+          refs.add(StatementRef(StatementRefKind.account, number[0]!.substring(number[0]!.length - 4), number[0]!.length));
         }
         if (refs.isNotEmpty) break;
       }
@@ -1356,9 +1564,12 @@ class StatementReader {
 
   /// The statement's balances, account and period, read from its pages.
   StatementFacts facts(List<DocPage> pages, List<StatementRow> rows) {
-    double? opening, closing;
+    double? opening, closing, outstanding;
     var available = false;
+    // Every closing figure read, as each page repeats it.
+    final closings = <(double, bool)>[];
     final refs = <StatementRef>{};
+    int? tableStart;
     DateTime? from, to, firstSeen, lastSeen;
     String? currency;
     // The table: card numbers in a row's details (a card payment) are not
@@ -1374,21 +1585,39 @@ class StatementReader {
         final text = normalize(lines[i].text);
         // The first opening and the last closing balance: a multi-page
         // statement repeats them per page.
-        if (_openingLabel.hasMatch(text)) opening ??= _labelled(lines, i, _openingLabel);
-        if (_closingLabel.hasMatch(text)) {
+        if (tableStart == null && _header(lines[i]) != null) tableStart = at;
+        if (_openingLabel.hasMatch(text) && !_rewards.hasMatch(text)) opening ??= _labelled(lines, i, _openingLabel);
+        if (_outstandingLabel.hasMatch(text)) outstanding ??= _labelled(lines, i, _outstandingLabel);
+        if (_closingLabel.hasMatch(text) && !_rewards.hasMatch(text)) {
           final v = _labelled(lines, i, _closingLabel);
           if (v != null) {
             closing = v;
             available = _available.hasMatch(_closingLabel.firstMatch(text)![0]!);
+            closings.add((v, available));
           }
         }
-        final inTable = firstRow != null && at >= firstRow && at <= lastRow!;
+        // From the table's header down: a transfer's details name the
+        // other side's account.
+        final start = tableStart ?? firstRow;
+        final inTable = start != null && lastRow != null && at >= start && at <= lastRow;
         if (!inTable) refs.addAll(_refs(text));
-        if (currency == null && _currencyLabel.hasMatch(text)) currency = _currencyIn(text);
+        if (currency == null && _currencyLabel.hasMatch(text) && !_foreignLabel.hasMatch(text)) currency = _currencyIn(text);
         final (ds, spans) = _dates(text);
         // Two dates and no money: a row with a value date is not the period.
         final dated = ds.where((d) => !d.hijri).map((d) => d.value).toList();
         final money = _amounts(text, spans).where((a) => !a.value.bare);
+        if (from == null && dated.length == 1 && money.isEmpty && _from.hasMatch(text)) {
+          // "From 16/06/2026" over "To 15/09/2026".
+          for (final next in lines.skip(i + 1).take(2)) {
+            final t = normalize(next.text);
+            final until = _dates(t).$1.where((d) => !d.hijri).toList();
+            if (_to.hasMatch(t) && until.length == 1 && until.first.value.isAfter(dated.first)) {
+              from = dated.first;
+              to = until.first.value;
+              break;
+            }
+          }
+        }
         if (dated.length < 2 || money.isNotEmpty) continue;
         if (from == null && _periodLabel.hasMatch(text)) {
           from = dated.first;
@@ -1406,11 +1635,25 @@ class StatementReader {
     }
     from ??= firstSeen;
     to ??= lastSeen;
+    // Pages that print different closing figures (one page's text placed
+    // wrongly): the one the opening balance and the rows add up to.
+    if (opening != null && closings.map((c) => c.$1).toSet().length > 1) {
+      for (final (v, avail) in closings) {
+        if (Reconciliation.of(StatementFacts(opening: opening, closing: v), rows)?.addsUp ?? false) {
+          closing = v;
+          available = avail;
+          break;
+        }
+      }
+    }
+    // A card's own number also shows as an account number: one card.
+    final cards = {for (final r in refs) if (r.kind == StatementRefKind.card) r.last4};
+    refs.removeWhere((r) => r.kind == StatementRefKind.account && cards.contains(r.last4));
     return _withWorkedOut(
         StatementFacts(
           opening: opening,
-          closing: closing,
-          closingAvailable: available,
+          closing: closing ?? outstanding,
+          closingAvailable: closing != null && available,
           refs: refs.toList(),
           from: from,
           to: to,
@@ -1420,6 +1663,7 @@ class StatementReader {
   }
 
   static final _currencyLabel = RegExp(r'currency|العملة|devise|moneda', caseSensitive: false);
+  static final _foreignLabel = RegExp(r'foreign|exchange|الأجنبية|الاجنبية|تحويل العملة|étrangère|change|extranjera|cambio', caseSensitive: false);
 
   /// The currency a line names, word by word ("ريال سعودي", "SAR").
   static String? _currencyIn(String text) {
@@ -1451,7 +1695,8 @@ class StatementReader {
       if (r.currency != null) counts[r.currency!] = (counts[r.currency!] ?? 0) + 1;
     }
     if (counts.isEmpty) return null;
-    return (counts.entries.toList()..sort((a, b) => b.value - a.value)).first.key;
+    final top = (counts.entries.toList()..sort((a, b) => b.value - a.value)).first;
+    return top.value * 2 >= rows.length ? top.key : null;
   }
 
   /// Balances the statement doesn't print but its running balance shows:
@@ -1481,6 +1726,135 @@ class StatementReader {
   /// the bank's own text are marked doubtful (kept, unticked), names it
   /// copied from a line replace the reader's, and balances or an account
   /// the reader missed are read, by this code, from the lines it points at.
+  /// The on-device model's reading of each page ([structures], word
+  /// indexes into [pages]) against the rules' [rows] and [facts]:
+  ///
+  /// - Every figure comes from a word the model pointed at; a pointer to a
+  ///   word with no figure in it drops the model's whole reading.
+  /// - The model's rows are kept only when the numbers back them at least
+  ///   as well as the rules' rows (the statement adds up, the running
+  ///   balance links the rows) and none are lost.
+  /// - Otherwise the rules' rows stay, taking the model's name for a row
+  ///   whose own name came out unreadable, when both readings have the same
+  ///   rows with the same amounts.
+  (List<StatementRow>, StatementFacts) withStructure(
+      List<DocPage> pages, List<StatementRow> rows, StatementFacts facts, List<PageStructure> structures) {
+    final read = _fromStructure(pages, structures);
+    if (read == null) return (rows, facts);
+    final (found, opening, closing) = read;
+    final modelFacts = facts.copyWith(opening: facts.opening ?? opening, closing: facts.closing ?? closing);
+    final modelRows = _signFromOpening(found, modelFacts.opening);
+    if (modelRows.isNotEmpty && modelRows.length >= rows.length && _score(modelRows, modelFacts) >= _score(rows, facts)) {
+      return (modelRows, _withWorkedOut(modelFacts, modelRows));
+    }
+    final sameRows = modelRows.length == rows.length &&
+        [for (var i = 0; i < rows.length; i++) _same(rows[i].amount.abs(), modelRows[i].amount.abs())].every((x) => x);
+    if (!sameRows) return (rows, facts);
+    return (
+      [
+        for (var i = 0; i < rows.length; i++)
+          _unreadable(rows[i].description) && modelRows[i].description.isNotEmpty ? rows[i].copyWith(description: modelRows[i].description) : rows[i],
+      ],
+      facts
+    );
+  }
+
+  /// The oldest row's direction from the opening balance, when the running
+  /// balance has no earlier row to go by. Rows run oldest or newest first.
+  static List<StatementRow> _signFromOpening(List<StatementRow> rows, double? opening) {
+    if (opening == null || rows.isEmpty) return rows;
+    final (forward, backward) = _balanceFits(rows);
+    final i = backward > forward ? rows.length - 1 : 0;
+    final r = rows[i];
+    if (!r.signGuessed || r.balance == null) return rows;
+    final change = r.balance! - opening;
+    if (!_same(change.abs(), r.amount.abs()) || change == 0) return rows;
+    return [...rows]..[i] = r.copyWith(amount: r.amount.abs() * change.sign, signGuessed: false);
+  }
+
+  /// A name with no word in it, or more dots than letters (a mask).
+  static bool _unreadable(String name) {
+    final letters = RegExp(r'\p{L}', unicode: true).allMatches(name).length;
+    return !RegExp(r'\p{L}{2,}', unicode: true).hasMatch(name) || '.'.allMatches(name).length >= letters;
+  }
+
+  /// How well the numbers back a reading: the statement adding up counts
+  /// most, then each pair of rows the running balance links, then each row
+  /// whose direction and date were read rather than guessed.
+  static int _score(List<StatementRow> rows, StatementFacts facts) {
+    final (forward, backward) = _balanceFits(rows);
+    return ((Reconciliation.of(facts, rows)?.addsUp ?? false) ? 100000 : 0) +
+        math.max(forward, backward) * 100 +
+        rows.where((r) => !r.signGuessed).length +
+        rows.where((r) => !r.dateGuessed).length;
+  }
+
+  /// Rows, and the opening and closing figures, from the words the model
+  /// pointed at. Null when it pointed at a word that holds no figure.
+  (List<StatementRow>, double?, double?)? _fromStructure(List<DocPage> pages, List<PageStructure> structures) {
+    final out = <StatementRow>[];
+    double? opening, closing;
+    var base = 0;
+    for (var p = 0; p < pages.length && p < structures.length; p++) {
+      final tokens = pages[p].tokens;
+      final lines = _lines(tokens);
+      final s = structures[p];
+      String? word(int? id) => id == null || id >= tokens.length ? null : normalize(tokens[id].text);
+      List<_Found<_Money>>? figures(int? id) {
+        final t = word(id);
+        if (t == null) return null;
+        final found = _amounts(t, _dates(t).$2, loose: true);
+        return found.isEmpty ? null : found;
+      }
+
+      int? lineOf(int? id) {
+        if (id == null || id >= tokens.length) return null;
+        final i = lines.indexWhere((l) => l.cells.contains(tokens[id]));
+        return i < 0 ? null : base + i;
+      }
+
+      for (final r in s.rows) {
+        final amounts = figures(r.amount);
+        if (amounts == null) return null;
+        final money = amounts.first.value;
+        final balanceFigures = r.balance == null ? null : figures(r.balance);
+        if (r.balance != null && balanceFigures == null) return null;
+        // The balance shares the amount's word when the two were read as one.
+        final balanceMoney = balanceFigures == null ? null : (r.balance == r.amount ? (balanceFigures.length > 1 ? balanceFigures.last.value : null) : balanceFigures.last.value);
+        final dateText = word(r.date);
+        final date = dateText == null ? null : _dates(dateText).$1.where((d) => !d.hijri).firstOrNull?.value;
+        var sign = money.sign;
+        if (sign == 0) {
+          final cue = [for (final id in r.direction) ?word(id)].join(' ').toLowerCase();
+          if (RegExp(r'\bcr\b|\+|credit|deposit|دائن|إيداع|ايداع|crédit|abono').hasMatch(cue)) sign = 1;
+          if (RegExp(r'\bdr\b|(?:^|\s)-|debit|withdrawal|مدين|سحب|خصم|débit|cargo').hasMatch(cue)) sign = -1;
+        }
+        out.add(StatementRow(
+          date: date ?? DateTime(received.year, received.month, received.day),
+          dateGuessed: date == null,
+          description: r.name,
+          amount: money.major * (sign == 0 ? -1 : sign),
+          signGuessed: sign == 0,
+          currency: money.currency,
+          balance: balanceMoney == null ? null : balanceMoney.major * (balanceMoney.sign == 0 ? 1 : balanceMoney.sign),
+          line: lineOf(r.amount),
+        ));
+      }
+      if (s.opening != null) {
+        final f = figures(s.opening);
+        if (f == null) return null;
+        opening ??= f.last.value.major * (f.last.value.sign < 0 ? -1 : 1);
+      }
+      if (s.closing != null) {
+        final f = figures(s.closing);
+        if (f == null) return null;
+        closing = f.last.value.major * (f.last.value.sign < 0 ? -1 : 1);
+      }
+      base += lines.length;
+    }
+    return (_signsFromMarkers(_signsFromBalances(_withDocumentCurrency(out))), opening, closing);
+  }
+
   (List<StatementRow>, StatementFacts) withLabels(List<StatementRow> rows, StatementFacts facts, List<String> lines, List<LineLabel> labels) {
     final byLine = {for (final l in labels) if (l.line >= 0 && l.line < lines.length) l.line: l};
     StatementRow labelled(StatementRow r) {
@@ -1513,7 +1887,9 @@ class StatementReader {
           if (refs.isNotEmpty) {
             f = f.copyWith(refs: refs);
           } else if (digits.isNotEmpty) {
-            f = f.copyWith(refs: [StatementRef(_cardLabel.hasMatch(text) ? StatementRefKind.card : StatementRefKind.account, digits.first.substring(digits.first.length - 4))]);
+            f = f.copyWith(refs: [
+              StatementRef(_cardLabel.hasMatch(text) ? StatementRefKind.card : StatementRefKind.account, digits.first.substring(digits.first.length - 4), digits.first.length)
+            ]);
           }
         default:
           break;

@@ -200,20 +200,116 @@ enum DocumentReader {
   /// Vision's lines with their boxes, flipped to a top left origin.
   ///
   /// Vision reads in the script of the first language it is given: English
-  /// first turns Arabic into Latin nonsense, while Arabic first still reads
-  /// Latin statements well. So Arabic goes first; a page with no Arabic on
-  /// it is read again in the app's language when that one has accents
-  /// Arabic-first would miss (French, Spanish).
+  /// first turns Arabic into Latin nonsense, while Arabic first garbles
+  /// Latin names and can drop the dates and figures on a line that is
+  /// mostly Arabic. So a page is read Arabic first; when it has Arabic on
+  /// it, it is read again Latin first and each word is taken from the
+  /// reading made for its script. A page with no Arabic is read again in
+  /// the app's language when that one has accents Arabic-first would miss
+  /// (French, Spanish).
   static func recognizeBoxes(_ handler: VNImageRequestHandler, languages: [String]) -> [[String: Any]]? {
-    let arabicFirst = ["ar-SA"] + languages.filter { !$0.hasPrefix("ar") }
-    guard let first = recognizeBoxes(handler, ordered: arabicFirst) else { return nil }
+    let latinLanguages = languages.filter { !$0.hasPrefix("ar") }
+    guard let arabic = recognizeLines(handler, ordered: ["ar-SA"] + latinLanguages) else { return nil }
+    let hasArabic = arabic.contains { line in line.words.contains { isArabic(String($0.text)) } }
     let primary = languages.first ?? "en-US"
-    let hasArabic = first.contains { ($0["t"] as? String)?.unicodeScalars.contains { (0x0600...0x06FF).contains($0.value) } ?? false }
-    if hasArabic || primary.hasPrefix("en") || primary.hasPrefix("ar") { return first }
-    return recognizeBoxes(handler, ordered: languages) ?? first
+    if !hasArabic {
+      if primary.hasPrefix("en") || primary.hasPrefix("ar") { return tokens(arabic.map { $0.whole }) }
+      return tokens((recognizeLines(handler, ordered: languages) ?? arabic).map { $0.whole })
+    }
+    guard let latin = recognizeLines(handler, ordered: latinLanguages.isEmpty ? ["en-US"] : latinLanguages) else {
+      return tokens(arabic.map { $0.whole })
+    }
+    return tokens(merged(arabic: arabic, latin: latin))
   }
 
-  private static func recognizeBoxes(_ handler: VNImageRequestHandler, ordered languages: [String]) -> [[String: Any]]? {
+  /// One line Vision read: its words with their boxes, in reading order.
+  struct Line {
+    var whole: (text: String, frame: CGRect)
+    var words: [(text: Substring, frame: CGRect)]
+  }
+
+  /// The Arabic words and the figures of the Arabic-first reading, and the
+  /// Latin words of the Latin-first reading, each group of neighbouring
+  /// words kept from one reading as one token. Latin-first reading only
+  /// gives a figure where Arabic-first reading has none: it misreads some
+  /// decimal points, while Arabic-first reading drops a line's figures
+  /// when the line is mostly Arabic.
+  static func merged(arabic: [Line], latin: [Line]) -> [(text: String, frame: CGRect)] {
+    var out: [(text: String, frame: CGRect)] = []
+    var words: [CGRect] = []
+    var figures: [CGRect] = []
+    for line in arabic {
+      groups(line.words.map { word in
+        let figure = isFigure(word.text)
+        if figure { figures.append(word.frame) }
+        if readableArabic(word.text) { words.append(word.frame) }
+        return (word, figure || readableArabic(word.text))
+      }, into: &out)
+    }
+    for line in latin {
+      groups(line.words.map { word in
+        let taken = isFigure(word.text)
+          ? figures.contains { overlap($0, word.frame) > 0.3 }
+          : words.contains { overlap($0, word.frame) > 0.3 }
+        return (word, !taken)
+      }, into: &out)
+    }
+    return out
+  }
+
+  /// A date, an amount or a number: digits and marks, no letters.
+  static func isFigure(_ word: Substring) -> Bool {
+    word.contains { $0.isNumber } && !word.contains { $0.isLetter }
+  }
+
+  /// Runs of kept words, each run one token.
+  private static func groups(_ words: [((text: Substring, frame: CGRect), Bool)], into out: inout [(text: String, frame: CGRect)]) {
+    var run: [(text: Substring, frame: CGRect)] = []
+    func flush() {
+      guard let first = run.first else { return }
+      out.append((run.map { String($0.text) }.joined(separator: " "), run.dropFirst().reduce(first.frame) { $0.union($1.frame) }))
+      run = []
+    }
+    for (word, keep) in words {
+      if keep { run.append(word) } else { flush() }
+    }
+    flush()
+  }
+
+  /// How much of the smaller box the two share.
+  private static func overlap(_ a: CGRect, _ b: CGRect) -> CGFloat {
+    let shared = a.intersection(b)
+    guard !shared.isNull else { return 0 }
+    let smaller = min(a.width * a.height, b.width * b.height)
+    return smaller > 0 ? shared.width * shared.height / smaller : 0
+  }
+
+  /// An Arabic word read as one: Arabic letters (or Arabic digits), no
+  /// Latin letters, and not the dotted fragments Arabic-first reading
+  /// makes of a Latin name.
+  static func readableArabic(_ word: Substring) -> Bool {
+    var arabic = 0, latin = 0, marks = 0
+    for u in word.unicodeScalars {
+      if (0x0600...0x06FF).contains(u.value) || (0xFB50...0xFDFF).contains(u.value) || (0xFE70...0xFEFF).contains(u.value) {
+        arabic += 1
+      } else if CharacterSet.letters.contains(u) {
+        latin += 1
+      } else if !CharacterSet.decimalDigits.contains(u) {
+        marks += 1
+      }
+    }
+    return arabic >= 2 && latin == 0 && marks <= 1
+  }
+
+  private static func tokens(_ runs: [(text: String, frame: CGRect)]) -> [[String: Any]] {
+    runs.map { run in
+      ["t": run.text, "x": Double(run.frame.minX), "y": Double(run.frame.minY), "w": Double(run.frame.width), "h": Double(run.frame.height)]
+    }
+  }
+
+  /// Vision's lines in the given language order, boxes flipped to a top
+  /// left origin, each with its words placed.
+  private static func recognizeLines(_ handler: VNImageRequestHandler, ordered languages: [String]) -> [Line]? {
     let request = VNRecognizeTextRequest()
     request.recognitionLevel = .accurate
     request.usesLanguageCorrection = false
@@ -233,10 +329,21 @@ enum DocumentReader {
     } catch {
       return nil
     }
+    func flipped(_ b: CGRect) -> CGRect { CGRect(x: b.minX, y: 1 - b.maxY, width: b.width, height: b.height) }
     return (request.results ?? []).compactMap { observation in
-      guard let text = observation.topCandidates(1).first?.string else { return nil }
-      let b = observation.boundingBox
-      return ["t": text, "x": Double(b.minX), "y": Double(1 - b.maxY), "w": Double(b.width), "h": Double(b.height)]
+      guard let candidate = observation.topCandidates(1).first else { return nil }
+      let text = candidate.string
+      let whole = flipped(observation.boundingBox)
+      var words: [(text: Substring, frame: CGRect)] = []
+      var index = text.startIndex
+      while index < text.endIndex {
+        guard let start = text[index...].firstIndex(where: { !$0.isWhitespace }) else { break }
+        let end = text[start...].firstIndex(where: { $0.isWhitespace }) ?? text.endIndex
+        let box = (try? candidate.boundingBox(for: start..<end))?.boundingBox
+        words.append((text[start..<end], box.map(flipped) ?? whole))
+        index = end
+      }
+      return Line(whole: (text, whole), words: words)
     }
   }
 }

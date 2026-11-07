@@ -10,21 +10,32 @@ class StatementRef extends Equatable {
   /// The last four digits.
   final String last4;
 
-  const StatementRef(this.kind, this.last4);
+  /// How many digits the whole number has, when the statement shows it in
+  /// full: two accounts can end alike (a loan's 16-digit …0001 and a bank
+  /// account's 12-digit …001).
+  final int? digits;
+
+  const StatementRef(this.kind, this.last4, [this.digits]);
 
   /// As stored on an account to recognise its statements next time.
-  String get key => '${kind.name}:$last4';
+  String get key => '${kind.name}:$last4${digits == null ? '' : '/$digits'}';
 
   static StatementRef? fromKey(String key) {
-    final i = key.indexOf(':');
-    if (i < 0) return null;
-    final kind = StatementRefKind.values.where((k) => k.name == key.substring(0, i)).firstOrNull;
-    final last4 = key.substring(i + 1);
-    return kind == null || !RegExp(r'^\d{4}$').hasMatch(last4) ? null : StatementRef(kind, last4);
+    final m = RegExp(r'^(\w+):(\d{4})(?:/(\d{1,2}))?$').firstMatch(key);
+    if (m == null) return null;
+    final kind = StatementRefKind.values.where((k) => k.name == m[1]).firstOrNull;
+    return kind == null ? null : StatementRef(kind, m[2]!, m[3] == null ? null : int.parse(m[3]!));
+  }
+
+  /// Whether a stored [key] names the same number. A length known on only
+  /// one side doesn't tell them apart.
+  bool matches(String key) {
+    final other = fromKey(key);
+    return other != null && other.kind == kind && other.last4 == last4 && (other.digits == null || digits == null || other.digits == digits);
   }
 
   @override
-  List<Object?> get props => [kind, last4];
+  List<Object?> get props => [kind, last4, digits];
 }
 
 enum StatementRefKind { account, iban, card }
@@ -64,7 +75,14 @@ class StatementFacts extends Equatable {
   bool get isEmpty => opening == null && closing == null && refs.isEmpty;
 
   StatementFacts copyWith(
-          {double? opening, double? closing, bool? openingWorkedOut, bool? closingWorkedOut, bool? closingAvailable, List<StatementRef>? refs}) =>
+          {double? opening,
+          double? closing,
+          bool? openingWorkedOut,
+          bool? closingWorkedOut,
+          bool? closingAvailable,
+          List<StatementRef>? refs,
+          DateTime? from,
+          DateTime? to}) =>
       StatementFacts(
         opening: opening ?? this.opening,
         closing: closing ?? this.closing,
@@ -72,8 +90,8 @@ class StatementFacts extends Equatable {
         closingWorkedOut: closingWorkedOut ?? this.closingWorkedOut,
         closingAvailable: closingAvailable ?? this.closingAvailable,
         refs: refs ?? this.refs,
-        from: from,
-        to: to,
+        from: from ?? this.from,
+        to: to ?? this.to,
         currency: currency,
       );
 
@@ -148,4 +166,58 @@ class LineLabel extends Equatable {
 
   @override
   List<Object?> get props => [line, kind, name];
+}
+
+/// One transaction as the on-device model sees it on a page: which of the
+/// page's words ([DocPage.tokens], by index) are its date, amount, balance
+/// and direction, and who it was with in its own words. Never a figure:
+/// the reader takes every figure from the words pointed at.
+class StructuredRow extends Equatable {
+  final int? date;
+  final int? amount;
+  final int? balance;
+  final List<int> direction;
+
+  /// The payee or merchant as written on the picture; digits are dropped.
+  final String name;
+
+  const StructuredRow({this.date, this.amount, this.balance, this.direction = const [], this.name = ''});
+
+  static StructuredRow? fromMap(Map<Object?, Object?> m) {
+    int? id(Object? v) => v is int && v >= 0 ? v : null;
+    final name = m['name'];
+    return StructuredRow(
+      date: id(m['date']),
+      amount: id(m['amount']),
+      balance: id(m['balance']),
+      direction: [for (final v in (m['direction'] as List? ?? const [])) ?id(v)],
+      name: name is String ? name.replaceAll(RegExp(r'[0-9\u0660-\u0669\u06F0-\u06F9]'), '').trim() : '',
+    );
+  }
+
+  @override
+  List<Object?> get props => [date, amount, balance, direction, name];
+}
+
+/// What the on-device model says one page holds, as word indexes.
+class PageStructure extends Equatable {
+  final List<StructuredRow> rows;
+  final int? opening;
+  final int? closing;
+  final int? account;
+
+  const PageStructure({this.rows = const [], this.opening, this.closing, this.account});
+
+  static PageStructure fromMap(Map<Object?, Object?> m) {
+    int? id(Object? v) => v is int && v >= 0 ? v : null;
+    return PageStructure(
+      rows: [for (final r in (m['rows'] as List? ?? const [])) if (r is Map<Object?, Object?>) ?StructuredRow.fromMap(r)],
+      opening: id(m['opening']),
+      closing: id(m['closing']),
+      account: id(m['account']),
+    );
+  }
+
+  @override
+  List<Object?> get props => [rows, opening, closing, account];
 }

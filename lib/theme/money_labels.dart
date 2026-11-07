@@ -111,6 +111,8 @@ extension MoneyLabels on AppLocalizations {
       'category.salary' => catSalary,
       'category.other_income' => catOtherIncome,
       'category.interest_and_fees' => catInterestFees,
+      'category.uncategorized' => catUncategorized,
+      'category.uncategorized_income' => catUncategorizedIncome,
       'system.opening_balances' => sysOpening,
       'system.change_in_value' => sysChange,
       'system.rounding' => sysRounding,
@@ -157,6 +159,7 @@ class MoneyIcons {
         'category.home' => Icons.home_outlined,
         'category.salary' => Icons.work_outline,
         'category.interest_and_fees' => Icons.percent,
+        'category.uncategorized' || 'category.uncategorized_income' => Icons.label_off_outlined,
         _ => Icons.label_outline,
       };
 

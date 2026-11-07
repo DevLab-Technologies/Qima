@@ -12,6 +12,7 @@ import '../../l10n/app_localizations.dart';
 import '../../models/book.dart';
 import '../../models/book_account.dart';
 import '../../models/book_entry.dart';
+import '../../models/categorizer.dart';
 import '../../models/entry_builder.dart';
 import '../../models/import_plan.dart';
 import '../../models/minor_units.dart';
@@ -180,7 +181,7 @@ class _ImportReviewScreenState extends State<ImportReviewScreen> {
 
     final candidates = account == null
         ? const <ImportCandidate>[]
-        : ImportPlanner.plan(files: [for (final i in imports.items) (i.id, i.rows)], account: account, book: money.book);
+        : ImportPlanner.plan(files: [for (final i in imports.items) (i.id, i.rows)], account: account, book: money.book, rules: money.settings.categoryRules);
     final byFile = <String, List<ImportCandidate>>{};
     for (final c in candidates) {
       (byFile[c.fileId] ??= []).add(c);
@@ -188,6 +189,8 @@ class _ImportReviewScreenState extends State<ImportReviewScreen> {
     bool ticked(ImportCandidate c) => _ticked[c.key] ?? c.suggested;
     final chosen = [for (final c in candidates) if (ticked(c)) c];
     final balance = account == null || imports.reading ? null : _balance(account, chosen, imports, money.book, context.read<MoneyCubit>().builder);
+    // A statement or loan screen with no new rows can still set the balance.
+    final applyBalance = balance != null && (_fixBalance ?? balance.opening);
 
     final body = <Widget>[];
     if (account == null) {
@@ -290,10 +293,14 @@ class _ImportReviewScreenState extends State<ImportReviewScreen> {
                   key: const ValueKey('importAdd'),
                   onPressed: _saving || (chosen.isEmpty && imports.reading)
                       ? null
-                      : chosen.isEmpty
+                      : chosen.isEmpty && !applyBalance
                           ? () => _discardAll(imports)
                           : () => _add(account, chosen, imports),
-                  child: Text(chosen.isEmpty ? l10n.importDiscardAll : l10n.importAddCount(chosen.length)),
+                  child: Text(chosen.isNotEmpty
+                      ? l10n.importAddCount(chosen.length)
+                      : applyBalance
+                          ? l10n.importApplyBalance
+                          : l10n.importDiscardAll),
                 ),
               ),
             ),
@@ -332,7 +339,9 @@ class _ImportReviewScreenState extends State<ImportReviewScreen> {
                 selected: {isIn},
                 onSelectionChanged: (v) => setSheet(() {
                   isIn = v.first;
-                  category = ImportPlanner.guessCategory(c.row.description, isIn: isIn, book: money.book);
+                  category = ImportPlanner.guessCategory(c.row.description,
+                          detail: c.row.detail, isIn: isIn, categorizer: Categorizer(money.book, rules: money.settings.categoryRules))
+                      .categoryId;
                 }),
               ),
             ),
@@ -379,6 +388,7 @@ class _ImportReviewScreenState extends State<ImportReviewScreen> {
       final finished = [for (final i in imports.items) if (i.done) i];
       await money.importEntries([...entries, ?fix], fileHashes: [for (final i in finished) if (i.status == ImportStatus.read) ?i.hash]);
       await _keepRefs(money, account, [for (final i in finished) if (i.status == ImportStatus.read) i.facts]);
+      await money.learnCategories(_picked(chosen, book));
       await importer.remove(finished.map((i) => i.id));
       if (entries.isNotEmpty) messenger.showSnackBar(SnackBar(content: Text(l10n.importAdded(entries.length))));
       if (importer.state.isEmpty) navigator.pop();
@@ -387,6 +397,21 @@ class _ImportReviewScreenState extends State<ImportReviewScreen> {
     } finally {
       if (mounted) setState(() => _saving = false);
     }
+  }
+
+  /// The categories the person picked over the guess, to use for those
+  /// merchants next time.
+  Map<String, String> _picked(List<ImportCandidate> chosen, Book book) {
+    final out = <String, String>{};
+    for (final c in chosen) {
+      final picked = _category[c.key];
+      final category = picked == null ? null : book.accounts[picked];
+      if (category == null || picked == c.categoryId || Categorizer.isUncategorized(picked!)) continue;
+      var key = Categorizer.merchantKey(c.row.description);
+      if (key.isEmpty) key = Categorizer.merchantKey(c.row.detail);
+      if (key.isNotEmpty) out[Categorizer.ruleKey(key, isIn: category.side == AccountSide.income)] = category.id;
+    }
+    return out;
   }
 
   List<BookEntry> _entries(BookAccount account, List<ImportCandidate> chosen, Book book, EntryBuilder builder) => [
@@ -445,9 +470,11 @@ class _ImportReviewScreenState extends State<ImportReviewScreen> {
   Future<void> _keepRefs(MoneyCubit money, BookAccount account, List<StatementFacts> files) async {
     final keep = ImportPlanner.refsToKeep(files);
     if (keep.isEmpty) return;
+    final refs = keep.map(StatementRef.fromKey).nonNulls.toList();
+    bool named(String key) => refs.any((r) => r.matches(key));
     for (final other in money.state.accounts) {
-      if (other.id == account.id || !other.statementRefs.any(keep.contains)) continue;
-      await money.updateAccount(other.copyWith(statementRefs: [for (final r in other.statementRefs) if (!keep.contains(r)) r]));
+      if (other.id == account.id || !other.statementRefs.any(named)) continue;
+      await money.updateAccount(other.copyWith(statementRefs: [for (final r in other.statementRefs) if (!named(r)) r]));
     }
     final current = money.state.book.accounts[account.id] ?? account;
     if (keep.every(current.statementRefs.contains)) return;

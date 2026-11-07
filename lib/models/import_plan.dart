@@ -3,6 +3,7 @@ import 'package:equatable/equatable.dart';
 import 'book.dart';
 import 'book_account.dart';
 import 'book_entry.dart';
+import 'categorizer.dart';
 import 'default_categories.dart';
 import 'entry_builder.dart';
 import 'minor_units.dart';
@@ -60,16 +61,18 @@ class ImportCandidate extends Equatable {
 class ImportPlanner {
   ImportPlanner._();
 
-  /// Accounts a statement can be from: money and cards the person keeps.
+  /// Accounts a statement can be from: money, cards and loans the person
+  /// keeps (a loan's statement or app screen gives what is still owed).
   static bool canHoldStatement(BookAccount a) =>
-      !a.archived && (a.type == AccountType.debit || a.type == AccountType.cash || a.type == AccountType.credit);
+      !a.archived &&
+      (a.type == AccountType.debit || a.type == AccountType.cash || a.type == AccountType.credit || a.type == AccountType.loan);
 
   /// The account the rows most likely come from: one that an earlier
   /// statement with the same account or card number went to, else one whose
   /// currency the rows are written in, a bank account before a card, the
   /// most used.
   static BookAccount? guessAccount(List<BookAccount> accounts, List<StatementRow> rows, List<BookEntry> entries, {Iterable<StatementRef> refs = const []}) {
-    final keys = {for (final r in refs) r.key};
+    final named = refs.toList();
     final options = accounts.where(canHoldStatement).toList();
     if (options.isEmpty) return null;
     final currencies = <String, int>{};
@@ -83,7 +86,7 @@ class ImportPlanner {
       }
     }
     int score(BookAccount a) =>
-        (a.statementRefs.any(keys.contains) ? 1 << 40 : 0) +
+        (a.statementRefs.any((k) => named.any((r) => r.matches(k))) ? 1 << 40 : 0) +
         (currencies[a.currency] ?? 0) * 1000 +
         (a.type == AccountType.debit ? 500 : 0) +
         (use[a.id] ?? 0).clamp(0, 499);
@@ -95,13 +98,15 @@ class ImportPlanner {
     required List<(String fileId, List<StatementRow> rows)> files,
     required BookAccount account,
     required Book book,
+    Map<String, String> rules = const {},
   }) {
+    final categorizer = Categorizer(book, rules: rules);
     final seen = <String>{};
     final out = <ImportCandidate>[];
     for (final (fileId, rows) in files) {
       for (var i = 0; i < rows.length; i++) {
         final r = rows[i];
-        final sameKey = '${_day(r.date)}|${r.amount.toStringAsFixed(3)}|${_words(r.description)}';
+        final sameKey = '${_day(r.date)}|${r.amount.toStringAsFixed(3)}|${Categorizer.merchantKey(r.description)}';
         ImportFlag? flag;
         if (r.doubtful) {
           flag = ImportFlag.notTransaction;
@@ -117,7 +122,7 @@ class ImportPlanner {
           fileId: fileId,
           row: r,
           flag: flag,
-          categoryId: guessCategory(r.description, isIn: r.isIn, book: book),
+          categoryId: guessCategory(r.description, detail: r.detail, isIn: r.isIn, categorizer: categorizer).categoryId,
         ));
       }
     }
@@ -193,13 +198,6 @@ class ImportPlanner {
 
   static String _day(DateTime d) => '${d.year}-${d.month}-${d.day}';
 
-  /// A merchant's name reduced for matching: lower case, letters only,
-  /// the first two words ("PANDA RIYADH 4412" and "Panda" both start
-  /// "panda").
-  static String _words(String s) {
-    final words = s.toLowerCase().replaceAll(RegExp(r'[^\p{L}\s]', unicode: true), ' ').split(RegExp(r'\s+')).where((w) => w.length > 1).toList();
-    return words.take(2).join(' ');
-  }
 
   static const Map<String, List<String>> _keywords = {
     'category.groceries': ['panda', 'danube', 'tamimi', 'carrefour', 'lulu', 'othaim', 'farm superstore', 'nesto', 'spinneys', 'grocery', 'supermarket', 'hypermarket', 'بنده', 'الدانوب', 'التميمي', 'كارفور', 'العثيم', 'لولو', 'سوبرماركت', 'تموينات', 'بقالة'],
@@ -212,28 +210,10 @@ class ImportPlanner {
     'category.salary': ['salary', 'payroll', 'wages', 'راتب', 'رواتب', 'salaire', 'nómina', 'nomina'],
   };
 
-  /// A category for a row: the one used the last time this merchant was
-  /// recorded, else a known name, else Other.
-  static String guessCategory(String description, {required bool isIn, required Book book}) {
-    final words = _words(description);
-    if (words.isNotEmpty) {
-      final entries = [...book.entries]..sort((a, b) => b.date.compareTo(a.date));
-      for (final e in entries) {
-        if (_words(e.merchant.isEmpty ? e.rawMerchant : e.merchant) != words) continue;
-        for (final l in e.lines) {
-          final a = book.accounts[l.accountId];
-          if (a != null && a.type == AccountType.category && (a.side == AccountSide.income) == isIn && !a.archived) return a.id;
-        }
-      }
-    }
-    final lower = ' ${description.toLowerCase()} ';
-    for (final e in _keywords.entries) {
-      final income = DefaultCategories.income.containsKey(e.key);
-      if (income != isIn) continue;
-      if (e.value.any(lower.contains) && book.accounts.containsKey(e.key)) return e.key;
-    }
-    return isIn ? DefaultCategories.otherIncome : DefaultCategories.other;
-  }
+  /// A category for a row, the way the person would pick it (see
+  /// [Categorizer.guess]): Uncategorized when nothing places it.
+  static CategoryGuess guessCategory(String description, {String detail = '', required bool isIn, required Categorizer categorizer}) =>
+      categorizer.guess(description, detail: detail, isIn: isIn, keywords: _keywords, isIncomeKeyword: DefaultCategories.income.containsKey);
 
   /// The entry for a row: a spend from the account, or money into it.
   static BookEntry entryFor({

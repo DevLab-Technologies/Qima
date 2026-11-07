@@ -47,7 +47,7 @@ class StatementFiles {
       if (ext == 'pdf' || images.contains(ext)) {
         final pages = await recognition.readDocument(file.path, languages);
         if (pages == null) return const StatementRead(ReadOutcome.unreadable);
-        return _labelled(reader, pages, languages.first);
+        return _labelled(reader, file.path, pages, languages.first);
       }
       final bytes = await inbox.bytes(file);
       if (ext == 'xlsx') {
@@ -76,11 +76,15 @@ class StatementFiles {
   }
 
   /// A PDF or a picture, read by the rules and then, when the model is on,
-  /// checked line by line against what the model says each line is.
-  Future<StatementRead> _labelled(StatementReader reader, List<DocPage> pages, String localeTag) async {
+  /// checked against what the model says: which words on each page make
+  /// up each row (kept only when the numbers back it), then what each line
+  /// is.
+  Future<StatementRead> _labelled(StatementReader reader, String path, List<DocPage> pages, String localeTag) async {
     var (rows, facts) = reader.read(pages);
     final model = assist();
     if (await model.isAvailable()) {
+      final structures = await model.structurePages(path, pages, localeTag);
+      if (structures != null) (rows, facts) = reader.withStructure(pages, rows, facts, structures);
       final lines = reader.lineTexts(pages);
       final labels = await model.labelStatementLines(lines, localeTag);
       if (labels != null && labels.isNotEmpty) (rows, facts) = reader.withLabels(rows, facts, lines, labels);

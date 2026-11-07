@@ -5,6 +5,7 @@ import 'package:qima/models/instrument_catalog.dart';
 import 'package:qima/models/metal_breakdown.dart';
 import 'package:qima/models/transaction_capture.dart';
 import 'package:qima/models/statement_facts.dart';
+import 'package:qima/models/statement_reader.dart';
 import 'package:qima/services/ai_assist_provider.dart';
 
 const _names = {
@@ -52,6 +53,9 @@ class _FakeProvider implements AiAssistProvider {
 
   @override
   Future<List<LineLabel>?> labelStatementLines(List<String> lines, String localeTag) async => null;
+
+  @override
+  Future<List<PageStructure>?> structurePages(String path, List<DocPage> pages, String localeTag) async => null;
 }
 
 void main() {

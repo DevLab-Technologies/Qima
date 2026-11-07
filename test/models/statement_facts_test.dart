@@ -37,7 +37,7 @@ void main() {
       expect(facts.opening, 22020.35);
       expect(facts.closing, 39078.25);
       expect(facts.openingWorkedOut, isFalse);
-      expect(facts.refs, [const StatementRef(StatementRefKind.iban, '7519')]);
+      expect(facts.refs, [const StatementRef(StatementRefKind.iban, '7519', 22)]);
       expect(facts.from, DateTime(2026, 11, 1));
       expect(facts.to, DateTime(2026, 11, 30));
       final check = Reconciliation.of(facts, rows)!;
@@ -276,7 +276,7 @@ void main() {
 
     test('the account, period and currency come from above the table, not a card paid in it', () {
       final (_, facts) = reader.read(bilingual());
-      expect(facts.refs, [const StatementRef(StatementRefKind.account, '1234')]);
+      expect(facts.refs, [const StatementRef(StatementRefKind.account, '1234', 14)]);
       expect(facts.from, DateTime(2026, 9, 1));
       expect(facts.to, DateTime(2026, 9, 30));
       expect(facts.currency, 'SAR');
@@ -304,7 +304,7 @@ void main() {
       expect(rows.single.amount, -1250);
       expect(rows.single.date, DateTime(2026, 9, 12));
       expect(rows.single.signGuessed, isFalse);
-      expect(facts.refs, [const StatementRef(StatementRefKind.account, '4433')]);
+      expect(facts.refs, [const StatementRef(StatementRefKind.account, '4433', 14)]);
       expect(facts.opening, isNull);
     });
 
@@ -347,6 +347,96 @@ void main() {
       expect(reader.read([page]).$1.map((r) => r.amount), [-12, -30]);
     });
 
+    test('a card statement: transaction dates, CR marks, a foreign row and the closing that adds up', () {
+      final page = DocPage([
+        ...line(0.05, [('Card Number 4582 XXXX XXXX 7788', 0.05, 0.4)]),
+        ...line(0.20, [('Transaction Date', 0.05, 0.12), ('Posting Date', 0.20, 0.12), ('Description', 0.36, 0.2), ('Amount', 0.80, 0.1)]),
+        ...line(0.24, [('01/09/2026', 0.05, 0.09), ('03/09/2026', 0.20, 0.09), ('Coffee House Branch 101 SAU', 0.36, 0.25), ('230.00', 0.80, 0.08)]),
+        ...line(0.26, [('02/09/2026', 0.05, 0.09), ('04/09/2026', 0.20, 0.09), ('Online Tools USA', 0.36, 0.2), ('8.00 USD', 0.64, 0.08), ('30.40', 0.80, 0.08)]),
+        ...line(0.28, [('05/09/2026', 0.05, 0.09), ('05/09/2026', 0.20, 0.09), ('PAYMENT RECEIVED THANK YOU', 0.36, 0.25), ('500.00 CR', 0.80, 0.1)]),
+        ...line(0.30, [('06/09/2026', 0.05, 0.09), ('08/09/2026', 0.20, 0.09), ('Corner Grocer', 0.36, 0.2), ('120.00', 0.80, 0.08)]),
+        ...line(0.32, [('07/09/2026', 0.05, 0.09), ('07/09/2026', 0.20, 0.09), ('Corner Grocer refund', 0.36, 0.2), ('20.00 CR', 0.80, 0.1)]),
+        ...line(0.40, [('Opening Balance ( )', 0.05, 0.15), ('Payment/Credits ( )', 0.45, 0.15), ('Closing Balance ( )', 0.78, 0.15)]),
+        ...line(0.42, [('1,000.00', 0.06, 0.1), ('520.00', 0.47, 0.08), ('860.40', 0.80, 0.1)]),
+      ]);
+      // A later page whose text put another figure beside the label.
+      final misplaced = DocPage(line(0.50, [('Closing Balance 900.00', 0.60, 0.3)]));
+      final (rows, facts) = reader.read([page, misplaced]);
+      expect(rows.map((r) => r.date.day), [1, 2, 5, 6, 7]);
+      expect(rows.map((r) => r.amount), [-230, -30.40, 500, -120, 20]);
+      expect(rows.any((r) => r.signGuessed), isFalse);
+      expect(rows.any((r) => r.currency != null), isFalse);
+      expect(rows[1].detail, '8.00 USD');
+      expect(facts.refs, [const StatementRef(StatementRefKind.card, '7788')]);
+      expect(facts.currency, isNull);
+      expect(facts.closing, 860.40);
+      expect(Reconciliation.of(facts, rows)!.addsUp, isTrue);
+    });
+
+    test('cells centred on their date: the line above a date is its row\'s, even across a page', () {
+      final header = line(0.20, [('Posting Date', 0.07, 0.08), ('Value Date', 0.17, 0.08), ('Description', 0.28, 0.2), ('Debit', 0.64, 0.06), ('Credit', 0.75, 0.06), ('Balance', 0.85, 0.08)]);
+      final first = DocPage([
+        ...header,
+        ...line(0.30, [('FT26AB01 - Payee: Sara', 0.28, 0.25)]),
+        ...line(0.32, [('10/11/2026', 0.07, 0.09), ('10/11/2026', 0.17, 0.09), ('S... A...', 0.28, 0.1), ('1,500-', 0.64, 0.06), ('8,500.00', 0.85, 0.08)]),
+        ...line(0.34, [('Benef: 0100', 0.28, 0.2)]),
+        ...line(0.37, [('FT26AB02 - Salary', 0.28, 0.25)]),
+        ...line(0.39, [('05/11/2026', 0.07, 0.09), ('05/11/2026', 0.17, 0.09), ('10,000', 0.75, 0.06), ('10,000.00', 0.85, 0.08)]),
+        ...line(0.41, [('Company Payroll', 0.28, 0.2)]),
+        ...line(0.95, [('FT26AB03 - Card Fee', 0.28, 0.2)]),
+      ]);
+      final second = DocPage(line(0.03, [('01/11/2026', 0.07, 0.09), ('01/11/2026', 0.17, 0.09), ('75-', 0.64, 0.06), ('0.00', 0.85, 0.08)]));
+      final rows = reader.readPages([first, second]);
+      expect(rows.map((r) => r.description), ['FT26AB01 - Payee: Sara', 'FT26AB02 - Salary', 'FT26AB03 - Card Fee']);
+      expect(rows.map((r) => r.detail), ['Benef: 0100', 'Company Payroll', '']);
+      expect(rows.map((r) => r.amount), [-1500, 10000, -75]);
+    });
+
+    test('a loan screen gives no rows, its outstanding amount as the balance, and the account with its length', () {
+      final page = DocPage([
+        ...line(0.05, [('AUTO LOAN', 0.05, 0.3)]),
+        ...line(0.10, [('SAR 120,500.00', 0.05, 0.4)], h: 0.03),
+        ...line(0.20, [('Loan account number', 0.05, 0.35), ('1234 5678 9012 0001', 0.55, 0.4)]),
+        ...line(0.24, [('Total loan amount', 0.05, 0.35), ('SAR 150,000.00', 0.55, 0.4)]),
+        ...line(0.28, [('Loan outstanding amount', 0.05, 0.35), ('SAR 120,500.00', 0.55, 0.4)]),
+        ...line(0.32, [('Amount paid', 0.05, 0.35), ('SAR 29,500.00', 0.55, 0.4)]),
+        ...line(0.36, [('Monthly installment amount', 0.05, 0.35), ('SAR 2,500.00', 0.55, 0.4)]),
+        ...line(0.40, [('Last payment received 29th', 0.05, 0.35), ('October, 2026 SAR 2,500.00', 0.55, 0.4)]),
+      ]);
+      final (rows, facts) = reader.read([page]);
+      expect(rows, isEmpty);
+      expect(facts.closing, 120500);
+      expect(facts.to, DateTime(2026, 12, 2));
+      expect(facts.refs, [const StatementRef(StatementRefKind.account, '0001', 16)]);
+      // A 12-digit account ending 0001 is another account; one saved
+      // without its length still matches.
+      expect(facts.refs.single.matches('account:0001/12'), isFalse);
+      expect(facts.refs.single.matches('account:0001'), isTrue);
+    });
+
+    test('a scanned statement: misread header words, "O6SEP", a Hijri day under it, and the period on two lines', () {
+      final page = DocPage([
+        ...line(0.05, [('Account Number 091-000000-001', 0.50, 0.4)]),
+        ...line(0.10, [('From 16/06/2026', 0.50, 0.3)]),
+        ...line(0.12, [('To 15/09/2026', 0.50, 0.3)]),
+        ...line(0.20, [('Date', 0.05, 0.06), ('arratives', 0.15, 0.1), ('Vithdrawals', 0.55, 0.1), ('Deposits', 0.70, 0.08), ('Balance', 0.85, 0.08)]),
+        ...line(0.24, [('O6SEP', 0.05, 0.06), ('TRANSFER IN', 0.15, 0.3)]),
+        ...line(0.26, [('24/3', 0.05, 0.04), ('Sender Name', 0.15, 0.3)]),
+        ...line(0.28, [('SA8710000099999999999999', 0.15, 0.35)]),
+        ...line(0.30, [('INCOMING PAYMENT REF A1', 0.15, 0.3), ('1.000.00', 0.70, 0.08)]),
+        ...line(0.34, [('O6SEP', 0.05, 0.06), ('TRANSFER OUT', 0.15, 0.3)]),
+        ...line(0.36, [('24/3', 0.05, 0.04)]),
+        ...line(0.38, [('PERSONAL TRANSFER REF B2', 0.15, 0.3), ('1.000.00', 0.55, 0.08), ('54.89', 0.85, 0.08)]),
+      ]);
+      final (rows, facts) = reader.read([page]);
+      expect(rows.map((r) => r.date), [DateTime(2026, 9, 6), DateTime(2026, 9, 6)]);
+      expect(rows.map((r) => r.amount), [1000, -1000]);
+      expect(rows.last.balance, 54.89);
+      expect(facts.refs, [const StatementRef(StatementRefKind.account, '0001', 12)]);
+      expect(facts.from, DateTime(2026, 6, 16));
+      expect(facts.to, DateTime(2026, 9, 15));
+    });
+
     test('a document with no money in it gives nothing', () {
       final page = DocPage([
         ...line(0.03, [('Liability Determination Report', 0.05, 0.4)]),
@@ -359,4 +449,67 @@ void main() {
     });
   });
 
+
+  group('the on-device model points at words, and the numbers judge', () {
+    // Word indexes on statement(): opening 8; rows (date, name, amount,
+    // balance) 9-12, 13-16, 17-20; closing 22.
+    const fullReading = PageStructure(opening: 8, closing: 22, rows: [
+      StructuredRow(date: 9, amount: 11, balance: 12, name: 'Salary'),
+      StructuredRow(date: 13, amount: 15, balance: 16, name: 'Panda'),
+      StructuredRow(date: 17, amount: 19, balance: 20, name: 'STC'),
+    ]);
+
+    test('rows the rules missed come from the words the model pointed at', () {
+      final pages = [statement()];
+      final ruled = reader.facts(pages, reader.readPages(pages));
+      final (rows, facts) = reader.withStructure(pages, const [], ruled, const [fullReading]);
+      expect(rows.map((r) => r.amount), [18000, -642.10, -300]);
+      expect(rows.first.date, DateTime(2026, 11, 1));
+      expect(rows.map((r) => r.description), ['Salary', 'Panda', 'STC']);
+      expect(Reconciliation.of(facts, rows)!.addsUp, isTrue);
+    });
+
+    test('pointing at a word with no figure drops the whole reading', () {
+      final pages = [statement()];
+      final (ruledRows, ruled) = reader.read(pages);
+      const wrong = PageStructure(rows: [StructuredRow(date: 9, amount: 10, name: 'Salary')]);
+      final (rows, facts) = reader.withStructure(pages, ruledRows, ruled, const [wrong]);
+      expect(rows, ruledRows);
+      expect(facts, ruled);
+    });
+
+    test('pointing past the page drops the whole reading', () {
+      final pages = [statement()];
+      final (ruledRows, ruled) = reader.read(pages);
+      const wrong = PageStructure(rows: [StructuredRow(amount: 400, name: 'Ghost')]);
+      expect(reader.withStructure(pages, ruledRows, ruled, const [wrong]).$1, ruledRows);
+    });
+
+    test('a reading that loses a row loses to the rules', () {
+      final pages = [statement()];
+      final (ruledRows, ruled) = reader.read(pages);
+      final short = PageStructure(rows: fullReading.rows.sublist(0, 2));
+      final (rows, _) = reader.withStructure(pages, ruledRows, ruled, [short]);
+      expect(rows, ruledRows);
+    });
+
+    test('when the rules win, only an unreadable name is taken from the model', () {
+      final page = DocPage([
+        ...line(0.10, [('Date', 0.05, 0.08), ('Description', 0.18, 0.2), ('Debit', 0.55, 0.08), ('Credit', 0.68, 0.08), ('Balance', 0.82, 0.1)]),
+        ...line(0.16, [('01/11/2026', 0.05, 0.1), ('A.. E.', 0.18, 0.2), ('500.00', 0.55, 0.08), ('1,500.00', 0.82, 0.1)]),
+        ...line(0.19, [('03/11/2026', 0.05, 0.1), ('PANDA RIYADH', 0.18, 0.2), ('100.00', 0.55, 0.08), ('1,400.00', 0.82, 0.1)]),
+      ]);
+      final pages = [page];
+      final (ruledRows, ruled) = reader.read(pages);
+      expect(ruledRows, hasLength(2));
+      // The model reads the same rows but no balances, so it scores lower.
+      const reading = PageStructure(rows: [
+        StructuredRow(date: 5, amount: 7, name: 'Ahmed Essam'),
+        StructuredRow(date: 9, amount: 11, name: 'Panda'),
+      ]);
+      final (rows, _) = reader.withStructure(pages, ruledRows, ruled, const [reading]);
+      expect(rows.map((r) => r.amount), ruledRows.map((r) => r.amount));
+      expect(rows.map((r) => r.description), ['Ahmed Essam', ruledRows[1].description]);
+    });
+  });
 }

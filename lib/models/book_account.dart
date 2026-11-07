@@ -79,7 +79,12 @@ enum SystemAccount {
 
   /// Loan profit always goes here, so the budget shows it as spending and
   /// the principal never does.
-  interestAndFees('category.interest_and_fees', 'Interest & fees', AccountSide.spending, AccountType.category);
+  interestAndFees('category.interest_and_fees', 'Interest & fees', AccountSide.spending, AccountType.category),
+
+  /// Where an imported row goes when nothing could place it, until the
+  /// person picks a category (Money › To categorize).
+  uncategorized('category.uncategorized', 'Uncategorized', AccountSide.spending, AccountType.category),
+  uncategorizedIncome('category.uncategorized_income', 'Uncategorized income', AccountSide.income, AccountType.category);
 
   final String id;
   final String defaultName;

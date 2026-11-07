@@ -4148,6 +4148,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get importDiscardAll => 'تجاهل الكل';
 
   @override
+  String get importApplyBalance => 'تطبيق الرصيد';
+
+  @override
   String get importDiscardConfirm => 'تجاهل هذه الملفات؟ لن يُضاف منها شيء.';
 
   @override
@@ -4266,4 +4269,65 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get importEmpty => 'لا شيء في الانتظار';
+
+  @override
+  String get catUncategorized => 'غير مصنّف';
+
+  @override
+  String get catUncategorizedIncome => 'دخل غير مصنّف';
+
+  @override
+  String get toCategorizeTitle => 'بانتظار التصنيف';
+
+  @override
+  String toCategorizeCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count عمليات بانتظار التصنيف',
+      one: 'عملية بانتظار التصنيف',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get toCategorizeHint =>
+      'اختر فئة مرة واحدة لكل اسم، وتستخدمها العمليات المستوردة من هذا الاسم من الآن.';
+
+  @override
+  String get toCategorizeEmpty => 'كل العمليات مصنّفة.';
+
+  @override
+  String toCategorizeAlso(
+    int count,
+    String name,
+    String category,
+    String from,
+  ) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          'هل تضع أيضًا $count عمليات سابقة من $name في $category؟ هي الآن في $from.',
+      one: 'هل تضع أيضًا عملية سابقة من $name في $category؟ هي الآن في $from.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get toCategorizeAlsoYes => 'انقلها';
+
+  @override
+  String get categoriesLearned => 'تعلّمتها من اختياراتك';
+
+  @override
+  String get categoriesForgetTitle => 'نسيان هذا الاختيار؟';
+
+  @override
+  String categoriesForgetMessage(String name, String category) {
+    return 'لن تذهب العمليات المستوردة من $name إلى $category تلقائيًا بعد الآن. تبقى العمليات الموجودة كما هي.';
+  }
+
+  @override
+  String get categoriesForget => 'نسيان';
 }

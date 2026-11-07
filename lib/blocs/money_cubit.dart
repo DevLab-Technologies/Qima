@@ -5,6 +5,7 @@ import 'package:uuid/uuid.dart';
 import '../models/book.dart';
 import '../models/book_account.dart';
 import '../models/book_entry.dart';
+import '../models/categorizer.dart';
 import '../models/default_categories.dart';
 import '../models/entry_builder.dart';
 import '../models/money.dart';
@@ -47,11 +48,18 @@ class MoneyState extends Equatable {
           if (a.type == type && (archived || !a.archived)) a,
       ];
 
-  /// Spending or income categories, Interest & fees included for spending.
-  List<BookAccount> categories(AccountSide side) => [
-        for (final a in book.accounts.values)
-          if (a.type == AccountType.category && a.side == side && !a.archived) a,
-      ];
+  /// Spending or income categories, the person's first; then Interest &
+  /// fees and Uncategorized, which every book has.
+  List<BookAccount> categories(AccountSide side) {
+    final all = [
+      for (final a in book.accounts.values)
+        if (a.type == AccountType.category && a.side == side && !a.archived) a,
+    ];
+    return [...all.where((a) => !a.isSystem), ...all.where((a) => a.isSystem)];
+  }
+
+  /// Uncategorized entries grouped by merchant (Money › To categorize).
+  late final List<UncategorizedGroup> uncategorized = Categorizer.uncategorized(book);
 
   /// True once the person has added anything Money keeps: Home then calls
   /// its total Net worth instead of Portfolio.
@@ -472,6 +480,36 @@ class MoneyCubit extends Cubit<MoneyState> {
       features: {...state.settings.features, MoneyFeature.budget},
     ));
   }
+
+  /// Books [entryIds] to [categoryId], and with [ruleKey] remembers the
+  /// choice for that merchant so later imports use it. All or nothing.
+  Future<void> categorize(Iterable<String> entryIds, String categoryId, {String? ruleKey}) async {
+    final ids = entryIds.toSet();
+    final book = state.book;
+    final changed = [
+      for (final e in state.entries)
+        if (ids.contains(e.id)) Categorizer.recategorized(e, book, categoryId),
+    ];
+    final all = Book(state.accounts, [for (final e in state.entries) if (!ids.contains(e.id)) e, ...changed]);
+    for (final e in changed) {
+      _check(all, e);
+    }
+    if (changed.isNotEmpty) {
+      final saved = await store.entries.upsertAll(changed);
+      if (isClosed) return;
+      emit(state.copyWith(entries: saved));
+    }
+    if (ruleKey != null) await learnCategories({ruleKey: categoryId});
+  }
+
+  /// Remembers categories picked for merchants, by rule key.
+  Future<void> learnCategories(Map<String, String> rules) async {
+    if (rules.isEmpty) return;
+    await _saveSettings(state.settings.copyWith(categoryRules: {...state.settings.categoryRules, ...rules}));
+  }
+
+  Future<void> forgetCategory(String ruleKey) =>
+      _saveSettings(state.settings.copyWith(categoryRules: {...state.settings.categoryRules}..remove(ruleKey)));
 
   Future<void> markWhatsNewSeen() => _saveSettings(state.settings.copyWith(seenWhatsNew: true));
 

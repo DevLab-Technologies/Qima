@@ -4129,6 +4129,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get importDiscardAll => 'Discard all';
 
   @override
+  String get importApplyBalance => 'Apply the balance';
+
+  @override
   String get importDiscardConfirm =>
       'Discard these files? Nothing from them is added.';
 
@@ -4246,4 +4249,66 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get importEmpty => 'Nothing waiting';
+
+  @override
+  String get catUncategorized => 'Uncategorized';
+
+  @override
+  String get catUncategorizedIncome => 'Uncategorized income';
+
+  @override
+  String get toCategorizeTitle => 'To categorize';
+
+  @override
+  String toCategorizeCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count to categorize',
+      one: '1 to categorize',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get toCategorizeHint =>
+      'Pick a category once for each name. Imports from that name use it from now on.';
+
+  @override
+  String get toCategorizeEmpty => 'Everything has a category.';
+
+  @override
+  String toCategorizeAlso(
+    int count,
+    String name,
+    String category,
+    String from,
+  ) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          'Also put $count earlier entries from $name in $category? They are in $from now.',
+      one:
+          'Also put 1 earlier entry from $name in $category? It is in $from now.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get toCategorizeAlsoYes => 'Move them';
+
+  @override
+  String get categoriesLearned => 'Learned from your choices';
+
+  @override
+  String get categoriesForgetTitle => 'Forget this choice?';
+
+  @override
+  String categoriesForgetMessage(String name, String category) {
+    return 'Imports from $name will no longer go to $category on their own. Entries already there stay.';
+  }
+
+  @override
+  String get categoriesForget => 'Forget';
 }

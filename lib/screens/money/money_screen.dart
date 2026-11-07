@@ -14,6 +14,7 @@ import '../../theme/money_labels.dart';
 import '../../theme/qima_colors.dart';
 import '../../widgets/money_widgets.dart';
 import 'accounts_screens.dart';
+import 'categorize_screen.dart';
 import 'entry_detail_screen.dart';
 import 'entry_editor_screen.dart';
 import 'more_money_screens.dart';
@@ -84,6 +85,19 @@ class _MoneyScreenState extends State<MoneyScreen> {
           ),
         ));
         sections.add(const SizedBox(height: DS.spaceMD));
+
+        // Imported entries nothing could place, waiting for a category.
+        final toCategorize = ToCategorizeScreen.count(state);
+        if (toCategorize > 0) {
+          sections.add(MoneySection(children: [
+            MoneyRow(
+              key: const ValueKey('toCategorize'),
+              icon: Icons.label_off_outlined,
+              title: l10n.toCategorizeCount(toCategorize),
+              onTap: () => ToCategorizeScreen.open(context),
+            ),
+          ]));
+        }
 
         // Worth a look: arithmetic on the person's own budget, ending in a choice.
         if (isThisMonth && a.hasBudget) {

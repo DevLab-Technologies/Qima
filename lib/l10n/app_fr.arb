@@ -1197,6 +1197,7 @@
   "importAddCount": "{count, plural, =0{Ajouter} =1{Ajouter 1 opération} other{Ajouter {count} opérations}}",
   "importAdded": "{count, plural, =1{1 opération ajoutée} other{{count} opérations ajoutées}}",
   "importDiscardAll": "Tout ignorer",
+  "importApplyBalance": "Appliquer le solde",
   "importDiscardConfirm": "Ignorer ces fichiers ? Rien n’en sera ajouté.",
   "importDiscard": "Ignorer",
   "importRemoveFile": "Retirer le fichier",
@@ -1226,5 +1227,17 @@
   "importCategory": "Catégorie",
   "importNothingSelected": "Cochez les opérations à ajouter.",
   "importReadOnDevice": "Lu sur cet appareil. Les fichiers sont supprimés après l’import.",
-  "importEmpty": "Rien en attente"
+  "importEmpty": "Rien en attente",
+  "catUncategorized": "Non classé",
+  "catUncategorizedIncome": "Revenus non classés",
+  "toCategorizeTitle": "À classer",
+  "toCategorizeCount": "{count, plural, =1{1 à classer} other{{count} à classer}}",
+  "toCategorizeHint": "Choisissez une catégorie une fois par nom. Les imports de ce nom l’utiliseront désormais.",
+  "toCategorizeEmpty": "Tout est classé.",
+  "toCategorizeAlso": "{count, plural, =1{Mettre aussi 1 opération antérieure de {name} dans {category} ? Elle est dans {from}.} other{Mettre aussi {count} opérations antérieures de {name} dans {category} ? Elles sont dans {from}.}}",
+  "toCategorizeAlsoYes": "Les déplacer",
+  "categoriesLearned": "Appris de vos choix",
+  "categoriesForgetTitle": "Oublier ce choix ?",
+  "categoriesForgetMessage": "Les imports de {name} n’iront plus d’eux-mêmes dans {category}. Les opérations déjà classées restent.",
+  "categoriesForget": "Oublier"
 }

@@ -83,6 +83,10 @@ class MoneySettings extends Equatable implements Syncable {
 
   static const int keptHashes = 400;
 
+  /// Categories the person picked for merchants, by rule key ("out:panda"
+  /// to a category id). Imports use them first; Categories lists them.
+  final Map<String, String> categoryRules;
+
   const MoneySettings({
     this.features = const {},
     this.homeOrder = const [],
@@ -92,6 +96,7 @@ class MoneySettings extends Equatable implements Syncable {
     this.seenWhatsNew = false,
     this.valueReviewMonths = 6,
     this.importedHashes = const [],
+    this.categoryRules = const {},
   });
 
   @override
@@ -135,6 +140,7 @@ class MoneySettings extends Equatable implements Syncable {
     bool? seenWhatsNew,
     int? valueReviewMonths,
     List<String>? importedHashes,
+    Map<String, String>? categoryRules,
   }) =>
       MoneySettings(
         features: features ?? this.features,
@@ -145,6 +151,7 @@ class MoneySettings extends Equatable implements Syncable {
         seenWhatsNew: seenWhatsNew ?? this.seenWhatsNew,
         valueReviewMonths: valueReviewMonths ?? this.valueReviewMonths,
         importedHashes: importedHashes ?? this.importedHashes,
+        categoryRules: categoryRules ?? this.categoryRules,
       );
 
   @override
@@ -158,6 +165,7 @@ class MoneySettings extends Equatable implements Syncable {
         if (seenWhatsNew) 'seenWhatsNew': true,
         'valueReviewMonths': valueReviewMonths,
         if (importedHashes.isNotEmpty) 'imported': importedHashes,
+        if (categoryRules.isNotEmpty) 'categoryRules': categoryRules,
       };
 
   factory MoneySettings.fromJson(Map<String, dynamic> json) {
@@ -171,11 +179,12 @@ class MoneySettings extends Equatable implements Syncable {
       seenWhatsNew: json['seenWhatsNew'] as bool? ?? false,
       valueReviewMonths: (json['valueReviewMonths'] as num?)?.toInt() ?? 6,
       importedHashes: names('imported'),
+      categoryRules: {for (final e in ((json['categoryRules'] as Map?) ?? const {}).entries) e.key as String: e.value as String},
     );
   }
 
   @override
-  List<Object?> get props => [features, homeOrder, hiddenCards, budgets, budgetCurrency, seenWhatsNew, valueReviewMonths, importedHashes];
+  List<Object?> get props => [features, homeOrder, hiddenCards, budgets, budgetCurrency, seenWhatsNew, valueReviewMonths, importedHashes, categoryRules];
 }
 
 /// A payment that comes back every month, shown in Coming up until it is

@@ -7097,6 +7097,12 @@ abstract class AppLocalizations {
   /// **'Discard all'**
   String get importDiscardAll;
 
+  /// Review button when no rows are ticked but the statement balance will be set
+  ///
+  /// In en, this message translates to:
+  /// **'Apply the balance'**
+  String get importApplyBalance;
+
   /// No description provided for @importDiscardConfirm.
   ///
   /// In en, this message translates to:
@@ -7276,6 +7282,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Nothing waiting'**
   String get importEmpty;
+
+  /// Categories: catUncategorized
+  ///
+  /// In en, this message translates to:
+  /// **'Uncategorized'**
+  String get catUncategorized;
+
+  /// Categories: catUncategorizedIncome
+  ///
+  /// In en, this message translates to:
+  /// **'Uncategorized income'**
+  String get catUncategorizedIncome;
+
+  /// Categories: toCategorizeTitle
+  ///
+  /// In en, this message translates to:
+  /// **'To categorize'**
+  String get toCategorizeTitle;
+
+  /// Categories: toCategorizeCount
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 to categorize} other{{count} to categorize}}'**
+  String toCategorizeCount(int count);
+
+  /// Categories: toCategorizeHint
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a category once for each name. Imports from that name use it from now on.'**
+  String get toCategorizeHint;
+
+  /// Categories: toCategorizeEmpty
+  ///
+  /// In en, this message translates to:
+  /// **'Everything has a category.'**
+  String get toCategorizeEmpty;
+
+  /// Categories: toCategorizeAlso
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Also put 1 earlier entry from {name} in {category}? It is in {from} now.} other{Also put {count} earlier entries from {name} in {category}? They are in {from} now.}}'**
+  String toCategorizeAlso(int count, String name, String category, String from);
+
+  /// Categories: toCategorizeAlsoYes
+  ///
+  /// In en, this message translates to:
+  /// **'Move them'**
+  String get toCategorizeAlsoYes;
+
+  /// Categories: categoriesLearned
+  ///
+  /// In en, this message translates to:
+  /// **'Learned from your choices'**
+  String get categoriesLearned;
+
+  /// Categories: categoriesForgetTitle
+  ///
+  /// In en, this message translates to:
+  /// **'Forget this choice?'**
+  String get categoriesForgetTitle;
+
+  /// Categories: categoriesForgetMessage
+  ///
+  /// In en, this message translates to:
+  /// **'Imports from {name} will no longer go to {category} on their own. Entries already there stay.'**
+  String categoriesForgetMessage(String name, String category);
+
+  /// Categories: categoriesForget
+  ///
+  /// In en, this message translates to:
+  /// **'Forget'**
+  String get categoriesForget;
 }
 
 class _AppLocalizationsDelegate

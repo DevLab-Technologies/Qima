@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:qima/blocs/app_cubit.dart';
 import 'package:qima/models/transaction_capture.dart';
 import 'package:qima/models/statement_facts.dart';
+import 'package:qima/models/statement_reader.dart';
 import 'package:qima/services/ai_assist_provider.dart';
 import 'package:qima/services/preferences.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -28,6 +29,9 @@ class _Wording implements AiAssistProvider {
 
   @override
   Future<List<LineLabel>?> labelStatementLines(List<String> lines, String localeTag) async => null;
+
+  @override
+  Future<List<PageStructure>?> structurePages(String path, List<DocPage> pages, String localeTag) async => null;
 }
 
 void main() {

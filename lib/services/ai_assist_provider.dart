@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 import '../models/statement_facts.dart';
+import '../models/statement_reader.dart';
 import '../models/transaction_capture.dart';
 
 /// The one seam between Qima's domain layer and an on-device language model
@@ -54,6 +55,14 @@ abstract class AiAssistProvider {
   /// help. The reader checks every label against the line itself; see
   /// `StatementReader.withLabels`.
   Future<List<LineLabel>?> labelStatementLines(List<String> lines, String localeTag);
+
+  /// Says, for each page of the document at [path], which of its words
+  /// ([pages], numbered from 0 per page) are each transaction's date,
+  /// amount, balance and direction, and which are the opening and closing
+  /// balances, with each payee's name read off the picture. Returns null
+  /// when the model can't help. It points at words and never writes a
+  /// figure; see `StatementReader.withStructure`.
+  Future<List<PageStructure>?> structurePages(String path, List<DocPage> pages, String localeTag);
 }
 
 /// Whether a model's [candidate] rewording of [original] can be shown: it
@@ -119,6 +128,9 @@ class NullAiAssistProvider implements AiAssistProvider {
 
   @override
   Future<List<LineLabel>?> labelStatementLines(List<String> lines, String localeTag) async => null;
+
+  @override
+  Future<List<PageStructure>?> structurePages(String path, List<DocPage> pages, String localeTag) async => null;
 }
 
 /// The OS's own on-device model (v4 phase 6): Apple's Foundation Models on
@@ -195,6 +207,27 @@ class PlatformAiAssistProvider implements AiAssistProvider {
       return null;
     } on PlatformException catch (e) {
       debugPrint('AiAssist: labelStatementLines failed: $e');
+      return null;
+    }
+  }
+
+  @override
+  Future<List<PageStructure>?> structurePages(String path, List<DocPage> pages, String localeTag) async {
+    if (pages.isEmpty) return null;
+    try {
+      final raw = await _channel.invokeListMethod<Object?>('structurePages', {
+        'path': path,
+        'locale': localeTag,
+        'pages': [
+          for (final p in pages) [for (final t in p.tokens) {'t': t.text, 'x': t.x, 'y': t.y, 'w': t.w, 'h': t.h}],
+        ],
+      });
+      if (raw == null || raw.length != pages.length) return null;
+      return [for (final p in raw) p is Map<Object?, Object?> ? PageStructure.fromMap(p) : const PageStructure()];
+    } on MissingPluginException {
+      return null;
+    } on PlatformException catch (e) {
+      debugPrint('AiAssist: structurePages failed: $e');
       return null;
     }
   }

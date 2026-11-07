@@ -461,7 +461,7 @@ class CategoriesScreen extends StatelessWidget {
           title: Text(l10n.categoryRename),
           content: TextField(controller: controller, autofocus: true),
           actions: [
-            if (c.id != SystemAccount.interestAndFees.id)
+            if (!c.isSystem)
               TextButton(
                 onPressed: () async {
                   final ok = await confirmDelete(d, title: l10n.categoryRemove, message: l10n.categoryRemoveMessage, confirmLabel: l10n.commonDelete);
@@ -500,6 +500,20 @@ class CategoriesScreen extends StatelessWidget {
       if (name != null && name.isNotEmpty) await money.addCategory(name, side);
     }
 
+    // What Qima learned from the person's choices, each one forgettable.
+    final learned = [
+      for (final MapEntry(:key, :value) in state.settings.categoryRules.entries)
+        if (state.book.accounts[value] case final category?) (key, key.substring(key.indexOf(':') + 1), category),
+    ]..sort((a, b) => a.$2.compareTo(b.$2));
+
+    Future<void> forget(String ruleKey, String name, BookAccount category) async {
+      final ok = await confirmDelete(context,
+          title: l10n.categoriesForgetTitle,
+          message: l10n.categoriesForgetMessage(name, l10n.accountName(category)),
+          confirmLabel: l10n.categoriesForget);
+      if (ok) await money.forgetCategory(ruleKey);
+    }
+
     Widget list(String title, AccountSide side) => MoneySection(
           title: title,
           trailing: IconButton(visualDensity: VisualDensity.compact, icon: const Icon(Icons.add), onPressed: () => add(side)),
@@ -514,7 +528,24 @@ class CategoriesScreen extends StatelessWidget {
         appBar: AppBar(backgroundColor: Colors.transparent, title: Text(l10n.categoriesTitle)),
         body: ListView(
           padding: const EdgeInsets.all(DS.spaceMD),
-          children: [list(l10n.categoriesSpending, AccountSide.spending), list(l10n.categoriesIncome, AccountSide.income)],
+          children: [
+            list(l10n.categoriesSpending, AccountSide.spending),
+            list(l10n.categoriesIncome, AccountSide.income),
+            if (learned.isNotEmpty)
+              MoneySection(
+                title: l10n.categoriesLearned,
+                children: [
+                  for (final (ruleKey, name, category) in learned)
+                    MoneyRow(
+                      key: ValueKey('rule:$ruleKey'),
+                      icon: MoneyIcons.account(category),
+                      title: name,
+                      subtitle: l10n.accountName(category),
+                      onTap: () => forget(ruleKey, name, category),
+                    ),
+                ],
+              ),
+          ],
         ),
       ),
     );

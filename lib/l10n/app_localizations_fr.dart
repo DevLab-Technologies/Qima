@@ -4155,6 +4155,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get importDiscardAll => 'Tout ignorer';
 
   @override
+  String get importApplyBalance => 'Appliquer le solde';
+
+  @override
   String get importDiscardConfirm =>
       'Ignorer ces fichiers ? Rien n’en sera ajouté.';
 
@@ -4273,4 +4276,66 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get importEmpty => 'Rien en attente';
+
+  @override
+  String get catUncategorized => 'Non classé';
+
+  @override
+  String get catUncategorizedIncome => 'Revenus non classés';
+
+  @override
+  String get toCategorizeTitle => 'À classer';
+
+  @override
+  String toCategorizeCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count à classer',
+      one: '1 à classer',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get toCategorizeHint =>
+      'Choisissez une catégorie une fois par nom. Les imports de ce nom l’utiliseront désormais.';
+
+  @override
+  String get toCategorizeEmpty => 'Tout est classé.';
+
+  @override
+  String toCategorizeAlso(
+    int count,
+    String name,
+    String category,
+    String from,
+  ) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          'Mettre aussi $count opérations antérieures de $name dans $category ? Elles sont dans $from.',
+      one:
+          'Mettre aussi 1 opération antérieure de $name dans $category ? Elle est dans $from.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get toCategorizeAlsoYes => 'Les déplacer';
+
+  @override
+  String get categoriesLearned => 'Appris de vos choix';
+
+  @override
+  String get categoriesForgetTitle => 'Oublier ce choix ?';
+
+  @override
+  String categoriesForgetMessage(String name, String category) {
+    return 'Les imports de $name n’iront plus d’eux-mêmes dans $category. Les opérations déjà classées restent.';
+  }
+
+  @override
+  String get categoriesForget => 'Oublier';
 }
