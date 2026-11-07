@@ -5152,6 +5152,1836 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Speech and receipts are read on this device and never sent anywhere. Nothing is saved until you confirm, and every number comes from what you typed, said or scanned.'**
   String get helpAddAssetStep6Body;
+
+  /// No description provided for @navHome.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get navHome;
+
+  /// No description provided for @navMoney.
+  ///
+  /// In en, this message translates to:
+  /// **'Money'**
+  String get navMoney;
+
+  /// No description provided for @navPrices.
+  ///
+  /// In en, this message translates to:
+  /// **'Prices'**
+  String get navPrices;
+
+  /// No description provided for @netWorth.
+  ///
+  /// In en, this message translates to:
+  /// **'Net worth'**
+  String get netWorth;
+
+  /// No description provided for @balanceSheet.
+  ///
+  /// In en, this message translates to:
+  /// **'Balance sheet'**
+  String get balanceSheet;
+
+  /// No description provided for @youOwn.
+  ///
+  /// In en, this message translates to:
+  /// **'You own'**
+  String get youOwn;
+
+  /// No description provided for @youOweSide.
+  ///
+  /// In en, this message translates to:
+  /// **'You owe'**
+  String get youOweSide;
+
+  /// No description provided for @ownOweLine.
+  ///
+  /// In en, this message translates to:
+  /// **'You own {own} · You owe {owe}'**
+  String ownOweLine(String own, String owe);
+
+  /// No description provided for @sheetHoldings.
+  ///
+  /// In en, this message translates to:
+  /// **'Holdings'**
+  String get sheetHoldings;
+
+  /// No description provided for @sheetHoldingsLive.
+  ///
+  /// In en, this message translates to:
+  /// **'At live prices'**
+  String get sheetHoldingsLive;
+
+  /// No description provided for @sheetCash.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash and bank'**
+  String get sheetCash;
+
+  /// No description provided for @sheetOwedToYou.
+  ///
+  /// In en, this message translates to:
+  /// **'Money owed to you'**
+  String get sheetOwedToYou;
+
+  /// No description provided for @sheetAssets.
+  ///
+  /// In en, this message translates to:
+  /// **'Property and more'**
+  String get sheetAssets;
+
+  /// No description provided for @sheetCards.
+  ///
+  /// In en, this message translates to:
+  /// **'Cards'**
+  String get sheetCards;
+
+  /// No description provided for @sheetLoans.
+  ///
+  /// In en, this message translates to:
+  /// **'Loans'**
+  String get sheetLoans;
+
+  /// No description provided for @sheetYouOwe.
+  ///
+  /// In en, this message translates to:
+  /// **'Money you owe people'**
+  String get sheetYouOwe;
+
+  /// No description provided for @sheetNothingOwed.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing owed. Cards, loans and money you owe people appear here once added.'**
+  String get sheetNothingOwed;
+
+  /// No description provided for @sheetMissingRates.
+  ///
+  /// In en, this message translates to:
+  /// **'No exchange rate yet for {codes}; those amounts are left out of the total.'**
+  String sheetMissingRates(String codes);
+
+  /// No description provided for @acctCash.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash'**
+  String get acctCash;
+
+  /// No description provided for @acctDebit.
+  ///
+  /// In en, this message translates to:
+  /// **'Bank account'**
+  String get acctDebit;
+
+  /// No description provided for @acctCredit.
+  ///
+  /// In en, this message translates to:
+  /// **'Card'**
+  String get acctCredit;
+
+  /// No description provided for @acctLoan.
+  ///
+  /// In en, this message translates to:
+  /// **'Loan'**
+  String get acctLoan;
+
+  /// No description provided for @acctReceivable.
+  ///
+  /// In en, this message translates to:
+  /// **'Owes you'**
+  String get acctReceivable;
+
+  /// No description provided for @acctPayable.
+  ///
+  /// In en, this message translates to:
+  /// **'You owe'**
+  String get acctPayable;
+
+  /// No description provided for @acctAsset.
+  ///
+  /// In en, this message translates to:
+  /// **'Asset'**
+  String get acctAsset;
+
+  /// No description provided for @acctCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get acctCategory;
+
+  /// No description provided for @assetKindProperty.
+  ///
+  /// In en, this message translates to:
+  /// **'Property'**
+  String get assetKindProperty;
+
+  /// No description provided for @assetKindVehicle.
+  ///
+  /// In en, this message translates to:
+  /// **'Vehicle'**
+  String get assetKindVehicle;
+
+  /// No description provided for @assetKindBusiness.
+  ///
+  /// In en, this message translates to:
+  /// **'Business'**
+  String get assetKindBusiness;
+
+  /// No description provided for @assetKindValuables.
+  ///
+  /// In en, this message translates to:
+  /// **'Valuables'**
+  String get assetKindValuables;
+
+  /// No description provided for @assetKindOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get assetKindOther;
+
+  /// No description provided for @assetKindPropertyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'A home, land, a shop'**
+  String get assetKindPropertyHint;
+
+  /// No description provided for @assetKindVehicleHint.
+  ///
+  /// In en, this message translates to:
+  /// **'A car, a motorbike, a boat'**
+  String get assetKindVehicleHint;
+
+  /// No description provided for @assetKindBusinessHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Your share in a business'**
+  String get assetKindBusinessHint;
+
+  /// No description provided for @assetKindValuablesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'A watch, art, a collection'**
+  String get assetKindValuablesHint;
+
+  /// No description provided for @assetKindOtherHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Anything else you own'**
+  String get assetKindOtherHint;
+
+  /// No description provided for @tplOpening.
+  ///
+  /// In en, this message translates to:
+  /// **'Opening balance'**
+  String get tplOpening;
+
+  /// No description provided for @tplSpend.
+  ///
+  /// In en, this message translates to:
+  /// **'Spend'**
+  String get tplSpend;
+
+  /// No description provided for @tplIncome.
+  ///
+  /// In en, this message translates to:
+  /// **'Income'**
+  String get tplIncome;
+
+  /// No description provided for @tplTransfer.
+  ///
+  /// In en, this message translates to:
+  /// **'Transfer'**
+  String get tplTransfer;
+
+  /// No description provided for @tplAtm.
+  ///
+  /// In en, this message translates to:
+  /// **'ATM withdrawal'**
+  String get tplAtm;
+
+  /// No description provided for @tplSwap.
+  ///
+  /// In en, this message translates to:
+  /// **'Currency swap'**
+  String get tplSwap;
+
+  /// No description provided for @tplCardPayment.
+  ///
+  /// In en, this message translates to:
+  /// **'Card payment'**
+  String get tplCardPayment;
+
+  /// No description provided for @tplLoanPayment.
+  ///
+  /// In en, this message translates to:
+  /// **'Loan payment'**
+  String get tplLoanPayment;
+
+  /// No description provided for @tplLent.
+  ///
+  /// In en, this message translates to:
+  /// **'Lent'**
+  String get tplLent;
+
+  /// No description provided for @tplBorrowed.
+  ///
+  /// In en, this message translates to:
+  /// **'Borrowed'**
+  String get tplBorrowed;
+
+  /// No description provided for @tplRepaymentIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Repayment received'**
+  String get tplRepaymentIn;
+
+  /// No description provided for @tplRepaymentOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Repayment made'**
+  String get tplRepaymentOut;
+
+  /// No description provided for @tplRefund.
+  ///
+  /// In en, this message translates to:
+  /// **'Refund'**
+  String get tplRefund;
+
+  /// No description provided for @tplDeclined.
+  ///
+  /// In en, this message translates to:
+  /// **'Declined'**
+  String get tplDeclined;
+
+  /// No description provided for @tplCashCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash count'**
+  String get tplCashCount;
+
+  /// No description provided for @tplBillSplit.
+  ///
+  /// In en, this message translates to:
+  /// **'Bill split'**
+  String get tplBillSplit;
+
+  /// No description provided for @tplValuation.
+  ///
+  /// In en, this message translates to:
+  /// **'New value'**
+  String get tplValuation;
+
+  /// No description provided for @tplAssetSale.
+  ///
+  /// In en, this message translates to:
+  /// **'Sold'**
+  String get tplAssetSale;
+
+  /// No description provided for @tplAdjustment.
+  ///
+  /// In en, this message translates to:
+  /// **'Adjustment'**
+  String get tplAdjustment;
+
+  /// No description provided for @catGroceries.
+  ///
+  /// In en, this message translates to:
+  /// **'Groceries'**
+  String get catGroceries;
+
+  /// No description provided for @catDining.
+  ///
+  /// In en, this message translates to:
+  /// **'Dining'**
+  String get catDining;
+
+  /// No description provided for @catTransport.
+  ///
+  /// In en, this message translates to:
+  /// **'Transport'**
+  String get catTransport;
+
+  /// No description provided for @catBills.
+  ///
+  /// In en, this message translates to:
+  /// **'Bills'**
+  String get catBills;
+
+  /// No description provided for @catShopping.
+  ///
+  /// In en, this message translates to:
+  /// **'Shopping'**
+  String get catShopping;
+
+  /// No description provided for @catHealth.
+  ///
+  /// In en, this message translates to:
+  /// **'Health'**
+  String get catHealth;
+
+  /// No description provided for @catHome.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get catHome;
+
+  /// No description provided for @catOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get catOther;
+
+  /// No description provided for @catSalary.
+  ///
+  /// In en, this message translates to:
+  /// **'Salary'**
+  String get catSalary;
+
+  /// No description provided for @catOtherIncome.
+  ///
+  /// In en, this message translates to:
+  /// **'Other income'**
+  String get catOtherIncome;
+
+  /// No description provided for @catInterestFees.
+  ///
+  /// In en, this message translates to:
+  /// **'Interest & fees'**
+  String get catInterestFees;
+
+  /// No description provided for @sysOpening.
+  ///
+  /// In en, this message translates to:
+  /// **'Opening balances'**
+  String get sysOpening;
+
+  /// No description provided for @sysChange.
+  ///
+  /// In en, this message translates to:
+  /// **'Change in value'**
+  String get sysChange;
+
+  /// No description provided for @sysRounding.
+  ///
+  /// In en, this message translates to:
+  /// **'Rounding'**
+  String get sysRounding;
+
+  /// No description provided for @featBudget.
+  ///
+  /// In en, this message translates to:
+  /// **'Budget'**
+  String get featBudget;
+
+  /// No description provided for @featRecurring.
+  ///
+  /// In en, this message translates to:
+  /// **'Recurring payments'**
+  String get featRecurring;
+
+  /// No description provided for @featPeople.
+  ///
+  /// In en, this message translates to:
+  /// **'Lent and borrowed'**
+  String get featPeople;
+
+  /// No description provided for @featLoans.
+  ///
+  /// In en, this message translates to:
+  /// **'Loans'**
+  String get featLoans;
+
+  /// No description provided for @featBillSplit.
+  ///
+  /// In en, this message translates to:
+  /// **'Bill split'**
+  String get featBillSplit;
+
+  /// No description provided for @featZakat.
+  ///
+  /// In en, this message translates to:
+  /// **'Zakat'**
+  String get featZakat;
+
+  /// No description provided for @featBudgetDetail.
+  ///
+  /// In en, this message translates to:
+  /// **'A monthly amount per category, and what\'s left'**
+  String get featBudgetDetail;
+
+  /// No description provided for @featRecurringDetail.
+  ///
+  /// In en, this message translates to:
+  /// **'Bills and subscriptions, shown before they are due'**
+  String get featRecurringDetail;
+
+  /// No description provided for @featPeopleDetail.
+  ///
+  /// In en, this message translates to:
+  /// **'Who owes you, and whom you owe'**
+  String get featPeopleDetail;
+
+  /// No description provided for @featLoansDetail.
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s left on a loan, and each payment\'s profit'**
+  String get featLoansDetail;
+
+  /// No description provided for @featBillSplitDetail.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay a bill and split it; only your share is spending'**
+  String get featBillSplitDetail;
+
+  /// No description provided for @featZakatDetail.
+  ///
+  /// In en, this message translates to:
+  /// **'Zakat over your holdings, cash and debts'**
+  String get featZakatDetail;
+
+  /// No description provided for @featureTurnedOn.
+  ///
+  /// In en, this message translates to:
+  /// **'{feature} is on'**
+  String featureTurnedOn(String feature);
+
+  /// No description provided for @featuresTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Features'**
+  String get featuresTitle;
+
+  /// No description provided for @featuresSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Budget, recurring, loans and more'**
+  String get featuresSubtitle;
+
+  /// No description provided for @featuresIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Turning a feature off hides its screens, never your money: its amounts still count and still show on the balance sheet.'**
+  String get featuresIntro;
+
+  /// No description provided for @cardNeedsReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Needs review'**
+  String get cardNeedsReview;
+
+  /// No description provided for @cardComingUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Coming up'**
+  String get cardComingUp;
+
+  /// No description provided for @cardLeftToSpend.
+  ///
+  /// In en, this message translates to:
+  /// **'Left to spend'**
+  String get cardLeftToSpend;
+
+  /// No description provided for @cardAccounts.
+  ///
+  /// In en, this message translates to:
+  /// **'Accounts'**
+  String get cardAccounts;
+
+  /// No description provided for @editHome.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Home'**
+  String get editHome;
+
+  /// No description provided for @editHomeIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Move cards, or hide the ones you don\'t need. Qima never adds back a card you hid.'**
+  String get editHomeIntro;
+
+  /// No description provided for @editHomeTotalFixed.
+  ///
+  /// In en, this message translates to:
+  /// **'Always first: the balance sheet opens from it'**
+  String get editHomeTotalFixed;
+
+  /// No description provided for @editHomeCantHide.
+  ///
+  /// In en, this message translates to:
+  /// **'Shows only when something needs you'**
+  String get editHomeCantHide;
+
+  /// No description provided for @moveUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Move up'**
+  String get moveUp;
+
+  /// No description provided for @moveDown.
+  ///
+  /// In en, this message translates to:
+  /// **'Move down'**
+  String get moveDown;
+
+  /// No description provided for @moveToTop.
+  ///
+  /// In en, this message translates to:
+  /// **'Move to top'**
+  String get moveToTop;
+
+  /// No description provided for @startTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Start with what you have'**
+  String get startTitle;
+
+  /// No description provided for @startMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a bank account, a holding or a property. Qima adds them up into your net worth.'**
+  String get startMessage;
+
+  /// No description provided for @holdingsGainLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Gain {amount}'**
+  String holdingsGainLine(String amount);
+
+  /// No description provided for @reviewValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Review the value of {name}'**
+  String reviewValue(String name);
+
+  /// No description provided for @accountAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add an account'**
+  String get accountAdd;
+
+  /// No description provided for @accountEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit account'**
+  String get accountEdit;
+
+  /// No description provided for @accountNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get accountNameLabel;
+
+  /// No description provided for @accountCurrency.
+  ///
+  /// In en, this message translates to:
+  /// **'Currency'**
+  String get accountCurrency;
+
+  /// No description provided for @accountBalanceToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Balance today'**
+  String get accountBalanceToday;
+
+  /// No description provided for @accountOwedToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Owed on it today'**
+  String get accountOwedToday;
+
+  /// No description provided for @accountLoanLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'Left to pay (principal)'**
+  String get accountLoanLeft;
+
+  /// No description provided for @accountTheyOwe.
+  ///
+  /// In en, this message translates to:
+  /// **'They owe you'**
+  String get accountTheyOwe;
+
+  /// No description provided for @accountYouOwe.
+  ///
+  /// In en, this message translates to:
+  /// **'You owe them'**
+  String get accountYouOwe;
+
+  /// No description provided for @accountBalanceHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Qima starts from this figure; leave it empty for zero.'**
+  String get accountBalanceHelp;
+
+  /// No description provided for @accountSince.
+  ///
+  /// In en, this message translates to:
+  /// **'As of'**
+  String get accountSince;
+
+  /// No description provided for @accountLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'Card limit'**
+  String get accountLimit;
+
+  /// No description provided for @accountCounts.
+  ///
+  /// In en, this message translates to:
+  /// **'Count in net worth'**
+  String get accountCounts;
+
+  /// No description provided for @accountCountsHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Off leaves it out of the total; its history still adds up.'**
+  String get accountCountsHelp;
+
+  /// No description provided for @accountErrorName.
+  ///
+  /// In en, this message translates to:
+  /// **'Give it a name.'**
+  String get accountErrorName;
+
+  /// No description provided for @accountLeftOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Not counted in net worth'**
+  String get accountLeftOut;
+
+  /// No description provided for @accountAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} available'**
+  String accountAvailable(String amount);
+
+  /// No description provided for @accountCountCash.
+  ///
+  /// In en, this message translates to:
+  /// **'Count cash'**
+  String get accountCountCash;
+
+  /// No description provided for @accountCheckBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'Check the balance'**
+  String get accountCheckBalance;
+
+  /// No description provided for @accountPayCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay the card'**
+  String get accountPayCard;
+
+  /// No description provided for @accountPayLoan.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay the loan'**
+  String get accountPayLoan;
+
+  /// No description provided for @accountRemoveTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove account'**
+  String get accountRemoveTitle;
+
+  /// No description provided for @accountRemoveMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'An account with transactions is archived so its history still adds up. One never used is deleted.'**
+  String get accountRemoveMessage;
+
+  /// No description provided for @accountsEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No accounts yet'**
+  String get accountsEmptyTitle;
+
+  /// No description provided for @accountsEmptyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a bank account, cash, a card or a loan with what\'s in it today.'**
+  String get accountsEmptyMessage;
+
+  /// No description provided for @reconcileTracked.
+  ///
+  /// In en, this message translates to:
+  /// **'Qima has {amount}.'**
+  String reconcileTracked(String amount);
+
+  /// No description provided for @reconcileCounted.
+  ///
+  /// In en, this message translates to:
+  /// **'What you counted'**
+  String get reconcileCounted;
+
+  /// No description provided for @reconcileStatement.
+  ///
+  /// In en, this message translates to:
+  /// **'Balance on the statement or app'**
+  String get reconcileStatement;
+
+  /// No description provided for @reconcileDone.
+  ///
+  /// In en, this message translates to:
+  /// **'The difference is recorded under Other, so the balance matches.'**
+  String get reconcileDone;
+
+  /// No description provided for @entryAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount'**
+  String get entryAmount;
+
+  /// No description provided for @entryPrincipal.
+  ///
+  /// In en, this message translates to:
+  /// **'Principal'**
+  String get entryPrincipal;
+
+  /// No description provided for @entryProfit.
+  ///
+  /// In en, this message translates to:
+  /// **'Profit or interest'**
+  String get entryProfit;
+
+  /// No description provided for @entryProfitHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Counts as spending in Interest & fees; the principal never does.'**
+  String get entryProfitHelp;
+
+  /// No description provided for @entrySent.
+  ///
+  /// In en, this message translates to:
+  /// **'Sent'**
+  String get entrySent;
+
+  /// No description provided for @entryReceived.
+  ///
+  /// In en, this message translates to:
+  /// **'Received'**
+  String get entryReceived;
+
+  /// No description provided for @entryPaidFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid from'**
+  String get entryPaidFrom;
+
+  /// No description provided for @entryFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'From'**
+  String get entryFrom;
+
+  /// No description provided for @entryTo.
+  ///
+  /// In en, this message translates to:
+  /// **'To'**
+  String get entryTo;
+
+  /// No description provided for @entryPerson.
+  ///
+  /// In en, this message translates to:
+  /// **'Person'**
+  String get entryPerson;
+
+  /// No description provided for @entryCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get entryCategory;
+
+  /// No description provided for @entryDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get entryDate;
+
+  /// No description provided for @entryMerchant.
+  ///
+  /// In en, this message translates to:
+  /// **'Where'**
+  String get entryMerchant;
+
+  /// No description provided for @entryNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Note'**
+  String get entryNote;
+
+  /// No description provided for @entryDeclined.
+  ///
+  /// In en, this message translates to:
+  /// **'Declined'**
+  String get entryDeclined;
+
+  /// No description provided for @entryDeclinedHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Shown struck through; never in a balance.'**
+  String get entryDeclinedHelp;
+
+  /// No description provided for @entryEditTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit transaction'**
+  String get entryEditTitle;
+
+  /// No description provided for @entryDeleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete transaction?'**
+  String get entryDeleteTitle;
+
+  /// No description provided for @entryDeleteMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Every account it touched goes back to what it was before.'**
+  String get entryDeleteMessage;
+
+  /// No description provided for @entryErrorAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter an amount above zero.'**
+  String get entryErrorAmount;
+
+  /// No description provided for @entryErrorAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose the accounts.'**
+  String get entryErrorAccount;
+
+  /// No description provided for @entryErrorSameCurrency.
+  ///
+  /// In en, this message translates to:
+  /// **'Both accounts need the same currency. For different currencies, use Currency swap.'**
+  String get entryErrorSameCurrency;
+
+  /// No description provided for @entryErrorSwap.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose two accounts in different currencies.'**
+  String get entryErrorSwap;
+
+  /// No description provided for @entryErrorPerson.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter who it is.'**
+  String get entryErrorPerson;
+
+  /// No description provided for @entryErrorRate.
+  ///
+  /// In en, this message translates to:
+  /// **'There\'s no exchange rate for this currency yet. Try again once prices refresh.'**
+  String get entryErrorRate;
+
+  /// No description provided for @entryNeedsAccountTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add an account first'**
+  String get entryNeedsAccountTitle;
+
+  /// No description provided for @entryNeedsAccountMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This needs an account to come from or go to. Add one in Accounts.'**
+  String get entryNeedsAccountMessage;
+
+  /// No description provided for @howItAddsUp.
+  ///
+  /// In en, this message translates to:
+  /// **'How it adds up'**
+  String get howItAddsUp;
+
+  /// No description provided for @hiuUp.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} up by {amount}'**
+  String hiuUp(String name, String amount);
+
+  /// No description provided for @hiuDown.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} down by {amount}'**
+  String hiuDown(String name, String amount);
+
+  /// No description provided for @hiuSpending.
+  ///
+  /// In en, this message translates to:
+  /// **'Spending: it counts in your budget.'**
+  String get hiuSpending;
+
+  /// No description provided for @hiuIncome.
+  ///
+  /// In en, this message translates to:
+  /// **'Income: it counts in your cash flow.'**
+  String get hiuIncome;
+
+  /// No description provided for @hiuRefund.
+  ///
+  /// In en, this message translates to:
+  /// **'A refund lowers spending in its category.'**
+  String get hiuRefund;
+
+  /// No description provided for @hiuWorth.
+  ///
+  /// In en, this message translates to:
+  /// **'A change in value moves net worth only; it\'s never income or spending.'**
+  String get hiuWorth;
+
+  /// No description provided for @hiuMove.
+  ///
+  /// In en, this message translates to:
+  /// **'A move between your own accounts: not spending, and your net worth stays the same.'**
+  String get hiuMove;
+
+  /// No description provided for @hiuDeclined.
+  ///
+  /// In en, this message translates to:
+  /// **'Declined: nothing moved.'**
+  String get hiuDeclined;
+
+  /// No description provided for @allTransactions.
+  ///
+  /// In en, this message translates to:
+  /// **'All transactions'**
+  String get allTransactions;
+
+  /// No description provided for @transactionsSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get transactionsSearch;
+
+  /// No description provided for @transactionsEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No transactions'**
+  String get transactionsEmptyTitle;
+
+  /// No description provided for @transactionsEmptyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Add one with the + button.'**
+  String get transactionsEmptyMessage;
+
+  /// No description provided for @moneySpent.
+  ///
+  /// In en, this message translates to:
+  /// **'Spent'**
+  String get moneySpent;
+
+  /// No description provided for @moneySpentOf.
+  ///
+  /// In en, this message translates to:
+  /// **'{spent} of {budget}'**
+  String moneySpentOf(String spent, String budget);
+
+  /// No description provided for @moneySpentSoFar.
+  ///
+  /// In en, this message translates to:
+  /// **'Spent {amount} this month'**
+  String moneySpentSoFar(String amount);
+
+  /// No description provided for @moneyPace.
+  ///
+  /// In en, this message translates to:
+  /// **'At this pace: {amount} by the month\'s end'**
+  String moneyPace(String amount);
+
+  /// No description provided for @moneyNothingSpent.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing spent this month.'**
+  String get moneyNothingSpent;
+
+  /// No description provided for @moneyIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Money in'**
+  String get moneyIn;
+
+  /// No description provided for @moneyOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Money out'**
+  String get moneyOut;
+
+  /// No description provided for @moneyLeftOver.
+  ///
+  /// In en, this message translates to:
+  /// **'Left over'**
+  String get moneyLeftOver;
+
+  /// No description provided for @moneyShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Short'**
+  String get moneyShort;
+
+  /// No description provided for @moneyTrend.
+  ///
+  /// In en, this message translates to:
+  /// **'Spending by month'**
+  String get moneyTrend;
+
+  /// No description provided for @moneyTransactions.
+  ///
+  /// In en, this message translates to:
+  /// **'Transactions'**
+  String get moneyTransactions;
+
+  /// No description provided for @moneyStartMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Add an account first, then record what you spend.'**
+  String get moneyStartMessage;
+
+  /// No description provided for @whereItWent.
+  ///
+  /// In en, this message translates to:
+  /// **'Where it went'**
+  String get whereItWent;
+
+  /// No description provided for @cashFlow.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash flow'**
+  String get cashFlow;
+
+  /// No description provided for @worthALook.
+  ///
+  /// In en, this message translates to:
+  /// **'Worth a look'**
+  String get worthALook;
+
+  /// No description provided for @aheadOfPace.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} is ahead of its budget'**
+  String aheadOfPace(String name);
+
+  /// No description provided for @spareIn.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} has {amount} to spare'**
+  String spareIn(String name, String amount);
+
+  /// No description provided for @previousMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous month'**
+  String get previousMonth;
+
+  /// No description provided for @nextMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Next month'**
+  String get nextMonth;
+
+  /// No description provided for @ask.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask'**
+  String get ask;
+
+  /// No description provided for @askSpentMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'How much did I spend this month?'**
+  String get askSpentMonth;
+
+  /// No description provided for @askSpentMonthAnswer.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount}'**
+  String askSpentMonthAnswer(String amount);
+
+  /// No description provided for @askTopCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Where did most of it go?'**
+  String get askTopCategory;
+
+  /// No description provided for @askTopCategoryAnswer.
+  ///
+  /// In en, this message translates to:
+  /// **'{name}: {amount}'**
+  String askTopCategoryAnswer(String name, String amount);
+
+  /// No description provided for @askVsLastMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Is it more than last month?'**
+  String get askVsLastMonth;
+
+  /// No description provided for @askMore.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} more than last month'**
+  String askMore(String amount);
+
+  /// No description provided for @askLess.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} less than last month'**
+  String askLess(String amount);
+
+  /// No description provided for @askSame.
+  ///
+  /// In en, this message translates to:
+  /// **'About the same as last month'**
+  String get askSame;
+
+  /// No description provided for @askOwed.
+  ///
+  /// In en, this message translates to:
+  /// **'Who owes me money?'**
+  String get askOwed;
+
+  /// No description provided for @askNobodyOwes.
+  ///
+  /// In en, this message translates to:
+  /// **'Nobody owes you money.'**
+  String get askNobodyOwes;
+
+  /// No description provided for @assetAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add an asset'**
+  String get assetAdd;
+
+  /// No description provided for @assetEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit asset'**
+  String get assetEdit;
+
+  /// No description provided for @assetGoldNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Gold and silver by weight stay holdings, because Qima prices them. Add them with Add a holding.'**
+  String get assetGoldNote;
+
+  /// No description provided for @assetValueToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Value today'**
+  String get assetValueToday;
+
+  /// No description provided for @assetCost.
+  ///
+  /// In en, this message translates to:
+  /// **'Price paid'**
+  String get assetCost;
+
+  /// No description provided for @assetBought.
+  ///
+  /// In en, this message translates to:
+  /// **'Date bought'**
+  String get assetBought;
+
+  /// No description provided for @optional.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional'**
+  String get optional;
+
+  /// No description provided for @assetLoan.
+  ///
+  /// In en, this message translates to:
+  /// **'Loan secured on it'**
+  String get assetLoan;
+
+  /// No description provided for @assetNoLoan.
+  ///
+  /// In en, this message translates to:
+  /// **'None'**
+  String get assetNoLoan;
+
+  /// No description provided for @assetForSale.
+  ///
+  /// In en, this message translates to:
+  /// **'Held for sale'**
+  String get assetForSale;
+
+  /// No description provided for @assetForSaleHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Counts for zakat at its value. Off for things you use.'**
+  String get assetForSaleHelp;
+
+  /// No description provided for @assetErrorValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter today\'s value.'**
+  String get assetErrorValue;
+
+  /// No description provided for @assetsTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Total value'**
+  String get assetsTotal;
+
+  /// No description provided for @assetsTotalHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Values you set yourself, each with its date'**
+  String get assetsTotalHelp;
+
+  /// No description provided for @assetsEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No assets yet'**
+  String get assetsEmptyTitle;
+
+  /// No description provided for @assetsEmptyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a home, land, a car or a share in a business. You set the value; Qima keeps its history.'**
+  String get assetsEmptyMessage;
+
+  /// No description provided for @assetUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Updated {date}'**
+  String assetUpdated(String date);
+
+  /// No description provided for @assetSinceBought.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} since bought'**
+  String assetSinceBought(String amount);
+
+  /// No description provided for @assetUpdateValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Update the value'**
+  String get assetUpdateValue;
+
+  /// No description provided for @assetUpdateHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Every update is dated. The latest counts; older values stay as history.'**
+  String get assetUpdateHelp;
+
+  /// No description provided for @assetNewValue.
+  ///
+  /// In en, this message translates to:
+  /// **'New value'**
+  String get assetNewValue;
+
+  /// No description provided for @assetValueSource.
+  ///
+  /// In en, this message translates to:
+  /// **'Where the value comes from'**
+  String get assetValueSource;
+
+  /// No description provided for @assetSold.
+  ///
+  /// In en, this message translates to:
+  /// **'Sold it'**
+  String get assetSold;
+
+  /// No description provided for @assetSellTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sell {name}'**
+  String assetSellTitle(String name);
+
+  /// No description provided for @assetLastValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Last value: {amount}'**
+  String assetLastValue(String amount);
+
+  /// No description provided for @assetSoldInto.
+  ///
+  /// In en, this message translates to:
+  /// **'Money went into'**
+  String get assetSoldInto;
+
+  /// No description provided for @assetSoldFor.
+  ///
+  /// In en, this message translates to:
+  /// **'Sold for'**
+  String get assetSoldFor;
+
+  /// No description provided for @assetGain.
+  ///
+  /// In en, this message translates to:
+  /// **'Gain of {amount}'**
+  String assetGain(String amount);
+
+  /// No description provided for @assetLoss.
+  ///
+  /// In en, this message translates to:
+  /// **'Loss of {amount}'**
+  String assetLoss(String amount);
+
+  /// No description provided for @assetGainHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Compared with the last value. It\'s a change in value, never income.'**
+  String get assetGainHelp;
+
+  /// No description provided for @assetPayOff.
+  ///
+  /// In en, this message translates to:
+  /// **'The sale paid off {name}'**
+  String assetPayOff(String name);
+
+  /// No description provided for @assetPayOffHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} still owed, paid from the same account'**
+  String assetPayOffHelp(String amount);
+
+  /// No description provided for @assetYours.
+  ///
+  /// In en, this message translates to:
+  /// **'What is yours'**
+  String get assetYours;
+
+  /// No description provided for @assetValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Value'**
+  String get assetValue;
+
+  /// No description provided for @assetStillOwed.
+  ///
+  /// In en, this message translates to:
+  /// **'Still owed on {name}'**
+  String assetStillOwed(String name);
+
+  /// No description provided for @assetYoursTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Yours'**
+  String get assetYoursTotal;
+
+  /// No description provided for @assetYoursHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'The balance sheet still lists the asset under what you own and the loan under what you owe.'**
+  String get assetYoursHelp;
+
+  /// No description provided for @assetHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'History'**
+  String get assetHistory;
+
+  /// No description provided for @assetRemoveTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove asset'**
+  String get assetRemoveTitle;
+
+  /// No description provided for @assetRemoveMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'To record a sale, use Sold it instead. Removing archives it with its history.'**
+  String get assetRemoveMessage;
+
+  /// No description provided for @howTotalWorked.
+  ///
+  /// In en, this message translates to:
+  /// **'How the total is worked out'**
+  String get howTotalWorked;
+
+  /// No description provided for @howTotalIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Net worth is what you own minus what you owe.'**
+  String get howTotalIntro;
+
+  /// No description provided for @howTotalHoldings.
+  ///
+  /// In en, this message translates to:
+  /// **'Holdings use live prices, as on the watchlist.'**
+  String get howTotalHoldings;
+
+  /// No description provided for @howTotalAssets.
+  ///
+  /// In en, this message translates to:
+  /// **'Assets you value yourself use their latest value, with its date; each can be left out.'**
+  String get howTotalAssets;
+
+  /// No description provided for @howTotalLoans.
+  ///
+  /// In en, this message translates to:
+  /// **'Loans count principal only; future profit isn\'t a debt until it falls due.'**
+  String get howTotalLoans;
+
+  /// No description provided for @howTotalRates.
+  ///
+  /// In en, this message translates to:
+  /// **'Other currencies use the live rate.'**
+  String get howTotalRates;
+
+  /// No description provided for @sheetAccountsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{No accounts} =1{1 account} other{{count} accounts}}'**
+  String sheetAccountsCount(int count);
+
+  /// No description provided for @budgetFor.
+  ///
+  /// In en, this message translates to:
+  /// **'Budget for {name}'**
+  String budgetFor(String name);
+
+  /// No description provided for @budgetIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Set a monthly amount for the categories you want to watch. Card payments, transfers and loan principal never count.'**
+  String get budgetIntro;
+
+  /// No description provided for @budgetMonthly.
+  ///
+  /// In en, this message translates to:
+  /// **'Each month'**
+  String get budgetMonthly;
+
+  /// No description provided for @budgetZeroHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Zero removes it.'**
+  String get budgetZeroHelp;
+
+  /// No description provided for @budgetNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No budget'**
+  String get budgetNone;
+
+  /// No description provided for @budgetOf.
+  ///
+  /// In en, this message translates to:
+  /// **'Budget {amount}'**
+  String budgetOf(String amount);
+
+  /// No description provided for @budgetSet.
+  ///
+  /// In en, this message translates to:
+  /// **'Set a budget'**
+  String get budgetSet;
+
+  /// No description provided for @budgetTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'This month\'s budget'**
+  String get budgetTotal;
+
+  /// No description provided for @recurringAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a recurring payment'**
+  String get recurringAdd;
+
+  /// No description provided for @recurringDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Day of the month'**
+  String get recurringDay;
+
+  /// No description provided for @recurringEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No recurring payments'**
+  String get recurringEmptyTitle;
+
+  /// No description provided for @recurringEmptyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Add rent, bills and subscriptions to see them in Coming up before they\'re due.'**
+  String get recurringEmptyMessage;
+
+  /// No description provided for @recurringNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Next {date}'**
+  String recurringNext(String date);
+
+  /// No description provided for @recurringRecord.
+  ///
+  /// In en, this message translates to:
+  /// **'Record {name} for {date}'**
+  String recurringRecord(String name, String date);
+
+  /// No description provided for @peopleEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Nobody yet'**
+  String get peopleEmptyTitle;
+
+  /// No description provided for @peopleEmptyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Record money you lend or borrow, and the repayments.'**
+  String get peopleEmptyMessage;
+
+  /// No description provided for @splitTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Bill total'**
+  String get splitTotal;
+
+  /// No description provided for @splitWho.
+  ///
+  /// In en, this message translates to:
+  /// **'Who else shared it'**
+  String get splitWho;
+
+  /// No description provided for @splitShare.
+  ///
+  /// In en, this message translates to:
+  /// **'Share'**
+  String get splitShare;
+
+  /// No description provided for @splitAddPerson.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a person'**
+  String get splitAddPerson;
+
+  /// No description provided for @splitEvenly.
+  ///
+  /// In en, this message translates to:
+  /// **'Split evenly'**
+  String get splitEvenly;
+
+  /// No description provided for @splitMine.
+  ///
+  /// In en, this message translates to:
+  /// **'Your share (spending)'**
+  String get splitMine;
+
+  /// No description provided for @splitOwedToYou.
+  ///
+  /// In en, this message translates to:
+  /// **'Owed to you'**
+  String get splitOwedToYou;
+
+  /// No description provided for @splitHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'The full amount leaves the account; only your share is spending, and each other share becomes money owed to you.'**
+  String get splitHelp;
+
+  /// No description provided for @splitErrorPerson.
+  ///
+  /// In en, this message translates to:
+  /// **'Each person needs a name and a share.'**
+  String get splitErrorPerson;
+
+  /// No description provided for @splitErrorShares.
+  ///
+  /// In en, this message translates to:
+  /// **'Add at least one person, with shares no more than the total.'**
+  String get splitErrorShares;
+
+  /// No description provided for @categoriesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Categories'**
+  String get categoriesTitle;
+
+  /// No description provided for @categoriesSpending.
+  ///
+  /// In en, this message translates to:
+  /// **'Spending'**
+  String get categoriesSpending;
+
+  /// No description provided for @categoriesIncome.
+  ///
+  /// In en, this message translates to:
+  /// **'Income'**
+  String get categoriesIncome;
+
+  /// No description provided for @categoryRename.
+  ///
+  /// In en, this message translates to:
+  /// **'Rename category'**
+  String get categoryRename;
+
+  /// No description provided for @categoryRemove.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove category'**
+  String get categoryRemove;
+
+  /// No description provided for @categoryRemoveMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Transactions in it keep it in their history.'**
+  String get categoryRemoveMessage;
+
+  /// No description provided for @categoryAddSpending.
+  ///
+  /// In en, this message translates to:
+  /// **'New spending category'**
+  String get categoryAddSpending;
+
+  /// No description provided for @categoryAddIncome.
+  ///
+  /// In en, this message translates to:
+  /// **'New income category'**
+  String get categoryAddIncome;
+
+  /// No description provided for @valueReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Review asset values'**
+  String get valueReview;
+
+  /// No description provided for @valueReviewHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'A reminder in Needs review'**
+  String get valueReviewHelp;
+
+  /// No description provided for @valueReviewOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Off'**
+  String get valueReviewOff;
+
+  /// No description provided for @valueReviewMonths.
+  ///
+  /// In en, this message translates to:
+  /// **'{months, plural, =1{Every month} other{Every {months} months}}'**
+  String valueReviewMonths(int months);
+
+  /// No description provided for @addSheetSpendSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'A purchase, a bill or cash'**
+  String get addSheetSpendSubtitle;
+
+  /// No description provided for @addSheetMore.
+  ///
+  /// In en, this message translates to:
+  /// **'More'**
+  String get addSheetMore;
+
+  /// No description provided for @addSheetMoreSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Income, transfers, loans, lending, accounts, assets'**
+  String get addSheetMoreSubtitle;
+
+  /// No description provided for @whatsNewTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s new in Qima'**
+  String get whatsNewTitle;
+
+  /// No description provided for @whatsNewTabs.
+  ///
+  /// In en, this message translates to:
+  /// **'Three tabs: Home for where you stand, Money for where it goes, Prices for the market.'**
+  String get whatsNewTabs;
+
+  /// No description provided for @whatsNewBalanceSheet.
+  ///
+  /// In en, this message translates to:
+  /// **'Your holdings, accounts, cards and loans add up on one balance sheet. Tap the total to see it.'**
+  String get whatsNewBalanceSheet;
+
+  /// No description provided for @whatsNewAssets.
+  ///
+  /// In en, this message translates to:
+  /// **'Add property, a car or a business and update its value yourself.'**
+  String get whatsNewAssets;
+
+  /// No description provided for @whatsNewPick.
+  ///
+  /// In en, this message translates to:
+  /// **'What would you like to use?'**
+  String get whatsNewPick;
+
+  /// No description provided for @whatsNewLater.
+  ///
+  /// In en, this message translates to:
+  /// **'You can change these any time in Settings › Features.'**
+  String get whatsNewLater;
+
+  /// No description provided for @zakatDueTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Zakat due'**
+  String get zakatDueTitle;
+
+  /// No description provided for @zakatDueLine.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} due'**
+  String zakatDueLine(String amount);
+
+  /// No description provided for @zakatBelowLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Below the nisab'**
+  String get zakatBelowLine;
+
+  /// No description provided for @zakatBaseLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Counted: {amount}'**
+  String zakatBaseLine(String amount);
+
+  /// No description provided for @zakatAbove.
+  ///
+  /// In en, this message translates to:
+  /// **'Above the nisab of {amount}'**
+  String zakatAbove(String amount);
+
+  /// No description provided for @zakatBelow.
+  ///
+  /// In en, this message translates to:
+  /// **'Below the nisab of {amount}'**
+  String zakatBelow(String amount);
+
+  /// No description provided for @zakatNoThreshold.
+  ///
+  /// In en, this message translates to:
+  /// **'The nisab is shown once gold and silver prices load.'**
+  String get zakatNoThreshold;
+
+  /// No description provided for @zakatBase.
+  ///
+  /// In en, this message translates to:
+  /// **'Counted for zakat'**
+  String get zakatBase;
+
+  /// No description provided for @zakatHeldForSale.
+  ///
+  /// In en, this message translates to:
+  /// **'Assets held for sale'**
+  String get zakatHeldForSale;
+
+  /// No description provided for @zakatDebtsDue.
+  ///
+  /// In en, this message translates to:
+  /// **'Debts due now'**
+  String get zakatDebtsDue;
+
+  /// No description provided for @zakatBookHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Holdings follow your zakat settings. Card balances and money you owe people are deducted; loans aren\'t, because only an instalment due now would be, and Qima doesn\'t know a loan\'s schedule.'**
+  String get zakatBookHelp;
+
+  /// No description provided for @zakatHoldingsDetail.
+  ///
+  /// In en, this message translates to:
+  /// **'Holdings in detail'**
+  String get zakatHoldingsDetail;
 }
 
 class _AppLocalizationsDelegate

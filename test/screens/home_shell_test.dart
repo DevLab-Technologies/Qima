@@ -15,13 +15,18 @@ import 'package:qima/models/watch_card.dart';
 import 'package:qima/screens/add_instrument_screen.dart';
 import 'package:qima/screens/card_config_screen.dart';
 import 'package:qima/screens/home_shell.dart';
+import 'package:qima/screens/money/balance_sheet_screen.dart';
+import 'package:qima/screens/money/home_screen.dart';
+import 'package:qima/screens/money/money_screen.dart';
 import 'package:qima/screens/instrument_detail_screen.dart';
-import 'package:qima/screens/portfolio_detail_screen.dart';
 import 'package:qima/screens/settings_screen.dart';
 import 'package:qima/screens/watchlist_screen.dart';
 import 'package:qima/services/local_file_store.dart';
 import 'package:qima/services/price_repository.dart';
 import 'package:qima/theme/app_theme.dart';
+import 'package:qima/widgets/portfolio_hero.dart';
+
+import '../helpers/money_provider.dart';
 
 /// No-ops every network/on-disk call `AppCubit` fires in the background, so
 /// these widget tests can exercise `HomeShell` deterministically and offline
@@ -125,8 +130,7 @@ void main() {
   }
 
   Widget app(AppCubit cubit, {Locale locale = const Locale('en')}) {
-    return BlocProvider<AppCubit>.value(
-      value: cubit,
+    return MultiBlocProvider(providers: [BlocProvider<AppCubit>.value(value: cubit), testMoneyProvider(cubit)],
       child: MaterialApp(
         locale: locale,
         localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -146,32 +150,33 @@ void main() {
     }
   }
 
-  /// Taps a nav destination by its (unselected) icon rather than its label —
-  /// the Portfolio label text also appears elsewhere on screen (e.g. the
-  /// watchlist's portfolio hero), so a text finder would be ambiguous.
-  Future<void> tapNavDestination(WidgetTester tester, IconData icon) async {
-    await tester.tap(find.descendant(of: find.byType(BottomAppBar), matching: find.byIcon(icon)));
+  /// The tab bar's button for [label] (the bar marks each tab as a
+  /// labelled, selectable button).
+  Finder tabButton(String label) =>
+      find.byWidgetPredicate((w) => w is Semantics && w.properties.button == true && w.properties.label == label);
+
+  Future<void> tapTab(WidgetTester tester, String label) async {
+    await tester.tap(tabButton(label));
     await settle(tester);
   }
 
-  /// The bottom bar marks the tab labelled [label] as selected.
   void expectTabSelected(WidgetTester tester, String label) {
-    final tab = find.descendant(of: find.byType(BottomAppBar), matching: find.bySemanticsLabel(label));
-    expect(tester.getSemantics(tab), isSemantics(isSelected: true, isButton: true));
+    expect(tester.widget<Semantics>(tabButton(label)).properties.selected, isTrue);
   }
 
-  testWidgets('the phone bar has Watchlist and Portfolio either side of +, and Settings opens from Watchlist',
-      (tester) async {
+  testWidgets('the phone bar has Home, Money and Prices, and Settings opens from Home', (tester) async {
     setSurfaceSize(tester, const Size(400, 800));
     await tester.pumpWidget(app(cubit));
     await settle(tester);
 
     final l10n = await AppLocalizations.delegate.load(const Locale('en'));
-    final bar = find.byType(BottomAppBar);
-    expect(find.descendant(of: bar, matching: find.text(l10n.navWatchlist)), findsOneWidget);
-    expect(find.descendant(of: bar, matching: find.text(l10n.portfolioTitle)), findsOneWidget);
-    expect(find.descendant(of: bar, matching: find.text(l10n.settingsTitle)), findsNothing);
+    expect(tabButton(l10n.navHome), findsOneWidget);
+    expect(tabButton(l10n.navMoney), findsOneWidget);
+    expect(tabButton(l10n.navPrices), findsOneWidget);
+    expect(tabButton(l10n.settingsTitle), findsNothing);
     expect(find.byTooltip(l10n.addButton), findsOneWidget);
+    expectTabSelected(tester, l10n.navHome);
+    expect(find.byType(HomeScreen), findsOneWidget);
 
     await tester.tap(find.byTooltip(l10n.settingsTitle));
     await settle(tester);
@@ -179,12 +184,9 @@ void main() {
     expect(find.byType(BackButton), findsOneWidget);
   });
 
-  testWidgets('switching tabs preserves the watchlist asset-class filter and scroll state', (tester) async {
+  testWidgets('switching tabs preserves the Prices asset-class filter', (tester) async {
     // Add a non-metal card directly to state (not via `addCard`, which
-    // round-trips through the on-disk `watchlistStore` and would replace
-    // the in-memory-only gold/silver cards `setUp` seeded with `emit`) so
-    // the asset-class filter actually renders (only shown with >1 available
-    // class).
+    // round-trips through the on-disk store) so the filter renders.
     cubit.emit(cubit.state.copyWith(
       cards: [
         ...cubit.state.cards,
@@ -194,68 +196,60 @@ void main() {
     setSurfaceSize(tester, const Size(400, 800));
     await tester.pumpWidget(app(cubit));
     await settle(tester);
+    final l10n = await AppLocalizations.delegate.load(const Locale('en'));
 
+    await tapTab(tester, l10n.navPrices);
     final cryptoChip = find.widgetWithText(ChoiceChip, 'Crypto');
     expect(cryptoChip, findsOneWidget);
     await tester.tap(cryptoChip);
     await settle(tester);
 
-    // Switch to Portfolio, then Settings, then back to Watchlist.
-    await tapNavDestination(tester, Icons.pie_chart_outline);
-    expect(find.byType(PortfolioDetailScreen), findsOneWidget);
-    // `skipOffstage: false` — `IndexedStack` keeps inactive tabs mounted but
-    // offstage, and `find.byType` skips offstage widgets by default.
-    expect(find.byType(WatchlistScreen, skipOffstage: false), findsOneWidget); // kept alive underneath
+    await tapTab(tester, l10n.navMoney);
+    expect(find.byType(MoneyScreen), findsOneWidget);
+    // `IndexedStack` keeps inactive tabs mounted but offstage.
+    expect(find.byType(WatchlistScreen, skipOffstage: false), findsOneWidget);
 
-    await tapNavDestination(tester, Icons.list_alt_outlined);
-
-    // The Crypto filter chip is still selected (Gold/Silver rows are hidden).
-    final chipWidget = tester.widget<ChoiceChip>(cryptoChip);
-    expect(chipWidget.selected, isTrue);
+    await tapTab(tester, l10n.navPrices);
+    expect(tester.widget<ChoiceChip>(cryptoChip).selected, isTrue);
   });
 
-  testWidgets('the Portfolio tab shows no back button', (tester) async {
+  testWidgets('the Prices tab has no portfolio total and no back button', (tester) async {
     setSurfaceSize(tester, const Size(400, 800));
     await tester.pumpWidget(app(cubit));
     await settle(tester);
+    final l10n = await AppLocalizations.delegate.load(const Locale('en'));
 
-    await tapNavDestination(tester, Icons.pie_chart_outline);
+    await tapTab(tester, l10n.navPrices);
     expect(find.byType(BackButton), findsNothing);
+    expect(find.descendant(of: find.byType(WatchlistScreen), matching: find.byType(PortfolioHero)), findsNothing);
   });
 
-  testWidgets('Android back from Portfolio returns to Watchlist instead of exiting', (tester) async {
+  testWidgets('Android back from Money returns to Home instead of exiting', (tester) async {
     setSurfaceSize(tester, const Size(400, 800));
     await tester.pumpWidget(app(cubit));
     await settle(tester);
+    final l10n = await AppLocalizations.delegate.load(const Locale('en'));
 
-    await tapNavDestination(tester, Icons.pie_chart_outline);
-    expect(find.byType(PortfolioDetailScreen), findsOneWidget);
+    await tapTab(tester, l10n.navMoney);
+    expectTabSelected(tester, l10n.navMoney);
 
-    // Simulate the system back gesture/button through the standard test API.
     await tester.binding.handlePopRoute();
     await settle(tester);
-
-    final l10n = await AppLocalizations.delegate.load(const Locale('en'));
-    expectTabSelected(tester, l10n.navWatchlist);
-    // A second back press (now on Watchlist) is left for the platform to
-    // exit the app — PopScope.canPop is true there rather than intercepted.
+    expectTabSelected(tester, l10n.navHome);
   });
 
-  testWidgets('tapping the portfolio hero switches to the Portfolio tab', (tester) async {
+  testWidgets('before any account, Home shows the Portfolio total, and tapping it opens the balance sheet', (tester) async {
     setSurfaceSize(tester, const Size(400, 800));
     await tester.pumpWidget(app(cubit));
     await settle(tester);
 
-    final l10n = await AppLocalizations.delegate.load(const Locale('en'));
-    // The hero's own "Portfolio" label (not the nav bar's).
-    await tester.tap(find.text(l10n.portfolioTitle).first);
+    expect(find.byType(PortfolioHero), findsOneWidget);
+    await tester.tap(find.byType(PortfolioHero));
     await settle(tester);
-
-    expect(find.byType(PortfolioDetailScreen), findsOneWidget);
-    expectTabSelected(tester, l10n.portfolioTitle);
+    expect(find.byType(BalanceSheetScreen), findsOneWidget);
   });
 
-  testWidgets('add flow ends at [Shell(Watchlist), Detail] and Back shows the Watchlist tab', (tester) async {
+  testWidgets('add flow ends at [Shell, Detail] and Back shows the shell again', (tester) async {
     setSurfaceSize(tester, const Size(400, 800));
     await tester.pumpWidget(app(cubit));
     await settle(tester);
@@ -269,9 +263,6 @@ void main() {
     await settle(tester);
     expect(find.byType(AddInstrumentScreen), findsOneWidget);
 
-    // Scoped to AddInstrumentScreen — "Gold" also already appears as an
-    // existing watchlist row underneath it, so an unscoped text finder
-    // would be ambiguous.
     final goldOption = find.descendant(of: find.byType(AddInstrumentScreen), matching: find.text('Gold'));
     await tester.tap(goldOption.first);
     await settle(tester);
@@ -284,8 +275,6 @@ void main() {
     await settle(tester);
 
     expect(find.byType(InstrumentDetailScreen), findsOneWidget);
-    // `skipOffstage: false` — the Navigator keeps the previous route (the
-    // shell) mounted-but-offstage underneath the newly pushed detail route.
     expect(find.byType(HomeShell, skipOffstage: false), findsOneWidget);
 
     final navigator = tester.state<NavigatorState>(find.byType(Navigator).first);
@@ -293,30 +282,33 @@ void main() {
     navigator.pop();
     await settle(tester);
 
-    expect(find.byType(WatchlistScreen), findsOneWidget);
+    expect(find.byType(HomeScreen), findsOneWidget);
     expect(find.byType(InstrumentDetailScreen), findsNothing);
   });
 
-  testWidgets('a NavigationRail with all three tabs and the + is used at width >= 600', (tester) async {
+  testWidgets('a NavigationRail with three tabs, the + and Settings at the foot is used at width >= 600', (tester) async {
     setSurfaceSize(tester, const Size(900, 800));
     await tester.pumpWidget(app(cubit));
     await settle(tester);
 
     final l10n = await AppLocalizations.delegate.load(const Locale('en'));
     expect(find.byType(NavigationRail), findsOneWidget);
-    expect(find.byType(BottomAppBar), findsNothing);
+    expect(tester.widget<NavigationRail>(find.byType(NavigationRail)).destinations, hasLength(3));
     expect(find.byTooltip(l10n.addButton), findsOneWidget);
-    expect(find.byTooltip(l10n.settingsTitle), findsNothing);
+    // Settings sits at the rail's foot, not in Home's header.
+    expect(find.descendant(of: find.byType(NavigationRail), matching: find.byTooltip(l10n.settingsTitle)), findsOneWidget);
+    expect(find.byTooltip(l10n.settingsTitle), findsOneWidget);
   });
 
-  testWidgets('refresh keeps running while a non-watchlist tab is showing', (tester) async {
+  testWidgets('refresh keeps running while another tab is showing', (tester) async {
     setSurfaceSize(tester, const Size(400, 800));
     await tester.pumpWidget(app(cubit));
     await settle(tester);
     final callsAfterMount = repository.refreshAllCallCount;
     expect(callsAfterMount, greaterThan(0));
+    final l10n = await AppLocalizations.delegate.load(const Locale('en'));
 
-    await tapNavDestination(tester, Icons.pie_chart_outline);
+    await tapTab(tester, l10n.navMoney);
 
     await tester.runAsync(() async {
       await cubit.refreshAll(silent: true);
@@ -335,8 +327,7 @@ void main() {
   testWidgets('builds cleanly in light theme', (tester) async {
     setSurfaceSize(tester, const Size(400, 800));
     await tester.pumpWidget(
-      BlocProvider<AppCubit>.value(
-        value: cubit,
+      MultiBlocProvider(providers: [BlocProvider<AppCubit>.value(value: cubit), testMoneyProvider(cubit)],
         child: MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,

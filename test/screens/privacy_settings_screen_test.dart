@@ -9,6 +9,8 @@ import 'package:qima/services/preferences.dart';
 import 'package:qima/theme/app_theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../helpers/money_provider.dart';
+
 /// Scriptable fake so these tests never touch real biometric hardware.
 class _FakeAppLockService extends AppLockService {
   bool nextAuthResult = true;
@@ -22,8 +24,7 @@ class _FakeAppLockService extends AppLockService {
 
 void main() {
   Widget harness({required AppCubit cubit}) {
-    return BlocProvider<AppCubit>.value(
-      value: cubit,
+    return MultiBlocProvider(providers: [BlocProvider<AppCubit>.value(value: cubit), testMoneyProvider(cubit)],
       child: MaterialApp(
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,

@@ -6,6 +6,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../blocs/app_cubit.dart';
 import '../l10n/app_localizations.dart';
 import '../screens/add_instrument_screen.dart';
+import '../screens/money/accounts_screens.dart';
+import '../screens/money/asset_screens.dart';
+import '../screens/money/entry_editor_screen.dart';
+import '../screens/money/more_money_screens.dart';
+import '../theme/money_labels.dart';
 import '../services/dictation_service.dart';
 import '../theme/design_system.dart';
 import '../theme/help_topics.dart';
@@ -45,14 +50,77 @@ Future<void> showAddSheet(BuildContext context) async {
     cubit.textRecognition.isAvailable().timeout(unavailable, onTimeout: () => false),
   ).wait;
   if (!context.mounted) return;
-  final start = await showModalBottomSheet<AddStart>(
+  final choice = await showModalBottomSheet<Object>(
     context: context,
     showDragHandle: true,
     isScrollControlled: true,
+    // A tall sheet stops below the status bar, drag handle in view.
+    useSafeArea: true,
     builder: (_) => _AddSheet(canSpeak: dictation != DictationAvailability.unsupported, canScan: scan),
   );
-  if (start == null || !context.mounted) return;
-  unawaited(Navigator.of(context).push(MaterialPageRoute(builder: (_) => AddInstrumentScreen(start: start))));
+  if (choice == null || !context.mounted) return;
+  switch (choice) {
+    case AddStart start:
+      unawaited(Navigator.of(context).push(MaterialPageRoute(builder: (_) => AddInstrumentScreen(start: start))));
+    case EntryKind kind:
+      unawaited(EntryEditorScreen.open(context, kind));
+    case _MoreChoice.more:
+      await _showMore(context);
+  }
+}
+
+enum _MoreChoice { more, account, asset, recurring, billSplit }
+
+/// Everything else that can be added, under More.
+Future<void> _showMore(BuildContext context) async {
+  final l10n = AppLocalizations.of(context)!;
+  final choice = await showModalBottomSheet<Object>(
+    context: context,
+    showDragHandle: true,
+    isScrollControlled: true,
+    // A tall sheet stops below the status bar, drag handle in view.
+    useSafeArea: true,
+    builder: (sheetContext) {
+      Widget row(IconData icon, String title, Object value) =>
+          ListTile(leading: Icon(icon), title: Text(title), onTap: () => Navigator.of(sheetContext).pop(value));
+      return SafeArea(
+        child: SingleChildScrollView(
+          child: Column(mainAxisSize: MainAxisSize.min, children: [
+            for (final k in [
+              EntryKind.income,
+              EntryKind.transfer,
+              EntryKind.cardPayment,
+              EntryKind.loanPayment,
+              EntryKind.lent,
+              EntryKind.borrowed,
+              EntryKind.repaymentIn,
+              EntryKind.repaymentOut,
+              EntryKind.refund,
+              EntryKind.swap,
+            ])
+              row(MoneyIcons.template(k.template), l10n.template(k.template), k),
+            row(Icons.call_split, l10n.featBillSplit, _MoreChoice.billSplit),
+            row(Icons.event_repeat, l10n.recurringAdd, _MoreChoice.recurring),
+            row(Icons.account_balance_outlined, l10n.accountAdd, _MoreChoice.account),
+            row(Icons.home_work_outlined, l10n.assetAdd, _MoreChoice.asset),
+          ]),
+        ),
+      );
+    },
+  );
+  if (choice == null || !context.mounted) return;
+  switch (choice) {
+    case EntryKind kind:
+      unawaited(EntryEditorScreen.open(context, kind));
+    case _MoreChoice.account:
+      unawaited(AccountEditorScreen.open(context));
+    case _MoreChoice.asset:
+      unawaited(AssetEditorScreen.open(context));
+    case _MoreChoice.recurring:
+      unawaited(RecurringEditorScreen.open(context));
+    case _MoreChoice.billSplit:
+      unawaited(Navigator.of(context).push(MaterialPageRoute(builder: (_) => const BillSplitScreen())));
+  }
 }
 
 class _AddSheet extends StatelessWidget {
@@ -72,7 +140,7 @@ class _AddSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final colors = context.colors;
-    void choose(AddStart start) => Navigator.of(context).pop(start);
+    void choose(Object choice) => Navigator.of(context).pop(choice);
     return SafeArea(
       child: SingleChildScrollView(
         child: Padding(
@@ -81,6 +149,14 @@ class _AddSheet extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              _Choice(
+                key: const ValueKey('addSheetSpend'),
+                icon: Icons.shopping_cart_outlined,
+                title: l10n.tplSpend,
+                subtitle: l10n.addSheetSpendSubtitle,
+                onTap: () => choose(EntryKind.spend),
+              ),
+              const SizedBox(height: DS.spaceSM),
               _Choice(
                 key: const ValueKey('addSheetWatch'),
                 icon: Icons.list_alt_outlined,
@@ -95,6 +171,14 @@ class _AddSheet extends StatelessWidget {
                 title: l10n.addHoldingTitle,
                 subtitle: _holdingSubtitle(l10n),
                 onTap: () => choose(AddStart.holding),
+              ),
+              const SizedBox(height: DS.spaceSM),
+              _Choice(
+                key: const ValueKey('addSheetMore'),
+                icon: Icons.more_horiz,
+                title: l10n.addSheetMore,
+                subtitle: l10n.addSheetMoreSubtitle,
+                onTap: () => choose(_MoreChoice.more),
               ),
               if (assistantSupportedOnThisPlatform)
                 Padding(

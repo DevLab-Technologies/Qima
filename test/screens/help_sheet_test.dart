@@ -25,6 +25,8 @@ import 'package:qima/widgets/help_button.dart';
 import 'package:qima/theme/app_theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../helpers/money_provider.dart';
+
 /// Help button + help sheet behavior (spec "Help on every page" +
 /// Engineering rules): the button is present on every listed page, opens
 /// the right topic, the index sheet lists every topic, "Replay the tour"
@@ -66,8 +68,7 @@ void main() {
   });
 
   Widget harness(Widget child, {Locale locale = const Locale('en')}) {
-    return BlocProvider<AppCubit>.value(
-      value: cubit,
+    return MultiBlocProvider(providers: [BlocProvider<AppCubit>.value(value: cubit), testMoneyProvider(cubit)],
       child: MaterialApp(
         locale: locale,
         localizationsDelegates: AppLocalizations.localizationsDelegates,

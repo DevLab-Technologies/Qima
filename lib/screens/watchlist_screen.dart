@@ -42,12 +42,17 @@ class WatchlistScreen extends StatefulWidget {
   final VoidCallback? onOpenSettings;
   final ScrollController? scrollController;
 
+  /// The Prices tab (v5): titled Prices, with no portfolio total, which now
+  /// lives on Home.
+  final bool asPrices;
+
   const WatchlistScreen({
     super.key,
     this.manageRefreshLifecycle = true,
     this.onOpenPortfolio,
     this.onOpenSettings,
     this.scrollController,
+    this.asPrices = false,
   });
 
   @override
@@ -127,7 +132,9 @@ class _WatchlistScreenState extends State<WatchlistScreen> with WidgetsBindingOb
                 )
               : AppBar(
                   backgroundColor: Colors.transparent,
-                  title: Text(l10n.appTitle),
+                  automaticallyImplyLeading: !widget.asPrices,
+                  titleSpacing: widget.asPrices ? 16 : null,
+                  title: Text(widget.asPrices ? l10n.navPrices : l10n.appTitle),
                   actions: [
                     const HelpButton(topic: HelpTopicId.watchlist),
                     BlocBuilder<AppCubit, AppState>(
@@ -215,7 +222,7 @@ class _WatchlistScreenState extends State<WatchlistScreen> with WidgetsBindingOb
   
               if (_editingOrder) return _editOrderList(context, cubit, l10n, colors, state.cards);
   
-              final valuation = cubit.portfolioValuation;
+              final valuation = widget.asPrices ? null : cubit.portfolioValuation;
   
               // Only classes actually present in the watchlist get a filter
               // chip; a class with zero cards never shows an empty chip.
@@ -246,7 +253,7 @@ class _WatchlistScreenState extends State<WatchlistScreen> with WidgetsBindingOb
               return ListView(
                 controller: widget.scrollController,
                 // Extra room at the end so the docked + never covers the last row.
-                padding: const EdgeInsets.fromLTRB(DS.spaceMD, DS.spaceMD, DS.spaceMD, DS.spaceXL * 2),
+                padding: EdgeInsets.fromLTRB(DS.spaceMD, DS.spaceMD, DS.spaceMD, DS.spaceXL * (widget.asPrices ? 4 : 2)),
                 children: [
                   if (valuation != null) ...[
                     PortfolioHero(

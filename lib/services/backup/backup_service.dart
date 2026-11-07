@@ -18,7 +18,11 @@ import '../../models/price_alert.dart';
 import '../../models/syncable.dart';
 import '../../models/watch_card.dart';
 import '../../models/zakat.dart';
+import '../../models/book_account.dart';
+import '../../models/book_entry.dart';
+import '../../models/money_settings.dart';
 import '../alerts_store.dart';
+import '../book_store.dart';
 import '../custom_instrument_store.dart';
 import '../holdings_store.dart';
 import '../preferences.dart';
@@ -93,6 +97,10 @@ class BackupService {
   final TransactionsStore transactionsStore;
   final CustomInstrumentStore customInstrumentStore;
   final AlertsStore alertsStore;
+
+  /// The money ledger (v5). Optional so older callers and tests that never
+  /// touch money keep working; without it a backup carries no ledger.
+  final BookStore? bookStore;
   final Preferences preferences;
 
   BackupService({
@@ -101,6 +109,7 @@ class BackupService {
     TransactionsStore? transactionsStore,
     required this.customInstrumentStore,
     required this.alertsStore,
+    this.bookStore,
     required this.preferences,
   }) : transactionsStore = transactionsStore ?? TransactionsStore(legacyLots: holdingsStore);
 
@@ -149,6 +158,19 @@ class BackupService {
       zakat: (await preferences.zakatSettings).toJson(),
     );
 
+    final book = bookStore;
+    // Seeds the default categories first, so a replace from this backup
+    // never tombstones them on the device it restores to.
+    if (book != null) await book.loadAccounts();
+    final bookJson = book == null
+        ? null
+        : {
+            'accounts': [for (final r in await book.accounts.exportRecords()) r.toJson()],
+            'entries': [for (final r in await book.entries.exportRecords()) r.toJson()],
+            'recurring': [for (final r in await book.recurring.exportRecords()) r.toJson()],
+            'settings': [for (final r in await book.settings.exportRecords()) r.toJson()],
+          };
+
     return BackupPayload(
       watchcards: cardsRecords.map((r) => r.toJson()).toList(),
       holdings: lotsRecords.map((r) => r.toJson()).toList(),
@@ -156,6 +178,7 @@ class BackupService {
       customInstruments: customRecords.map((r) => r.toJson()).toList(),
       alerts: alertsRecords.map((r) => r.toJson()).toList(),
       settings: settings,
+      book: bookJson,
     );
   }
 
@@ -327,14 +350,15 @@ class BackupService {
     final customRecords = _decodeRecords(payload.customInstruments, CustomInstrument.fromJson);
     final alertRecords = _decodeRecords(payload.alerts, PriceAlert.fromJson);
 
-    final mergeDiff = await _diff(
+    final bookDiff = await _bookDiff(payload);
+    final mergeDiff = bookDiff.merge + await _diff(
       cardRecords: cardRecords,
       transactionRecords: transactionRecords,
       customRecords: customRecords,
       alertRecords: alertRecords,
       mode: BackupImportMode.merge,
     );
-    final replaceDiff = await _diff(
+    final replaceDiff = bookDiff.replace + await _diff(
       cardRecords: cardRecords,
       transactionRecords: transactionRecords,
       customRecords: customRecords,
@@ -343,6 +367,35 @@ class BackupService {
     );
 
     return BackupPreview(envelope: envelope, payload: payload, mergeDiff: mergeDiff, replaceDiff: replaceDiff);
+  }
+
+  /// What restoring the money ledger would change, in each mode. Nothing
+  /// when the backup has no ledger (it is then left as it is).
+  Future<({BackupDiff merge, BackupDiff replace})> _bookDiff(BackupPayload payload) async {
+    final book = bookStore, data = payload.book;
+    if (book == null || data == null) {
+      const none = BackupDiff(added: 0, updated: 0, removed: 0);
+      return (merge: none, replace: none);
+    }
+    final accounts = _decodeRecords(data['accounts'] ?? const [], BookAccount.fromJson);
+    final entries = _decodeRecords(data['entries'] ?? const [], BookEntry.fromJson);
+    final currentAccounts = await book.accounts.exportRecords();
+    final currentEntries = await book.entries.exportRecords();
+    BackupDiff of(BackupImportMode mode) =>
+        _diffRecords(currentAccounts, accounts, mode) + _diffRecords(currentEntries, entries, mode);
+    return (merge: of(BackupImportMode.merge), replace: of(BackupImportMode.replace));
+  }
+
+  Future<void> _importBook(BackupPayload payload, {required bool replace}) async {
+    final book = bookStore, data = payload.book;
+    if (book == null || data == null) return;
+    await book.accounts.importRecords(_decodeRecords(data['accounts'] ?? const [], BookAccount.fromJson), replace: replace);
+    await book.entries.importRecords(_decodeRecords(data['entries'] ?? const [], BookEntry.fromJson), replace: replace);
+    await book.recurring.importRecords(_decodeRecords(data['recurring'] ?? const [], RecurringPayment.fromJson), replace: replace);
+    final settings = _decodeRecords(data['settings'] ?? const [], MoneySettings.fromJson);
+    // Money's settings are one record: a merge keeps the newer copy, a
+    // replace takes the backup's only if it has one.
+    if (settings.isNotEmpty || !replace) await book.settings.importRecords(settings, replace: replace);
   }
 
   List<Record<T>> _decodeRecords<T extends Syncable>(
@@ -461,6 +514,7 @@ class BackupService {
     await transactionsStore.importRecords(transactionRecords, replace: replace);
     await customInstrumentStore.importRecords(customRecords, replace: replace);
     await alertsStore.importRecords(alertRecords, replace: replace);
+    await _importBook(payload, replace: replace);
 
     if (replace) {
       await _applySettings(payload.settings);

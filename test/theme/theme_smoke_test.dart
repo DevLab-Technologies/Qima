@@ -10,6 +10,8 @@ import 'package:qima/services/preferences.dart';
 import 'package:qima/theme/app_theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../helpers/money_provider.dart';
+
 /// Phase 1 smoke coverage: every main screen builds without error in both
 /// [ThemeMode]s, and [Appearance] round-trips through [AppState]/[AppCubit]
 /// the way `AppLanguage` already did.
@@ -47,8 +49,7 @@ void main() {
   testWidgets('the Appearance section renders a System/Light/Dark segmented button', (tester) async {
     final cubit = AppCubit();
     await tester.pumpWidget(
-      BlocProvider<AppCubit>.value(
-        value: cubit,
+      MultiBlocProvider(providers: [BlocProvider<AppCubit>.value(value: cubit), testMoneyProvider(cubit)],
         child: MaterialApp(
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,

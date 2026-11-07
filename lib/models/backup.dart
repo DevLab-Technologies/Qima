@@ -21,7 +21,10 @@ class BackupEnvelope extends Equatable {
   /// 2 (v3): holdings are a transaction ledger (`transactions`). A 2.x app
   /// refuses these rather than restoring the lots alone and silently
   /// dropping every sale.
-  static const int currentVersion = 2;
+  ///
+  /// 3 (v5): the money ledger (`book`). A 4.x app refuses these rather than
+  /// restoring the holdings alone and silently dropping every account.
+  static const int currentVersion = 3;
 
   final String format;
   final int version;
@@ -198,6 +201,11 @@ class BackupPayload extends Equatable {
   final List<Map<String, dynamic>> alerts;
   final BackupSettings settings;
 
+  /// The money ledger (v5): raw records per collection, keyed `accounts`,
+  /// `entries`, `recurring` and `settings`. Null in a backup written before
+  /// it existed; restoring one of those leaves the ledger untouched.
+  final Map<String, List<Map<String, dynamic>>>? book;
+
   const BackupPayload({
     required this.watchcards,
     required this.holdings,
@@ -205,6 +213,7 @@ class BackupPayload extends Equatable {
     required this.customInstruments,
     required this.alerts,
     required this.settings,
+    this.book,
   });
 
   Map<String, dynamic> toJson() => {
@@ -214,6 +223,7 @@ class BackupPayload extends Equatable {
         'customInstruments': customInstruments,
         'alerts': alerts,
         'settings': settings.toJson(),
+        if (book != null) 'book': book,
       };
 
   factory BackupPayload.fromJson(Map<String, dynamic> json) {
@@ -238,11 +248,24 @@ class BackupPayload extends Equatable {
       customInstruments: listOf('customInstruments'),
       alerts: listOf('alerts'),
       settings: BackupSettings.fromJson(settingsJson),
+      book: _bookOf(json['book']),
     );
   }
 
+  static Map<String, List<Map<String, dynamic>>>? _bookOf(Object? raw) {
+    if (raw == null) return null;
+    if (raw is! Map<String, dynamic>) throw const FormatException('invalid book');
+    return {
+      for (final e in raw.entries)
+        e.key: [
+          for (final r in (e.value is List ? e.value as List : throw FormatException('invalid book.${e.key}')))
+            r is Map<String, dynamic> ? r : throw FormatException('invalid book.${e.key} entry'),
+        ],
+    };
+  }
+
   @override
-  List<Object?> get props => [watchcards, holdings, transactions, customInstruments, alerts, settings];
+  List<Object?> get props => [watchcards, holdings, transactions, customInstruments, alerts, settings, book];
 }
 
 /// Envelope `payload` shape when `encrypted: true` — the [BackupPayload]

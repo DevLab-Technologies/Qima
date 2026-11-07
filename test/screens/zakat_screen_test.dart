@@ -25,6 +25,8 @@ import 'package:qima/theme/masking.dart';
 import 'package:qima/theme/strings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../helpers/money_provider.dart';
+
 /// Serves fixed prices and never touches the network or disk.
 class _FakeRepository extends PriceRepository {
   final Map<String, double> prices;
@@ -107,8 +109,7 @@ void main() {
     return cubit;
   }
 
-  Widget harness(AppCubit cubit, Widget home, {Locale locale = const Locale('en')}) => BlocProvider<AppCubit>.value(
-        value: cubit,
+  Widget harness(AppCubit cubit, Widget home, {Locale locale = const Locale('en')}) => MultiBlocProvider(providers: [BlocProvider<AppCubit>.value(value: cubit), testMoneyProvider(cubit)],
         child: MaterialApp(
           locale: locale,
           localizationsDelegates: AppLocalizations.localizationsDelegates,

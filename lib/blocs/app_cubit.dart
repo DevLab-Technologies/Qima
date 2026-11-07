@@ -27,6 +27,7 @@ import '../models/watchlist_sort.dart';
 import '../models/zakat.dart';
 import '../models/chart_range.dart';
 import '../services/ai_assist_provider.dart';
+import '../services/book_store.dart';
 import '../services/dictation_service.dart';
 import '../services/alert_runtime_store.dart';
 import '../services/alerts_store.dart';
@@ -64,6 +65,15 @@ class AppCubit extends Cubit<AppState> {
   final AlertsStore alertsStore;
   final AlertRuntimeStore alertRuntimeStore;
   final NotificationService notificationService;
+
+  /// The money ledger (v5). Owned here only so it shares [cloudStore] and
+  /// travels in backups; `MoneyCubit` reads and writes it.
+  final BookStore bookStore;
+
+  /// Set by `MoneyCubit`'s owner: reloads the money ledger after another
+  /// device changed [key], or every part of it when [key] is null (a
+  /// restore).
+  Future<void> Function(String? key)? onBookChanged;
 
   /// The OS's on-device language model (v4). Features reach it through
   /// [assist], which is the null provider unless Settings · On-device
@@ -115,6 +125,7 @@ class AppCubit extends Cubit<AppState> {
     AlertRuntimeStore? alertRuntimeStore,
     NotificationService? notificationService,
     SwitchableCloudKVStore? cloudStore,
+    BookStore? bookStore,
     AiAssistProvider? aiAssist,
     DictationService? dictation,
     TextRecognitionService? textRecognition,
@@ -136,6 +147,7 @@ class AppCubit extends Cubit<AppState> {
       alertRuntimeStore: alertRuntimeStore ?? AlertRuntimeStore(),
       notificationService: notificationService ?? NotificationService(),
       cloudStore: resolvedCloudStore,
+      bookStore: bookStore ?? BookStore(cloud: resolvedCloudStore),
       aiAssist: aiAssist ?? const PlatformAiAssistProvider(),
       dictation: dictation ?? const PlatformDictation(),
       textRecognition: textRecognition ?? const PlatformTextRecognition(),
@@ -154,6 +166,7 @@ class AppCubit extends Cubit<AppState> {
     required this.alertRuntimeStore,
     required this.notificationService,
     required this.cloudStore,
+    required this.bookStore,
     required this.aiAssist,
     required this.dictation,
     required this.textRecognition,
@@ -173,6 +186,7 @@ class AppCubit extends Cubit<AppState> {
       transactionsStore: transactionsStore,
       customInstrumentStore: customInstrumentStore,
       alertsStore: alertsStore,
+      bookStore: bookStore,
       preferences: preferences,
     );
 
@@ -431,6 +445,7 @@ class AppCubit extends Cubit<AppState> {
       'custominstruments.records': () => _reloadCustomInstruments(),
       'alerts.records': () => _reloadAlerts(),
       'zakatSettings': () => _reloadZakatSettings(),
+      for (final key in BookStore.cloudKeys) key: () async => onBookChanged?.call(key),
     };
 
     if (!platformSupportsICloud) return;
@@ -574,6 +589,7 @@ class AppCubit extends Cubit<AppState> {
     await _reloadCustomInstruments();
     await _reloadAlerts();
     await _reloadZakatSettings();
+    await onBookChanged?.call(null);
     if (isClosed) return;
     emit(state.copyWith(cloudSyncStatus: CloudSyncStatus.upToDate, lastCloudSyncAt: DateTime.now()));
   }
@@ -1358,6 +1374,7 @@ class AppCubit extends Cubit<AppState> {
   Future<void> restoreFromBackup(BackupPayload payload, {required BackupImportMode mode}) async {
     await backupService.import(payload, mode: mode);
     await _reloadAllStores();
+    await onBookChanged?.call(null);
     await _refreshBackupReminder();
   }
 

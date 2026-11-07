@@ -2250,5 +2250,590 @@
   "helpAddAssetStep5Title": "Add a holding",
   "helpAddAssetStep5Body": "Tap +, then Add holding. Type what you bought, or speak it or scan a receipt where this device can. Check what was read, then confirm.",
   "helpAddAssetStep6Title": "Read on this device",
-  "helpAddAssetStep6Body": "Speech and receipts are read on this device and never sent anywhere. Nothing is saved until you confirm, and every number comes from what you typed, said or scanned."
+  "helpAddAssetStep6Body": "Speech and receipts are read on this device and never sent anywhere. Nothing is saved until you confirm, and every number comes from what you typed, said or scanned.",
+  "navHome": "Home",
+  "navMoney": "Money",
+  "navPrices": "Prices",
+  "netWorth": "Net worth",
+  "balanceSheet": "Balance sheet",
+  "youOwn": "You own",
+  "youOweSide": "You owe",
+  "ownOweLine": "You own {own} · You owe {owe}",
+  "@ownOweLine": {
+    "placeholders": {
+      "own": {
+        "type": "String"
+      },
+      "owe": {
+        "type": "String"
+      }
+    }
+  },
+  "sheetHoldings": "Holdings",
+  "sheetHoldingsLive": "At live prices",
+  "sheetCash": "Cash and bank",
+  "sheetOwedToYou": "Money owed to you",
+  "sheetAssets": "Property and more",
+  "sheetCards": "Cards",
+  "sheetLoans": "Loans",
+  "sheetYouOwe": "Money you owe people",
+  "sheetNothingOwed": "Nothing owed. Cards, loans and money you owe people appear here once added.",
+  "sheetMissingRates": "No exchange rate yet for {codes}; those amounts are left out of the total.",
+  "@sheetMissingRates": {
+    "placeholders": {
+      "codes": {
+        "type": "String"
+      }
+    }
+  },
+  "acctCash": "Cash",
+  "acctDebit": "Bank account",
+  "acctCredit": "Card",
+  "acctLoan": "Loan",
+  "acctReceivable": "Owes you",
+  "acctPayable": "You owe",
+  "acctAsset": "Asset",
+  "acctCategory": "Category",
+  "assetKindProperty": "Property",
+  "assetKindVehicle": "Vehicle",
+  "assetKindBusiness": "Business",
+  "assetKindValuables": "Valuables",
+  "assetKindOther": "Other",
+  "assetKindPropertyHint": "A home, land, a shop",
+  "assetKindVehicleHint": "A car, a motorbike, a boat",
+  "assetKindBusinessHint": "Your share in a business",
+  "assetKindValuablesHint": "A watch, art, a collection",
+  "assetKindOtherHint": "Anything else you own",
+  "tplOpening": "Opening balance",
+  "tplSpend": "Spend",
+  "tplIncome": "Income",
+  "tplTransfer": "Transfer",
+  "tplAtm": "ATM withdrawal",
+  "tplSwap": "Currency swap",
+  "tplCardPayment": "Card payment",
+  "tplLoanPayment": "Loan payment",
+  "tplLent": "Lent",
+  "tplBorrowed": "Borrowed",
+  "tplRepaymentIn": "Repayment received",
+  "tplRepaymentOut": "Repayment made",
+  "tplRefund": "Refund",
+  "tplDeclined": "Declined",
+  "tplCashCount": "Cash count",
+  "tplBillSplit": "Bill split",
+  "tplValuation": "New value",
+  "tplAssetSale": "Sold",
+  "tplAdjustment": "Adjustment",
+  "catGroceries": "Groceries",
+  "catDining": "Dining",
+  "catTransport": "Transport",
+  "catBills": "Bills",
+  "catShopping": "Shopping",
+  "catHealth": "Health",
+  "catHome": "Home",
+  "catOther": "Other",
+  "catSalary": "Salary",
+  "catOtherIncome": "Other income",
+  "catInterestFees": "Interest & fees",
+  "sysOpening": "Opening balances",
+  "sysChange": "Change in value",
+  "sysRounding": "Rounding",
+  "featBudget": "Budget",
+  "featRecurring": "Recurring payments",
+  "featPeople": "Lent and borrowed",
+  "featLoans": "Loans",
+  "featBillSplit": "Bill split",
+  "featZakat": "Zakat",
+  "featBudgetDetail": "A monthly amount per category, and what's left",
+  "featRecurringDetail": "Bills and subscriptions, shown before they are due",
+  "featPeopleDetail": "Who owes you, and whom you owe",
+  "featLoansDetail": "What's left on a loan, and each payment's profit",
+  "featBillSplitDetail": "Pay a bill and split it; only your share is spending",
+  "featZakatDetail": "Zakat over your holdings, cash and debts",
+  "featureTurnedOn": "{feature} is on",
+  "@featureTurnedOn": {
+    "placeholders": {
+      "feature": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresTitle": "Features",
+  "featuresSubtitle": "Budget, recurring, loans and more",
+  "featuresIntro": "Turning a feature off hides its screens, never your money: its amounts still count and still show on the balance sheet.",
+  "cardNeedsReview": "Needs review",
+  "cardComingUp": "Coming up",
+  "cardLeftToSpend": "Left to spend",
+  "cardAccounts": "Accounts",
+  "editHome": "Edit Home",
+  "editHomeIntro": "Move cards, or hide the ones you don't need. Qima never adds back a card you hid.",
+  "editHomeTotalFixed": "Always first: the balance sheet opens from it",
+  "editHomeCantHide": "Shows only when something needs you",
+  "moveUp": "Move up",
+  "moveDown": "Move down",
+  "moveToTop": "Move to top",
+  "startTitle": "Start with what you have",
+  "startMessage": "Add a bank account, a holding or a property. Qima adds them up into your net worth.",
+  "holdingsGainLine": "Gain {amount}",
+  "@holdingsGainLine": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "reviewValue": "Review the value of {name}",
+  "@reviewValue": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "accountAdd": "Add an account",
+  "accountEdit": "Edit account",
+  "accountNameLabel": "Name",
+  "accountCurrency": "Currency",
+  "accountBalanceToday": "Balance today",
+  "accountOwedToday": "Owed on it today",
+  "accountLoanLeft": "Left to pay (principal)",
+  "accountTheyOwe": "They owe you",
+  "accountYouOwe": "You owe them",
+  "accountBalanceHelp": "Qima starts from this figure; leave it empty for zero.",
+  "accountSince": "As of",
+  "accountLimit": "Card limit",
+  "accountCounts": "Count in net worth",
+  "accountCountsHelp": "Off leaves it out of the total; its history still adds up.",
+  "accountErrorName": "Give it a name.",
+  "accountLeftOut": "Not counted in net worth",
+  "accountAvailable": "{amount} available",
+  "@accountAvailable": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "accountCountCash": "Count cash",
+  "accountCheckBalance": "Check the balance",
+  "accountPayCard": "Pay the card",
+  "accountPayLoan": "Pay the loan",
+  "accountRemoveTitle": "Remove account",
+  "accountRemoveMessage": "An account with transactions is archived so its history still adds up. One never used is deleted.",
+  "accountsEmptyTitle": "No accounts yet",
+  "accountsEmptyMessage": "Add a bank account, cash, a card or a loan with what's in it today.",
+  "reconcileTracked": "Qima has {amount}.",
+  "@reconcileTracked": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "reconcileCounted": "What you counted",
+  "reconcileStatement": "Balance on the statement or app",
+  "reconcileDone": "The difference is recorded under Other, so the balance matches.",
+  "entryAmount": "Amount",
+  "entryPrincipal": "Principal",
+  "entryProfit": "Profit or interest",
+  "entryProfitHelp": "Counts as spending in Interest & fees; the principal never does.",
+  "entrySent": "Sent",
+  "entryReceived": "Received",
+  "entryPaidFrom": "Paid from",
+  "entryFrom": "From",
+  "entryTo": "To",
+  "entryPerson": "Person",
+  "entryCategory": "Category",
+  "entryDate": "Date",
+  "entryMerchant": "Where",
+  "entryNote": "Note",
+  "entryDeclined": "Declined",
+  "entryDeclinedHelp": "Shown struck through; never in a balance.",
+  "entryEditTitle": "Edit transaction",
+  "entryDeleteTitle": "Delete transaction?",
+  "entryDeleteMessage": "Every account it touched goes back to what it was before.",
+  "entryErrorAmount": "Enter an amount above zero.",
+  "entryErrorAccount": "Choose the accounts.",
+  "entryErrorSameCurrency": "Both accounts need the same currency. For different currencies, use Currency swap.",
+  "entryErrorSwap": "Choose two accounts in different currencies.",
+  "entryErrorPerson": "Enter who it is.",
+  "entryErrorRate": "There's no exchange rate for this currency yet. Try again once prices refresh.",
+  "entryNeedsAccountTitle": "Add an account first",
+  "entryNeedsAccountMessage": "This needs an account to come from or go to. Add one in Accounts.",
+  "howItAddsUp": "How it adds up",
+  "hiuUp": "{name} up by {amount}",
+  "@hiuUp": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "hiuDown": "{name} down by {amount}",
+  "@hiuDown": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "hiuSpending": "Spending: it counts in your budget.",
+  "hiuIncome": "Income: it counts in your cash flow.",
+  "hiuRefund": "A refund lowers spending in its category.",
+  "hiuWorth": "A change in value moves net worth only; it's never income or spending.",
+  "hiuMove": "A move between your own accounts: not spending, and your net worth stays the same.",
+  "hiuDeclined": "Declined: nothing moved.",
+  "allTransactions": "All transactions",
+  "transactionsSearch": "Search",
+  "transactionsEmptyTitle": "No transactions",
+  "transactionsEmptyMessage": "Add one with the + button.",
+  "moneySpent": "Spent",
+  "moneySpentOf": "{spent} of {budget}",
+  "@moneySpentOf": {
+    "placeholders": {
+      "spent": {
+        "type": "String"
+      },
+      "budget": {
+        "type": "String"
+      }
+    }
+  },
+  "moneySpentSoFar": "Spent {amount} this month",
+  "@moneySpentSoFar": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "moneyPace": "At this pace: {amount} by the month's end",
+  "@moneyPace": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "moneyNothingSpent": "Nothing spent this month.",
+  "moneyIn": "Money in",
+  "moneyOut": "Money out",
+  "moneyLeftOver": "Left over",
+  "moneyShort": "Short",
+  "moneyTrend": "Spending by month",
+  "moneyTransactions": "Transactions",
+  "moneyStartMessage": "Add an account first, then record what you spend.",
+  "whereItWent": "Where it went",
+  "cashFlow": "Cash flow",
+  "worthALook": "Worth a look",
+  "aheadOfPace": "{name} is ahead of its budget",
+  "@aheadOfPace": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "spareIn": "{name} has {amount} to spare",
+  "@spareIn": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "previousMonth": "Previous month",
+  "nextMonth": "Next month",
+  "ask": "Ask",
+  "askSpentMonth": "How much did I spend this month?",
+  "askSpentMonthAnswer": "{amount}",
+  "@askSpentMonthAnswer": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "askTopCategory": "Where did most of it go?",
+  "askTopCategoryAnswer": "{name}: {amount}",
+  "@askTopCategoryAnswer": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "askVsLastMonth": "Is it more than last month?",
+  "askMore": "{amount} more than last month",
+  "@askMore": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "askLess": "{amount} less than last month",
+  "@askLess": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "askSame": "About the same as last month",
+  "askOwed": "Who owes me money?",
+  "askNobodyOwes": "Nobody owes you money.",
+  "assetAdd": "Add an asset",
+  "assetEdit": "Edit asset",
+  "assetGoldNote": "Gold and silver by weight stay holdings, because Qima prices them. Add them with Add a holding.",
+  "assetValueToday": "Value today",
+  "assetCost": "Price paid",
+  "assetBought": "Date bought",
+  "optional": "Optional",
+  "assetLoan": "Loan secured on it",
+  "assetNoLoan": "None",
+  "assetForSale": "Held for sale",
+  "assetForSaleHelp": "Counts for zakat at its value. Off for things you use.",
+  "assetErrorValue": "Enter today's value.",
+  "assetsTotal": "Total value",
+  "assetsTotalHelp": "Values you set yourself, each with its date",
+  "assetsEmptyTitle": "No assets yet",
+  "assetsEmptyMessage": "Add a home, land, a car or a share in a business. You set the value; Qima keeps its history.",
+  "assetUpdated": "Updated {date}",
+  "@assetUpdated": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "assetSinceBought": "{amount} since bought",
+  "@assetSinceBought": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "assetUpdateValue": "Update the value",
+  "assetUpdateHelp": "Every update is dated. The latest counts; older values stay as history.",
+  "assetNewValue": "New value",
+  "assetValueSource": "Where the value comes from",
+  "assetSold": "Sold it",
+  "assetSellTitle": "Sell {name}",
+  "@assetSellTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "assetLastValue": "Last value: {amount}",
+  "@assetLastValue": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "assetSoldInto": "Money went into",
+  "assetSoldFor": "Sold for",
+  "assetGain": "Gain of {amount}",
+  "@assetGain": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "assetLoss": "Loss of {amount}",
+  "@assetLoss": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "assetGainHelp": "Compared with the last value. It's a change in value, never income.",
+  "assetPayOff": "The sale paid off {name}",
+  "@assetPayOff": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "assetPayOffHelp": "{amount} still owed, paid from the same account",
+  "@assetPayOffHelp": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "assetYours": "What is yours",
+  "assetValue": "Value",
+  "assetStillOwed": "Still owed on {name}",
+  "@assetStillOwed": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "assetYoursTotal": "Yours",
+  "assetYoursHelp": "The balance sheet still lists the asset under what you own and the loan under what you owe.",
+  "assetHistory": "History",
+  "assetRemoveTitle": "Remove asset",
+  "assetRemoveMessage": "To record a sale, use Sold it instead. Removing archives it with its history.",
+  "howTotalWorked": "How the total is worked out",
+  "howTotalIntro": "Net worth is what you own minus what you owe.",
+  "howTotalHoldings": "Holdings use live prices, as on the watchlist.",
+  "howTotalAssets": "Assets you value yourself use their latest value, with its date; each can be left out.",
+  "howTotalLoans": "Loans count principal only; future profit isn't a debt until it falls due.",
+  "howTotalRates": "Other currencies use the live rate.",
+  "sheetAccountsCount": "{count, plural, =0{No accounts} =1{1 account} other{{count} accounts}}",
+  "@sheetAccountsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "budgetFor": "Budget for {name}",
+  "@budgetFor": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "budgetIntro": "Set a monthly amount for the categories you want to watch. Card payments, transfers and loan principal never count.",
+  "budgetMonthly": "Each month",
+  "budgetZeroHelp": "Zero removes it.",
+  "budgetNone": "No budget",
+  "budgetOf": "Budget {amount}",
+  "@budgetOf": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "budgetSet": "Set a budget",
+  "budgetTotal": "This month's budget",
+  "recurringAdd": "Add a recurring payment",
+  "recurringDay": "Day of the month",
+  "recurringEmptyTitle": "No recurring payments",
+  "recurringEmptyMessage": "Add rent, bills and subscriptions to see them in Coming up before they're due.",
+  "recurringNext": "Next {date}",
+  "@recurringNext": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "recurringRecord": "Record {name} for {date}",
+  "@recurringRecord": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "peopleEmptyTitle": "Nobody yet",
+  "peopleEmptyMessage": "Record money you lend or borrow, and the repayments.",
+  "splitTotal": "Bill total",
+  "splitWho": "Who else shared it",
+  "splitShare": "Share",
+  "splitAddPerson": "Add a person",
+  "splitEvenly": "Split evenly",
+  "splitMine": "Your share (spending)",
+  "splitOwedToYou": "Owed to you",
+  "splitHelp": "The full amount leaves the account; only your share is spending, and each other share becomes money owed to you.",
+  "splitErrorPerson": "Each person needs a name and a share.",
+  "splitErrorShares": "Add at least one person, with shares no more than the total.",
+  "categoriesTitle": "Categories",
+  "categoriesSpending": "Spending",
+  "categoriesIncome": "Income",
+  "categoryRename": "Rename category",
+  "categoryRemove": "Remove category",
+  "categoryRemoveMessage": "Transactions in it keep it in their history.",
+  "categoryAddSpending": "New spending category",
+  "categoryAddIncome": "New income category",
+  "valueReview": "Review asset values",
+  "valueReviewHelp": "A reminder in Needs review",
+  "valueReviewOff": "Off",
+  "valueReviewMonths": "{months, plural, =1{Every month} other{Every {months} months}}",
+  "@valueReviewMonths": {
+    "placeholders": {
+      "months": {
+        "type": "int"
+      }
+    }
+  },
+  "addSheetSpendSubtitle": "A purchase, a bill or cash",
+  "addSheetMore": "More",
+  "addSheetMoreSubtitle": "Income, transfers, loans, lending, accounts, assets",
+  "whatsNewTitle": "What's new in Qima",
+  "whatsNewTabs": "Three tabs: Home for where you stand, Money for where it goes, Prices for the market.",
+  "whatsNewBalanceSheet": "Your holdings, accounts, cards and loans add up on one balance sheet. Tap the total to see it.",
+  "whatsNewAssets": "Add property, a car or a business and update its value yourself.",
+  "whatsNewPick": "What would you like to use?",
+  "whatsNewLater": "You can change these any time in Settings › Features.",
+  "zakatDueTitle": "Zakat due",
+  "zakatDueLine": "{amount} due",
+  "@zakatDueLine": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "zakatBelowLine": "Below the nisab",
+  "zakatBaseLine": "Counted: {amount}",
+  "@zakatBaseLine": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "zakatAbove": "Above the nisab of {amount}",
+  "@zakatAbove": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "zakatBelow": "Below the nisab of {amount}",
+  "@zakatBelow": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "zakatNoThreshold": "The nisab is shown once gold and silver prices load.",
+  "zakatBase": "Counted for zakat",
+  "zakatHeldForSale": "Assets held for sale",
+  "zakatDebtsDue": "Debts due now",
+  "zakatBookHelp": "Holdings follow your zakat settings. Card balances and money you owe people are deducted; loans aren't, because only an instalment due now would be, and Qima doesn't know a loan's schedule.",
+  "zakatHoldingsDetail": "Holdings in detail"
 }

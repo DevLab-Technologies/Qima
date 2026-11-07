@@ -3005,4 +3005,1043 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get helpAddAssetStep6Body =>
       'يُقرأ الكلام والإيصالات على هذا الجهاز ولا يُرسل شيء منها. لا يُحفظ شيء حتى تؤكد، وكل رقم يأتي مما كتبته أو قلته أو مسحته.';
+
+  @override
+  String get navHome => 'الرئيسية';
+
+  @override
+  String get navMoney => 'المال';
+
+  @override
+  String get navPrices => 'الأسعار';
+
+  @override
+  String get netWorth => 'صافي الثروة';
+
+  @override
+  String get balanceSheet => 'الميزانية';
+
+  @override
+  String get youOwn => 'ما تملكه';
+
+  @override
+  String get youOweSide => 'ما عليك';
+
+  @override
+  String ownOweLine(String own, String owe) {
+    return 'تملك $own · عليك $owe';
+  }
+
+  @override
+  String get sheetHoldings => 'الاستثمارات';
+
+  @override
+  String get sheetHoldingsLive => 'بالأسعار الحالية';
+
+  @override
+  String get sheetCash => 'النقد والبنوك';
+
+  @override
+  String get sheetOwedToYou => 'أموال لك عند الآخرين';
+
+  @override
+  String get sheetAssets => 'عقارات وغيرها';
+
+  @override
+  String get sheetCards => 'البطاقات';
+
+  @override
+  String get sheetLoans => 'القروض';
+
+  @override
+  String get sheetYouOwe => 'أموال عليك للآخرين';
+
+  @override
+  String get sheetNothingOwed =>
+      'لا ديون. تظهر هنا البطاقات والقروض وما عليك للآخرين بعد إضافتها.';
+
+  @override
+  String sheetMissingRates(String codes) {
+    return 'لا يوجد سعر صرف بعد لـ $codes، لذا لم تُحسب هذه المبالغ في الإجمالي.';
+  }
+
+  @override
+  String get acctCash => 'نقد';
+
+  @override
+  String get acctDebit => 'حساب بنكي';
+
+  @override
+  String get acctCredit => 'بطاقة';
+
+  @override
+  String get acctLoan => 'قرض';
+
+  @override
+  String get acctReceivable => 'مدين لك';
+
+  @override
+  String get acctPayable => 'دائن لك';
+
+  @override
+  String get acctAsset => 'أصل';
+
+  @override
+  String get acctCategory => 'فئة';
+
+  @override
+  String get assetKindProperty => 'عقار';
+
+  @override
+  String get assetKindVehicle => 'مركبة';
+
+  @override
+  String get assetKindBusiness => 'نشاط تجاري';
+
+  @override
+  String get assetKindValuables => 'مقتنيات ثمينة';
+
+  @override
+  String get assetKindOther => 'أخرى';
+
+  @override
+  String get assetKindPropertyHint => 'منزل، أرض، محل';
+
+  @override
+  String get assetKindVehicleHint => 'سيارة، دراجة نارية، قارب';
+
+  @override
+  String get assetKindBusinessHint => 'حصتك في نشاط تجاري';
+
+  @override
+  String get assetKindValuablesHint => 'ساعة، عمل فني، مجموعة';
+
+  @override
+  String get assetKindOtherHint => 'أي شيء آخر تملكه';
+
+  @override
+  String get tplOpening => 'رصيد افتتاحي';
+
+  @override
+  String get tplSpend => 'مصروف';
+
+  @override
+  String get tplIncome => 'دخل';
+
+  @override
+  String get tplTransfer => 'تحويل';
+
+  @override
+  String get tplAtm => 'سحب من الصراف';
+
+  @override
+  String get tplSwap => 'تبديل عملة';
+
+  @override
+  String get tplCardPayment => 'سداد البطاقة';
+
+  @override
+  String get tplLoanPayment => 'قسط القرض';
+
+  @override
+  String get tplLent => 'أقرضت';
+
+  @override
+  String get tplBorrowed => 'اقترضت';
+
+  @override
+  String get tplRepaymentIn => 'سداد مستلم';
+
+  @override
+  String get tplRepaymentOut => 'سداد مدفوع';
+
+  @override
+  String get tplRefund => 'استرداد';
+
+  @override
+  String get tplDeclined => 'مرفوضة';
+
+  @override
+  String get tplCashCount => 'جرد النقد';
+
+  @override
+  String get tplBillSplit => 'تقسيم فاتورة';
+
+  @override
+  String get tplValuation => 'قيمة جديدة';
+
+  @override
+  String get tplAssetSale => 'مُباع';
+
+  @override
+  String get tplAdjustment => 'تسوية';
+
+  @override
+  String get catGroceries => 'بقالة';
+
+  @override
+  String get catDining => 'مطاعم';
+
+  @override
+  String get catTransport => 'مواصلات';
+
+  @override
+  String get catBills => 'فواتير';
+
+  @override
+  String get catShopping => 'تسوق';
+
+  @override
+  String get catHealth => 'صحة';
+
+  @override
+  String get catHome => 'المنزل';
+
+  @override
+  String get catOther => 'أخرى';
+
+  @override
+  String get catSalary => 'راتب';
+
+  @override
+  String get catOtherIncome => 'دخل آخر';
+
+  @override
+  String get catInterestFees => 'أرباح ورسوم';
+
+  @override
+  String get sysOpening => 'الأرصدة الافتتاحية';
+
+  @override
+  String get sysChange => 'تغير القيمة';
+
+  @override
+  String get sysRounding => 'تقريب';
+
+  @override
+  String get featBudget => 'الميزانية الشهرية';
+
+  @override
+  String get featRecurring => 'المدفوعات المتكررة';
+
+  @override
+  String get featPeople => 'السلف والديون';
+
+  @override
+  String get featLoans => 'القروض';
+
+  @override
+  String get featBillSplit => 'تقسيم الفاتورة';
+
+  @override
+  String get featZakat => 'الزكاة';
+
+  @override
+  String get featBudgetDetail => 'مبلغ شهري لكل فئة وما تبقى منه';
+
+  @override
+  String get featRecurringDetail => 'الفواتير والاشتراكات قبل موعدها';
+
+  @override
+  String get featPeopleDetail => 'من لك عنده مال ومن لك عليه';
+
+  @override
+  String get featLoansDetail => 'المتبقي من القرض وأرباح كل قسط';
+
+  @override
+  String get featBillSplitDetail => 'ادفع الفاتورة وقسّمها، ونصيبك وحده مصروف';
+
+  @override
+  String get featZakatDetail => 'الزكاة على استثماراتك ونقدك وديونك';
+
+  @override
+  String featureTurnedOn(String feature) {
+    return 'تم تشغيل $feature';
+  }
+
+  @override
+  String get featuresTitle => 'الميزات';
+
+  @override
+  String get featuresSubtitle => 'الميزانية والمتكررة والقروض وغيرها';
+
+  @override
+  String get featuresIntro =>
+      'إيقاف ميزة يخفي شاشاتها فقط، أما أموالك فتبقى محسوبة وتظهر في الميزانية.';
+
+  @override
+  String get cardNeedsReview => 'يحتاج مراجعة';
+
+  @override
+  String get cardComingUp => 'قادم';
+
+  @override
+  String get cardLeftToSpend => 'المتبقي للإنفاق';
+
+  @override
+  String get cardAccounts => 'الحسابات';
+
+  @override
+  String get editHome => 'تعديل الرئيسية';
+
+  @override
+  String get editHomeIntro =>
+      'حرّك البطاقات أو أخفِ ما لا تحتاجه. لن يعيد قيمة بطاقة أخفيتها.';
+
+  @override
+  String get editHomeTotalFixed => 'دائمًا في الأعلى: منه تُفتح الميزانية';
+
+  @override
+  String get editHomeCantHide => 'تظهر فقط عندما يحتاجك شيء';
+
+  @override
+  String get moveUp => 'تحريك لأعلى';
+
+  @override
+  String get moveDown => 'تحريك لأسفل';
+
+  @override
+  String get moveToTop => 'نقل إلى الأعلى';
+
+  @override
+  String get startTitle => 'ابدأ بما لديك';
+
+  @override
+  String get startMessage =>
+      'أضف حسابًا بنكيًا أو استثمارًا أو عقارًا، وتجمعها قيمة في صافي ثروتك.';
+
+  @override
+  String holdingsGainLine(String amount) {
+    return 'الربح $amount';
+  }
+
+  @override
+  String reviewValue(String name) {
+    return 'راجع قيمة $name';
+  }
+
+  @override
+  String get accountAdd => 'إضافة حساب';
+
+  @override
+  String get accountEdit => 'تعديل الحساب';
+
+  @override
+  String get accountNameLabel => 'الاسم';
+
+  @override
+  String get accountCurrency => 'العملة';
+
+  @override
+  String get accountBalanceToday => 'الرصيد اليوم';
+
+  @override
+  String get accountOwedToday => 'المستحق عليها اليوم';
+
+  @override
+  String get accountLoanLeft => 'المتبقي من أصل القرض';
+
+  @override
+  String get accountTheyOwe => 'المبلغ الذي لك';
+
+  @override
+  String get accountYouOwe => 'المبلغ الذي عليك';
+
+  @override
+  String get accountBalanceHelp =>
+      'يبدأ قيمة من هذا الرقم، اتركه فارغًا ليكون صفرًا.';
+
+  @override
+  String get accountSince => 'بتاريخ';
+
+  @override
+  String get accountLimit => 'حد البطاقة';
+
+  @override
+  String get accountCounts => 'احتسابه في صافي الثروة';
+
+  @override
+  String get accountCountsHelp =>
+      'عند الإيقاف لا يدخل في الإجمالي، ويبقى سجله متوازنًا.';
+
+  @override
+  String get accountErrorName => 'أدخل اسمًا.';
+
+  @override
+  String get accountLeftOut => 'غير محتسب في صافي الثروة';
+
+  @override
+  String accountAvailable(String amount) {
+    return 'المتاح $amount';
+  }
+
+  @override
+  String get accountCountCash => 'جرد النقد';
+
+  @override
+  String get accountCheckBalance => 'مطابقة الرصيد';
+
+  @override
+  String get accountPayCard => 'سداد البطاقة';
+
+  @override
+  String get accountPayLoan => 'سداد قسط';
+
+  @override
+  String get accountRemoveTitle => 'حذف الحساب';
+
+  @override
+  String get accountRemoveMessage =>
+      'الحساب الذي له معاملات يُؤرشف ليبقى السجل متوازنًا، وغير المستخدم يُحذف.';
+
+  @override
+  String get accountsEmptyTitle => 'لا حسابات بعد';
+
+  @override
+  String get accountsEmptyMessage =>
+      'أضف حسابًا بنكيًا أو نقدًا أو بطاقة أو قرضًا برصيده اليوم.';
+
+  @override
+  String reconcileTracked(String amount) {
+    return 'المسجل في قيمة $amount.';
+  }
+
+  @override
+  String get reconcileCounted => 'ما عددته';
+
+  @override
+  String get reconcileStatement => 'الرصيد في الكشف أو التطبيق';
+
+  @override
+  String get reconcileDone => 'سُجل الفرق تحت «أخرى» ليتطابق الرصيد.';
+
+  @override
+  String get entryAmount => 'المبلغ';
+
+  @override
+  String get entryPrincipal => 'أصل القسط';
+
+  @override
+  String get entryProfit => 'الربح أو الفائدة';
+
+  @override
+  String get entryProfitHelp =>
+      'يُحسب مصروفًا في «أرباح ورسوم»، أما الأصل فلا.';
+
+  @override
+  String get entrySent => 'المرسل';
+
+  @override
+  String get entryReceived => 'المستلم';
+
+  @override
+  String get entryPaidFrom => 'مدفوع من';
+
+  @override
+  String get entryFrom => 'من';
+
+  @override
+  String get entryTo => 'إلى';
+
+  @override
+  String get entryPerson => 'الشخص';
+
+  @override
+  String get entryCategory => 'الفئة';
+
+  @override
+  String get entryDate => 'التاريخ';
+
+  @override
+  String get entryMerchant => 'المكان';
+
+  @override
+  String get entryNote => 'ملاحظة';
+
+  @override
+  String get entryDeclined => 'مرفوضة';
+
+  @override
+  String get entryDeclinedHelp => 'تظهر مشطوبة ولا تدخل في أي رصيد.';
+
+  @override
+  String get entryEditTitle => 'تعديل المعاملة';
+
+  @override
+  String get entryDeleteTitle => 'حذف المعاملة؟';
+
+  @override
+  String get entryDeleteMessage =>
+      'تعود كل الحسابات التي أثّرت عليها كما كانت.';
+
+  @override
+  String get entryErrorAmount => 'أدخل مبلغًا أكبر من صفر.';
+
+  @override
+  String get entryErrorAccount => 'اختر الحسابات.';
+
+  @override
+  String get entryErrorSameCurrency =>
+      'يجب أن يكون الحسابان بنفس العملة. للعملات المختلفة استخدم تبديل عملة.';
+
+  @override
+  String get entryErrorSwap => 'اختر حسابين بعملتين مختلفتين.';
+
+  @override
+  String get entryErrorPerson => 'أدخل اسم الشخص.';
+
+  @override
+  String get entryErrorRate =>
+      'لا يوجد سعر صرف لهذه العملة بعد. حاول بعد تحديث الأسعار.';
+
+  @override
+  String get entryNeedsAccountTitle => 'أضف حسابًا أولًا';
+
+  @override
+  String get entryNeedsAccountMessage =>
+      'يحتاج هذا إلى حساب تخرج منه الأموال أو تدخل إليه. أضفه من الحسابات.';
+
+  @override
+  String get howItAddsUp => 'كيف تتوازن';
+
+  @override
+  String hiuUp(String name, String amount) {
+    return '$name زاد $amount';
+  }
+
+  @override
+  String hiuDown(String name, String amount) {
+    return '$name نقص $amount';
+  }
+
+  @override
+  String get hiuSpending => 'مصروف: يُحسب في ميزانيتك.';
+
+  @override
+  String get hiuIncome => 'دخل: يُحسب في تدفقك النقدي.';
+
+  @override
+  String get hiuRefund => 'الاسترداد يخفض المصروف في فئته.';
+
+  @override
+  String get hiuWorth =>
+      'تغير القيمة يحرك صافي الثروة فقط، وليس دخلًا ولا مصروفًا.';
+
+  @override
+  String get hiuMove => 'نقل بين حساباتك: ليس مصروفًا، وصافي ثروتك لا يتغير.';
+
+  @override
+  String get hiuDeclined => 'مرفوضة: لم يتحرك شيء.';
+
+  @override
+  String get allTransactions => 'كل المعاملات';
+
+  @override
+  String get transactionsSearch => 'بحث';
+
+  @override
+  String get transactionsEmptyTitle => 'لا معاملات';
+
+  @override
+  String get transactionsEmptyMessage => 'أضف معاملة بزر +.';
+
+  @override
+  String get moneySpent => 'المصروف';
+
+  @override
+  String moneySpentOf(String spent, String budget) {
+    return '$spent من $budget';
+  }
+
+  @override
+  String moneySpentSoFar(String amount) {
+    return 'صُرف $amount هذا الشهر';
+  }
+
+  @override
+  String moneyPace(String amount) {
+    return 'بهذا المعدل: $amount بنهاية الشهر';
+  }
+
+  @override
+  String get moneyNothingSpent => 'لا مصروفات هذا الشهر.';
+
+  @override
+  String get moneyIn => 'الداخل';
+
+  @override
+  String get moneyOut => 'الخارج';
+
+  @override
+  String get moneyLeftOver => 'الفائض';
+
+  @override
+  String get moneyShort => 'العجز';
+
+  @override
+  String get moneyTrend => 'المصروف حسب الشهر';
+
+  @override
+  String get moneyTransactions => 'المعاملات';
+
+  @override
+  String get moneyStartMessage => 'أضف حسابًا أولًا ثم سجّل ما تصرفه.';
+
+  @override
+  String get whereItWent => 'أين ذهب المال';
+
+  @override
+  String get cashFlow => 'التدفق النقدي';
+
+  @override
+  String get worthALook => 'يستحق النظر';
+
+  @override
+  String aheadOfPace(String name) {
+    return '$name تجاوزت وتيرة ميزانيتها';
+  }
+
+  @override
+  String spareIn(String name, String amount) {
+    return 'في $name فائض $amount';
+  }
+
+  @override
+  String get previousMonth => 'الشهر السابق';
+
+  @override
+  String get nextMonth => 'الشهر التالي';
+
+  @override
+  String get ask => 'اسأل';
+
+  @override
+  String get askSpentMonth => 'كم صرفت هذا الشهر؟';
+
+  @override
+  String askSpentMonthAnswer(String amount) {
+    return '$amount';
+  }
+
+  @override
+  String get askTopCategory => 'أين ذهب معظمه؟';
+
+  @override
+  String askTopCategoryAnswer(String name, String amount) {
+    return '$name: $amount';
+  }
+
+  @override
+  String get askVsLastMonth => 'هل هو أكثر من الشهر الماضي؟';
+
+  @override
+  String askMore(String amount) {
+    return 'أكثر بـ $amount من الشهر الماضي';
+  }
+
+  @override
+  String askLess(String amount) {
+    return 'أقل بـ $amount من الشهر الماضي';
+  }
+
+  @override
+  String get askSame => 'تقريبًا مثل الشهر الماضي';
+
+  @override
+  String get askOwed => 'من عليه مال لي؟';
+
+  @override
+  String get askNobodyOwes => 'لا أحد عليه مال لك.';
+
+  @override
+  String get assetAdd => 'إضافة أصل';
+
+  @override
+  String get assetEdit => 'تعديل الأصل';
+
+  @override
+  String get assetGoldNote =>
+      'الذهب والفضة بالوزن تبقى استثمارات لأن قيمة تسعّرها. أضفها من «إضافة استثمار».';
+
+  @override
+  String get assetValueToday => 'القيمة اليوم';
+
+  @override
+  String get assetCost => 'سعر الشراء';
+
+  @override
+  String get assetBought => 'تاريخ الشراء';
+
+  @override
+  String get optional => 'اختياري';
+
+  @override
+  String get assetLoan => 'قرض مرتبط به';
+
+  @override
+  String get assetNoLoan => 'لا يوجد';
+
+  @override
+  String get assetForSale => 'معروض للبيع';
+
+  @override
+  String get assetForSaleHelp => 'يُحسب في الزكاة بقيمته. أوقفه لما تستخدمه.';
+
+  @override
+  String get assetErrorValue => 'أدخل القيمة اليوم.';
+
+  @override
+  String get assetsTotal => 'القيمة الإجمالية';
+
+  @override
+  String get assetsTotalHelp => 'قيم تحددها بنفسك، كل منها بتاريخها';
+
+  @override
+  String get assetsEmptyTitle => 'لا أصول بعد';
+
+  @override
+  String get assetsEmptyMessage =>
+      'أضف منزلًا أو أرضًا أو سيارة أو حصة في نشاط. أنت تحدد القيمة وقيمة تحفظ تاريخها.';
+
+  @override
+  String assetUpdated(String date) {
+    return 'آخر تحديث $date';
+  }
+
+  @override
+  String assetSinceBought(String amount) {
+    return '$amount منذ الشراء';
+  }
+
+  @override
+  String get assetUpdateValue => 'تحديث القيمة';
+
+  @override
+  String get assetUpdateHelp =>
+      'كل تحديث مؤرخ. الأحدث هو المعتمد وتبقى القيم السابقة في السجل.';
+
+  @override
+  String get assetNewValue => 'القيمة الجديدة';
+
+  @override
+  String get assetValueSource => 'مصدر القيمة';
+
+  @override
+  String get assetSold => 'تم البيع';
+
+  @override
+  String assetSellTitle(String name) {
+    return 'بيع $name';
+  }
+
+  @override
+  String assetLastValue(String amount) {
+    return 'آخر قيمة: $amount';
+  }
+
+  @override
+  String get assetSoldInto => 'دخلت الأموال في';
+
+  @override
+  String get assetSoldFor => 'بيع بمبلغ';
+
+  @override
+  String assetGain(String amount) {
+    return 'ربح $amount';
+  }
+
+  @override
+  String assetLoss(String amount) {
+    return 'خسارة $amount';
+  }
+
+  @override
+  String get assetGainHelp =>
+      'مقارنة بآخر قيمة، وهو تغير في القيمة وليس دخلًا.';
+
+  @override
+  String assetPayOff(String name) {
+    return 'سدد البيع $name';
+  }
+
+  @override
+  String assetPayOffHelp(String amount) {
+    return '$amount متبقٍ، يُدفع من نفس الحساب';
+  }
+
+  @override
+  String get assetYours => 'ما يخصك منه';
+
+  @override
+  String get assetValue => 'القيمة';
+
+  @override
+  String assetStillOwed(String name) {
+    return 'المتبقي على $name';
+  }
+
+  @override
+  String get assetYoursTotal => 'حصتك';
+
+  @override
+  String get assetYoursHelp =>
+      'تبقى الميزانية تعرض الأصل ضمن ما تملكه والقرض ضمن ما عليك.';
+
+  @override
+  String get assetHistory => 'السجل';
+
+  @override
+  String get assetRemoveTitle => 'حذف الأصل';
+
+  @override
+  String get assetRemoveMessage =>
+      'لتسجيل بيع استخدم «تم البيع». الحذف يؤرشفه مع سجله.';
+
+  @override
+  String get howTotalWorked => 'كيف يُحسب الإجمالي';
+
+  @override
+  String get howTotalIntro => 'صافي الثروة هو ما تملكه ناقص ما عليك.';
+
+  @override
+  String get howTotalHoldings =>
+      'الاستثمارات بالأسعار الحالية كما في قائمة الأسعار.';
+
+  @override
+  String get howTotalAssets =>
+      'الأصول التي تقيّمها تُحسب بآخر قيمة مع تاريخها، ويمكن استثناء أي منها.';
+
+  @override
+  String get howTotalLoans =>
+      'القروض بأصلها فقط، والأرباح المستقبلية ليست دينًا حتى تستحق.';
+
+  @override
+  String get howTotalRates => 'العملات الأخرى بسعر الصرف الحالي.';
+
+  @override
+  String sheetAccountsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count حساب',
+      many: '$count حسابًا',
+      few: '$count حسابات',
+      two: 'حسابان',
+      one: 'حساب واحد',
+      zero: 'لا حسابات',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String budgetFor(String name) {
+    return 'ميزانية $name';
+  }
+
+  @override
+  String get budgetIntro =>
+      'حدد مبلغًا شهريًا للفئات التي تريد متابعتها. سداد البطاقات والتحويلات وأصل القروض لا تُحسب.';
+
+  @override
+  String get budgetMonthly => 'شهريًا';
+
+  @override
+  String get budgetZeroHelp => 'الصفر يحذفها.';
+
+  @override
+  String get budgetNone => 'بلا ميزانية';
+
+  @override
+  String budgetOf(String amount) {
+    return 'الميزانية $amount';
+  }
+
+  @override
+  String get budgetSet => 'حدد ميزانية';
+
+  @override
+  String get budgetTotal => 'ميزانية هذا الشهر';
+
+  @override
+  String get recurringAdd => 'إضافة دفعة متكررة';
+
+  @override
+  String get recurringDay => 'يوم الشهر';
+
+  @override
+  String get recurringEmptyTitle => 'لا مدفوعات متكررة';
+
+  @override
+  String get recurringEmptyMessage =>
+      'أضف الإيجار والفواتير والاشتراكات لتراها في «قادم» قبل موعدها.';
+
+  @override
+  String recurringNext(String date) {
+    return 'القادم $date';
+  }
+
+  @override
+  String recurringRecord(String name, String date) {
+    return 'تسجيل $name بتاريخ $date';
+  }
+
+  @override
+  String get peopleEmptyTitle => 'لا أحد بعد';
+
+  @override
+  String get peopleEmptyMessage => 'سجّل ما تقرضه أو تقترضه والسداد.';
+
+  @override
+  String get splitTotal => 'إجمالي الفاتورة';
+
+  @override
+  String get splitWho => 'من شاركك';
+
+  @override
+  String get splitShare => 'النصيب';
+
+  @override
+  String get splitAddPerson => 'إضافة شخص';
+
+  @override
+  String get splitEvenly => 'قسمة بالتساوي';
+
+  @override
+  String get splitMine => 'نصيبك (مصروف)';
+
+  @override
+  String get splitOwedToYou => 'مستحق لك';
+
+  @override
+  String get splitHelp =>
+      'يخرج المبلغ كاملًا من الحساب، ونصيبك وحده مصروف، وأنصبة الآخرين تصبح أموالًا لك عندهم.';
+
+  @override
+  String get splitErrorPerson => 'لكل شخص اسم ونصيب.';
+
+  @override
+  String get splitErrorShares =>
+      'أضف شخصًا واحدًا على الأقل بأنصبة لا تتجاوز الإجمالي.';
+
+  @override
+  String get categoriesTitle => 'الفئات';
+
+  @override
+  String get categoriesSpending => 'المصروفات';
+
+  @override
+  String get categoriesIncome => 'الدخل';
+
+  @override
+  String get categoryRename => 'إعادة تسمية الفئة';
+
+  @override
+  String get categoryRemove => 'حذف الفئة';
+
+  @override
+  String get categoryRemoveMessage => 'تبقى في سجل المعاملات المرتبطة بها.';
+
+  @override
+  String get categoryAddSpending => 'فئة مصروف جديدة';
+
+  @override
+  String get categoryAddIncome => 'فئة دخل جديدة';
+
+  @override
+  String get valueReview => 'مراجعة قيم الأصول';
+
+  @override
+  String get valueReviewHelp => 'تذكير في «يحتاج مراجعة»';
+
+  @override
+  String get valueReviewOff => 'إيقاف';
+
+  @override
+  String valueReviewMonths(int months) {
+    String _temp0 = intl.Intl.pluralLogic(
+      months,
+      locale: localeName,
+      other: 'كل $months شهر',
+      many: 'كل $months شهرًا',
+      few: 'كل $months أشهر',
+      two: 'كل شهرين',
+      one: 'كل شهر',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get addSheetSpendSubtitle => 'مشتريات أو فاتورة أو نقد';
+
+  @override
+  String get addSheetMore => 'المزيد';
+
+  @override
+  String get addSheetMoreSubtitle => 'دخل، تحويلات، قروض، سلف، حسابات، أصول';
+
+  @override
+  String get whatsNewTitle => 'الجديد في قيمة';
+
+  @override
+  String get whatsNewTabs =>
+      'ثلاث تبويبات: الرئيسية لوضعك، والمال لمصروفك، والأسعار للسوق.';
+
+  @override
+  String get whatsNewBalanceSheet =>
+      'استثماراتك وحساباتك وبطاقاتك وقروضك تجتمع في ميزانية واحدة. اضغط الإجمالي لرؤيتها.';
+
+  @override
+  String get whatsNewAssets =>
+      'أضف عقارًا أو سيارة أو نشاطًا وحدّث قيمته بنفسك.';
+
+  @override
+  String get whatsNewPick => 'ماذا تريد أن تستخدم؟';
+
+  @override
+  String get whatsNewLater => 'يمكنك تغييرها في أي وقت من الإعدادات › الميزات.';
+
+  @override
+  String get zakatDueTitle => 'الزكاة المستحقة';
+
+  @override
+  String zakatDueLine(String amount) {
+    return 'المستحق $amount';
+  }
+
+  @override
+  String get zakatBelowLine => 'دون النصاب';
+
+  @override
+  String zakatBaseLine(String amount) {
+    return 'المحتسب: $amount';
+  }
+
+  @override
+  String zakatAbove(String amount) {
+    return 'فوق النصاب البالغ $amount';
+  }
+
+  @override
+  String zakatBelow(String amount) {
+    return 'دون النصاب البالغ $amount';
+  }
+
+  @override
+  String get zakatNoThreshold => 'يظهر النصاب بعد تحميل أسعار الذهب والفضة.';
+
+  @override
+  String get zakatBase => 'المحتسب للزكاة';
+
+  @override
+  String get zakatHeldForSale => 'أصول معروضة للبيع';
+
+  @override
+  String get zakatDebtsDue => 'ديون مستحقة الآن';
+
+  @override
+  String get zakatBookHelp =>
+      'الاستثمارات حسب إعدادات الزكاة. تُخصم أرصدة البطاقات وما عليك للآخرين، ولا تُخصم القروض لأن المستحق منها هو القسط الحالي فقط ولا تعرف قيمة جدولها.';
+
+  @override
+  String get zakatHoldingsDetail => 'تفاصيل الاستثمارات';
 }

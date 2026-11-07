@@ -7,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'blocs/app_cubit.dart';
 import 'blocs/app_state.dart';
+import 'blocs/money_cubit.dart';
 import 'l10n/app_localizations.dart';
 import 'models/watch_card.dart';
 import 'screens/backup_screen.dart';
@@ -71,20 +72,33 @@ class _QimaAppState extends State<QimaApp> {
   /// here bypasses it.
   final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
   late final AppCubit _cubit;
+  late final MoneyCubit _money;
   StreamSubscription<String>? _tapSubscription;
 
   @override
   void initState() {
     super.initState();
     _cubit = AppCubit();
+    _money = MoneyCubit(
+      store: _cubit.bookStore,
+      baseCurrency: () => _cubit.state.baseCurrency,
+      rates: () => _cubit.state.rates,
+    );
+    _cubit.onBookChanged = (key) => key == null ? _money.load() : _money.adoptCloudChanges(key);
     _tapSubscription = notificationTapPayloads.stream.listen(_handleNotificationTap);
-    _cubit.init().then((_) => _consumeColdLaunchPayload());
+    // The money ledger loads after init, once the cloud backend is settled
+    // (see AppCubit.init), so a fresh device never seeds over synced data.
+    _cubit.init().then((_) async {
+      await _money.load();
+      await _consumeColdLaunchPayload();
+    });
   }
 
   @override
   void dispose() {
     _tapSubscription?.cancel();
     unawaited(_cubit.disposeCloudSync());
+    unawaited(_money.close());
     super.dispose();
   }
 
@@ -132,8 +146,11 @@ class _QimaAppState extends State<QimaApp> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<AppCubit>.value(
-      value: _cubit,
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<AppCubit>.value(value: _cubit),
+        BlocProvider<MoneyCubit>.value(value: _money),
+      ],
       child: BlocBuilder<AppCubit, AppState>(
         buildWhen: (previous, current) =>
             previous.appLanguage != current.appLanguage || previous.appearance != current.appearance,

@@ -6,6 +6,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 
 import '../blocs/app_cubit.dart';
 import '../blocs/app_state.dart';
+import '../blocs/money_cubit.dart';
 import '../l10n/app_localizations.dart';
 import '../models/chart_range.dart';
 import '../services/app_lock_service.dart';
@@ -19,6 +20,9 @@ import '../theme/strings.dart';
 import '../widgets/help_button.dart';
 import '../widgets/section_header.dart';
 import 'alerts_screen.dart';
+import 'money/accounts_screens.dart';
+import 'money/home_screen.dart';
+import 'money/more_money_screens.dart';
 import 'backup_screen.dart';
 import 'currency_picker.dart';
 import 'help_index_sheet.dart';
@@ -120,6 +124,9 @@ class SettingsScreen extends StatelessWidget {
                         Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ZakatSettingsScreen())),
                   ),
                 ),
+                const SizedBox(height: DS.spaceLG),
+                SectionHeader(l10n.navMoney),
+                const _MoneySection(),
                 const SizedBox(height: DS.spaceLG),
                 SectionHeader(l10n.settingsBaseCurrency),
                 DSCard(
@@ -735,6 +742,52 @@ class _OnDeviceModelSectionState extends State<_OnDeviceModelSection> {
             child: Text(
               l10n.settingsUseModelFooter,
               style: TextStyle(color: colors.textTertiary, fontSize: 12, height: 1.35),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+
+/// Money (v5): which features are on, how Home is arranged, categories, and
+/// how often to review the values of assets valued by hand.
+class _MoneySection extends StatelessWidget {
+  const _MoneySection();
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final colors = context.colors;
+    final money = context.read<MoneyCubit>();
+    final months = context.select<MoneyCubit, int>((c) => c.state.settings.valueReviewMonths);
+    Widget tile(String title, String? subtitle, Widget screen) => ListTile(
+          contentPadding: const EdgeInsets.symmetric(horizontal: DS.spaceMD, vertical: DS.space2XS),
+          title: Text(title, style: TextStyle(color: colors.textPrimary)),
+          subtitle: subtitle == null ? null : Text(subtitle, style: TextStyle(color: colors.textTertiary, fontSize: 12)),
+          trailing: Icon(Icons.chevron_right, color: colors.textTertiary),
+          onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => screen)),
+        );
+    return DSCard(
+      padding: EdgeInsets.zero,
+      child: Column(
+        children: [
+          tile(l10n.featuresTitle, l10n.featuresSubtitle, const FeaturesScreen()),
+          tile(l10n.editHome, null, const EditHomeScreen()),
+          tile(l10n.categoriesTitle, null, const CategoriesScreen()),
+          ListTile(
+            contentPadding: const EdgeInsets.symmetric(horizontal: DS.spaceMD, vertical: DS.space2XS),
+            title: Text(l10n.valueReview, style: TextStyle(color: colors.textPrimary)),
+            subtitle: Text(l10n.valueReviewHelp, style: TextStyle(color: colors.textTertiary, fontSize: 12)),
+            trailing: DropdownButton<int>(
+              value: months,
+              underline: const SizedBox.shrink(),
+              items: [
+                DropdownMenuItem(value: 0, child: Text(l10n.valueReviewOff)),
+                for (final m in const [3, 6, 12]) DropdownMenuItem(value: m, child: Text(l10n.valueReviewMonths(m))),
+              ],
+              onChanged: (v) => money.setValueReviewMonths(v ?? months),
             ),
           ),
         ],

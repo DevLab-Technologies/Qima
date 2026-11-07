@@ -3013,4 +3013,1050 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get helpAddAssetStep6Body =>
       'La voix et les reçus sont lus sur cet appareil et ne sont jamais envoyés. Rien n\'est enregistré avant votre confirmation, et chaque nombre vient de ce que vous avez saisi, dit ou scanné.';
+
+  @override
+  String get navHome => 'Accueil';
+
+  @override
+  String get navMoney => 'Argent';
+
+  @override
+  String get navPrices => 'Prix';
+
+  @override
+  String get netWorth => 'Valeur nette';
+
+  @override
+  String get balanceSheet => 'Bilan';
+
+  @override
+  String get youOwn => 'Ce que vous possédez';
+
+  @override
+  String get youOweSide => 'Ce que vous devez';
+
+  @override
+  String ownOweLine(String own, String owe) {
+    return 'Vous possédez $own · Vous devez $owe';
+  }
+
+  @override
+  String get sheetHoldings => 'Placements';
+
+  @override
+  String get sheetHoldingsLive => 'Aux prix actuels';
+
+  @override
+  String get sheetCash => 'Espèces et banque';
+
+  @override
+  String get sheetOwedToYou => 'On vous doit';
+
+  @override
+  String get sheetAssets => 'Biens et plus';
+
+  @override
+  String get sheetCards => 'Cartes';
+
+  @override
+  String get sheetLoans => 'Prêts';
+
+  @override
+  String get sheetYouOwe => 'Vous devez à des proches';
+
+  @override
+  String get sheetNothingOwed =>
+      'Aucune dette. Cartes, prêts et dettes apparaissent ici une fois ajoutés.';
+
+  @override
+  String sheetMissingRates(String codes) {
+    return 'Pas encore de taux pour $codes ; ces montants sont exclus du total.';
+  }
+
+  @override
+  String get acctCash => 'Espèces';
+
+  @override
+  String get acctDebit => 'Compte bancaire';
+
+  @override
+  String get acctCredit => 'Carte';
+
+  @override
+  String get acctLoan => 'Prêt';
+
+  @override
+  String get acctReceivable => 'Vous doit';
+
+  @override
+  String get acctPayable => 'Vous lui devez';
+
+  @override
+  String get acctAsset => 'Bien';
+
+  @override
+  String get acctCategory => 'Catégorie';
+
+  @override
+  String get assetKindProperty => 'Immobilier';
+
+  @override
+  String get assetKindVehicle => 'Véhicule';
+
+  @override
+  String get assetKindBusiness => 'Entreprise';
+
+  @override
+  String get assetKindValuables => 'Objets de valeur';
+
+  @override
+  String get assetKindOther => 'Autre';
+
+  @override
+  String get assetKindPropertyHint => 'Une maison, un terrain, un local';
+
+  @override
+  String get assetKindVehicleHint => 'Une voiture, une moto, un bateau';
+
+  @override
+  String get assetKindBusinessHint => 'Votre part d’une entreprise';
+
+  @override
+  String get assetKindValuablesHint => 'Une montre, une œuvre, une collection';
+
+  @override
+  String get assetKindOtherHint => 'Tout autre bien';
+
+  @override
+  String get tplOpening => 'Solde d’ouverture';
+
+  @override
+  String get tplSpend => 'Dépense';
+
+  @override
+  String get tplIncome => 'Revenu';
+
+  @override
+  String get tplTransfer => 'Virement';
+
+  @override
+  String get tplAtm => 'Retrait au distributeur';
+
+  @override
+  String get tplSwap => 'Change de devise';
+
+  @override
+  String get tplCardPayment => 'Paiement de carte';
+
+  @override
+  String get tplLoanPayment => 'Remboursement de prêt';
+
+  @override
+  String get tplLent => 'Prêté';
+
+  @override
+  String get tplBorrowed => 'Emprunté';
+
+  @override
+  String get tplRepaymentIn => 'Remboursement reçu';
+
+  @override
+  String get tplRepaymentOut => 'Remboursement versé';
+
+  @override
+  String get tplRefund => 'Remboursement';
+
+  @override
+  String get tplDeclined => 'Refusée';
+
+  @override
+  String get tplCashCount => 'Comptage d’espèces';
+
+  @override
+  String get tplBillSplit => 'Addition partagée';
+
+  @override
+  String get tplValuation => 'Nouvelle valeur';
+
+  @override
+  String get tplAssetSale => 'Vendu';
+
+  @override
+  String get tplAdjustment => 'Ajustement';
+
+  @override
+  String get catGroceries => 'Courses';
+
+  @override
+  String get catDining => 'Restaurants';
+
+  @override
+  String get catTransport => 'Transport';
+
+  @override
+  String get catBills => 'Factures';
+
+  @override
+  String get catShopping => 'Achats';
+
+  @override
+  String get catHealth => 'Santé';
+
+  @override
+  String get catHome => 'Maison';
+
+  @override
+  String get catOther => 'Autres';
+
+  @override
+  String get catSalary => 'Salaire';
+
+  @override
+  String get catOtherIncome => 'Autres revenus';
+
+  @override
+  String get catInterestFees => 'Intérêts et frais';
+
+  @override
+  String get sysOpening => 'Soldes d’ouverture';
+
+  @override
+  String get sysChange => 'Variation de valeur';
+
+  @override
+  String get sysRounding => 'Arrondi';
+
+  @override
+  String get featBudget => 'Budget';
+
+  @override
+  String get featRecurring => 'Paiements récurrents';
+
+  @override
+  String get featPeople => 'Prêts entre proches';
+
+  @override
+  String get featLoans => 'Prêts';
+
+  @override
+  String get featBillSplit => 'Partage d’addition';
+
+  @override
+  String get featZakat => 'Zakat';
+
+  @override
+  String get featBudgetDetail => 'Un montant mensuel par catégorie et le reste';
+
+  @override
+  String get featRecurringDetail => 'Factures et abonnements avant l’échéance';
+
+  @override
+  String get featPeopleDetail => 'Qui vous doit et à qui vous devez';
+
+  @override
+  String get featLoansDetail =>
+      'Le restant dû et les intérêts de chaque échéance';
+
+  @override
+  String get featBillSplitDetail =>
+      'Payez et partagez ; seule votre part est une dépense';
+
+  @override
+  String get featZakatDetail => 'Zakat sur placements, espèces et dettes';
+
+  @override
+  String featureTurnedOn(String feature) {
+    return '$feature activé';
+  }
+
+  @override
+  String get featuresTitle => 'Fonctions';
+
+  @override
+  String get featuresSubtitle => 'Budget, récurrents, prêts et plus';
+
+  @override
+  String get featuresIntro =>
+      'Désactiver une fonction masque ses écrans, jamais votre argent : ses montants comptent toujours dans le bilan.';
+
+  @override
+  String get cardNeedsReview => 'À vérifier';
+
+  @override
+  String get cardComingUp => 'À venir';
+
+  @override
+  String get cardLeftToSpend => 'Reste à dépenser';
+
+  @override
+  String get cardAccounts => 'Comptes';
+
+  @override
+  String get editHome => 'Modifier l’accueil';
+
+  @override
+  String get editHomeIntro =>
+      'Déplacez ou masquez des cartes. Qima ne réaffiche jamais une carte masquée.';
+
+  @override
+  String get editHomeTotalFixed => 'Toujours en premier : il ouvre le bilan';
+
+  @override
+  String get editHomeCantHide => 'N’apparaît que si quelque chose vous attend';
+
+  @override
+  String get moveUp => 'Monter';
+
+  @override
+  String get moveDown => 'Descendre';
+
+  @override
+  String get moveToTop => 'Placer en haut';
+
+  @override
+  String get startTitle => 'Commencez par ce que vous avez';
+
+  @override
+  String get startMessage =>
+      'Ajoutez un compte, un placement ou un bien. Qima les additionne dans votre valeur nette.';
+
+  @override
+  String holdingsGainLine(String amount) {
+    return 'Gain $amount';
+  }
+
+  @override
+  String reviewValue(String name) {
+    return 'Revoir la valeur de $name';
+  }
+
+  @override
+  String get accountAdd => 'Ajouter un compte';
+
+  @override
+  String get accountEdit => 'Modifier le compte';
+
+  @override
+  String get accountNameLabel => 'Nom';
+
+  @override
+  String get accountCurrency => 'Devise';
+
+  @override
+  String get accountBalanceToday => 'Solde aujourd’hui';
+
+  @override
+  String get accountOwedToday => 'Dû aujourd’hui';
+
+  @override
+  String get accountLoanLeft => 'Capital restant dû';
+
+  @override
+  String get accountTheyOwe => 'Vous doit';
+
+  @override
+  String get accountYouOwe => 'Vous lui devez';
+
+  @override
+  String get accountBalanceHelp =>
+      'Qima part de ce montant ; laissez vide pour zéro.';
+
+  @override
+  String get accountSince => 'En date du';
+
+  @override
+  String get accountLimit => 'Plafond de la carte';
+
+  @override
+  String get accountCounts => 'Compter dans la valeur nette';
+
+  @override
+  String get accountCountsHelp =>
+      'Désactivé, il est exclu du total ; son historique reste juste.';
+
+  @override
+  String get accountErrorName => 'Donnez-lui un nom.';
+
+  @override
+  String get accountLeftOut => 'Non compté dans la valeur nette';
+
+  @override
+  String accountAvailable(String amount) {
+    return '$amount disponible';
+  }
+
+  @override
+  String get accountCountCash => 'Compter les espèces';
+
+  @override
+  String get accountCheckBalance => 'Vérifier le solde';
+
+  @override
+  String get accountPayCard => 'Payer la carte';
+
+  @override
+  String get accountPayLoan => 'Payer le prêt';
+
+  @override
+  String get accountRemoveTitle => 'Supprimer le compte';
+
+  @override
+  String get accountRemoveMessage =>
+      'Un compte avec des opérations est archivé pour garder l’historique juste. Un compte inutilisé est supprimé.';
+
+  @override
+  String get accountsEmptyTitle => 'Aucun compte';
+
+  @override
+  String get accountsEmptyMessage =>
+      'Ajoutez un compte, des espèces, une carte ou un prêt avec son solde du jour.';
+
+  @override
+  String reconcileTracked(String amount) {
+    return 'Qima indique $amount.';
+  }
+
+  @override
+  String get reconcileCounted => 'Ce que vous avez compté';
+
+  @override
+  String get reconcileStatement => 'Solde sur le relevé ou l’appli';
+
+  @override
+  String get reconcileDone =>
+      'L’écart est noté dans Autres et le solde correspond.';
+
+  @override
+  String get entryAmount => 'Montant';
+
+  @override
+  String get entryPrincipal => 'Capital';
+
+  @override
+  String get entryProfit => 'Intérêts';
+
+  @override
+  String get entryProfitHelp =>
+      'Compte comme dépense en Intérêts et frais ; jamais le capital.';
+
+  @override
+  String get entrySent => 'Envoyé';
+
+  @override
+  String get entryReceived => 'Reçu';
+
+  @override
+  String get entryPaidFrom => 'Payé avec';
+
+  @override
+  String get entryFrom => 'Depuis';
+
+  @override
+  String get entryTo => 'Vers';
+
+  @override
+  String get entryPerson => 'Personne';
+
+  @override
+  String get entryCategory => 'Catégorie';
+
+  @override
+  String get entryDate => 'Date';
+
+  @override
+  String get entryMerchant => 'Où';
+
+  @override
+  String get entryNote => 'Note';
+
+  @override
+  String get entryDeclined => 'Refusée';
+
+  @override
+  String get entryDeclinedHelp => 'Affichée barrée ; jamais dans un solde.';
+
+  @override
+  String get entryEditTitle => 'Modifier l’opération';
+
+  @override
+  String get entryDeleteTitle => 'Supprimer l’opération ?';
+
+  @override
+  String get entryDeleteMessage =>
+      'Chaque compte concerné revient à son état d’avant.';
+
+  @override
+  String get entryErrorAmount => 'Saisissez un montant supérieur à zéro.';
+
+  @override
+  String get entryErrorAccount => 'Choisissez les comptes.';
+
+  @override
+  String get entryErrorSameCurrency =>
+      'Les deux comptes doivent avoir la même devise. Sinon, utilisez Change de devise.';
+
+  @override
+  String get entryErrorSwap =>
+      'Choisissez deux comptes de devises différentes.';
+
+  @override
+  String get entryErrorPerson => 'Indiquez qui c’est.';
+
+  @override
+  String get entryErrorRate =>
+      'Pas encore de taux pour cette devise. Réessayez après la mise à jour.';
+
+  @override
+  String get entryNeedsAccountTitle => 'Ajoutez d’abord un compte';
+
+  @override
+  String get entryNeedsAccountMessage =>
+      'Il faut un compte d’origine ou de destination. Ajoutez-en un dans Comptes.';
+
+  @override
+  String get howItAddsUp => 'Comment ça s’équilibre';
+
+  @override
+  String hiuUp(String name, String amount) {
+    return '$name augmente de $amount';
+  }
+
+  @override
+  String hiuDown(String name, String amount) {
+    return '$name diminue de $amount';
+  }
+
+  @override
+  String get hiuSpending => 'Dépense : elle compte dans votre budget.';
+
+  @override
+  String get hiuIncome => 'Revenu : il compte dans vos flux.';
+
+  @override
+  String get hiuRefund => 'Un remboursement réduit la dépense de sa catégorie.';
+
+  @override
+  String get hiuWorth =>
+      'Une variation de valeur ne touche que la valeur nette ; jamais revenu ni dépense.';
+
+  @override
+  String get hiuMove =>
+      'Un mouvement entre vos comptes : pas une dépense, votre valeur nette ne change pas.';
+
+  @override
+  String get hiuDeclined => 'Refusée : rien n’a bougé.';
+
+  @override
+  String get allTransactions => 'Toutes les opérations';
+
+  @override
+  String get transactionsSearch => 'Rechercher';
+
+  @override
+  String get transactionsEmptyTitle => 'Aucune opération';
+
+  @override
+  String get transactionsEmptyMessage => 'Ajoutez-en une avec le bouton +.';
+
+  @override
+  String get moneySpent => 'Dépensé';
+
+  @override
+  String moneySpentOf(String spent, String budget) {
+    return '$spent sur $budget';
+  }
+
+  @override
+  String moneySpentSoFar(String amount) {
+    return '$amount dépensés ce mois-ci';
+  }
+
+  @override
+  String moneyPace(String amount) {
+    return 'À ce rythme : $amount en fin de mois';
+  }
+
+  @override
+  String get moneyNothingSpent => 'Aucune dépense ce mois-ci.';
+
+  @override
+  String get moneyIn => 'Entrées';
+
+  @override
+  String get moneyOut => 'Sorties';
+
+  @override
+  String get moneyLeftOver => 'Excédent';
+
+  @override
+  String get moneyShort => 'Déficit';
+
+  @override
+  String get moneyTrend => 'Dépenses par mois';
+
+  @override
+  String get moneyTransactions => 'Opérations';
+
+  @override
+  String get moneyStartMessage => 'Ajoutez un compte, puis notez vos dépenses.';
+
+  @override
+  String get whereItWent => 'Où est passé l’argent';
+
+  @override
+  String get cashFlow => 'Flux de trésorerie';
+
+  @override
+  String get worthALook => 'À regarder';
+
+  @override
+  String aheadOfPace(String name) {
+    return '$name dépasse le rythme de son budget';
+  }
+
+  @override
+  String spareIn(String name, String amount) {
+    return '$name a $amount de marge';
+  }
+
+  @override
+  String get previousMonth => 'Mois précédent';
+
+  @override
+  String get nextMonth => 'Mois suivant';
+
+  @override
+  String get ask => 'Demander';
+
+  @override
+  String get askSpentMonth => 'Combien ai-je dépensé ce mois-ci ?';
+
+  @override
+  String askSpentMonthAnswer(String amount) {
+    return '$amount';
+  }
+
+  @override
+  String get askTopCategory => 'Où est passé l’essentiel ?';
+
+  @override
+  String askTopCategoryAnswer(String name, String amount) {
+    return '$name : $amount';
+  }
+
+  @override
+  String get askVsLastMonth => 'Est-ce plus que le mois dernier ?';
+
+  @override
+  String askMore(String amount) {
+    return '$amount de plus que le mois dernier';
+  }
+
+  @override
+  String askLess(String amount) {
+    return '$amount de moins que le mois dernier';
+  }
+
+  @override
+  String get askSame => 'À peu près comme le mois dernier';
+
+  @override
+  String get askOwed => 'Qui me doit de l’argent ?';
+
+  @override
+  String get askNobodyOwes => 'Personne ne vous doit d’argent.';
+
+  @override
+  String get assetAdd => 'Ajouter un bien';
+
+  @override
+  String get assetEdit => 'Modifier le bien';
+
+  @override
+  String get assetGoldNote =>
+      'L’or et l’argent au poids restent des placements, car Qima les évalue. Ajoutez-les via Ajouter un placement.';
+
+  @override
+  String get assetValueToday => 'Valeur aujourd’hui';
+
+  @override
+  String get assetCost => 'Prix payé';
+
+  @override
+  String get assetBought => 'Date d’achat';
+
+  @override
+  String get optional => 'Facultatif';
+
+  @override
+  String get assetLoan => 'Prêt adossé';
+
+  @override
+  String get assetNoLoan => 'Aucun';
+
+  @override
+  String get assetForSale => 'Destiné à la vente';
+
+  @override
+  String get assetForSaleHelp =>
+      'Compte pour la zakat à sa valeur. Désactivé pour ce que vous utilisez.';
+
+  @override
+  String get assetErrorValue => 'Saisissez la valeur du jour.';
+
+  @override
+  String get assetsTotal => 'Valeur totale';
+
+  @override
+  String get assetsTotalHelp => 'Valeurs fixées par vous, chacune datée';
+
+  @override
+  String get assetsEmptyTitle => 'Aucun bien';
+
+  @override
+  String get assetsEmptyMessage =>
+      'Ajoutez une maison, un terrain, une voiture ou une part d’entreprise. Vous fixez la valeur, Qima garde l’historique.';
+
+  @override
+  String assetUpdated(String date) {
+    return 'Mis à jour le $date';
+  }
+
+  @override
+  String assetSinceBought(String amount) {
+    return '$amount depuis l’achat';
+  }
+
+  @override
+  String get assetUpdateValue => 'Mettre à jour la valeur';
+
+  @override
+  String get assetUpdateHelp =>
+      'Chaque mise à jour est datée. La dernière compte ; les autres restent dans l’historique.';
+
+  @override
+  String get assetNewValue => 'Nouvelle valeur';
+
+  @override
+  String get assetValueSource => 'Origine de la valeur';
+
+  @override
+  String get assetSold => 'Vendu';
+
+  @override
+  String assetSellTitle(String name) {
+    return 'Vendre $name';
+  }
+
+  @override
+  String assetLastValue(String amount) {
+    return 'Dernière valeur : $amount';
+  }
+
+  @override
+  String get assetSoldInto => 'L’argent est allé sur';
+
+  @override
+  String get assetSoldFor => 'Vendu pour';
+
+  @override
+  String assetGain(String amount) {
+    return 'Plus-value de $amount';
+  }
+
+  @override
+  String assetLoss(String amount) {
+    return 'Moins-value de $amount';
+  }
+
+  @override
+  String get assetGainHelp =>
+      'Par rapport à la dernière valeur. C’est une variation, jamais un revenu.';
+
+  @override
+  String assetPayOff(String name) {
+    return 'La vente a soldé $name';
+  }
+
+  @override
+  String assetPayOffHelp(String amount) {
+    return '$amount restant, payé depuis le même compte';
+  }
+
+  @override
+  String get assetYours => 'Ce qui est à vous';
+
+  @override
+  String get assetValue => 'Valeur';
+
+  @override
+  String assetStillOwed(String name) {
+    return 'Restant dû sur $name';
+  }
+
+  @override
+  String get assetYoursTotal => 'À vous';
+
+  @override
+  String get assetYoursHelp =>
+      'Le bilan liste toujours le bien dans vos avoirs et le prêt dans vos dettes.';
+
+  @override
+  String get assetHistory => 'Historique';
+
+  @override
+  String get assetRemoveTitle => 'Supprimer le bien';
+
+  @override
+  String get assetRemoveMessage =>
+      'Pour une vente, utilisez Vendu. Supprimer l’archive avec son historique.';
+
+  @override
+  String get howTotalWorked => 'Comment le total est calculé';
+
+  @override
+  String get howTotalIntro =>
+      'La valeur nette est ce que vous possédez moins ce que vous devez.';
+
+  @override
+  String get howTotalHoldings =>
+      'Les placements utilisent les prix actuels, comme dans Prix.';
+
+  @override
+  String get howTotalAssets =>
+      'Les biens que vous évaluez utilisent leur dernière valeur datée ; chacun peut être exclu.';
+
+  @override
+  String get howTotalLoans =>
+      'Les prêts ne comptent que le capital ; les intérêts futurs ne sont pas une dette avant l’échéance.';
+
+  @override
+  String get howTotalRates => 'Les autres devises utilisent le taux actuel.';
+
+  @override
+  String sheetAccountsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count comptes',
+      one: '1 compte',
+      zero: 'Aucun compte',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String budgetFor(String name) {
+    return 'Budget pour $name';
+  }
+
+  @override
+  String get budgetIntro =>
+      'Fixez un montant mensuel pour les catégories à suivre. Paiements de carte, virements et capital ne comptent jamais.';
+
+  @override
+  String get budgetMonthly => 'Chaque mois';
+
+  @override
+  String get budgetZeroHelp => 'Zéro le supprime.';
+
+  @override
+  String get budgetNone => 'Sans budget';
+
+  @override
+  String budgetOf(String amount) {
+    return 'Budget $amount';
+  }
+
+  @override
+  String get budgetSet => 'Définir un budget';
+
+  @override
+  String get budgetTotal => 'Budget du mois';
+
+  @override
+  String get recurringAdd => 'Ajouter un paiement récurrent';
+
+  @override
+  String get recurringDay => 'Jour du mois';
+
+  @override
+  String get recurringEmptyTitle => 'Aucun paiement récurrent';
+
+  @override
+  String get recurringEmptyMessage =>
+      'Ajoutez loyer, factures et abonnements pour les voir dans À venir avant l’échéance.';
+
+  @override
+  String recurringNext(String date) {
+    return 'Prochain le $date';
+  }
+
+  @override
+  String recurringRecord(String name, String date) {
+    return 'Enregistrer $name du $date';
+  }
+
+  @override
+  String get peopleEmptyTitle => 'Personne pour l’instant';
+
+  @override
+  String get peopleEmptyMessage =>
+      'Notez ce que vous prêtez ou empruntez, et les remboursements.';
+
+  @override
+  String get splitTotal => 'Total de l’addition';
+
+  @override
+  String get splitWho => 'Avec qui';
+
+  @override
+  String get splitShare => 'Part';
+
+  @override
+  String get splitAddPerson => 'Ajouter une personne';
+
+  @override
+  String get splitEvenly => 'Partager à parts égales';
+
+  @override
+  String get splitMine => 'Votre part (dépense)';
+
+  @override
+  String get splitOwedToYou => 'On vous doit';
+
+  @override
+  String get splitHelp =>
+      'Le montant total quitte le compte ; seule votre part est une dépense, les autres vous sont dues.';
+
+  @override
+  String get splitErrorPerson =>
+      'Chaque personne doit avoir un nom et une part.';
+
+  @override
+  String get splitErrorShares =>
+      'Ajoutez au moins une personne, avec des parts n’excédant pas le total.';
+
+  @override
+  String get categoriesTitle => 'Catégories';
+
+  @override
+  String get categoriesSpending => 'Dépenses';
+
+  @override
+  String get categoriesIncome => 'Revenus';
+
+  @override
+  String get categoryRename => 'Renommer la catégorie';
+
+  @override
+  String get categoryRemove => 'Supprimer la catégorie';
+
+  @override
+  String get categoryRemoveMessage =>
+      'Les opérations la gardent dans leur historique.';
+
+  @override
+  String get categoryAddSpending => 'Nouvelle catégorie de dépense';
+
+  @override
+  String get categoryAddIncome => 'Nouvelle catégorie de revenu';
+
+  @override
+  String get valueReview => 'Revoir la valeur des biens';
+
+  @override
+  String get valueReviewHelp => 'Un rappel dans À vérifier';
+
+  @override
+  String get valueReviewOff => 'Désactivé';
+
+  @override
+  String valueReviewMonths(int months) {
+    String _temp0 = intl.Intl.pluralLogic(
+      months,
+      locale: localeName,
+      other: 'Tous les $months mois',
+      one: 'Chaque mois',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get addSheetSpendSubtitle => 'Un achat, une facture ou des espèces';
+
+  @override
+  String get addSheetMore => 'Plus';
+
+  @override
+  String get addSheetMoreSubtitle =>
+      'Revenus, virements, prêts, comptes, biens';
+
+  @override
+  String get whatsNewTitle => 'Nouveautés de Qima';
+
+  @override
+  String get whatsNewTabs =>
+      'Trois onglets : Accueil pour votre situation, Argent pour vos dépenses, Prix pour le marché.';
+
+  @override
+  String get whatsNewBalanceSheet =>
+      'Placements, comptes, cartes et prêts s’additionnent dans un bilan. Touchez le total pour le voir.';
+
+  @override
+  String get whatsNewAssets =>
+      'Ajoutez un bien, une voiture ou une entreprise et mettez sa valeur à jour.';
+
+  @override
+  String get whatsNewPick => 'Que souhaitez-vous utiliser ?';
+
+  @override
+  String get whatsNewLater =>
+      'Modifiable à tout moment dans Réglages › Fonctions.';
+
+  @override
+  String get zakatDueTitle => 'Zakat due';
+
+  @override
+  String zakatDueLine(String amount) {
+    return '$amount dus';
+  }
+
+  @override
+  String get zakatBelowLine => 'Sous le nisab';
+
+  @override
+  String zakatBaseLine(String amount) {
+    return 'Compté : $amount';
+  }
+
+  @override
+  String zakatAbove(String amount) {
+    return 'Au-dessus du nisab de $amount';
+  }
+
+  @override
+  String zakatBelow(String amount) {
+    return 'Sous le nisab de $amount';
+  }
+
+  @override
+  String get zakatNoThreshold =>
+      'Le nisab s’affiche une fois les prix de l’or et de l’argent chargés.';
+
+  @override
+  String get zakatBase => 'Compté pour la zakat';
+
+  @override
+  String get zakatHeldForSale => 'Biens destinés à la vente';
+
+  @override
+  String get zakatDebtsDue => 'Dettes exigibles';
+
+  @override
+  String get zakatBookHelp =>
+      'Les placements suivent vos réglages de zakat. Les cartes et dettes envers des proches sont déduites ; pas les prêts, car seule l’échéance due compterait et Qima ne connaît pas leur échéancier.';
+
+  @override
+  String get zakatHoldingsDetail => 'Détail des placements';
 }

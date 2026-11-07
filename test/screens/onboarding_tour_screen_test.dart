@@ -15,6 +15,8 @@ import 'package:qima/services/preferences.dart';
 import 'package:qima/theme/app_theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../helpers/money_provider.dart';
+
 /// Onboarding tour widget behavior (spec "Onboarding tour" + Engineering
 /// rules): page dots, Skip under Next and absent on the last step, Get
 /// started completing the tour and landing on the home shell, the base
@@ -49,8 +51,7 @@ void main() {
   });
 
   Widget harness({Locale locale = const Locale('en'), Size? surfaceSize, double textScale = 1}) {
-    return BlocProvider<AppCubit>.value(
-      value: cubit,
+    return MultiBlocProvider(providers: [BlocProvider<AppCubit>.value(value: cubit), testMoneyProvider(cubit)],
       child: MediaQuery(
         data: MediaQueryData(
           size: surfaceSize ?? const Size(400, 800),
@@ -123,8 +124,7 @@ void main() {
   testWidgets('Get started completes onboarding and pops', (tester) async {
     setSurfaceSize(tester, const Size(400, 800));
     var finished = false;
-    await tester.pumpWidget(BlocProvider<AppCubit>.value(
-      value: cubit,
+    await tester.pumpWidget(MultiBlocProvider(providers: [BlocProvider<AppCubit>.value(value: cubit), testMoneyProvider(cubit)],
       child: MaterialApp(
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
@@ -181,8 +181,7 @@ void main() {
 
   testWidgets('replaying from Settings shows the tour again and popping returns to Settings', (tester) async {
     setSurfaceSize(tester, const Size(400, 800));
-    await tester.pumpWidget(BlocProvider<AppCubit>.value(
-      value: cubit,
+    await tester.pumpWidget(MultiBlocProvider(providers: [BlocProvider<AppCubit>.value(value: cubit), testMoneyProvider(cubit)],
       child: MaterialApp(
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
@@ -210,7 +209,12 @@ void main() {
     }
 
     final l10n = await AppLocalizations.delegate.load(const Locale('en'));
-    await tester.scrollUntilVisible(find.text(l10n.settingsHelpReplayTour), 200);
+    // Scoped to Settings: Home stays mounted underneath it.
+    await tester.scrollUntilVisible(
+      find.text(l10n.settingsHelpReplayTour),
+      200,
+      scrollable: find.descendant(of: find.byType(SettingsScreen), matching: find.byType(Scrollable)).first,
+    );
     await tester.tap(find.text(l10n.settingsHelpReplayTour));
     await settle();
 
