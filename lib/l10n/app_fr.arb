@@ -1239,5 +1239,9 @@
   "categoriesLearned": "Appris de vos choix",
   "categoriesForgetTitle": "Oublier ce choix ?",
   "categoriesForgetMessage": "Les imports de {name} n’iront plus d’eux-mêmes dans {category}. Les opérations déjà classées restent.",
-  "categoriesForget": "Oublier"
+  "categoriesForget": "Oublier",
+  "marketClosed": "Fermé",
+  "marketClosedOpens": "Marché fermé · ouvre {time}",
+  "marketOpenCloses": "Marché ouvert · ferme {time}",
+  "marketClosedLong": "Marché fermé"
 }

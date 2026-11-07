@@ -2994,27 +2994,102 @@
   "importReadOnDevice": "Read on this device. Files are deleted once imported.",
   "importEmpty": "Nothing waiting",
   "catUncategorized": "Uncategorized",
-  "@catUncategorized": {"description": "Categories: catUncategorized"},
+  "@catUncategorized": {
+    "description": "Categories: catUncategorized"
+  },
   "catUncategorizedIncome": "Uncategorized income",
-  "@catUncategorizedIncome": {"description": "Categories: catUncategorizedIncome"},
+  "@catUncategorizedIncome": {
+    "description": "Categories: catUncategorizedIncome"
+  },
   "toCategorizeTitle": "To categorize",
-  "@toCategorizeTitle": {"description": "Categories: toCategorizeTitle"},
+  "@toCategorizeTitle": {
+    "description": "Categories: toCategorizeTitle"
+  },
   "toCategorizeCount": "{count, plural, =1{1 to categorize} other{{count} to categorize}}",
-  "@toCategorizeCount": {"description": "Categories: toCategorizeCount", "placeholders": {"count": {"type": "int"}}},
+  "@toCategorizeCount": {
+    "description": "Categories: toCategorizeCount",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "toCategorizeHint": "Pick a category once for each name. Imports from that name use it from now on.",
-  "@toCategorizeHint": {"description": "Categories: toCategorizeHint"},
+  "@toCategorizeHint": {
+    "description": "Categories: toCategorizeHint"
+  },
   "toCategorizeEmpty": "Everything has a category.",
-  "@toCategorizeEmpty": {"description": "Categories: toCategorizeEmpty"},
+  "@toCategorizeEmpty": {
+    "description": "Categories: toCategorizeEmpty"
+  },
   "toCategorizeAlso": "{count, plural, =1{Also put 1 earlier entry from {name} in {category}? It is in {from} now.} other{Also put {count} earlier entries from {name} in {category}? They are in {from} now.}}",
-  "@toCategorizeAlso": {"description": "Categories: toCategorizeAlso", "placeholders": {"count": {"type": "int"}, "name": {"type": "String"}, "category": {"type": "String"}, "from": {"type": "String"}}},
+  "@toCategorizeAlso": {
+    "description": "Categories: toCategorizeAlso",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "name": {
+        "type": "String"
+      },
+      "category": {
+        "type": "String"
+      },
+      "from": {
+        "type": "String"
+      }
+    }
+  },
   "toCategorizeAlsoYes": "Move them",
-  "@toCategorizeAlsoYes": {"description": "Categories: toCategorizeAlsoYes"},
+  "@toCategorizeAlsoYes": {
+    "description": "Categories: toCategorizeAlsoYes"
+  },
   "categoriesLearned": "Learned from your choices",
-  "@categoriesLearned": {"description": "Categories: categoriesLearned"},
+  "@categoriesLearned": {
+    "description": "Categories: categoriesLearned"
+  },
   "categoriesForgetTitle": "Forget this choice?",
-  "@categoriesForgetTitle": {"description": "Categories: categoriesForgetTitle"},
+  "@categoriesForgetTitle": {
+    "description": "Categories: categoriesForgetTitle"
+  },
   "categoriesForgetMessage": "Imports from {name} will no longer go to {category} on their own. Entries already there stay.",
-  "@categoriesForgetMessage": {"description": "Categories: categoriesForgetMessage", "placeholders": {"name": {"type": "String"}, "category": {"type": "String"}}},
+  "@categoriesForgetMessage": {
+    "description": "Categories: categoriesForgetMessage",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "category": {
+        "type": "String"
+      }
+    }
+  },
   "categoriesForget": "Forget",
-  "@categoriesForget": {"description": "Categories: categoriesForget"}
+  "@categoriesForget": {
+    "description": "Categories: categoriesForget"
+  },
+  "marketClosed": "Closed",
+  "marketClosedOpens": "Market closed · opens {time}",
+  "marketOpenCloses": "Market open · closes {time}",
+  "marketClosedLong": "Market closed",
+  "@marketClosed": {
+    "description": "A price row's mark while its market is shut."
+  },
+  "@marketClosedOpens": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "@marketOpenCloses": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "@marketClosedLong": {
+    "description": "The detail screen's line when the next opening is unknown."
+  }
 }

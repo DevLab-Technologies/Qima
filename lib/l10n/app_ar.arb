@@ -1239,5 +1239,9 @@
   "categoriesLearned": "تعلّمتها من اختياراتك",
   "categoriesForgetTitle": "نسيان هذا الاختيار؟",
   "categoriesForgetMessage": "لن تذهب العمليات المستوردة من {name} إلى {category} تلقائيًا بعد الآن. تبقى العمليات الموجودة كما هي.",
-  "categoriesForget": "نسيان"
+  "categoriesForget": "نسيان",
+  "marketClosed": "مغلق",
+  "marketClosedOpens": "السوق مغلق · يفتح {time}",
+  "marketOpenCloses": "السوق مفتوح · يغلق {time}",
+  "marketClosedLong": "السوق مغلق"
 }

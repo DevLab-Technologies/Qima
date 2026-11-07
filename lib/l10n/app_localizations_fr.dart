@@ -4338,4 +4338,20 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get categoriesForget => 'Oublier';
+
+  @override
+  String get marketClosed => 'Fermé';
+
+  @override
+  String marketClosedOpens(String time) {
+    return 'Marché fermé · ouvre $time';
+  }
+
+  @override
+  String marketOpenCloses(String time) {
+    return 'Marché ouvert · ferme $time';
+  }
+
+  @override
+  String get marketClosedLong => 'Marché fermé';
 }

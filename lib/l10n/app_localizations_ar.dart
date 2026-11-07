@@ -4330,4 +4330,20 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get categoriesForget => 'نسيان';
+
+  @override
+  String get marketClosed => 'مغلق';
+
+  @override
+  String marketClosedOpens(String time) {
+    return 'السوق مغلق · يفتح $time';
+  }
+
+  @override
+  String marketOpenCloses(String time) {
+    return 'السوق مفتوح · يغلق $time';
+  }
+
+  @override
+  String get marketClosedLong => 'السوق مغلق';
 }

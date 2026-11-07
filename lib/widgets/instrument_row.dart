@@ -6,6 +6,7 @@ import '../theme/price_chart.dart';
 import '../theme/qima_colors.dart';
 import '../theme/strings.dart';
 import 'instrument_icon.dart';
+import 'market_status.dart';
 
 /// Watchlist row: icon, name/detail line, a small non-interactive sparkline,
 /// and price + windowed change. Mirrors `InstrumentRow.swift`.
@@ -42,9 +43,13 @@ class InstrumentRow extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 2),
-                  Text(
-                    '${presentation.symbol} · ${presentation.displayCurrency}$unitSuffix$karat',
+                  Text.rich(
+                    TextSpan(children: [
+                      TextSpan(text: '${presentation.symbol} · ${presentation.displayCurrency}$unitSuffix$karat'),
+                      if (MarketClosedMark.closed(presentation.instrument, now)) ...MarketClosedMark.spans(context),
+                    ]),
                     style: TextStyle(color: colors.textTertiary, fontSize: 12),
+                    maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                 ],

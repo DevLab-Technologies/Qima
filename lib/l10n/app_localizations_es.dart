@@ -4340,4 +4340,20 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get categoriesForget => 'Olvidar';
+
+  @override
+  String get marketClosed => 'Cerrado';
+
+  @override
+  String marketClosedOpens(String time) {
+    return 'Mercado cerrado · abre $time';
+  }
+
+  @override
+  String marketOpenCloses(String time) {
+    return 'Mercado abierto · cierra $time';
+  }
+
+  @override
+  String get marketClosedLong => 'Mercado cerrado';
 }

@@ -7354,6 +7354,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Forget'**
   String get categoriesForget;
+
+  /// A price row's mark while its market is shut.
+  ///
+  /// In en, this message translates to:
+  /// **'Closed'**
+  String get marketClosed;
+
+  /// No description provided for @marketClosedOpens.
+  ///
+  /// In en, this message translates to:
+  /// **'Market closed · opens {time}'**
+  String marketClosedOpens(String time);
+
+  /// No description provided for @marketOpenCloses.
+  ///
+  /// In en, this message translates to:
+  /// **'Market open · closes {time}'**
+  String marketOpenCloses(String time);
+
+  /// The detail screen's line when the next opening is unknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Market closed'**
+  String get marketClosedLong;
 }
 
 class _AppLocalizationsDelegate

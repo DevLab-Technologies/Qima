@@ -19,6 +19,7 @@ import '../widgets/alerts_card.dart';
 import '../widgets/help_button.dart';
 import '../widgets/instrument_icon.dart';
 import '../widgets/key_stats_grid.dart';
+import '../widgets/market_status.dart';
 import '../widgets/range_selector.dart';
 import '../widgets/unit_price_carousel.dart';
 import 'currency_picker.dart';
@@ -223,6 +224,8 @@ class _InstrumentDetailScreenState extends State<InstrumentDetailScreen> {
                       ),
                     ],
                   ),
+                  const SizedBox(height: DS.spaceXS),
+                  MarketStatusLine(instrument: instrument, now: now),
                   const SizedBox(height: DS.spaceMD),
                   AlertsCard(card: _card),
                   const SizedBox(height: DS.spaceMD),
