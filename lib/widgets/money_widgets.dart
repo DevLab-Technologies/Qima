@@ -219,6 +219,9 @@ class AccountPicker extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     final selected = accounts.any((a) => a.id == value?.id) ? value!.id : null;
     return DropdownButtonFormField<String>(
+      // The field keeps its own value after the first build; a new choice
+      // or a new list from the caller starts it again.
+      key: ValueKey('$selected|${accounts.map((a) => a.id).join(',')}'),
       initialValue: selected,
       isExpanded: true,
       decoration: InputDecoration(labelText: label, border: const OutlineInputBorder()),

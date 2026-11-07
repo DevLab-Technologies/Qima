@@ -3983,7 +3983,13 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
-  String get addSheetSpendSubtitle => 'Un achat, une facture ou des espèces';
+  String get addSheetTransaction => 'Opération';
+
+  @override
+  String get addSheetTransactionSubtitle => 'Argent dépensé, reçu ou déplacé';
+
+  @override
+  String get entryNewTitle => 'Nouvelle opération';
 
   @override
   String get addSheetMore => 'Plus';
@@ -4059,4 +4065,165 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get zakatHoldingsDetail => 'Détail des placements';
+
+  @override
+  String get importStatement => 'Importer un relevé';
+
+  @override
+  String get importStatementSubtitle =>
+      'PDF, Excel, CSV ou captures de votre banque';
+
+  @override
+  String get importFromFiles => 'Depuis Fichiers';
+
+  @override
+  String get importFromFilesHint => 'Relevés en PDF, Excel ou CSV';
+
+  @override
+  String get importFromPhotos => 'Captures depuis Photos';
+
+  @override
+  String get importFromPhotosHint => 'Les opérations de votre appli bancaire';
+
+  @override
+  String get importShareTip =>
+      'Vous pouvez aussi partager des fichiers vers Qima depuis n’importe quelle appli.';
+
+  @override
+  String importReadingFiles(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Lecture de $count fichiers…',
+      one: 'Lecture d’1 fichier…',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String importReadyRows(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count opérations à vérifier',
+      one: '1 opération à vérifier',
+      zero: 'Rien à ajouter',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get importBannerTitle => 'Partagé avec Qima';
+
+  @override
+  String get importReviewTitle => 'Vérifier l’import';
+
+  @override
+  String get importIntoAccount => 'Relevé de';
+
+  @override
+  String get importNoAccountTitle => 'Ajoutez d’abord le compte';
+
+  @override
+  String get importNoAccountBody =>
+      'Ajoutez le compte bancaire ou la carte de ce relevé, puis revenez ici.';
+
+  @override
+  String importAddCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Ajouter $count opérations',
+      one: 'Ajouter 1 opération',
+      zero: 'Ajouter',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String importAdded(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count opérations ajoutées',
+      one: '1 opération ajoutée',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get importDiscardAll => 'Tout ignorer';
+
+  @override
+  String get importDiscardConfirm =>
+      'Ignorer ces fichiers ? Rien n’en sera ajouté.';
+
+  @override
+  String get importDiscard => 'Ignorer';
+
+  @override
+  String get importRemoveFile => 'Retirer le fichier';
+
+  @override
+  String get importFlagInBook => 'Déjà dans Qima';
+
+  @override
+  String get importFlagRepeated => 'Aussi dans un autre fichier';
+
+  @override
+  String importFlagCurrency(String currency) {
+    return 'En $currency, pas dans la devise du compte';
+  }
+
+  @override
+  String get importDateGuessed => 'Pas de date : jour du partage utilisé';
+
+  @override
+  String get importSignGuessed => 'À vérifier : entrée ou sortie ?';
+
+  @override
+  String get importStatusReading => 'Lecture…';
+
+  @override
+  String get importStatusWaiting => 'En attente';
+
+  @override
+  String get importStatusAlready => 'Déjà importé';
+
+  @override
+  String get importStatusUnsupported =>
+      'Qima ne peut pas lire ce type de fichier';
+
+  @override
+  String get importStatusUnreadable => 'Impossible de lire ce fichier';
+
+  @override
+  String get importStatusNothing => 'Aucune opération trouvée dans ce fichier';
+
+  @override
+  String importRowFound(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count trouvées',
+      one: '1 trouvée',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get importEditRow => 'Opération';
+
+  @override
+  String get importCategory => 'Catégorie';
+
+  @override
+  String get importNothingSelected => 'Cochez les opérations à ajouter.';
+
+  @override
+  String get importReadOnDevice =>
+      'Lu sur cet appareil. Les fichiers sont supprimés après l’import.';
+
+  @override
+  String get importEmpty => 'Rien en attente';
 }

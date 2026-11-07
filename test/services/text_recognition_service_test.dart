@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:qima/models/statement_reader.dart';
 import 'package:qima/blocs/app_cubit.dart';
 import 'package:qima/l10n/app_localizations.dart';
 import 'package:qima/l10n/app_localizations_en.dart';
@@ -20,6 +21,9 @@ class _FakeRecognition implements TextRecognitionService {
 
   @override
   Future<bool> isAvailable() async => available;
+
+  @override
+  Future<List<DocPage>?> readDocument(String path, List<String> languageTags) async => null;
 
   @override
   Future<List<String>?> recognize(String imagePath, List<String> languageTags) async {

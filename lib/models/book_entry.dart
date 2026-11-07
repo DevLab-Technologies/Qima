@@ -190,7 +190,7 @@ class BookEntry extends Equatable implements Syncable {
 
   bool get isBalanced => issues.isEmpty;
 
-  BookEntry copyWith({DateTime? date, DateTime? postedDate, EntryStatus? status, List<EntryLine>? lines, String? merchant, String? note}) =>
+  BookEntry copyWith({DateTime? date, DateTime? postedDate, EntryStatus? status, List<EntryLine>? lines, String? merchant, String? note, String? rawMerchant, EntrySource? source}) =>
       BookEntry(
         id: id,
         date: date ?? this.date,
@@ -200,9 +200,9 @@ class BookEntry extends Equatable implements Syncable {
         baseCurrency: baseCurrency,
         lines: lines ?? this.lines,
         merchant: merchant ?? this.merchant,
-        rawMerchant: rawMerchant,
+        rawMerchant: rawMerchant ?? this.rawMerchant,
         note: note ?? this.note,
-        source: source,
+        source: source ?? this.source,
       );
 
   @override

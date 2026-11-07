@@ -3983,7 +3983,13 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
-  String get addSheetSpendSubtitle => 'Una compra, una factura o efectivo';
+  String get addSheetTransaction => 'Movimiento';
+
+  @override
+  String get addSheetTransactionSubtitle => 'Dinero gastado, recibido o movido';
+
+  @override
+  String get entryNewTitle => 'Nuevo movimiento';
 
   @override
   String get addSheetMore => 'Más';
@@ -4058,4 +4064,168 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get zakatHoldingsDetail => 'Inversiones en detalle';
+
+  @override
+  String get importStatement => 'Importar un extracto';
+
+  @override
+  String get importStatementSubtitle =>
+      'PDF, Excel, CSV o capturas de tu banco';
+
+  @override
+  String get importFromFiles => 'Desde Archivos';
+
+  @override
+  String get importFromFilesHint => 'Extractos en PDF, Excel o CSV';
+
+  @override
+  String get importFromPhotos => 'Capturas desde Fotos';
+
+  @override
+  String get importFromPhotosHint => 'Los movimientos de tu app del banco';
+
+  @override
+  String get importShareTip =>
+      'También puedes compartir archivos con Qima desde cualquier app.';
+
+  @override
+  String importReadingFiles(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Leyendo $count archivos…',
+      one: 'Leyendo 1 archivo…',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String importReadyRows(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count movimientos por revisar',
+      one: '1 movimiento por revisar',
+      zero: 'No se encontró nada que añadir',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get importBannerTitle => 'Compartido con Qima';
+
+  @override
+  String get importReviewTitle => 'Revisar importación';
+
+  @override
+  String get importIntoAccount => 'Extracto de';
+
+  @override
+  String get importNoAccountTitle => 'Añade primero la cuenta';
+
+  @override
+  String get importNoAccountBody =>
+      'Añade la cuenta bancaria o tarjeta de este extracto y vuelve aquí.';
+
+  @override
+  String importAddCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Añadir $count movimientos',
+      one: 'Añadir 1 movimiento',
+      zero: 'Añadir',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String importAdded(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count movimientos añadidos',
+      one: '1 movimiento añadido',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get importDiscardAll => 'Descartar todo';
+
+  @override
+  String get importDiscardConfirm =>
+      '¿Descartar estos archivos? No se añadirá nada.';
+
+  @override
+  String get importDiscard => 'Descartar';
+
+  @override
+  String get importRemoveFile => 'Quitar archivo';
+
+  @override
+  String get importFlagInBook => 'Ya está en Qima';
+
+  @override
+  String get importFlagRepeated => 'También en otro archivo';
+
+  @override
+  String importFlagCurrency(String currency) {
+    return 'En $currency, no en la moneda de la cuenta';
+  }
+
+  @override
+  String get importDateGuessed =>
+      'Sin fecha: se usó el día en que se compartió';
+
+  @override
+  String get importSignGuessed => 'Revisa: ¿entrada o salida?';
+
+  @override
+  String get importStatusReading => 'Leyendo…';
+
+  @override
+  String get importStatusWaiting => 'En espera';
+
+  @override
+  String get importStatusAlready => 'Ya importado';
+
+  @override
+  String get importStatusUnsupported =>
+      'Qima no puede leer este tipo de archivo';
+
+  @override
+  String get importStatusUnreadable => 'No se pudo leer este archivo';
+
+  @override
+  String get importStatusNothing =>
+      'No se encontraron movimientos en este archivo';
+
+  @override
+  String importRowFound(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count encontrados',
+      one: '1 encontrado',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get importEditRow => 'Movimiento';
+
+  @override
+  String get importCategory => 'Categoría';
+
+  @override
+  String get importNothingSelected =>
+      'Marca los movimientos que quieras añadir.';
+
+  @override
+  String get importReadOnDevice =>
+      'Se lee en este dispositivo. Los archivos se borran al importarlos.';
+
+  @override
+  String get importEmpty => 'Nada pendiente';
 }

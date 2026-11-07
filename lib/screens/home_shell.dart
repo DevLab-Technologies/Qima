@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../blocs/app_cubit.dart';
+import '../blocs/import_cubit.dart';
 import '../blocs/money_cubit.dart';
 import '../l10n/app_localizations.dart';
 import '../theme/design_system.dart';
@@ -79,6 +80,8 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
   void _onForeground() {
     final cubit = context.read<AppCubit>();
     cubit.refreshIfStale();
+    // Anything shared to Qima while it was in the background.
+    unawaited(maybeImportCubit(context)?.checkInbox());
     _timer?.cancel();
     _timer = Timer.periodic(const Duration(seconds: 60), (_) => cubit.refreshAll(silent: true));
   }

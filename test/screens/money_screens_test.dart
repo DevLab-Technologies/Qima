@@ -1,13 +1,16 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:qima/blocs/app_cubit.dart';
+import 'package:qima/blocs/import_cubit.dart';
 import 'package:qima/blocs/money_cubit.dart';
 import 'package:qima/l10n/app_localizations.dart';
 import 'package:qima/models/asset.dart';
 import 'package:qima/models/book_account.dart';
+import 'package:qima/models/book_entry.dart';
 import 'package:qima/models/fx_history.dart';
 import 'package:qima/models/minor_units.dart';
 import 'package:qima/models/money.dart';
@@ -20,6 +23,10 @@ import 'package:qima/screens/money/balance_sheet_screen.dart';
 import 'package:qima/screens/money/entry_detail_screen.dart';
 import 'package:qima/screens/money/entry_editor_screen.dart';
 import 'package:qima/screens/money/home_screen.dart';
+import 'package:qima/screens/money/import_screens.dart';
+import 'package:qima/services/import/import_inbox_io.dart';
+import 'package:qima/models/statement_reader.dart';
+import 'package:qima/services/text_recognition_service.dart';
 import 'package:qima/screens/money/money_screen.dart';
 import 'package:qima/screens/money/more_money_screens.dart';
 import 'package:qima/theme/money_labels.dart';
@@ -45,11 +52,29 @@ int sar(num major) => MinorUnits.fromMajor(major, 'SAR');
 BookAccount acct(String id, String name, AccountType type, {AccountSide side = AccountSide.own, String ccy = 'SAR'}) =>
     BookAccount(id: id, name: name, side: side, type: type, currency: ccy);
 
+class _PdfRecognition implements TextRecognitionService {
+  @override
+  Future<bool> isAvailable() async => true;
+  @override
+  Future<List<String>?> recognize(String imagePath, List<String> languageTags) async => null;
+  @override
+  Future<List<DocPage>?> readDocument(String path, List<String> languageTags) async => [
+        DocPage([
+          const DocToken('Today', 0.05, 0.10, 0.2, 0.02),
+          const DocToken('Starbucks Olaya Riyadh with a long branch name', 0.05, 0.14, 0.5, 0.025),
+          const DocToken('-23.00 SAR', 0.7, 0.14, 0.25, 0.025),
+          const DocToken('Amazon', 0.05, 0.18, 0.3, 0.025),
+          const DocToken('USD 1,234,567.89', 0.6, 0.18, 0.35, 0.025),
+        ]),
+      ];
+}
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   late Directory dir;
   late AppCubit app;
   late MoneyCubit money;
+  late ImportCubit importer;
   final rates = FXRates(base: 'SAR', rates: const {'SAR': 1, 'EGP': 13}, updatedAt: DateTime(2026, 11, 7));
 
   setUp(() async {
@@ -58,9 +83,17 @@ void main() {
     app = AppCubit(repository: _OfflineRepository());
     app.emit(app.state.copyWith(initialized: true, rates: rates, fxHistory: FXHistory.empty, baseCurrency: 'SAR'));
     money = MoneyCubit(store: app.bookStore, baseCurrency: () => 'SAR', rates: () => app.state.rates);
+    final inboxDir = Directory('${dir.path}/inbox')..createSync();
+    importer = ImportCubit(
+      inbox: FolderInbox(folders: [inboxDir]),
+      recognition: _PdfRecognition(),
+      wasImported: money.wasImported,
+      languages: () => const ['en-US'],
+    );
   });
 
   tearDown(() async {
+    await importer.close();
     await money.close();
     await app.close();
     if (await dir.exists()) await dir.delete(recursive: true);
@@ -102,10 +135,19 @@ void main() {
     await money.setBudget('category.dining', sar(1200));
     await money.setBudget('category.groceries', sar(2500));
     await money.setFeatures(MoneyFeature.values.toSet());
+    await importer.addFiles([
+      ('Al Rajhi statement November 2026 with a long name.csv', utf8.encode('Date,Description,Debit,Credit,Balance\n03/11/2026,PANDA RIYADH,512.40,,21508.25\n01/11/2026,SALARY NOVEMBER,,17500.00,22020.65\n')),
+      ('IMG_2041.png', [1, 2, 3]),
+      ('notes.docx', [1]),
+    ]);
   }
 
   Widget wrap(Widget screen, Locale locale) => MultiBlocProvider(
-        providers: [BlocProvider<AppCubit>.value(value: app), BlocProvider<MoneyCubit>.value(value: money)],
+        providers: [
+          BlocProvider<AppCubit>.value(value: app),
+          BlocProvider<MoneyCubit>.value(value: money),
+          BlocProvider<ImportCubit>.value(value: importer),
+        ],
         child: MaterialApp(
           locale: locale,
           localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -152,6 +194,7 @@ void main() {
       'bill split': () => const BillSplitScreen(),
       'categories': () => const CategoriesScreen(),
       'zakat': () => const ZakatBookScreen(),
+      'import review': () => const ImportReviewScreen(),
       for (final k in EntryKind.values) 'editor ${k.name}': () => EntryEditorScreen(kind: k),
       'edit spend': () => EntryEditorScreen(kind: EntryKind.spend, existing: spend),
     };
@@ -205,6 +248,90 @@ void main() {
     });
     await tester.pump();
     expect(money.state.book.balanceOf('rajhi'), before - sar(25.50));
+  });
+
+  testWidgets('spend, income and transfer are tabs of one page that keep the amount', (tester) async {
+    await tester.runAsync(seed);
+    size(tester, const Size(390, 1200));
+    final l10n = await AppLocalizations.delegate.load(const Locale('en'));
+    final before = money.state.book.balanceOf('rajhi');
+    await tester.pumpWidget(wrap(const EntryEditorScreen(kind: EntryKind.spend, fromAccountId: 'rajhi'), const Locale('en')));
+    await tester.pump();
+    expect(find.text(l10n.entryNewTitle), findsOneWidget);
+    expect(find.text(l10n.entryPaidFrom), findsOneWidget);
+    await tester.enterText(find.byType(TextField).first, '40');
+
+    await tester.tap(find.text(l10n.tplTransfer));
+    await tester.pump();
+    expect(find.text(l10n.entryTo), findsOneWidget);
+    expect(find.text(l10n.entryCategory), findsNothing);
+
+    await tester.tap(find.text(l10n.tplIncome));
+    await tester.pump();
+    expect(find.text(l10n.entryPaidFrom), findsNothing);
+    expect(find.text('40'), findsOneWidget);
+    await tester.runAsync(() async {
+      await tester.tap(find.text('Save'));
+      for (var i = 0; i < 20 && money.state.book.balanceOf('rajhi') == before; i++) {
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+      }
+    });
+    await tester.pump();
+    // The account chosen on the Spend tab is where the income went.
+    expect(money.state.book.balanceOf('rajhi'), before + sar(40));
+  });
+
+  testWidgets('editing shows no tabs', (tester) async {
+    await tester.runAsync(seed);
+    size(tester, const Size(390, 1200));
+    final spend = money.state.book.entries.firstWhere((e) => e.template == EntryTemplate.spend);
+    await tester.pumpWidget(wrap(EntryEditorScreen(kind: EntryKind.spend, existing: spend), const Locale('en')));
+    await tester.pump();
+    expect(find.byKey(const ValueKey('entryKindTabs')), findsNothing);
+  });
+
+  testWidgets('the import review: rows ticked where sure, flags, and adding them', (tester) async {
+    await tester.runAsync(seed);
+    size(tester, const Size(390, 2400));
+    final l10n = await AppLocalizations.delegate.load(const Locale('en'));
+    final before = money.state.book.balanceOf('rajhi');
+    await tester.pumpWidget(wrap(const ImportReviewScreen(), const Locale('en')));
+    await tester.pump(const Duration(milliseconds: 300));
+    // The CSV, the screenshot (read as positioned text) and the unknown file.
+    expect(find.text('PANDA RIYADH'), findsOneWidget);
+    expect(find.text('SALARY NOVEMBER'), findsOneWidget);
+    expect(find.text('Starbucks Olaya Riyadh with a long branch name'), findsOneWidget);
+    expect(find.text(l10n.importFlagCurrency('USD')), findsOneWidget);
+    expect(find.text(l10n.importStatusUnsupported), findsOneWidget);
+    // Three ticked: Panda, salary, Starbucks; Amazon in USD is not.
+    expect(find.text(l10n.importAddCount(3)), findsOneWidget);
+    expect(find.byType(Checkbox), findsNWidgets(4));
+
+    // Untick the coffee, then add.
+    await tester.tap(find.byType(Checkbox).at(2));
+    await tester.pump();
+    expect(find.text(l10n.importAddCount(2)), findsOneWidget);
+    await tester.runAsync(() async {
+      await tester.tap(find.byKey(const ValueKey('importAdd')));
+      for (var i = 0; i < 40 && importer.state.items.isNotEmpty; i++) {
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+      }
+    });
+    await tester.pump();
+    expect(money.state.book.balanceOf('rajhi'), before - sar(512.40) + sar(17500));
+    expect(importer.state.isEmpty, isTrue);
+    expect(money.state.settings.importedHashes, hasLength(2));
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Home shows the import banner while files wait', (tester) async {
+    await tester.runAsync(seed);
+    size(tester, const Size(390, 3000));
+    final l10n = await AppLocalizations.delegate.load(const Locale('en'));
+    await tester.pumpWidget(wrap(const HomeScreen(), const Locale('en')));
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(find.text(l10n.importBannerTitle), findsOneWidget);
+    expect(find.text(l10n.importReadyRows(4)), findsOneWidget);
   });
 
   testWidgets('Home shows net worth once there is an account, and hides a card from Edit Home', (tester) async {

@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
+import '../models/statement_reader.dart';
+
 /// Reads the text in a photo on the device (v4 phase 7, receipt scan).
 /// Implemented with Apple's Vision in the iOS and macOS runners
 /// (`TextRecognitionPlugin`). Android's only on-device route is ML Kit,
@@ -12,6 +14,11 @@ abstract class TextRecognitionService {
   /// The image's lines, top to bottom, recognized in [languageTags] first;
   /// null when it couldn't be read.
   Future<List<String>?> recognize(String imagePath, List<String> languageTags);
+
+  /// A statement PDF, screenshot or photo as pages of positioned text: a
+  /// PDF's own text where it has some, Vision for scanned pages and images.
+  /// Null when the file can't be read.
+  Future<List<DocPage>?> readDocument(String path, List<String> languageTags);
 }
 
 class NoTextRecognition implements TextRecognitionService {
@@ -22,6 +29,9 @@ class NoTextRecognition implements TextRecognitionService {
 
   @override
   Future<List<String>?> recognize(String imagePath, List<String> languageTags) async => null;
+
+  @override
+  Future<List<DocPage>?> readDocument(String path, List<String> languageTags) async => null;
 }
 
 class PlatformTextRecognition implements TextRecognitionService {
@@ -50,6 +60,23 @@ class PlatformTextRecognition implements TextRecognitionService {
       return null;
     } on PlatformException catch (e) {
       debugPrint('TextRecognition: recognize failed: $e');
+      return null;
+    }
+  }
+
+  @override
+  Future<List<DocPage>?> readDocument(String path, List<String> languageTags) async {
+    try {
+      final pages = await _channel.invokeListMethod<Map<dynamic, dynamic>>('readDocument', {'path': path, 'languages': languageTags});
+      if (pages == null) return null;
+      return [
+        for (final p in pages)
+          DocPage([for (final t in (p['tokens'] as List? ?? const [])) DocToken.fromJson(t as Map<dynamic, dynamic>)]),
+      ];
+    } on MissingPluginException {
+      return null;
+    } on PlatformException catch (e) {
+      debugPrint('TextRecognition: readDocument failed: $e');
       return null;
     }
   }

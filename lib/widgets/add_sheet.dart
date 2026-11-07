@@ -9,6 +9,7 @@ import '../screens/add_instrument_screen.dart';
 import '../screens/money/accounts_screens.dart';
 import '../screens/money/asset_screens.dart';
 import '../screens/money/entry_editor_screen.dart';
+import '../screens/money/import_screens.dart';
 import '../screens/money/more_money_screens.dart';
 import '../theme/money_labels.dart';
 import '../services/dictation_service.dart';
@@ -66,10 +67,12 @@ Future<void> showAddSheet(BuildContext context) async {
       unawaited(EntryEditorScreen.open(context, kind));
     case _MoreChoice.more:
       await _showMore(context);
+    case _MoreChoice.import:
+      await showImportSheet(context);
   }
 }
 
-enum _MoreChoice { more, account, asset, recurring, billSplit }
+enum _MoreChoice { more, account, asset, recurring, billSplit, import }
 
 /// Everything else that can be added, under More.
 Future<void> _showMore(BuildContext context) async {
@@ -87,8 +90,6 @@ Future<void> _showMore(BuildContext context) async {
         child: SingleChildScrollView(
           child: Column(mainAxisSize: MainAxisSize.min, children: [
             for (final k in [
-              EntryKind.income,
-              EntryKind.transfer,
               EntryKind.cardPayment,
               EntryKind.loanPayment,
               EntryKind.lent,
@@ -151,10 +152,18 @@ class _AddSheet extends StatelessWidget {
             children: [
               _Choice(
                 key: const ValueKey('addSheetSpend'),
-                icon: Icons.shopping_cart_outlined,
-                title: l10n.tplSpend,
-                subtitle: l10n.addSheetSpendSubtitle,
+                icon: Icons.swap_vert,
+                title: l10n.addSheetTransaction,
+                subtitle: l10n.addSheetTransactionSubtitle,
                 onTap: () => choose(EntryKind.spend),
+              ),
+              const SizedBox(height: DS.spaceSM),
+              _Choice(
+                key: const ValueKey('addSheetImport'),
+                icon: Icons.receipt_long_outlined,
+                title: l10n.importStatement,
+                subtitle: l10n.importStatementSubtitle,
+                onTap: () => choose(_MoreChoice.import),
               ),
               const SizedBox(height: DS.spaceSM),
               _Choice(

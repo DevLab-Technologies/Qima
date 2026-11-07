@@ -9,6 +9,8 @@ default_platform(:ios)
 APP_IDENTIFIER = "com.devlabtechnologies.qima"
 WIDGET_IDENTIFIER = "com.devlabtechnologies.qima.widget"
 WIDGET_TARGET = "QimaWidgetExtension"
+SHARE_IDENTIFIER = "com.devlabtechnologies.qima.share"
+SHARE_TARGET = "QimaShare"
 MAC_PROJECT = "../macos/Runner.xcodeproj"
 MAC_INSTALLER_IDENTITY = "3rd Party Mac Developer Installer"
 APPLE_TEAM_ID = "ZS3A435WC2"
@@ -193,7 +195,7 @@ def build_mac_pkg!(build_number, profile_name, widget_profile_name)
         <key>#{APP_IDENTIFIER}</key>
         <string>#{profile_name}</string>
         <key>#{WIDGET_IDENTIFIER}</key>
-        <string>#{widget_profile_name}</string>
+        <string>#{widget_profile_name}</string>#{share_profile_name ? "\n    <key>#{SHARE_IDENTIFIER}</key>\n    <string>#{share_profile_name}</string>" : ""}
       </dict>
       <key>uploadSymbols</key>
       <true/>
@@ -221,7 +223,7 @@ end
 
 # Writes an ExportOptions.plist for a manual-signing app-store export. Not
 # checked into git because the profile names come from secrets at build time.
-def write_export_options!(profile_name, widget_profile_name)
+def write_export_options!(profile_name, widget_profile_name, share_profile_name = nil)
   path = File.expand_path("../ExportOptions.plist", __dir__)
   File.write(path, <<~PLIST)
     <?xml version="1.0" encoding="UTF-8"?>
@@ -301,13 +303,18 @@ platform :ios do
     end
   end
 
-  desc "Import a distribution certificate (.p12) and the app and widget provisioning profiles (.mobileprovision) from base64 secrets into a throwaway CI keychain, then switch Runner and the widget extension to manual signing."
+  desc "Import a distribution certificate (.p12) and the app, widget and share extension provisioning profiles (.mobileprovision) from base64 secrets into a throwaway CI keychain, then switch Runner and both extensions to manual signing."
   lane :setup_signing do
     keychain = ci_keychain
     import_p12(keychain: keychain, base64: ENV.fetch("IOS_DIST_CERT_BASE64"), password: ENV.fetch("IOS_DIST_CERT_PASSWORD", ""))
 
     profile_name = install_profile!(ENV.fetch("IOS_PROVISION_PROFILE_BASE64"))
     widget_profile_name = install_profile!(ENV.fetch("IOS_WIDGET_PROVISION_PROFILE_BASE64"))
+    # Share › Qima (QimaShare): App ID com.devlabtechnologies.qima.share with
+    # the app group, and its App Store profile.
+    share_base64 = ENV["IOS_SHARE_PROVISION_PROFILE_BASE64"].to_s
+    UI.user_error!("IOS_SHARE_PROVISION_PROFILE_BASE64 is missing: the App Store profile for #{SHARE_IDENTIFIER}.") if share_base64.empty?
+    share_profile_name = install_profile!(share_base64)
 
     update_code_signing_settings(
       use_automatic_signing: false,
@@ -325,9 +332,18 @@ platform :ios do
       profile_name: widget_profile_name,
       targets: [WIDGET_TARGET]
     )
+    update_code_signing_settings(
+      use_automatic_signing: false,
+      path: "Runner.xcodeproj",
+      team_id: APPLE_TEAM_ID,
+      code_sign_identity: "Apple Distribution",
+      profile_name: share_profile_name,
+      targets: [SHARE_TARGET]
+    )
 
     Actions.lane_context[:QIMA_PROFILE_NAME] = profile_name
     Actions.lane_context[:QIMA_WIDGET_PROFILE_NAME] = widget_profile_name
+    Actions.lane_context[:QIMA_SHARE_PROFILE_NAME] = share_profile_name
   end
 
   desc "Build the release IPA and upload it to TestFlight, as the version and build in pubspec.yaml."
@@ -338,7 +354,8 @@ platform :ios do
     setup_signing
     export_options_path = write_export_options!(
       Actions.lane_context[:QIMA_PROFILE_NAME],
-      Actions.lane_context[:QIMA_WIDGET_PROFILE_NAME]
+      Actions.lane_context[:QIMA_WIDGET_PROFILE_NAME],
+      Actions.lane_context[:QIMA_SHARE_PROFILE_NAME]
     )
 
     Dir.chdir(REPO_ROOT) do
@@ -369,7 +386,8 @@ platform :ios do
     setup_signing
     export_options_path = write_export_options!(
       Actions.lane_context[:QIMA_PROFILE_NAME],
-      Actions.lane_context[:QIMA_WIDGET_PROFILE_NAME]
+      Actions.lane_context[:QIMA_WIDGET_PROFILE_NAME],
+      Actions.lane_context[:QIMA_SHARE_PROFILE_NAME]
     )
 
     Dir.chdir(REPO_ROOT) do

@@ -1,0 +1,263 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:archive/archive.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:qima/blocs/import_cubit.dart';
+import 'package:qima/blocs/money_cubit.dart';
+import 'package:qima/models/book_account.dart';
+import 'package:qima/models/book_entry.dart';
+import 'package:qima/models/import_plan.dart';
+import 'package:qima/models/minor_units.dart';
+import 'package:qima/models/money.dart';
+import 'package:qima/models/statement_reader.dart';
+import 'package:qima/services/book_store.dart';
+import 'package:qima/services/csv/xlsx_reader.dart';
+import 'package:qima/services/import/import_inbox_io.dart';
+import 'package:qima/services/local_file_store.dart';
+import 'package:qima/services/text_recognition_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+final rates = FXRates(base: 'SAR', rates: const {'SAR': 1, 'EGP': 13}, updatedAt: DateTime.utc(2026, 11, 7));
+int sar(num major) => MinorUnits.fromMajor(major, 'SAR');
+
+/// Vision and PDFKit stand-in: every PDF or image reads as [pages].
+class FakeRecognition implements TextRecognitionService {
+  List<DocPage>? pages;
+  final read = <String>[];
+  FakeRecognition(this.pages);
+
+  @override
+  Future<bool> isAvailable() async => true;
+  @override
+  Future<List<String>?> recognize(String imagePath, List<String> languageTags) async => null;
+  @override
+  Future<List<DocPage>?> readDocument(String path, List<String> languageTags) async {
+    read.add(path);
+    return pages;
+  }
+}
+
+List<DocToken> line(double y, List<(String, double, double)> cells) => [for (final (t, x, w) in cells) DocToken(t, x, y, w, 0.02)];
+
+/// A minimal .xlsx: shared strings, one sheet, a date style on column A.
+List<int> xlsx(List<List<Object>> rows) {
+  final strings = <String>[];
+  int sid(String s) {
+    final i = strings.indexOf(s);
+    if (i >= 0) return i;
+    strings.add(s);
+    return strings.length - 1;
+  }
+
+  final sheet = StringBuffer('<?xml version="1.0"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetData>');
+  for (var r = 0; r < rows.length; r++) {
+    sheet.write('<row r="${r + 1}">');
+    for (var c = 0; c < rows[r].length; c++) {
+      final ref = '${String.fromCharCode(65 + c)}${r + 1}';
+      final v = rows[r][c];
+      if (v is String) {
+        sheet.write('<c r="$ref" t="s"><v>${sid(v)}</v></c>');
+      } else if (v is DateTime) {
+        final serial = v.difference(DateTime.utc(1899, 12, 30)).inDays;
+        sheet.write('<c r="$ref" s="1"><v>$serial</v></c>');
+      } else {
+        sheet.write('<c r="$ref"><v>$v</v></c>');
+      }
+    }
+    sheet.write('</row>');
+  }
+  sheet.write('</sheetData></worksheet>');
+  final shared = '<?xml version="1.0"?><sst xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">'
+      '${strings.map((s) => '<si><t>${const HtmlEscape().convert(s)}</t></si>').join()}</sst>';
+  const styles = '<?xml version="1.0"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">'
+      '<cellXfs count="2"><xf numFmtId="0"/><xf numFmtId="14"/></cellXfs></styleSheet>';
+  final archive = Archive()
+    ..addFile(ArchiveFile.string('xl/worksheets/sheet1.xml', sheet.toString()))
+    ..addFile(ArchiveFile.string('xl/sharedStrings.xml', shared))
+    ..addFile(ArchiveFile.string('xl/styles.xml', styles));
+  return ZipEncoder().encode(archive);
+}
+
+void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+  late Directory dir;
+  late BookStore store;
+  late MoneyCubit money;
+  late FolderInbox inbox;
+  late FakeRecognition recognition;
+  late ImportCubit importer;
+  var ids = 0;
+
+  final bank = BookAccount(id: 'rajhi', name: 'Al Rajhi', side: AccountSide.own, type: AccountType.debit, currency: 'SAR');
+  final card = BookAccount(id: 'visa', name: 'Visa', side: AccountSide.owe, type: AccountType.credit, currency: 'SAR');
+  final egp = BookAccount(id: 'cib', name: 'CIB', side: AccountSide.own, type: AccountType.debit, currency: 'EGP');
+
+  setUp(() async {
+    dir = await Directory.systemTemp.createTemp('qima_import');
+    LocalFileStore.overrideDirectoryForTesting(dir);
+    SharedPreferences.setMockInitialValues({});
+    store = BookStore();
+    ids = 0;
+    money = MoneyCubit(store: store, baseCurrency: () => 'SAR', rates: () => rates, newId: () => 'id${++ids}', now: () => DateTime(2026, 11, 7));
+    await money.load();
+    final shared = Directory('${dir.path}/shared')..createSync();
+    final own = Directory('${dir.path}/own')..createSync();
+    inbox = FolderInbox(folders: [own, shared]);
+    recognition = FakeRecognition(null);
+    importer = ImportCubit(inbox: inbox, recognition: recognition, wasImported: money.wasImported, languages: () => const ['en-US']);
+  });
+
+  tearDown(() async {
+    await importer.close();
+    await money.close();
+    if (await dir.exists()) await dir.delete(recursive: true);
+  });
+
+  /// What the share extension writes: a folder with the file and meta.json.
+  Future<void> share(String name, List<int> bytes, {DateTime? at}) async {
+    final folder = Directory('${dir.path}/shared/${++ids}-shared')..createSync();
+    File('${folder.path}/$name').writeAsBytesSync(bytes);
+    File('${folder.path}/meta.json').writeAsStringSync(jsonEncode({'name': name, 'receivedAt': (at ?? DateTime(2026, 11, 7, 12).add(Duration(seconds: ids))).toUtc().toIso8601String()}));
+  }
+
+  group('the inbox and reading', () {
+    test('a shared CSV, an Excel file and a PDF are read; a half-written folder is not', () async {
+      await share('statement.csv', utf8.encode('Date,Description,Amount\n2026-11-03,PANDA,-642.10\n2026-11-01,Salary,18000\n'));
+      await share('export.xlsx', xlsx([
+        ['Date', 'Details', 'Debit', 'Credit'],
+        [DateTime.utc(2026, 11, 4), 'STC', 300, ''],
+      ]));
+      recognition.pages = [DocPage(line(0.1, [('05/11/2026 ALBAIK', 0.05, 0.5), ('45.00 SAR-', 0.7, 0.2)]))];
+      await share('scan.pdf', [37, 80, 68, 70]);
+      Directory('${dir.path}/shared/.half').createSync();
+
+      await importer.checkInbox();
+      final items = importer.state.items;
+      expect(items.map((i) => i.file.name), ['statement.csv', 'export.xlsx', 'scan.pdf']);
+      expect(items.every((i) => i.status == ImportStatus.read), isTrue);
+      expect(items[0].rows.map((r) => r.amount), [-642.10, 18000]);
+      expect(items[1].rows.single.amount, -300);
+      expect(items[1].rows.single.date, DateTime(2026, 11, 4));
+      expect(items[2].rows.single.description, 'ALBAIK');
+      expect(recognition.read, hasLength(1));
+      expect(importer.state.rowCount, 4);
+    });
+
+    test('a shared bank message becomes one row; an unknown file type says so', () async {
+      await share('message.txt', utf8.encode('Purchase of SAR 89.00 at JARIR on 06/11/26'));
+      await share('notes.docx', [1, 2, 3]);
+      await importer.checkInbox();
+      expect(importer.state.items[0].rows.single.amount, -89);
+      expect(importer.state.items[1].status, ImportStatus.unsupported);
+    });
+
+    test('the same file shared twice, or imported before, is skipped', () async {
+      final bytes = utf8.encode('Date,Description,Amount\n2026-11-03,PANDA,-642.10\n');
+      await share('a.csv', bytes);
+      await share('b.csv', bytes);
+      await importer.checkInbox();
+      expect(importer.state.items.map((i) => i.status), [ImportStatus.read, ImportStatus.alreadyImported]);
+
+      await money.markImported([importer.state.items.first.hash!]);
+      await importer.remove(importer.state.items.map((i) => i.id));
+      await share('c.csv', bytes);
+      await importer.checkInbox();
+      expect(importer.state.items.single.status, ImportStatus.alreadyImported);
+    });
+
+    test('files picked in the app go through the inbox; removing deletes them', () async {
+      await importer.addFiles([('picked.csv', utf8.encode('Date,Description,Amount\n2026-11-03,PANDA,-1.00\n'))]);
+      expect(importer.state.items.single.rows, hasLength(1));
+      expect(await inbox.pending(), hasLength(1));
+      await importer.remove([importer.state.items.single.id]);
+      expect(await inbox.pending(), isEmpty);
+      expect(importer.state.isEmpty, isTrue);
+    });
+
+    test('Excel dates and shared strings', () {
+      final rows = XlsxReader.read(xlsx([
+        ['Date', 'Description', 'Amount'],
+        [DateTime.utc(2026, 11, 3), 'بنده', -642.1],
+      ]))!;
+      expect(rows[1], ['2026-11-03', 'بنده', '-642.1']);
+      expect(XlsxReader.read([1, 2, 3]), isNull);
+    });
+  });
+
+  group('planning against the book', () {
+    test('the account is guessed from the currency the rows are in', () {
+      final rows = [StatementRow(date: DateTime(2026, 11, 3), description: 'x', amount: -1, currency: 'EGP')];
+      expect(ImportPlanner.guessAccount([card, bank, egp], rows, const []), egp);
+      expect(ImportPlanner.guessAccount([card, bank], const [], const []), bank);
+      expect(ImportPlanner.guessAccount(const [], rows, const []), isNull);
+    });
+
+    test('duplicates of the book, repeats across files and other currencies start unticked', () async {
+      await money.addAccount(bank, opening: sar(10000), openedOn: DateTime(2026, 10, 1));
+      final cats = money.state.book.accounts;
+      await money.saveEntry(money.builder.spend(bank, cats['category.groceries']!, sar(642.10), DateTime(2026, 11, 2), merchant: 'Panda'));
+      final panda = StatementRow(date: DateTime(2026, 11, 3), description: 'PANDA RIYADH', amount: -642.10, currency: 'SAR');
+      final coffee = StatementRow(date: DateTime(2026, 11, 4), description: 'Starbucks', amount: -23);
+      final usd = StatementRow(date: DateTime(2026, 11, 4), description: 'Amazon', amount: -10, currency: 'USD');
+      final plan = ImportPlanner.plan(files: [('f1', [panda, coffee, usd]), ('f2', [coffee])], account: bank, book: money.state.book);
+      expect(plan.map((c) => c.flag), [ImportFlag.inBook, null, ImportFlag.otherCurrency, ImportFlag.repeated]);
+      // The merchant's last category wins over the keyword list.
+      expect(plan[0].categoryId, 'category.groceries');
+      expect(plan[1].categoryId, 'category.dining');
+      expect(plan.map((c) => c.key), ['f1:0', 'f1:1', 'f1:2', 'f2:0']);
+    });
+
+    test('categories: history first, then known names, then Other', () async {
+      await money.addAccount(bank, opening: sar(100), openedOn: DateTime(2026, 10, 1));
+      final cats = money.state.book.accounts;
+      await money.saveEntry(money.builder.spend(bank, cats['category.health']!, sar(5), DateTime(2026, 11, 1), merchant: 'Carrefour Express'));
+      final book = money.state.book;
+      expect(ImportPlanner.guessCategory('CARREFOUR EXPRESS OLAYA', isIn: false, book: book), 'category.health');
+      expect(ImportPlanner.guessCategory('Uber trip', isIn: false, book: book), 'category.transport');
+      expect(ImportPlanner.guessCategory('ستاربكس العليا', isIn: false, book: book), 'category.dining');
+      expect(ImportPlanner.guessCategory('راتب شهر نوفمبر', isIn: true, book: book), 'category.salary');
+      expect(ImportPlanner.guessCategory('Something', isIn: false, book: book), 'category.other');
+      expect(ImportPlanner.guessCategory('Something', isIn: true, book: book), 'category.other_income');
+    });
+  });
+
+  group('adding to the book', () {
+    test('spends, income and refunds are added in one go and the file is remembered', () async {
+      await money.addAccount(bank, opening: sar(1000), openedOn: DateTime(2026, 10, 1));
+      final cats = money.state.book.accounts;
+      final b = money.builder;
+      StatementRow r(String d, double a) => StatementRow(date: DateTime(2026, 11, 3), description: d, amount: a, detail: 'POS 1');
+      final entries = [
+        ImportPlanner.entryFor(builder: b, account: bank, category: cats['category.groceries']!, row: r('PANDA', -642.10), isIn: false),
+        ImportPlanner.entryFor(builder: b, account: bank, category: cats['category.salary']!, row: r('Salary', 18000), isIn: true),
+        ImportPlanner.entryFor(builder: b, account: bank, category: cats['category.shopping']!, row: r('Refund NOON', 99), isIn: true),
+      ];
+      expect(entries.map((e) => e.template), [EntryTemplate.spend, EntryTemplate.income, EntryTemplate.refund]);
+      expect(entries.every((e) => e.source == EntrySource.import), isTrue);
+      expect(entries.first.rawMerchant, 'PANDA · POS 1');
+      await money.importEntries(entries, fileHashes: ['abc']);
+      expect(money.state.book.balanceOf('rajhi'), sar(1000 - 642.10 + 18000 + 99));
+      expect(money.wasImported('abc'), isTrue);
+
+      // Kept after a reload.
+      final again = MoneyCubit(store: store, baseCurrency: () => 'SAR', rates: () => rates);
+      await again.load();
+      expect(again.state.entries.where((e) => e.source == EntrySource.import), hasLength(3));
+      expect(again.wasImported('abc'), isTrue);
+      await again.close();
+    });
+
+    test('an entry the book refuses saves nothing', () async {
+      await money.addAccount(bank, opening: sar(1000), openedOn: DateTime(2026, 10, 1));
+      final cats = money.state.book.accounts;
+      final good = ImportPlanner.entryFor(
+          builder: money.builder, account: bank, category: cats['category.groceries']!, row: StatementRow(date: DateTime(2026, 11, 3), description: 'A', amount: -1), isIn: false);
+      final bad = good.copyWith(lines: [good.lines.first]);
+      final before = money.state.entries.length;
+      await expectLater(money.importEntries([good.copyWith(), bad], fileHashes: ['h']), throwsA(isA<BookRejected>()));
+      expect(money.state.entries, hasLength(before));
+      expect(money.wasImported('h'), isFalse);
+    });
+  });
+}

@@ -185,6 +185,27 @@ class SyncedStore<T extends Syncable> {
     return _liveSorted(await _readLocal());
   }
 
+  /// Adds or replaces every item in [items] in one commit.
+  Future<List<T>> upsertAll(List<T> items) async {
+    if (items.isEmpty) return _liveSorted(await _readLocal());
+    final local = List<Record<T>>.of(await _readLocal());
+    final now = DateTime.now();
+    var maxOrder = local.isEmpty ? -1.0 : local.map((r) => r.order).reduce(max);
+    final index = {for (var i = 0; i < local.length; i++) local[i].item.id: i};
+    for (final item in items) {
+      final at = index[item.id];
+      if (at != null) {
+        local[at] = local[at].copyWith(item: item, updatedAt: now, deleted: false);
+      } else {
+        maxOrder += 1;
+        index[item.id] = local.length;
+        local.add(Record<T>(item: item, order: maxOrder, updatedAt: now));
+      }
+    }
+    await _commit(local);
+    return _liveSorted(await _readLocal());
+  }
+
   Future<List<T>> delete(String id) async {
     final local = await _readLocal();
     final index = local.indexWhere((r) => r.item.id == id);

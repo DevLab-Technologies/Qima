@@ -6857,11 +6857,23 @@ abstract class AppLocalizations {
   /// **'{months, plural, =1{Every month} other{Every {months} months}}'**
   String valueReviewMonths(int months);
 
-  /// No description provided for @addSheetSpendSubtitle.
+  /// No description provided for @addSheetTransaction.
   ///
   /// In en, this message translates to:
-  /// **'A purchase, a bill or cash'**
-  String get addSheetSpendSubtitle;
+  /// **'Transaction'**
+  String get addSheetTransaction;
+
+  /// No description provided for @addSheetTransactionSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Money spent, earned or moved'**
+  String get addSheetTransactionSubtitle;
+
+  /// No description provided for @entryNewTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'New transaction'**
+  String get entryNewTitle;
 
   /// No description provided for @addSheetMore.
   ///
@@ -6982,6 +6994,228 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Holdings in detail'**
   String get zakatHoldingsDetail;
+
+  /// No description provided for @importStatement.
+  ///
+  /// In en, this message translates to:
+  /// **'Import a statement'**
+  String get importStatement;
+
+  /// No description provided for @importStatementSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'PDF, Excel, CSV or screenshots from your bank'**
+  String get importStatementSubtitle;
+
+  /// No description provided for @importFromFiles.
+  ///
+  /// In en, this message translates to:
+  /// **'From Files'**
+  String get importFromFiles;
+
+  /// No description provided for @importFromFilesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Statements as PDF, Excel or CSV'**
+  String get importFromFilesHint;
+
+  /// No description provided for @importFromPhotos.
+  ///
+  /// In en, this message translates to:
+  /// **'Screenshots from Photos'**
+  String get importFromPhotos;
+
+  /// No description provided for @importFromPhotosHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Your banking app\'s transactions'**
+  String get importFromPhotosHint;
+
+  /// No description provided for @importShareTip.
+  ///
+  /// In en, this message translates to:
+  /// **'You can also share files to Qima from any app.'**
+  String get importShareTip;
+
+  /// No description provided for @importReadingFiles.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Reading 1 file…} other{Reading {count} files…}}'**
+  String importReadingFiles(int count);
+
+  /// No description provided for @importReadyRows.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{Nothing found to add} =1{1 transaction to review} other{{count} transactions to review}}'**
+  String importReadyRows(int count);
+
+  /// No description provided for @importBannerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Shared to Qima'**
+  String get importBannerTitle;
+
+  /// No description provided for @importReviewTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Review import'**
+  String get importReviewTitle;
+
+  /// No description provided for @importIntoAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Statement of'**
+  String get importIntoAccount;
+
+  /// No description provided for @importNoAccountTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add the account first'**
+  String get importNoAccountTitle;
+
+  /// No description provided for @importNoAccountBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Add the bank account or card this statement is from, then come back here.'**
+  String get importNoAccountBody;
+
+  /// No description provided for @importAddCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{Add} =1{Add 1 transaction} other{Add {count} transactions}}'**
+  String importAddCount(int count);
+
+  /// No description provided for @importAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 transaction added} other{{count} transactions added}}'**
+  String importAdded(int count);
+
+  /// No description provided for @importDiscardAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard all'**
+  String get importDiscardAll;
+
+  /// No description provided for @importDiscardConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard these files? Nothing from them is added.'**
+  String get importDiscardConfirm;
+
+  /// No description provided for @importDiscard.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard'**
+  String get importDiscard;
+
+  /// No description provided for @importRemoveFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove file'**
+  String get importRemoveFile;
+
+  /// No description provided for @importFlagInBook.
+  ///
+  /// In en, this message translates to:
+  /// **'Already in Qima'**
+  String get importFlagInBook;
+
+  /// No description provided for @importFlagRepeated.
+  ///
+  /// In en, this message translates to:
+  /// **'Also in another file'**
+  String get importFlagRepeated;
+
+  /// No description provided for @importFlagCurrency.
+  ///
+  /// In en, this message translates to:
+  /// **'In {currency}, not the account\'s currency'**
+  String importFlagCurrency(String currency);
+
+  /// No description provided for @importDateGuessed.
+  ///
+  /// In en, this message translates to:
+  /// **'No date found: set to the day it was shared'**
+  String get importDateGuessed;
+
+  /// No description provided for @importSignGuessed.
+  ///
+  /// In en, this message translates to:
+  /// **'Check: in or out?'**
+  String get importSignGuessed;
+
+  /// No description provided for @importStatusReading.
+  ///
+  /// In en, this message translates to:
+  /// **'Reading…'**
+  String get importStatusReading;
+
+  /// No description provided for @importStatusWaiting.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting'**
+  String get importStatusWaiting;
+
+  /// No description provided for @importStatusAlready.
+  ///
+  /// In en, this message translates to:
+  /// **'Imported before'**
+  String get importStatusAlready;
+
+  /// No description provided for @importStatusUnsupported.
+  ///
+  /// In en, this message translates to:
+  /// **'Qima can\'t read this kind of file'**
+  String get importStatusUnsupported;
+
+  /// No description provided for @importStatusUnreadable.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t read this file'**
+  String get importStatusUnreadable;
+
+  /// No description provided for @importStatusNothing.
+  ///
+  /// In en, this message translates to:
+  /// **'No transactions found in this file'**
+  String get importStatusNothing;
+
+  /// No description provided for @importRowFound.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 found} other{{count} found}}'**
+  String importRowFound(int count);
+
+  /// No description provided for @importEditRow.
+  ///
+  /// In en, this message translates to:
+  /// **'Transaction'**
+  String get importEditRow;
+
+  /// No description provided for @importCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get importCategory;
+
+  /// No description provided for @importNothingSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'Tick the transactions to add.'**
+  String get importNothingSelected;
+
+  /// No description provided for @importReadOnDevice.
+  ///
+  /// In en, this message translates to:
+  /// **'Read on this device. Files are deleted once imported.'**
+  String get importReadOnDevice;
+
+  /// No description provided for @importEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing waiting'**
+  String get importEmpty;
 }
 
 class _AppLocalizationsDelegate

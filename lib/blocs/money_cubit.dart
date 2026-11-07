@@ -253,6 +253,34 @@ class MoneyCubit extends Cubit<MoneyState> {
     return feature;
   }
 
+  /// Adds a batch of imported entries in one write, after checking every
+  /// one against the book with the others in it, and remembers the files
+  /// they came from so the same file is never imported twice. Nothing is
+  /// saved if any entry is refused.
+  Future<void> importEntries(List<BookEntry> entries, {Iterable<String> fileHashes = const []}) async {
+    final ids = {for (final e in entries) e.id};
+    final book = Book(state.accounts, [for (final e in state.entries) if (!ids.contains(e.id)) e, ...entries]);
+    for (final e in entries) {
+      _check(book, e);
+    }
+    if (entries.isNotEmpty) {
+      final saved = await store.entries.upsertAll(entries);
+      if (isClosed) return;
+      emit(state.copyWith(entries: saved));
+    }
+    await markImported(fileHashes);
+  }
+
+  bool wasImported(String fileHash) => state.settings.importedHashes.contains(fileHash);
+
+  Future<void> markImported(Iterable<String> fileHashes) async {
+    final add = [for (final h in fileHashes) if (!state.settings.importedHashes.contains(h)) h];
+    if (add.isEmpty) return;
+    final all = [...state.settings.importedHashes, ...add];
+    final kept = all.length > MoneySettings.keptHashes ? all.sublist(all.length - MoneySettings.keptHashes) : all;
+    await _saveSettings(state.settings.copyWith(importedHashes: kept));
+  }
+
   Future<void> deleteEntry(String id) async {
     final old = state.entries.where((e) => e.id == id).firstOrNull;
     final stated = old == null ? const <(BookEntry, String, int)>[] : _laterValues(_assetsIn(old), old.date, except: id);

@@ -3971,7 +3971,13 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get addSheetSpendSubtitle => 'مشتريات أو فاتورة أو نقد';
+  String get addSheetTransaction => 'معاملة';
+
+  @override
+  String get addSheetTransactionSubtitle => 'مال صُرف أو دخل أو حُوّل';
+
+  @override
+  String get entryNewTitle => 'معاملة جديدة';
 
   @override
   String get addSheetMore => 'المزيد';
@@ -4044,4 +4050,174 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get zakatHoldingsDetail => 'تفاصيل الاستثمارات';
+
+  @override
+  String get importStatement => 'استيراد كشف حساب';
+
+  @override
+  String get importStatementSubtitle =>
+      'PDF أو Excel أو CSV أو لقطات شاشة من بنكك';
+
+  @override
+  String get importFromFiles => 'من الملفات';
+
+  @override
+  String get importFromFilesHint => 'كشوف بصيغة PDF أو Excel أو CSV';
+
+  @override
+  String get importFromPhotos => 'لقطات شاشة من الصور';
+
+  @override
+  String get importFromPhotosHint => 'عمليات تطبيق بنكك';
+
+  @override
+  String get importShareTip =>
+      'يمكنك أيضًا مشاركة الملفات مع قيمة من أي تطبيق.';
+
+  @override
+  String importReadingFiles(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'جارٍ قراءة $count ملفًا…',
+      few: 'جارٍ قراءة $count ملفات…',
+      two: 'جارٍ قراءة ملفين…',
+      one: 'جارٍ قراءة ملف واحد…',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String importReadyRows(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count عملية للمراجعة',
+      few: '$count عمليات للمراجعة',
+      two: 'عمليتان للمراجعة',
+      one: 'عملية واحدة للمراجعة',
+      zero: 'لم يُعثر على شيء لإضافته',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get importBannerTitle => 'مُشارك مع قيمة';
+
+  @override
+  String get importReviewTitle => 'مراجعة الاستيراد';
+
+  @override
+  String get importIntoAccount => 'كشف حساب';
+
+  @override
+  String get importNoAccountTitle => 'أضف الحساب أولًا';
+
+  @override
+  String get importNoAccountBody =>
+      'أضف الحساب البنكي أو البطاقة التي يخصها هذا الكشف، ثم عد إلى هنا.';
+
+  @override
+  String importAddCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'إضافة $count عملية',
+      few: 'إضافة $count عمليات',
+      two: 'إضافة عمليتين',
+      one: 'إضافة عملية واحدة',
+      zero: 'إضافة',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String importAdded(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'أُضيفت $count عملية',
+      few: 'أُضيفت $count عمليات',
+      two: 'أُضيفت عمليتان',
+      one: 'أُضيفت عملية واحدة',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get importDiscardAll => 'تجاهل الكل';
+
+  @override
+  String get importDiscardConfirm => 'تجاهل هذه الملفات؟ لن يُضاف منها شيء.';
+
+  @override
+  String get importDiscard => 'تجاهل';
+
+  @override
+  String get importRemoveFile => 'إزالة الملف';
+
+  @override
+  String get importFlagInBook => 'موجودة في قيمة';
+
+  @override
+  String get importFlagRepeated => 'موجودة في ملف آخر';
+
+  @override
+  String importFlagCurrency(String currency) {
+    return 'بعملة $currency وليست عملة الحساب';
+  }
+
+  @override
+  String get importDateGuessed => 'لم يُعثر على تاريخ: استُخدم يوم المشاركة';
+
+  @override
+  String get importSignGuessed => 'تحقق: وارد أم صادر؟';
+
+  @override
+  String get importStatusReading => 'جارٍ القراءة…';
+
+  @override
+  String get importStatusWaiting => 'في الانتظار';
+
+  @override
+  String get importStatusAlready => 'استُورد من قبل';
+
+  @override
+  String get importStatusUnsupported =>
+      'لا تستطيع قيمة قراءة هذا النوع من الملفات';
+
+  @override
+  String get importStatusUnreadable => 'تعذرت قراءة هذا الملف';
+
+  @override
+  String get importStatusNothing => 'لم يُعثر على عمليات في هذا الملف';
+
+  @override
+  String importRowFound(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'وُجدت $count عملية',
+      few: 'وُجدت $count عمليات',
+      two: 'وُجدت عمليتان',
+      one: 'وُجدت عملية',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get importEditRow => 'العملية';
+
+  @override
+  String get importCategory => 'الفئة';
+
+  @override
+  String get importNothingSelected => 'حدد العمليات التي تريد إضافتها.';
+
+  @override
+  String get importReadOnDevice =>
+      'تُقرأ على هذا الجهاز، وتُحذف الملفات بعد الاستيراد.';
+
+  @override
+  String get importEmpty => 'لا شيء في الانتظار';
 }

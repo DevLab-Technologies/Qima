@@ -77,6 +77,12 @@ class MoneySettings extends Equatable implements Syncable {
   /// value themselves, in months; 0 is off.
   final int valueReviewMonths;
 
+  /// SHA-256 of files already imported, newest last, so the same statement
+  /// shared twice (here or on another device) is skipped.
+  final List<String> importedHashes;
+
+  static const int keptHashes = 400;
+
   const MoneySettings({
     this.features = const {},
     this.homeOrder = const [],
@@ -85,6 +91,7 @@ class MoneySettings extends Equatable implements Syncable {
     this.budgetCurrency,
     this.seenWhatsNew = false,
     this.valueReviewMonths = 6,
+    this.importedHashes = const [],
   });
 
   @override
@@ -127,6 +134,7 @@ class MoneySettings extends Equatable implements Syncable {
     String? budgetCurrency,
     bool? seenWhatsNew,
     int? valueReviewMonths,
+    List<String>? importedHashes,
   }) =>
       MoneySettings(
         features: features ?? this.features,
@@ -136,6 +144,7 @@ class MoneySettings extends Equatable implements Syncable {
         budgetCurrency: budgetCurrency ?? this.budgetCurrency,
         seenWhatsNew: seenWhatsNew ?? this.seenWhatsNew,
         valueReviewMonths: valueReviewMonths ?? this.valueReviewMonths,
+        importedHashes: importedHashes ?? this.importedHashes,
       );
 
   @override
@@ -148,6 +157,7 @@ class MoneySettings extends Equatable implements Syncable {
         if (budgetCurrency != null) 'budgetCurrency': budgetCurrency,
         if (seenWhatsNew) 'seenWhatsNew': true,
         'valueReviewMonths': valueReviewMonths,
+        if (importedHashes.isNotEmpty) 'imported': importedHashes,
       };
 
   factory MoneySettings.fromJson(Map<String, dynamic> json) {
@@ -160,11 +170,12 @@ class MoneySettings extends Equatable implements Syncable {
       budgetCurrency: json['budgetCurrency'] as String?,
       seenWhatsNew: json['seenWhatsNew'] as bool? ?? false,
       valueReviewMonths: (json['valueReviewMonths'] as num?)?.toInt() ?? 6,
+      importedHashes: names('imported'),
     );
   }
 
   @override
-  List<Object?> get props => [features, homeOrder, hiddenCards, budgets, budgetCurrency, seenWhatsNew, valueReviewMonths];
+  List<Object?> get props => [features, homeOrder, hiddenCards, budgets, budgetCurrency, seenWhatsNew, valueReviewMonths, importedHashes];
 }
 
 /// A payment that comes back every month, shown in Coming up until it is

@@ -25,6 +25,7 @@ import '../zakat_screen.dart';
 import 'accounts_screens.dart';
 import 'asset_screens.dart';
 import 'balance_sheet_screen.dart';
+import 'import_screens.dart';
 import 'more_money_screens.dart';
 
 /// The Home tab: "where do I stand?" The total first (it opens the balance
@@ -47,7 +48,7 @@ class HomeScreen extends StatelessWidget {
         final summary = netWorthOf(cubit, money);
         final hasHoldings = valuation != null;
 
-        final children = <Widget>[];
+        final children = <Widget>[const ImportBanner()];
         // The total. Until the first account or asset, it is the Portfolio,
         // with its chart and ranges, as current users know it.
         if (!money.hasBook && hasHoldings) {

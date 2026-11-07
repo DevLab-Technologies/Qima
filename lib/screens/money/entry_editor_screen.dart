@@ -90,7 +90,11 @@ class _EntryEditorScreenState extends State<EntryEditorScreen> {
   bool _declined = false;
   String? _error;
 
-  EntryKind get kind => widget.kind;
+  late EntryKind kind = widget.kind;
+
+  /// Spend, income and transfer share one page, one tab each, while adding.
+  static const tabs = [EntryKind.spend, EntryKind.income, EntryKind.transfer];
+  bool get _showTabs => widget.existing == null && tabs.contains(widget.kind);
   MoneyCubit get _money => context.read<MoneyCubit>();
 
   @override
@@ -107,8 +111,22 @@ class _EntryEditorScreenState extends State<EntryEditorScreen> {
     _to = widget.toAccountId == null ? null : book.accounts[widget.toAccountId];
     _from ??= _fromChoices.firstOrNull;
     _to ??= _toChoices.where((a) => a.id != _from?.id).firstOrNull;
-    final cats = _categoryChoices;
-    if (cats.isNotEmpty) _category = cats.first;
+    _category = _categoryChoices.firstOrNull;
+  }
+
+  /// Moves to another tab. The amount, date, merchant and note stay; the
+  /// money account chosen stays where the new tab has a place for it.
+  void _switchTo(EntryKind next) {
+    if (next == kind) return;
+    final money = kind == EntryKind.income ? _to : _from;
+    setState(() {
+      kind = next;
+      _error = null;
+      BookAccount? keep(List<BookAccount> choices) => choices.where((a) => a.id == money?.id).firstOrNull ?? choices.firstOrNull;
+      _from = _fromChoices.isEmpty ? null : keep(_fromChoices);
+      _to = kind == EntryKind.income ? keep(_toChoices) : _toChoices.where((a) => a.id != _from?.id).firstOrNull;
+      _category = _categoryChoices.firstOrNull;
+    });
   }
 
   void _prefill(BookEntry e) {
@@ -302,11 +320,28 @@ class _EntryEditorScreenState extends State<EntryEditorScreen> {
       EntryKind.repaymentIn => state.ofType(AccountType.receivable),
       _ => const <BookAccount>[],
     };
-    final title = widget.existing == null ? l10n.template(kind.template) : l10n.entryEditTitle;
+    final title = widget.existing != null
+        ? l10n.entryEditTitle
+        : _showTabs
+            ? l10n.entryNewTitle
+            : l10n.template(kind.template);
     final missingAccount = (_fromChoices.isEmpty && !{EntryKind.income, EntryKind.refund, EntryKind.borrowed, EntryKind.repaymentIn}.contains(kind)) ||
         (_toChoices.isEmpty && {EntryKind.income, EntryKind.refund, EntryKind.borrowed, EntryKind.transfer, EntryKind.cardPayment, EntryKind.loanPayment, EntryKind.swap, EntryKind.repaymentIn}.contains(kind));
 
+    final kindTabs = !_showTabs
+        ? null
+        : SegmentedButton<EntryKind>(
+            key: const ValueKey('entryKindTabs'),
+            showSelectedIcon: false,
+            segments: [
+              for (final k in tabs) ButtonSegment(value: k, icon: Icon(MoneyIcons.template(k.template)), label: Text(l10n.template(k.template))),
+            ],
+            selected: {kind},
+            onSelectionChanged: (s) => _switchTo(s.first),
+          );
+
     final fields = <Widget>[
+      ?kindTabs,
       AmountField(
         controller: _amount,
         autofocus: widget.existing == null,
@@ -386,7 +421,10 @@ class _EntryEditorScreenState extends State<EntryEditorScreen> {
           actions: [if (!missingAccount) TextButton(onPressed: _save, child: Text(l10n.holdingsSave))],
         ),
         body: missingAccount
-            ? MoneyEmpty(icon: Icons.account_balance_outlined, title: l10n.entryNeedsAccountTitle, message: l10n.entryNeedsAccountMessage)
+            ? Column(children: [
+                if (kindTabs != null) Padding(padding: const EdgeInsets.all(DS.spaceMD), child: kindTabs),
+                Expanded(child: MoneyEmpty(icon: Icons.account_balance_outlined, title: l10n.entryNeedsAccountTitle, message: l10n.entryNeedsAccountMessage)),
+              ])
             : ListView(
                 padding: const EdgeInsets.all(DS.spaceMD),
                 children: [

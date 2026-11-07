@@ -3958,7 +3958,13 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get addSheetSpendSubtitle => 'A purchase, a bill or cash';
+  String get addSheetTransaction => 'Transaction';
+
+  @override
+  String get addSheetTransactionSubtitle => 'Money spent, earned or moved';
+
+  @override
+  String get entryNewTitle => 'New transaction';
 
   @override
   String get addSheetMore => 'More';
@@ -4034,4 +4040,163 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get zakatHoldingsDetail => 'Holdings in detail';
+
+  @override
+  String get importStatement => 'Import a statement';
+
+  @override
+  String get importStatementSubtitle =>
+      'PDF, Excel, CSV or screenshots from your bank';
+
+  @override
+  String get importFromFiles => 'From Files';
+
+  @override
+  String get importFromFilesHint => 'Statements as PDF, Excel or CSV';
+
+  @override
+  String get importFromPhotos => 'Screenshots from Photos';
+
+  @override
+  String get importFromPhotosHint => 'Your banking app\'s transactions';
+
+  @override
+  String get importShareTip => 'You can also share files to Qima from any app.';
+
+  @override
+  String importReadingFiles(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Reading $count files…',
+      one: 'Reading 1 file…',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String importReadyRows(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count transactions to review',
+      one: '1 transaction to review',
+      zero: 'Nothing found to add',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get importBannerTitle => 'Shared to Qima';
+
+  @override
+  String get importReviewTitle => 'Review import';
+
+  @override
+  String get importIntoAccount => 'Statement of';
+
+  @override
+  String get importNoAccountTitle => 'Add the account first';
+
+  @override
+  String get importNoAccountBody =>
+      'Add the bank account or card this statement is from, then come back here.';
+
+  @override
+  String importAddCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Add $count transactions',
+      one: 'Add 1 transaction',
+      zero: 'Add',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String importAdded(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count transactions added',
+      one: '1 transaction added',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get importDiscardAll => 'Discard all';
+
+  @override
+  String get importDiscardConfirm =>
+      'Discard these files? Nothing from them is added.';
+
+  @override
+  String get importDiscard => 'Discard';
+
+  @override
+  String get importRemoveFile => 'Remove file';
+
+  @override
+  String get importFlagInBook => 'Already in Qima';
+
+  @override
+  String get importFlagRepeated => 'Also in another file';
+
+  @override
+  String importFlagCurrency(String currency) {
+    return 'In $currency, not the account\'s currency';
+  }
+
+  @override
+  String get importDateGuessed => 'No date found: set to the day it was shared';
+
+  @override
+  String get importSignGuessed => 'Check: in or out?';
+
+  @override
+  String get importStatusReading => 'Reading…';
+
+  @override
+  String get importStatusWaiting => 'Waiting';
+
+  @override
+  String get importStatusAlready => 'Imported before';
+
+  @override
+  String get importStatusUnsupported => 'Qima can\'t read this kind of file';
+
+  @override
+  String get importStatusUnreadable => 'Couldn\'t read this file';
+
+  @override
+  String get importStatusNothing => 'No transactions found in this file';
+
+  @override
+  String importRowFound(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count found',
+      one: '1 found',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get importEditRow => 'Transaction';
+
+  @override
+  String get importCategory => 'Category';
+
+  @override
+  String get importNothingSelected => 'Tick the transactions to add.';
+
+  @override
+  String get importReadOnDevice =>
+      'Read on this device. Files are deleted once imported.';
+
+  @override
+  String get importEmpty => 'Nothing waiting';
 }
