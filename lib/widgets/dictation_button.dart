@@ -17,7 +17,13 @@ class DictationButton extends StatefulWidget {
   /// Called with the text so far while listening, and once more at the end.
   final ValueChanged<String> onText;
 
-  const DictationButton({super.key, required this.onText});
+  /// Called once with the final text, after [onText].
+  final ValueChanged<String>? onFinal;
+
+  /// Called when listening starts and ends.
+  final ValueChanged<bool>? onListening;
+
+  const DictationButton({super.key, required this.onText, this.onFinal, this.onListening});
 
   @override
   State<DictationButton> createState() => _DictationButtonState();
@@ -80,6 +86,7 @@ class _DictationButtonState extends State<DictationButton> {
               widget.onText(SpokenNumbers.toDigits(text));
             case DictationFinal(:final text):
               widget.onText(SpokenNumbers.toDigits(text));
+              widget.onFinal?.call(SpokenNumbers.toDigits(text));
             case DictationFailed(:final denied):
               if (denied && mounted) {
                 setState(() => _availability = DictationAvailability.denied);
@@ -88,10 +95,13 @@ class _DictationButtonState extends State<DictationButton> {
           }
         },
         onDone: () {
-          if (mounted) setState(() => _session = null);
+          if (!mounted) return;
+          setState(() => _session = null);
+          widget.onListening?.call(false);
         },
       );
     });
+    widget.onListening?.call(true);
   }
 
   void _explain(String message) {

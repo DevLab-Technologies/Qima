@@ -1195,6 +1195,431 @@ class AppLocalizationsEn extends AppLocalizations {
   String get helpButtonTooltip => 'Help';
 
   @override
+  String get helpHomeSummary =>
+      'Your net worth: everything you own minus everything you owe, with the cards you use most.';
+
+  @override
+  String get helpHomeStep1Title => 'Net worth';
+
+  @override
+  String get helpHomeStep1Body =>
+      'Tap it to open the balance sheet: what you own and what you owe, item by item.';
+
+  @override
+  String get helpHomeStep2Title => 'Your cards';
+
+  @override
+  String get helpHomeStep2Body =>
+      'Accounts, Left to spend, Coming up and others appear as you use them. Tap a card to open it.';
+
+  @override
+  String get helpHomeStep3Title => 'Edit Home';
+
+  @override
+  String get helpHomeStep3Body =>
+      'Move cards or hide the ones you don’t need. Qima never adds back a card you hid.';
+
+  @override
+  String get helpHomeStep4Title => 'Hide balances';
+
+  @override
+  String get helpHomeStep4Body =>
+      'Tap the eye to mask every amount, for when someone is looking.';
+
+  @override
+  String get helpHomeStep5Title => 'Add anything';
+
+  @override
+  String get helpHomeStep5Body =>
+      'Tap + for a transaction, a statement, a holding, or anything under More.';
+
+  @override
+  String get helpMoneySummary =>
+      'Where this month’s money went, and what came in and went out.';
+
+  @override
+  String get helpMoneyStep1Title => 'Pick a month';
+
+  @override
+  String get helpMoneyStep1Body =>
+      'Use the arrows at the top to see another month.';
+
+  @override
+  String get helpMoneyStep2Title => 'Spent and pace';
+
+  @override
+  String get helpMoneyStep2Body =>
+      'What you’ve spent so far, and where you’ll be by the month’s end at this pace.';
+
+  @override
+  String get helpMoneyStep3Title => 'Where it went';
+
+  @override
+  String get helpMoneyStep3Body => 'Spending by category, biggest first.';
+
+  @override
+  String get helpMoneyStep4Title => 'Cash flow';
+
+  @override
+  String get helpMoneyStep4Body =>
+      'Money in, money out and what’s left over. Moves between your own accounts don’t count.';
+
+  @override
+  String get helpMoneyStep5Title => 'Worth a look';
+
+  @override
+  String get helpMoneyStep5Body =>
+      'Notes on budgets and entries to categorize, when there’s something to see.';
+
+  @override
+  String get helpNewTransactionSummary =>
+      'Record money spent, earned or moved between your accounts.';
+
+  @override
+  String get helpNewTransactionStep1Title => 'Pick the kind';
+
+  @override
+  String get helpNewTransactionStep1Body =>
+      'Spend, Income or Transfer. The amount and date stay when you switch.';
+
+  @override
+  String get helpNewTransactionStep2Title => 'Say it';
+
+  @override
+  String get helpNewTransactionStep2Body =>
+      'Tap the mic and say, for example, “Spent 45 at Panda with Visa yesterday”. Qima fills in the form on this device; check it and tap Save.';
+
+  @override
+  String get helpNewTransactionStep3Title => 'Category';
+
+  @override
+  String get helpNewTransactionStep3Body =>
+      'Spending and income go in a category. A move between your own accounts is never spending.';
+
+  @override
+  String get helpNewTransactionStep4Title => 'Declined';
+
+  @override
+  String get helpNewTransactionStep4Body =>
+      'Turn on Declined for a payment that didn’t go through: it’s shown struck through and never counts.';
+
+  @override
+  String get helpTransactionsSummary =>
+      'Every transaction, newest first, and what each one did to your accounts.';
+
+  @override
+  String get helpTransactionsStep1Title => 'Open one';
+
+  @override
+  String get helpTransactionsStep1Body =>
+      'Tap a transaction to see each account it touched, and by how much.';
+
+  @override
+  String get helpTransactionsStep2Title => 'How it counts';
+
+  @override
+  String get helpTransactionsStep2Body =>
+      'Each one says whether it’s spending, income, a move between your accounts or a change in value.';
+
+  @override
+  String get helpTransactionsStep3Title => 'Edit or delete';
+
+  @override
+  String get helpTransactionsStep3Body =>
+      'Open it, then edit or delete it. Deleting puts every account back as it was.';
+
+  @override
+  String get helpAccountsSummary =>
+      'Bank accounts, cash, cards and loans, with what’s in each one today.';
+
+  @override
+  String get helpAccountsStep1Title => 'Add an account';
+
+  @override
+  String get helpAccountsStep1Body =>
+      'Give it a name, a type and its balance today. Qima starts from that figure.';
+
+  @override
+  String get helpAccountsStep2Title => 'Check the balance';
+
+  @override
+  String get helpAccountsStep2Body =>
+      'Open an account and enter what your bank shows. Qima shows any difference and can bring its balance to match.';
+
+  @override
+  String get helpAccountsStep3Title => 'Count cash';
+
+  @override
+  String get helpAccountsStep3Body =>
+      'For cash, count what’s in your wallet and Qima sets the balance to it.';
+
+  @override
+  String get helpAccountsStep4Title => 'Pay a card or loan';
+
+  @override
+  String get helpAccountsStep4Body =>
+      'Open the card or loan and tap Pay to record a payment from another account.';
+
+  @override
+  String get helpAccountsStep5Title => 'Remove one';
+
+  @override
+  String get helpAccountsStep5Body =>
+      'An account with transactions is archived so its history still adds up. One never used is deleted.';
+
+  @override
+  String get helpBalanceSheetSummary =>
+      'Everything you own and everything you owe, adding up to your net worth.';
+
+  @override
+  String get helpBalanceSheetStep1Title => 'What you own';
+
+  @override
+  String get helpBalanceSheetStep1Body =>
+      'Accounts, holdings at live prices, and assets at the value you set.';
+
+  @override
+  String get helpBalanceSheetStep2Title => 'What you owe';
+
+  @override
+  String get helpBalanceSheetStep2Body =>
+      'Cards, loans (principal only) and money you owe people.';
+
+  @override
+  String get helpBalanceSheetStep3Title => 'How the total is worked out';
+
+  @override
+  String get helpBalanceSheetStep3Body =>
+      'Open it to see each rule, such as the live rate used for other currencies.';
+
+  @override
+  String get helpBalanceSheetStep4Title => 'Leave one out';
+
+  @override
+  String get helpBalanceSheetStep4Body =>
+      'Turn off Count in net worth on an account or asset; its history still adds up.';
+
+  @override
+  String get helpAssetsSummary =>
+      'A home, land, a car or a share in a business, at the value you set.';
+
+  @override
+  String get helpAssetsStep1Title => 'Add an asset';
+
+  @override
+  String get helpAssetsStep1Body =>
+      'Pick a kind, then give it a value and a date. Gold and silver by weight are holdings instead.';
+
+  @override
+  String get helpAssetsStep2Title => 'Update the value';
+
+  @override
+  String get helpAssetsStep2Body =>
+      'Every update is dated. The latest counts; older values stay as history.';
+
+  @override
+  String get helpAssetsStep3Title => 'A loan on it';
+
+  @override
+  String get helpAssetsStep3Body =>
+      'Link the loan secured on it to see what’s still owed next to its value.';
+
+  @override
+  String get helpAssetsStep4Title => 'Sold it';
+
+  @override
+  String get helpAssetsStep4Body =>
+      'Record the sale: the money goes into an account and the asset leaves your balance sheet.';
+
+  @override
+  String get helpImportStatementSummary =>
+      'Bring in transactions from your bank’s PDF, Excel or CSV, screenshots, or a copied file.';
+
+  @override
+  String get helpImportStatementStep1Title => 'Pick the files';
+
+  @override
+  String get helpImportStatementStep1Body =>
+      'From Files, Photos, the clipboard, or Share › Qima from any app. They’re read on this device.';
+
+  @override
+  String get helpImportStatementStep2Title => 'Check every row';
+
+  @override
+  String get helpImportStatementStep2Body =>
+      'Pick the account, untick what you don’t want and fix any category. Rows already in Qima start unticked.';
+
+  @override
+  String get helpImportStatementStep3Title => 'Match the balance';
+
+  @override
+  String get helpImportStatementStep3Body =>
+      'When the statement shows a balance, tick Bring the balance to it so Qima agrees with your bank.';
+
+  @override
+  String get helpImportStatementStep4Title => 'Add them';
+
+  @override
+  String get helpImportStatementStep4Body =>
+      'Tap Add. The files are deleted once imported.';
+
+  @override
+  String get helpBankMessagesSummary =>
+      'Add purchases from the messages your bank sends you, after you check each one.';
+
+  @override
+  String get helpBankMessagesStep1Title => 'On Android';
+
+  @override
+  String get helpBankMessagesStep1Body =>
+      'Turn on Read new bank messages and allow access. Bring in the last 60 days the first time.';
+
+  @override
+  String get helpBankMessagesStep2Title => 'On iPhone';
+
+  @override
+  String get helpBankMessagesStep2Body =>
+      'Set up a Shortcuts automation once, so each bank message goes to Qima’s Add a bank message action.';
+
+  @override
+  String get helpBankMessagesStep3Title => 'Check before adding';
+
+  @override
+  String get helpBankMessagesStep3Body =>
+      'Messages wait in the import review. Codes, offers and repeats are skipped.';
+
+  @override
+  String get helpBankMessagesStep4Title => 'Private';
+
+  @override
+  String get helpBankMessagesStep4Body =>
+      'Messages are read on this device and never leave it.';
+
+  @override
+  String get helpCategoriesSummary =>
+      'Sort spending into categories, and teach Qima where each name goes.';
+
+  @override
+  String get helpCategoriesStep1Title => 'To categorize';
+
+  @override
+  String get helpCategoriesStep1Body =>
+      'Pick a category once for each name. Imports from that name use it from now on.';
+
+  @override
+  String get helpCategoriesStep2Title => 'Earlier entries';
+
+  @override
+  String get helpCategoriesStep2Body =>
+      'Qima offers to move earlier entries from the same name too.';
+
+  @override
+  String get helpCategoriesStep3Title => 'Your categories';
+
+  @override
+  String get helpCategoriesStep3Body =>
+      'Add, rename or remove categories. Transactions in a removed one keep it in their history.';
+
+  @override
+  String get helpCategoriesStep4Title => 'Forget a name';
+
+  @override
+  String get helpCategoriesStep4Body =>
+      'Forget what Qima learned for a name, and its imports are sorted by hand again.';
+
+  @override
+  String get helpBudgetSummary =>
+      'A monthly amount for each category you want to watch.';
+
+  @override
+  String get helpBudgetStep1Title => 'Set an amount';
+
+  @override
+  String get helpBudgetStep1Body =>
+      'Tap a category and enter its amount per month. Zero removes it.';
+
+  @override
+  String get helpBudgetStep2Title => 'Left to spend';
+
+  @override
+  String get helpBudgetStep2Body =>
+      'Home shows what’s left this month, and Money notes a category that’s ahead of its pace.';
+
+  @override
+  String get helpBudgetStep3Title => 'What counts';
+
+  @override
+  String get helpBudgetStep3Body =>
+      'Card payments, transfers and loan principal never count.';
+
+  @override
+  String get helpRecurringSummary =>
+      'Rent, bills and subscriptions, shown in Coming up before they’re due.';
+
+  @override
+  String get helpRecurringStep1Title => 'Add one';
+
+  @override
+  String get helpRecurringStep1Body =>
+      'Give it a name, an amount, the account it’s paid from and its day of the month.';
+
+  @override
+  String get helpRecurringStep2Title => 'Coming up';
+
+  @override
+  String get helpRecurringStep2Body =>
+      'Home lists the next ones due, so nothing takes you by surprise.';
+
+  @override
+  String get helpRecurringStep3Title => 'Change or remove';
+
+  @override
+  String get helpRecurringStep3Body => 'Tap one to change it or remove it.';
+
+  @override
+  String get helpPeopleSummary =>
+      'Who owes you, whom you owe, and the repayments.';
+
+  @override
+  String get helpPeopleStep1Title => 'Lent or borrowed';
+
+  @override
+  String get helpPeopleStep1Body =>
+      'Tap + › More › Lent or Borrowed, and type the person’s name.';
+
+  @override
+  String get helpPeopleStep2Title => 'Repayments';
+
+  @override
+  String get helpPeopleStep2Body =>
+      'Record Repayment received or Repayment made, and what’s owed goes down.';
+
+  @override
+  String get helpPeopleStep3Title => 'Bill split';
+
+  @override
+  String get helpPeopleStep3Body =>
+      'Pay a whole bill and split it: only your share is spending, the rest is owed to you.';
+
+  @override
+  String get helpFeaturesSummary =>
+      'Turn parts of Qima on or off. Features also turn on by themselves the first time you use them.';
+
+  @override
+  String get helpFeaturesStep1Title => 'Turn one off';
+
+  @override
+  String get helpFeaturesStep1Body =>
+      'Its screens hide, never your money: its amounts still count on the balance sheet.';
+
+  @override
+  String get helpFeaturesStep2Title => 'On when used';
+
+  @override
+  String get helpFeaturesStep2Body =>
+      'Record your first loan payment and Loans turns on, with an Undo if you didn’t want it.';
+
+  @override
   String get helpSheetAboutHeader => 'ABOUT THIS PAGE';
 
   @override
@@ -1214,11 +1639,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'Pick a page to see what it does and how to use it.';
 
   @override
-  String get helpWatchlistTitle => 'Watchlist';
+  String get helpWatchlistTitle => 'Prices';
 
   @override
-  String get helpWatchlistSummary =>
-      'Live prices for everything you follow, with your portfolio total on top.';
+  String get helpWatchlistSummary => 'Live prices for everything you follow.';
 
   @override
   String get helpWatchlistStep1Title => 'Open a card';
@@ -1565,7 +1989,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get helpBackupStep1Body =>
-      'Saves your watchlist, holdings, custom tickers and settings as a .json file.';
+      'Saves your accounts, transactions, assets, watchlist, holdings and settings as a .json file.';
 
   @override
   String get helpBackupStep2Title => 'Add a password';
@@ -2117,7 +2541,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get helpZakatSummary =>
-      'Qima works out zakat from your holdings at today’s prices. It calculates; the choices behind the calculation are yours.';
+      'Qima works out zakat from what you own at today’s prices. It calculates; the choices behind the calculation are yours.';
 
   @override
   String get helpZakatStep1Title => 'Nisab';
@@ -2131,7 +2555,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get helpZakatStep2Body =>
-      'Metals, crypto and cash count by default; equities don’t. Karat gold counts by its gold content. Switch any single asset off on the zakat screen.';
+      'Cash, metals and crypto count by default, and assets held for sale at their value; equities don’t. Card balances and money you owe people are deducted. Switch any single item off.';
 
   @override
   String get helpZakatStep3Title => 'Hawl';
@@ -3962,6 +4386,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get addSheetTransactionSubtitle => 'Money spent, earned or moved';
+
+  @override
+  String get entryVoiceHint =>
+      'Say what happened, like “Spent 45 at Panda with Visa yesterday”';
+
+  @override
+  String get entryVoiceNothing =>
+      'Didn’t catch an amount or a name. Try again, or type it.';
 
   @override
   String get entryNewTitle => 'New transaction';

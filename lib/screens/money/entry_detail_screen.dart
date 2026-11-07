@@ -12,6 +12,8 @@ import '../../theme/money_labels.dart';
 import '../../theme/qima_colors.dart';
 import '../../widgets/confirm_delete_dialog.dart';
 import '../../widgets/money_widgets.dart';
+import '../../theme/help_topics.dart';
+import '../../widgets/help_button.dart';
 import 'entry_editor_screen.dart';
 
 /// One transaction: what it was, and How it adds up (14.8), its lines in
@@ -47,6 +49,7 @@ class EntryDetailScreen extends StatelessWidget {
           backgroundColor: Colors.transparent,
           title: Text(l10n.template(entry.template)),
           actions: [
+            const HelpButton(topic: HelpTopicId.transactions),
             if (editKind != null)
               IconButton(
                 tooltip: l10n.entryEditTitle,
@@ -217,7 +220,7 @@ class _AllTransactionsScreenState extends State<AllTransactionsScreen> {
     return ScreenBackground(
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        appBar: AppBar(backgroundColor: Colors.transparent, title: Text(widget.title ?? l10n.allTransactions)),
+        appBar: AppBar(backgroundColor: Colors.transparent, title: Text(widget.title ?? l10n.allTransactions), actions: const [HelpButton(topic: HelpTopicId.transactions)]),
         body: ListView(
           padding: const EdgeInsets.only(bottom: DS.spaceXL),
           children: [

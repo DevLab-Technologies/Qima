@@ -25,6 +25,8 @@ import '../../theme/design_system.dart';
 import '../../theme/money_labels.dart';
 import '../../theme/qima_colors.dart';
 import '../../widgets/money_widgets.dart';
+import '../../theme/help_topics.dart';
+import '../../widgets/help_button.dart';
 import 'accounts_screens.dart';
 import 'bank_messages_screen.dart';
 
@@ -323,6 +325,7 @@ class _ImportReviewScreenState extends State<ImportReviewScreen> {
       appBar: AppBar(
         title: Text(l10n.importReviewTitle),
         actions: [
+          const HelpButton(topic: HelpTopicId.importStatement),
           if (!imports.isEmpty)
             TextButton(onPressed: _saving ? null : () => _discardAll(imports), child: Text(l10n.importDiscardAll)),
         ],

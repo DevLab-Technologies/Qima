@@ -7,6 +7,8 @@ import '../../services/import/bank_messages.dart';
 import '../../theme/design_system.dart';
 import '../../theme/qima_colors.dart';
 import '../../widgets/money_widgets.dart';
+import '../../theme/help_topics.dart';
+import '../../widgets/help_button.dart';
 import 'import_screens.dart';
 
 /// Bank text messages into Qima: on Android Qima reads them once allowed;
@@ -124,7 +126,7 @@ class _BankMessagesScreenState extends State<BankMessagesScreen> {
       ]),
     ));
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.bankMessagesTitle)),
+      appBar: AppBar(title: Text(l10n.bankMessagesTitle), actions: const [HelpButton(topic: HelpTopicId.bankMessages)]),
       body: ListView(padding: const EdgeInsets.fromLTRB(DS.spaceMD, DS.spaceSM, DS.spaceMD, DS.spaceLG), children: children),
     );
   }

@@ -13,6 +13,8 @@ import '../../theme/money_labels.dart';
 import '../../theme/qima_colors.dart';
 import '../../widgets/confirm_delete_dialog.dart';
 import '../../widgets/money_widgets.dart';
+import '../../theme/help_topics.dart';
+import '../../widgets/help_button.dart';
 import 'accounts_screens.dart';
 import 'entry_editor_screen.dart';
 
@@ -52,7 +54,7 @@ class BudgetScreen extends StatelessWidget {
     return ScreenBackground(
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        appBar: AppBar(backgroundColor: Colors.transparent, title: Text(l10n.featBudget)),
+        appBar: AppBar(backgroundColor: Colors.transparent, title: Text(l10n.featBudget), actions: const [HelpButton(topic: HelpTopicId.budget)]),
         body: ListView(
           padding: const EdgeInsets.all(DS.spaceMD),
           children: [
@@ -102,7 +104,7 @@ class RecurringScreen extends StatelessWidget {
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           title: Text(l10n.featRecurring),
-          actions: [IconButton(tooltip: l10n.recurringAdd, icon: const Icon(Icons.add), onPressed: () => RecurringEditorScreen.open(context))],
+          actions: [const HelpButton(topic: HelpTopicId.recurring), IconButton(tooltip: l10n.recurringAdd, icon: const Icon(Icons.add), onPressed: () => RecurringEditorScreen.open(context))],
         ),
         body: ListView(
           padding: const EdgeInsets.all(DS.spaceMD),
@@ -234,7 +236,7 @@ class _RecurringEditorScreenState extends State<RecurringEditorScreen> {
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           title: Text(widget.existing == null ? l10n.recurringAdd : widget.existing!.name),
-          actions: [if (accounts.isNotEmpty) TextButton(onPressed: _save, child: Text(l10n.holdingsSave))],
+          actions: [const HelpButton(topic: HelpTopicId.recurring), if (accounts.isNotEmpty) TextButton(onPressed: _save, child: Text(l10n.holdingsSave))],
         ),
         body: accounts.isEmpty
             ? MoneyEmpty(icon: Icons.account_balance_outlined, title: l10n.entryNeedsAccountTitle, message: l10n.entryNeedsAccountMessage)
@@ -274,7 +276,7 @@ class PeopleScreen extends StatelessWidget {
     return ScreenBackground(
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        appBar: AppBar(backgroundColor: Colors.transparent, title: Text(l10n.featPeople)),
+        appBar: AppBar(backgroundColor: Colors.transparent, title: Text(l10n.featPeople), actions: const [HelpButton(topic: HelpTopicId.people)]),
         body: ListView(
           padding: const EdgeInsets.all(DS.spaceMD),
           children: [
@@ -397,7 +399,7 @@ class _BillSplitScreenState extends State<BillSplitScreen> {
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           title: Text(l10n.featBillSplit),
-          actions: [if (accounts.isNotEmpty) TextButton(onPressed: _save, child: Text(l10n.holdingsSave))],
+          actions: [const HelpButton(topic: HelpTopicId.people), if (accounts.isNotEmpty) TextButton(onPressed: _save, child: Text(l10n.holdingsSave))],
         ),
         body: accounts.isEmpty
             ? MoneyEmpty(icon: Icons.account_balance_outlined, title: l10n.entryNeedsAccountTitle, message: l10n.entryNeedsAccountMessage)
@@ -525,7 +527,7 @@ class CategoriesScreen extends StatelessWidget {
     return ScreenBackground(
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        appBar: AppBar(backgroundColor: Colors.transparent, title: Text(l10n.categoriesTitle)),
+        appBar: AppBar(backgroundColor: Colors.transparent, title: Text(l10n.categoriesTitle), actions: const [HelpButton(topic: HelpTopicId.categories)]),
         body: ListView(
           padding: const EdgeInsets.all(DS.spaceMD),
           children: [

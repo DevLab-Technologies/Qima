@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -19,6 +20,7 @@ import 'package:qima/models/money.dart';
 import 'package:qima/models/money_settings.dart';
 import 'package:qima/models/net_worth.dart';
 import 'package:qima/models/quote.dart';
+import 'package:qima/screens/help_sheet.dart';
 import 'package:qima/screens/money/accounts_screens.dart';
 import 'package:qima/screens/money/asset_screens.dart';
 import 'package:qima/screens/money/balance_sheet_screen.dart';
@@ -28,6 +30,7 @@ import 'package:qima/screens/money/entry_detail_screen.dart';
 import 'package:qima/screens/money/entry_editor_screen.dart';
 import 'package:qima/screens/money/home_screen.dart';
 import 'package:qima/screens/money/import_screens.dart';
+import 'package:qima/services/dictation_service.dart';
 import 'package:qima/services/import/bank_messages.dart';
 import 'package:qima/services/import/import_inbox_io.dart';
 import 'package:qima/services/import/pasted_files.dart';
@@ -39,6 +42,22 @@ import 'package:qima/theme/money_labels.dart';
 import 'package:qima/services/local_file_store.dart';
 import 'package:qima/services/price_repository.dart';
 import 'package:qima/theme/app_theme.dart';
+import 'package:qima/theme/help_topics.dart';
+import 'package:qima/widgets/help_button.dart';
+
+/// A recognizer the test speaks through.
+class _SpokenWords implements DictationService {
+  StreamController<DictationEvent>? session;
+
+  @override
+  Future<DictationAvailability> availability(String localeTag) async => DictationAvailability.available;
+
+  @override
+  Stream<DictationEvent> listen(String localeTag) => (session = StreamController<DictationEvent>()).stream;
+
+  @override
+  Future<void> stop() async {}
+}
 
 class _OfflineRepository extends PriceRepository {
   @override
@@ -234,7 +253,14 @@ void main() {
           await tester.pump(const Duration(milliseconds: 600));
           final error = tester.takeException();
           if (error != null) fail('$name: ${error is FlutterError ? error.diagnostics.map((d) => d.toStringDeep()).join('\n') : error}');
+          expect(find.byType(HelpButton), findsWidgets, reason: '$name has no help');
           await tester.pumpWidget(const SizedBox());
+        }
+        // And every page's help reads without overflow.
+        for (final id in HelpTopicId.values) {
+          await tester.pumpWidget(wrap(Scaffold(body: Builder(builder: (context) => HelpSheet(topic: helpTopicFor(context, id)))), locale));
+          final error = tester.takeException();
+          if (error != null) fail('help ${id.name}: $error');
         }
       });
     }
@@ -527,6 +553,76 @@ void main() {
       await tester.pump();
       expect(opened, contains('openShortcuts'));
       debugDefaultTargetPlatformOverride = null;
+    });
+  });
+
+  group('speaking a transaction', () {
+    late _SpokenWords voice;
+
+    /// The app cubit with a mic that hears what the test says.
+    Future<void> withVoice() async {
+      voice = _SpokenWords();
+      final old = app;
+      app = AppCubit(repository: _OfflineRepository(), bookStore: old.bookStore, dictation: voice);
+      app.emit(old.state);
+      await old.close();
+    }
+
+    Future<void> say(WidgetTester tester, String words, AppLocalizations l10n) async {
+      await tester.tap(find.byTooltip(l10n.dictationStart));
+      await tester.pump();
+      voice.session!.add(DictationPartial(words.split(' ').first));
+      await tester.pump();
+      expect(find.byKey(const ValueKey('entryHeard')), findsOneWidget);
+      voice.session!
+        ..add(DictationFinal(words))
+        ..close();
+      await tester.pump();
+      await tester.pump();
+    }
+
+    testWidgets('a spend fills in as said, with the category it usually has, and saves only on Save', (tester) async {
+      await tester.runAsync(seed);
+      await withVoice();
+      size(tester, const Size(390, 1400));
+      final l10n = await AppLocalizations.delegate.load(const Locale('en'));
+      final before = money.state.book.entries.length;
+      await tester.pumpWidget(wrap(const EntryEditorScreen(kind: EntryKind.spend), const Locale('en')));
+      await tester.pump(const Duration(milliseconds: 300));
+      await say(tester, 'Spent 45.50 at Panda with Visa yesterday', l10n);
+      expect(find.text('\u201cSpent 45.50 at Panda with Visa yesterday\u201d'), findsOneWidget);
+      expect(find.widgetWithText(TextField, '45.50'), findsOneWidget);
+      expect(find.widgetWithText(TextField, 'Panda'), findsOneWidget);
+      expect(money.state.book.entries, hasLength(before));
+
+      await tester.tap(find.text(l10n.holdingsSave));
+      for (var i = 0; i < 50 && money.state.book.entries.length == before; i++) {
+        await tester.pump(const Duration(milliseconds: 100));
+        await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 20)));
+      }
+      final saved = money.state.entriesNewestFirst.firstWhere((e) => e.merchant == 'Panda' && e.lines.any((l) => l.accountId == 'visa'));
+      final now = DateTime.now();
+      expect(saved.date, DateTime(now.year, now.month, now.day - 1));
+      expect(saved.lines.firstWhere((l) => l.accountId == 'visa').amount, -sar(45.50));
+      expect(saved.lines.any((l) => l.accountId == 'category.groceries'), isTrue);
+    });
+
+    testWidgets('a transfer moves to its tab with both accounts; nothing understood says so', (tester) async {
+      await tester.runAsync(seed);
+      await withVoice();
+      size(tester, const Size(390, 1400));
+      final l10n = await AppLocalizations.delegate.load(const Locale('en'));
+      await tester.pumpWidget(wrap(const EntryEditorScreen(kind: EntryKind.spend), const Locale('en')));
+      await tester.pump(const Duration(milliseconds: 300));
+      await say(tester, 'transferred 500 from Al Rajhi to my wallet', l10n);
+      expect(tester.widget<SegmentedButton<EntryKind>>(find.byKey(const ValueKey('entryKindTabs'))).selected, {EntryKind.transfer});
+      expect(find.widgetWithText(TextField, '500'), findsOneWidget);
+      expect(find.textContaining('Al Rajhi current account'), findsOneWidget);
+      expect(find.textContaining('Wallet'), findsOneWidget);
+
+      await say(tester, 'hello there', l10n);
+      expect(find.text(l10n.entryVoiceNothing), findsOneWidget);
+      expect(find.widgetWithText(TextField, '500'), findsOneWidget);
     });
   });
 

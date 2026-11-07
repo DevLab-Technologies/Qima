@@ -6,10 +6,17 @@ import '../../blocs/money_cubit.dart';
 import '../../l10n/app_localizations.dart';
 import '../../models/book_account.dart';
 import '../../models/book_entry.dart';
+import '../../models/categorizer.dart';
 import '../../models/entry_builder.dart';
+import '../../models/import_plan.dart';
+import '../../models/spoken_entry.dart';
 import '../../theme/design_system.dart';
 import '../../theme/money_labels.dart';
+import '../../theme/qima_colors.dart';
+import '../../widgets/dictation_button.dart';
 import '../../widgets/money_widgets.dart';
+import '../../theme/help_topics.dart';
+import '../../widgets/help_button.dart';
 
 /// The ways a person adds a transaction. Each is one template; the editor
 /// asks only what that template needs.
@@ -89,6 +96,10 @@ class _EntryEditorScreenState extends State<EntryEditorScreen> {
   DateTime _date = DateTime.now();
   bool _declined = false;
   String? _error;
+
+  /// What the mic heard, shown while and after listening.
+  String? _heard;
+  bool _listening = false;
 
   late EntryKind kind = widget.kind;
 
@@ -183,6 +194,66 @@ class _EntryEditorScreenState extends State<EntryEditorScreen> {
           _person.text = (kind == EntryKind.lent ? _to : _from)?.name ?? '';
         }
     }
+  }
+
+  /// Fills the form from a spoken sentence. Only what was said changes,
+  /// and every figure is the person's own; they check it and tap Save.
+  void _applySpoken(String text) {
+    final l10n = AppLocalizations.of(context)!;
+    final state = _money.state;
+    final heard = SpokenEntry.parse(
+      text,
+      accounts: {for (final a in _of({..._money_, AccountType.credit})) a.id: l10n.accountName(a)},
+      categories: {
+        for (final a in [...state.categories(AccountSide.spending), ...state.categories(AccountSide.income)])
+          if (!Categorizer.isUncategorized(a.id)) a.id: l10n.accountName(a),
+      },
+    );
+    if (heard.isEmpty) {
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(SnackBar(persist: false, content: Text(l10n.entryVoiceNothing)));
+      return;
+    }
+    final next = switch (heard.kind) {
+      SpokenKind.spend => EntryKind.spend,
+      SpokenKind.income => EntryKind.income,
+      SpokenKind.transfer => EntryKind.transfer,
+      null => null,
+    };
+    if (_showTabs && next != null) _switchTo(next);
+    final book = state.book;
+    BookAccount? pick(List<BookAccount> choices, String? id) => id == null ? null : choices.where((a) => a.id == id).firstOrNull;
+    setState(() {
+      _error = null;
+      if (heard.amount != null) _amount.text = heard.amount!;
+      if (heard.merchant != null) _merchant.text = heard.merchant!;
+      if (heard.daysAgo != null) {
+        final now = DateTime.now();
+        _date = DateTime(now.year, now.month, now.day - heard.daysAgo!);
+      }
+      final ids = heard.accountIds;
+      if (ids.isNotEmpty) {
+        if (kind == EntryKind.income || kind == EntryKind.refund) {
+          _to = pick(_toChoices, ids.first) ?? _to;
+        } else if (_toChoices.isNotEmpty && ids.length > 1) {
+          _from = pick(_fromChoices, ids[0]) ?? _from;
+          _to = pick(_toChoices, ids[1]) ?? _to;
+        } else if (kind == EntryKind.cardPayment || kind == EntryKind.loanPayment) {
+          _from = pick(_fromChoices, ids.first) ?? _from;
+          _to = pick(_toChoices, ids.first) ?? _to;
+        } else {
+          _from = pick(_fromChoices, ids.first) ?? _from;
+        }
+      }
+      final said = pick(_categoryChoices, heard.categoryId);
+      if (said != null) {
+        _category = said;
+      } else if (heard.merchant != null && _categoryChoices.isNotEmpty) {
+        final guess = ImportPlanner.guessCategory(heard.merchant!, isIn: kind == EntryKind.income, categorizer: Categorizer(book, rules: state.settings.categoryRules));
+        if (guess.sure) _category = pick(_categoryChoices, guess.categoryId) ?? _category;
+      }
+    });
   }
 
   @override
@@ -340,8 +411,20 @@ class _EntryEditorScreenState extends State<EntryEditorScreen> {
             onSelectionChanged: (s) => _switchTo(s.first),
           );
 
+    final heard = _heard;
     final fields = <Widget>[
       ?kindTabs,
+      if (_listening || heard != null)
+        Row(key: const ValueKey('entryHeard'), crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Icon(Icons.graphic_eq, size: 18, color: _listening ? context.colors.brand : context.colors.textTertiary),
+          const SizedBox(width: DS.spaceSM),
+          Expanded(
+            child: Text(
+              heard == null || heard.isEmpty ? l10n.entryVoiceHint : '“$heard”',
+              style: TextStyle(color: context.colors.textSecondary, fontStyle: heard == null || heard.isEmpty ? FontStyle.normal : FontStyle.italic),
+            ),
+          ),
+        ]),
       AmountField(
         controller: _amount,
         autofocus: widget.existing == null,
@@ -418,7 +501,19 @@ class _EntryEditorScreenState extends State<EntryEditorScreen> {
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           title: Text(title),
-          actions: [if (!missingAccount) TextButton(onPressed: _save, child: Text(l10n.holdingsSave))],
+          actions: [
+            const HelpButton(topic: HelpTopicId.newTransaction),
+            if (!missingAccount && widget.existing == null)
+              DictationButton(
+                onText: (t) => setState(() => _heard = t),
+                onFinal: _applySpoken,
+                onListening: (on) => setState(() {
+                  _listening = on;
+                  if (on) _heard = null;
+                }),
+              ),
+            if (!missingAccount) TextButton(onPressed: _save, child: Text(l10n.holdingsSave)),
+          ],
         ),
         body: missingAccount
             ? Column(children: [

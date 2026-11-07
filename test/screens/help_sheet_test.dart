@@ -176,11 +176,11 @@ void main() {
     await tester.tap(find.text(l10n.settingsHelpHowQimaWorks));
     await settle(tester);
 
-    await tester.tap(find.text(l10n.helpPortfolioTitle));
+    await tester.tap(find.descendant(of: find.byType(HelpIndexSheet), matching: find.text(l10n.entryNewTitle)));
     await settle(tester);
 
     expect(find.byType(HelpSheet), findsOneWidget);
-    expect(find.text(l10n.helpPortfolioStep1Title), findsOneWidget);
+    expect(find.text(l10n.helpNewTransactionStep1Title), findsOneWidget);
   });
 
   testWidgets('Settings Help group has Replay the tour and How Qima works', (tester) async {

@@ -90,7 +90,7 @@ class HomeScreen extends StatelessWidget {
               titleSpacing: 16,
               title: Text(l10n.navHome),
               actions: [
-                const HelpButton(topic: HelpTopicId.portfolio),
+                const HelpButton(topic: HelpTopicId.home),
                 IconButton(
                   icon: Icon(hidden ? Icons.visibility_off_outlined : Icons.visibility_outlined),
                   tooltip: hidden ? l10n.privacyShowBalances : l10n.privacyHideBalances,
@@ -368,7 +368,7 @@ class EditHomeScreen extends StatelessWidget {
     return ScreenBackground(
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        appBar: AppBar(backgroundColor: Colors.transparent, title: Text(l10n.editHome)),
+        appBar: AppBar(backgroundColor: Colors.transparent, title: Text(l10n.editHome), actions: const [HelpButton(topic: HelpTopicId.home)]),
         body: ListView(
           padding: const EdgeInsets.all(DS.spaceMD),
           children: [
@@ -523,7 +523,7 @@ class ZakatBookScreen extends StatelessWidget {
     return ScreenBackground(
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        appBar: AppBar(backgroundColor: Colors.transparent, title: Text(l10n.featZakat)),
+        appBar: AppBar(backgroundColor: Colors.transparent, title: Text(l10n.featZakat), actions: const [HelpButton(topic: HelpTopicId.zakat)]),
         body: ListView(
           padding: const EdgeInsets.all(DS.spaceMD),
           children: [

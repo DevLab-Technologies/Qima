@@ -13,6 +13,8 @@ import '../../theme/design_system.dart';
 import '../../theme/money_labels.dart';
 import '../../theme/qima_colors.dart';
 import '../../widgets/money_widgets.dart';
+import '../../theme/help_topics.dart';
+import '../../widgets/help_button.dart';
 import 'accounts_screens.dart';
 import 'categorize_screen.dart';
 import 'entry_detail_screen.dart';
@@ -288,6 +290,7 @@ class _MoneyScreenState extends State<MoneyScreen> {
                   icon: const Icon(Icons.chevron_right),
                   onPressed: isThisMonth ? null : () => setState(() => _month = DateTime(_month.year, _month.month + 1)),
                 ),
+                const HelpButton(topic: HelpTopicId.money),
               ],
             ),
             body: ListView(

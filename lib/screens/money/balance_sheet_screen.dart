@@ -10,6 +10,8 @@ import '../../theme/design_system.dart';
 import '../../theme/money_labels.dart';
 import '../../theme/qima_colors.dart';
 import '../../widgets/money_widgets.dart';
+import '../../theme/help_topics.dart';
+import '../../widgets/help_button.dart';
 import '../portfolio_detail_screen.dart';
 import 'accounts_screens.dart';
 import 'asset_screens.dart';
@@ -84,7 +86,7 @@ class BalanceSheetScreen extends StatelessWidget {
     return ScreenBackground(
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        appBar: AppBar(backgroundColor: Colors.transparent, title: Text(l10n.balanceSheet)),
+        appBar: AppBar(backgroundColor: Colors.transparent, title: Text(l10n.balanceSheet), actions: const [HelpButton(topic: HelpTopicId.balanceSheet)]),
         body: ListView(
           padding: const EdgeInsets.all(DS.spaceMD),
           children: [
@@ -168,7 +170,7 @@ class HowTotalScreen extends StatelessWidget {
         return ScreenBackground(
           child: Scaffold(
             backgroundColor: Colors.transparent,
-            appBar: AppBar(backgroundColor: Colors.transparent, title: Text(l10n.howTotalWorked)),
+            appBar: AppBar(backgroundColor: Colors.transparent, title: Text(l10n.howTotalWorked), actions: const [HelpButton(topic: HelpTopicId.balanceSheet)]),
             body: ListView(
               padding: const EdgeInsets.all(DS.spaceMD),
               children: [

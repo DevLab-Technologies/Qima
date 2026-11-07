@@ -13,6 +13,8 @@ import '../../theme/qima_colors.dart';
 import '../../widgets/confirm_delete_dialog.dart';
 import '../../widgets/currency_field.dart';
 import '../../widgets/money_widgets.dart';
+import '../../theme/help_topics.dart';
+import '../../widgets/help_button.dart';
 import 'entry_detail_screen.dart';
 
 /// 14.1 Property and more: the assets the person values themselves, with
@@ -42,7 +44,7 @@ class AssetsScreen extends StatelessWidget {
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           title: Text(l10n.sheetAssets),
-          actions: [IconButton(tooltip: l10n.assetAdd, icon: const Icon(Icons.add), onPressed: () => AssetEditorScreen.open(context))],
+          actions: [const HelpButton(topic: HelpTopicId.assets), IconButton(tooltip: l10n.assetAdd, icon: const Icon(Icons.add), onPressed: () => AssetEditorScreen.open(context))],
         ),
         body: ListView(
           padding: const EdgeInsets.all(DS.spaceMD),
@@ -217,7 +219,7 @@ class _AssetEditorScreenState extends State<AssetEditorScreen> {
       return ScreenBackground(
         child: Scaffold(
           backgroundColor: Colors.transparent,
-          appBar: AppBar(backgroundColor: Colors.transparent, title: Text(l10n.assetAdd)),
+          appBar: AppBar(backgroundColor: Colors.transparent, title: Text(l10n.assetAdd), actions: const [HelpButton(topic: HelpTopicId.assets)]),
           body: ListView(
             padding: const EdgeInsets.all(DS.spaceMD),
             children: [
@@ -297,7 +299,7 @@ class _AssetEditorScreenState extends State<AssetEditorScreen> {
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           title: Text(_editing ? l10n.assetEdit : l10n.assetAdd),
-          actions: [TextButton(onPressed: _save, child: Text(l10n.holdingsSave))],
+          actions: [const HelpButton(topic: HelpTopicId.assets), TextButton(onPressed: _save, child: Text(l10n.holdingsSave))],
         ),
         body: ListView(
           padding: const EdgeInsets.all(DS.spaceMD),
@@ -382,6 +384,7 @@ class AssetDetailScreen extends StatelessWidget {
           backgroundColor: Colors.transparent,
           title: Text(a.name),
           actions: [
+            const HelpButton(topic: HelpTopicId.assets),
             PopupMenuButton<String>(
               onSelected: (v) async {
                 if (v == 'edit') {
@@ -642,7 +645,7 @@ class _SellAssetScreenState extends State<SellAssetScreen> {
     return ScreenBackground(
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        appBar: AppBar(backgroundColor: Colors.transparent, title: Text(l10n.assetSellTitle(a.name))),
+        appBar: AppBar(backgroundColor: Colors.transparent, title: Text(l10n.assetSellTitle(a.name)), actions: const [HelpButton(topic: HelpTopicId.assets)]),
         body: choices.isEmpty
             ? MoneyEmpty(icon: Icons.account_balance_outlined, title: l10n.entryNeedsAccountTitle, message: l10n.entryNeedsAccountMessage)
             : ListView(

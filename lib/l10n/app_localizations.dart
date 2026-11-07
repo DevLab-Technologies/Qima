@@ -2162,6 +2162,726 @@ abstract class AppLocalizations {
   /// **'Help'**
   String get helpButtonTooltip;
 
+  /// No description provided for @helpHomeSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Your net worth: everything you own minus everything you owe, with the cards you use most.'**
+  String get helpHomeSummary;
+
+  /// No description provided for @helpHomeStep1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Net worth'**
+  String get helpHomeStep1Title;
+
+  /// No description provided for @helpHomeStep1Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap it to open the balance sheet: what you own and what you owe, item by item.'**
+  String get helpHomeStep1Body;
+
+  /// No description provided for @helpHomeStep2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Your cards'**
+  String get helpHomeStep2Title;
+
+  /// No description provided for @helpHomeStep2Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Accounts, Left to spend, Coming up and others appear as you use them. Tap a card to open it.'**
+  String get helpHomeStep2Body;
+
+  /// No description provided for @helpHomeStep3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Home'**
+  String get helpHomeStep3Title;
+
+  /// No description provided for @helpHomeStep3Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Move cards or hide the ones you don’t need. Qima never adds back a card you hid.'**
+  String get helpHomeStep3Body;
+
+  /// No description provided for @helpHomeStep4Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide balances'**
+  String get helpHomeStep4Title;
+
+  /// No description provided for @helpHomeStep4Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap the eye to mask every amount, for when someone is looking.'**
+  String get helpHomeStep4Body;
+
+  /// No description provided for @helpHomeStep5Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Add anything'**
+  String get helpHomeStep5Title;
+
+  /// No description provided for @helpHomeStep5Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap + for a transaction, a statement, a holding, or anything under More.'**
+  String get helpHomeStep5Body;
+
+  /// No description provided for @helpMoneySummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Where this month’s money went, and what came in and went out.'**
+  String get helpMoneySummary;
+
+  /// No description provided for @helpMoneyStep1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a month'**
+  String get helpMoneyStep1Title;
+
+  /// No description provided for @helpMoneyStep1Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Use the arrows at the top to see another month.'**
+  String get helpMoneyStep1Body;
+
+  /// No description provided for @helpMoneyStep2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Spent and pace'**
+  String get helpMoneyStep2Title;
+
+  /// No description provided for @helpMoneyStep2Body.
+  ///
+  /// In en, this message translates to:
+  /// **'What you’ve spent so far, and where you’ll be by the month’s end at this pace.'**
+  String get helpMoneyStep2Body;
+
+  /// No description provided for @helpMoneyStep3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Where it went'**
+  String get helpMoneyStep3Title;
+
+  /// No description provided for @helpMoneyStep3Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Spending by category, biggest first.'**
+  String get helpMoneyStep3Body;
+
+  /// No description provided for @helpMoneyStep4Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash flow'**
+  String get helpMoneyStep4Title;
+
+  /// No description provided for @helpMoneyStep4Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Money in, money out and what’s left over. Moves between your own accounts don’t count.'**
+  String get helpMoneyStep4Body;
+
+  /// No description provided for @helpMoneyStep5Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Worth a look'**
+  String get helpMoneyStep5Title;
+
+  /// No description provided for @helpMoneyStep5Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes on budgets and entries to categorize, when there’s something to see.'**
+  String get helpMoneyStep5Body;
+
+  /// No description provided for @helpNewTransactionSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Record money spent, earned or moved between your accounts.'**
+  String get helpNewTransactionSummary;
+
+  /// No description provided for @helpNewTransactionStep1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick the kind'**
+  String get helpNewTransactionStep1Title;
+
+  /// No description provided for @helpNewTransactionStep1Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Spend, Income or Transfer. The amount and date stay when you switch.'**
+  String get helpNewTransactionStep1Body;
+
+  /// No description provided for @helpNewTransactionStep2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Say it'**
+  String get helpNewTransactionStep2Title;
+
+  /// No description provided for @helpNewTransactionStep2Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap the mic and say, for example, “Spent 45 at Panda with Visa yesterday”. Qima fills in the form on this device; check it and tap Save.'**
+  String get helpNewTransactionStep2Body;
+
+  /// No description provided for @helpNewTransactionStep3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get helpNewTransactionStep3Title;
+
+  /// No description provided for @helpNewTransactionStep3Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Spending and income go in a category. A move between your own accounts is never spending.'**
+  String get helpNewTransactionStep3Body;
+
+  /// No description provided for @helpNewTransactionStep4Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Declined'**
+  String get helpNewTransactionStep4Title;
+
+  /// No description provided for @helpNewTransactionStep4Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn on Declined for a payment that didn’t go through: it’s shown struck through and never counts.'**
+  String get helpNewTransactionStep4Body;
+
+  /// No description provided for @helpTransactionsSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Every transaction, newest first, and what each one did to your accounts.'**
+  String get helpTransactionsSummary;
+
+  /// No description provided for @helpTransactionsStep1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Open one'**
+  String get helpTransactionsStep1Title;
+
+  /// No description provided for @helpTransactionsStep1Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap a transaction to see each account it touched, and by how much.'**
+  String get helpTransactionsStep1Body;
+
+  /// No description provided for @helpTransactionsStep2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'How it counts'**
+  String get helpTransactionsStep2Title;
+
+  /// No description provided for @helpTransactionsStep2Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Each one says whether it’s spending, income, a move between your accounts or a change in value.'**
+  String get helpTransactionsStep2Body;
+
+  /// No description provided for @helpTransactionsStep3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit or delete'**
+  String get helpTransactionsStep3Title;
+
+  /// No description provided for @helpTransactionsStep3Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Open it, then edit or delete it. Deleting puts every account back as it was.'**
+  String get helpTransactionsStep3Body;
+
+  /// No description provided for @helpAccountsSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Bank accounts, cash, cards and loans, with what’s in each one today.'**
+  String get helpAccountsSummary;
+
+  /// No description provided for @helpAccountsStep1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Add an account'**
+  String get helpAccountsStep1Title;
+
+  /// No description provided for @helpAccountsStep1Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Give it a name, a type and its balance today. Qima starts from that figure.'**
+  String get helpAccountsStep1Body;
+
+  /// No description provided for @helpAccountsStep2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Check the balance'**
+  String get helpAccountsStep2Title;
+
+  /// No description provided for @helpAccountsStep2Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Open an account and enter what your bank shows. Qima shows any difference and can bring its balance to match.'**
+  String get helpAccountsStep2Body;
+
+  /// No description provided for @helpAccountsStep3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Count cash'**
+  String get helpAccountsStep3Title;
+
+  /// No description provided for @helpAccountsStep3Body.
+  ///
+  /// In en, this message translates to:
+  /// **'For cash, count what’s in your wallet and Qima sets the balance to it.'**
+  String get helpAccountsStep3Body;
+
+  /// No description provided for @helpAccountsStep4Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay a card or loan'**
+  String get helpAccountsStep4Title;
+
+  /// No description provided for @helpAccountsStep4Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Open the card or loan and tap Pay to record a payment from another account.'**
+  String get helpAccountsStep4Body;
+
+  /// No description provided for @helpAccountsStep5Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove one'**
+  String get helpAccountsStep5Title;
+
+  /// No description provided for @helpAccountsStep5Body.
+  ///
+  /// In en, this message translates to:
+  /// **'An account with transactions is archived so its history still adds up. One never used is deleted.'**
+  String get helpAccountsStep5Body;
+
+  /// No description provided for @helpBalanceSheetSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Everything you own and everything you owe, adding up to your net worth.'**
+  String get helpBalanceSheetSummary;
+
+  /// No description provided for @helpBalanceSheetStep1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'What you own'**
+  String get helpBalanceSheetStep1Title;
+
+  /// No description provided for @helpBalanceSheetStep1Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Accounts, holdings at live prices, and assets at the value you set.'**
+  String get helpBalanceSheetStep1Body;
+
+  /// No description provided for @helpBalanceSheetStep2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'What you owe'**
+  String get helpBalanceSheetStep2Title;
+
+  /// No description provided for @helpBalanceSheetStep2Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Cards, loans (principal only) and money you owe people.'**
+  String get helpBalanceSheetStep2Body;
+
+  /// No description provided for @helpBalanceSheetStep3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'How the total is worked out'**
+  String get helpBalanceSheetStep3Title;
+
+  /// No description provided for @helpBalanceSheetStep3Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Open it to see each rule, such as the live rate used for other currencies.'**
+  String get helpBalanceSheetStep3Body;
+
+  /// No description provided for @helpBalanceSheetStep4Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave one out'**
+  String get helpBalanceSheetStep4Title;
+
+  /// No description provided for @helpBalanceSheetStep4Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn off Count in net worth on an account or asset; its history still adds up.'**
+  String get helpBalanceSheetStep4Body;
+
+  /// No description provided for @helpAssetsSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'A home, land, a car or a share in a business, at the value you set.'**
+  String get helpAssetsSummary;
+
+  /// No description provided for @helpAssetsStep1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Add an asset'**
+  String get helpAssetsStep1Title;
+
+  /// No description provided for @helpAssetsStep1Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a kind, then give it a value and a date. Gold and silver by weight are holdings instead.'**
+  String get helpAssetsStep1Body;
+
+  /// No description provided for @helpAssetsStep2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Update the value'**
+  String get helpAssetsStep2Title;
+
+  /// No description provided for @helpAssetsStep2Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Every update is dated. The latest counts; older values stay as history.'**
+  String get helpAssetsStep2Body;
+
+  /// No description provided for @helpAssetsStep3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'A loan on it'**
+  String get helpAssetsStep3Title;
+
+  /// No description provided for @helpAssetsStep3Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Link the loan secured on it to see what’s still owed next to its value.'**
+  String get helpAssetsStep3Body;
+
+  /// No description provided for @helpAssetsStep4Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Sold it'**
+  String get helpAssetsStep4Title;
+
+  /// No description provided for @helpAssetsStep4Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Record the sale: the money goes into an account and the asset leaves your balance sheet.'**
+  String get helpAssetsStep4Body;
+
+  /// No description provided for @helpImportStatementSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Bring in transactions from your bank’s PDF, Excel or CSV, screenshots, or a copied file.'**
+  String get helpImportStatementSummary;
+
+  /// No description provided for @helpImportStatementStep1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick the files'**
+  String get helpImportStatementStep1Title;
+
+  /// No description provided for @helpImportStatementStep1Body.
+  ///
+  /// In en, this message translates to:
+  /// **'From Files, Photos, the clipboard, or Share › Qima from any app. They’re read on this device.'**
+  String get helpImportStatementStep1Body;
+
+  /// No description provided for @helpImportStatementStep2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Check every row'**
+  String get helpImportStatementStep2Title;
+
+  /// No description provided for @helpImportStatementStep2Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick the account, untick what you don’t want and fix any category. Rows already in Qima start unticked.'**
+  String get helpImportStatementStep2Body;
+
+  /// No description provided for @helpImportStatementStep3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Match the balance'**
+  String get helpImportStatementStep3Title;
+
+  /// No description provided for @helpImportStatementStep3Body.
+  ///
+  /// In en, this message translates to:
+  /// **'When the statement shows a balance, tick Bring the balance to it so Qima agrees with your bank.'**
+  String get helpImportStatementStep3Body;
+
+  /// No description provided for @helpImportStatementStep4Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Add them'**
+  String get helpImportStatementStep4Title;
+
+  /// No description provided for @helpImportStatementStep4Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap Add. The files are deleted once imported.'**
+  String get helpImportStatementStep4Body;
+
+  /// No description provided for @helpBankMessagesSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Add purchases from the messages your bank sends you, after you check each one.'**
+  String get helpBankMessagesSummary;
+
+  /// No description provided for @helpBankMessagesStep1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'On Android'**
+  String get helpBankMessagesStep1Title;
+
+  /// No description provided for @helpBankMessagesStep1Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn on Read new bank messages and allow access. Bring in the last 60 days the first time.'**
+  String get helpBankMessagesStep1Body;
+
+  /// No description provided for @helpBankMessagesStep2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'On iPhone'**
+  String get helpBankMessagesStep2Title;
+
+  /// No description provided for @helpBankMessagesStep2Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Set up a Shortcuts automation once, so each bank message goes to Qima’s Add a bank message action.'**
+  String get helpBankMessagesStep2Body;
+
+  /// No description provided for @helpBankMessagesStep3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Check before adding'**
+  String get helpBankMessagesStep3Title;
+
+  /// No description provided for @helpBankMessagesStep3Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Messages wait in the import review. Codes, offers and repeats are skipped.'**
+  String get helpBankMessagesStep3Body;
+
+  /// No description provided for @helpBankMessagesStep4Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Private'**
+  String get helpBankMessagesStep4Title;
+
+  /// No description provided for @helpBankMessagesStep4Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Messages are read on this device and never leave it.'**
+  String get helpBankMessagesStep4Body;
+
+  /// No description provided for @helpCategoriesSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Sort spending into categories, and teach Qima where each name goes.'**
+  String get helpCategoriesSummary;
+
+  /// No description provided for @helpCategoriesStep1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'To categorize'**
+  String get helpCategoriesStep1Title;
+
+  /// No description provided for @helpCategoriesStep1Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a category once for each name. Imports from that name use it from now on.'**
+  String get helpCategoriesStep1Body;
+
+  /// No description provided for @helpCategoriesStep2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Earlier entries'**
+  String get helpCategoriesStep2Title;
+
+  /// No description provided for @helpCategoriesStep2Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Qima offers to move earlier entries from the same name too.'**
+  String get helpCategoriesStep2Body;
+
+  /// No description provided for @helpCategoriesStep3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Your categories'**
+  String get helpCategoriesStep3Title;
+
+  /// No description provided for @helpCategoriesStep3Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Add, rename or remove categories. Transactions in a removed one keep it in their history.'**
+  String get helpCategoriesStep3Body;
+
+  /// No description provided for @helpCategoriesStep4Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Forget a name'**
+  String get helpCategoriesStep4Title;
+
+  /// No description provided for @helpCategoriesStep4Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Forget what Qima learned for a name, and its imports are sorted by hand again.'**
+  String get helpCategoriesStep4Body;
+
+  /// No description provided for @helpBudgetSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'A monthly amount for each category you want to watch.'**
+  String get helpBudgetSummary;
+
+  /// No description provided for @helpBudgetStep1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Set an amount'**
+  String get helpBudgetStep1Title;
+
+  /// No description provided for @helpBudgetStep1Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap a category and enter its amount per month. Zero removes it.'**
+  String get helpBudgetStep1Body;
+
+  /// No description provided for @helpBudgetStep2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Left to spend'**
+  String get helpBudgetStep2Title;
+
+  /// No description provided for @helpBudgetStep2Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Home shows what’s left this month, and Money notes a category that’s ahead of its pace.'**
+  String get helpBudgetStep2Body;
+
+  /// No description provided for @helpBudgetStep3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'What counts'**
+  String get helpBudgetStep3Title;
+
+  /// No description provided for @helpBudgetStep3Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Card payments, transfers and loan principal never count.'**
+  String get helpBudgetStep3Body;
+
+  /// No description provided for @helpRecurringSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Rent, bills and subscriptions, shown in Coming up before they’re due.'**
+  String get helpRecurringSummary;
+
+  /// No description provided for @helpRecurringStep1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Add one'**
+  String get helpRecurringStep1Title;
+
+  /// No description provided for @helpRecurringStep1Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Give it a name, an amount, the account it’s paid from and its day of the month.'**
+  String get helpRecurringStep1Body;
+
+  /// No description provided for @helpRecurringStep2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Coming up'**
+  String get helpRecurringStep2Title;
+
+  /// No description provided for @helpRecurringStep2Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Home lists the next ones due, so nothing takes you by surprise.'**
+  String get helpRecurringStep2Body;
+
+  /// No description provided for @helpRecurringStep3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Change or remove'**
+  String get helpRecurringStep3Title;
+
+  /// No description provided for @helpRecurringStep3Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap one to change it or remove it.'**
+  String get helpRecurringStep3Body;
+
+  /// No description provided for @helpPeopleSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Who owes you, whom you owe, and the repayments.'**
+  String get helpPeopleSummary;
+
+  /// No description provided for @helpPeopleStep1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Lent or borrowed'**
+  String get helpPeopleStep1Title;
+
+  /// No description provided for @helpPeopleStep1Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap + › More › Lent or Borrowed, and type the person’s name.'**
+  String get helpPeopleStep1Body;
+
+  /// No description provided for @helpPeopleStep2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Repayments'**
+  String get helpPeopleStep2Title;
+
+  /// No description provided for @helpPeopleStep2Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Record Repayment received or Repayment made, and what’s owed goes down.'**
+  String get helpPeopleStep2Body;
+
+  /// No description provided for @helpPeopleStep3Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Bill split'**
+  String get helpPeopleStep3Title;
+
+  /// No description provided for @helpPeopleStep3Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay a whole bill and split it: only your share is spending, the rest is owed to you.'**
+  String get helpPeopleStep3Body;
+
+  /// No description provided for @helpFeaturesSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn parts of Qima on or off. Features also turn on by themselves the first time you use them.'**
+  String get helpFeaturesSummary;
+
+  /// No description provided for @helpFeaturesStep1Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn one off'**
+  String get helpFeaturesStep1Title;
+
+  /// No description provided for @helpFeaturesStep1Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Its screens hide, never your money: its amounts still count on the balance sheet.'**
+  String get helpFeaturesStep1Body;
+
+  /// No description provided for @helpFeaturesStep2Title.
+  ///
+  /// In en, this message translates to:
+  /// **'On when used'**
+  String get helpFeaturesStep2Title;
+
+  /// No description provided for @helpFeaturesStep2Body.
+  ///
+  /// In en, this message translates to:
+  /// **'Record your first loan payment and Loans turns on, with an Undo if you didn’t want it.'**
+  String get helpFeaturesStep2Body;
+
   /// Small-caps header above the page name in the help sheet.
   ///
   /// In en, this message translates to:
@@ -2201,13 +2921,13 @@ abstract class AppLocalizations {
   /// Watchlist help topic title (matches the page name).
   ///
   /// In en, this message translates to:
-  /// **'Watchlist'**
+  /// **'Prices'**
   String get helpWatchlistTitle;
 
   /// Watchlist help topic summary line.
   ///
   /// In en, this message translates to:
-  /// **'Live prices for everything you follow, with your portfolio total on top.'**
+  /// **'Live prices for everything you follow.'**
   String get helpWatchlistSummary;
 
   /// Watchlist help step 1 title.
@@ -2807,7 +3527,7 @@ abstract class AppLocalizations {
   /// Backup & restore help step 1 body.
   ///
   /// In en, this message translates to:
-  /// **'Saves your watchlist, holdings, custom tickers and settings as a .json file.'**
+  /// **'Saves your accounts, transactions, assets, watchlist, holdings and settings as a .json file.'**
   String get helpBackupStep1Body;
 
   /// Backup & restore help step 2 title.
@@ -3725,7 +4445,7 @@ abstract class AppLocalizations {
   /// No description provided for @helpZakatSummary.
   ///
   /// In en, this message translates to:
-  /// **'Qima works out zakat from your holdings at today’s prices. It calculates; the choices behind the calculation are yours.'**
+  /// **'Qima works out zakat from what you own at today’s prices. It calculates; the choices behind the calculation are yours.'**
   String get helpZakatSummary;
 
   /// No description provided for @helpZakatStep1Title.
@@ -3749,7 +4469,7 @@ abstract class AppLocalizations {
   /// No description provided for @helpZakatStep2Body.
   ///
   /// In en, this message translates to:
-  /// **'Metals, crypto and cash count by default; equities don’t. Karat gold counts by its gold content. Switch any single asset off on the zakat screen.'**
+  /// **'Cash, metals and crypto count by default, and assets held for sale at their value; equities don’t. Card balances and money you owe people are deducted. Switch any single item off.'**
   String get helpZakatStep2Body;
 
   /// No description provided for @helpZakatStep3Title.
@@ -6868,6 +7588,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Money spent, earned or moved'**
   String get addSheetTransactionSubtitle;
+
+  /// No description provided for @entryVoiceHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Say what happened, like “Spent 45 at Panda with Visa yesterday”'**
+  String get entryVoiceHint;
+
+  /// No description provided for @entryVoiceNothing.
+  ///
+  /// In en, this message translates to:
+  /// **'Didn’t catch an amount or a name. Try again, or type it.'**
+  String get entryVoiceNothing;
 
   /// No description provided for @entryNewTitle.
   ///

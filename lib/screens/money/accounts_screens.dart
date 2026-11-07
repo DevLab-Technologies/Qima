@@ -14,6 +14,8 @@ import '../../theme/qima_colors.dart';
 import '../../widgets/confirm_delete_dialog.dart';
 import '../../widgets/currency_field.dart';
 import '../../widgets/money_widgets.dart';
+import '../../theme/help_topics.dart';
+import '../../widgets/help_button.dart';
 import 'entry_detail_screen.dart';
 import 'entry_editor_screen.dart';
 
@@ -78,6 +80,7 @@ class AccountsScreen extends StatelessWidget {
           backgroundColor: Colors.transparent,
           title: Text(title ?? l10n.cardAccounts),
           actions: [
+            const HelpButton(topic: HelpTopicId.accounts),
             IconButton(
               tooltip: l10n.accountAdd,
               icon: const Icon(Icons.add),
@@ -248,7 +251,7 @@ class _AccountEditorScreenState extends State<AccountEditorScreen> {
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           title: Text(_editing ? l10n.accountEdit : l10n.accountAdd),
-          actions: [TextButton(onPressed: _save, child: Text(l10n.holdingsSave))],
+          actions: [const HelpButton(topic: HelpTopicId.accounts), TextButton(onPressed: _save, child: Text(l10n.holdingsSave))],
         ),
         body: ListView(
           padding: const EdgeInsets.all(DS.spaceMD),
@@ -301,6 +304,7 @@ class AccountDetailScreen extends StatelessWidget {
           backgroundColor: Colors.transparent,
           title: Text(a.name),
           actions: [
+            const HelpButton(topic: HelpTopicId.accounts),
             PopupMenuButton<String>(
               onSelected: (v) async {
                 if (v == 'edit') {
@@ -428,7 +432,7 @@ class FeaturesScreen extends StatelessWidget {
     return ScreenBackground(
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        appBar: AppBar(backgroundColor: Colors.transparent, title: Text(l10n.featuresTitle)),
+        appBar: AppBar(backgroundColor: Colors.transparent, title: Text(l10n.featuresTitle), actions: const [HelpButton(topic: HelpTopicId.features)]),
         body: ListView(
           padding: const EdgeInsets.all(DS.spaceMD),
           children: [

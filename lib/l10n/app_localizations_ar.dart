@@ -1200,6 +1200,427 @@ class AppLocalizationsAr extends AppLocalizations {
   String get helpButtonTooltip => 'مساعدة';
 
   @override
+  String get helpHomeSummary =>
+      'صافي ثروتك: كل ما تملكه ناقص كل ما عليك، مع البطاقات التي تستخدمها أكثر.';
+
+  @override
+  String get helpHomeStep1Title => 'صافي الثروة';
+
+  @override
+  String get helpHomeStep1Body =>
+      'اضغط عليه لفتح الميزانية: ما تملكه وما عليك، بندًا بندًا.';
+
+  @override
+  String get helpHomeStep2Title => 'بطاقاتك';
+
+  @override
+  String get helpHomeStep2Body =>
+      'تظهر الحسابات والمتبقي للإنفاق و«قادم» وغيرها عندما تستخدمها. اضغط على بطاقة لفتحها.';
+
+  @override
+  String get helpHomeStep3Title => 'تعديل الرئيسية';
+
+  @override
+  String get helpHomeStep3Body =>
+      'حرّك البطاقات أو أخفِ ما لا تحتاجه. لا تعيد قيمة أي بطاقة أخفيتها.';
+
+  @override
+  String get helpHomeStep4Title => 'إخفاء الأرصدة';
+
+  @override
+  String get helpHomeStep4Body =>
+      'اضغط على العين لإخفاء كل المبالغ عندما يكون أحد ينظر.';
+
+  @override
+  String get helpHomeStep5Title => 'أضف أي شيء';
+
+  @override
+  String get helpHomeStep5Body =>
+      'اضغط + لإضافة معاملة أو كشف حساب أو استثمار، أو أي شيء تحت المزيد.';
+
+  @override
+  String get helpMoneySummary => 'أين ذهب مال هذا الشهر، وما دخل وما خرج.';
+
+  @override
+  String get helpMoneyStep1Title => 'اختر شهرًا';
+
+  @override
+  String get helpMoneyStep1Body => 'استخدم الأسهم في الأعلى لعرض شهر آخر.';
+
+  @override
+  String get helpMoneyStep2Title => 'المصروف والوتيرة';
+
+  @override
+  String get helpMoneyStep2Body =>
+      'ما صرفته حتى الآن، وأين ستصل بنهاية الشهر بهذه الوتيرة.';
+
+  @override
+  String get helpMoneyStep3Title => 'أين ذهب المال';
+
+  @override
+  String get helpMoneyStep3Body => 'المصروفات حسب الفئة، الأكبر أولًا.';
+
+  @override
+  String get helpMoneyStep4Title => 'التدفق النقدي';
+
+  @override
+  String get helpMoneyStep4Body =>
+      'المال الداخل والخارج وما تبقّى. التحويل بين حساباتك لا يُحتسب.';
+
+  @override
+  String get helpMoneyStep5Title => 'يستحق النظر';
+
+  @override
+  String get helpMoneyStep5Body =>
+      'ملاحظات عن الميزانيات والمعاملات التي تحتاج فئة، عندما يكون هناك ما يستحق.';
+
+  @override
+  String get helpNewTransactionSummary =>
+      'سجّل مالًا صرفته أو كسبته أو نقلته بين حساباتك.';
+
+  @override
+  String get helpNewTransactionStep1Title => 'اختر النوع';
+
+  @override
+  String get helpNewTransactionStep1Body =>
+      'مصروف أو دخل أو تحويل. يبقى المبلغ والتاريخ عند التبديل.';
+
+  @override
+  String get helpNewTransactionStep2Title => 'قلها';
+
+  @override
+  String get helpNewTransactionStep2Body =>
+      'اضغط على الميكروفون وقل مثلًا «دفعت 45 في بنده بالفيزا أمس». تملأ قيمة النموذج على هذا الجهاز؛ راجعه ثم اضغط حفظ.';
+
+  @override
+  String get helpNewTransactionStep3Title => 'الفئة';
+
+  @override
+  String get helpNewTransactionStep3Body =>
+      'يُصنَّف المصروف والدخل في فئة. النقل بين حساباتك لا يُعدّ مصروفًا أبدًا.';
+
+  @override
+  String get helpNewTransactionStep4Title => 'مرفوضة';
+
+  @override
+  String get helpNewTransactionStep4Body =>
+      'فعّل «مرفوضة» لمعاملة دفع لم تتم: تظهر مشطوبة ولا تُحتسب أبدًا.';
+
+  @override
+  String get helpTransactionsSummary =>
+      'كل المعاملات، الأحدث أولًا، وما فعلته كل واحدة بحساباتك.';
+
+  @override
+  String get helpTransactionsStep1Title => 'افتح واحدة';
+
+  @override
+  String get helpTransactionsStep1Body =>
+      'اضغط على معاملة لترى كل حساب تأثر بها وبكم.';
+
+  @override
+  String get helpTransactionsStep2Title => 'كيف تُحتسب';
+
+  @override
+  String get helpTransactionsStep2Body =>
+      'توضّح كل معاملة إن كانت مصروفًا أو دخلًا أو نقلًا بين حساباتك أو تغيّرًا في القيمة.';
+
+  @override
+  String get helpTransactionsStep3Title => 'عدّل أو احذف';
+
+  @override
+  String get helpTransactionsStep3Body =>
+      'افتحها ثم عدّلها أو احذفها. الحذف يعيد كل حساب كما كان.';
+
+  @override
+  String get helpAccountsSummary =>
+      'الحسابات البنكية والنقد والبطاقات والقروض، مع رصيد كل منها اليوم.';
+
+  @override
+  String get helpAccountsStep1Title => 'أضف حسابًا';
+
+  @override
+  String get helpAccountsStep1Body =>
+      'أعطه اسمًا ونوعًا ورصيده اليوم. تبدأ قيمة من هذا الرقم.';
+
+  @override
+  String get helpAccountsStep2Title => 'مطابقة الرصيد';
+
+  @override
+  String get helpAccountsStep2Body =>
+      'افتح الحساب وأدخل ما يظهره بنكك. تُظهر قيمة أي فرق ويمكنها مطابقة الرصيد.';
+
+  @override
+  String get helpAccountsStep3Title => 'جرد النقد';
+
+  @override
+  String get helpAccountsStep3Body =>
+      'للنقد، عُدّ ما في محفظتك وتضبط قيمة الرصيد عليه.';
+
+  @override
+  String get helpAccountsStep4Title => 'سدّد بطاقة أو قرضًا';
+
+  @override
+  String get helpAccountsStep4Body =>
+      'افتح البطاقة أو القرض واضغط سداد لتسجيل دفعة من حساب آخر.';
+
+  @override
+  String get helpAccountsStep5Title => 'احذف حسابًا';
+
+  @override
+  String get helpAccountsStep5Body =>
+      'الحساب الذي فيه معاملات يُؤرشف ليبقى سجله صحيحًا، والحساب غير المستخدم يُحذف.';
+
+  @override
+  String get helpBalanceSheetSummary =>
+      'كل ما تملكه وكل ما عليك، وصولًا إلى صافي ثروتك.';
+
+  @override
+  String get helpBalanceSheetStep1Title => 'ما تملكه';
+
+  @override
+  String get helpBalanceSheetStep1Body =>
+      'الحسابات، والاستثمارات بالأسعار الحية، والأصول بالقيمة التي تحددها.';
+
+  @override
+  String get helpBalanceSheetStep2Title => 'ما عليك';
+
+  @override
+  String get helpBalanceSheetStep2Body =>
+      'البطاقات، والقروض (أصل الدين فقط)، والمال الذي تدين به للناس.';
+
+  @override
+  String get helpBalanceSheetStep3Title => 'كيف يُحسب الإجمالي';
+
+  @override
+  String get helpBalanceSheetStep3Body =>
+      'افتحه لترى كل قاعدة، مثل السعر الحي المستخدم للعملات الأخرى.';
+
+  @override
+  String get helpBalanceSheetStep4Title => 'استبعد بندًا';
+
+  @override
+  String get helpBalanceSheetStep4Body =>
+      'أوقف «احتسابه في صافي الثروة» لحساب أو أصل؛ ويبقى سجله صحيحًا.';
+
+  @override
+  String get helpAssetsSummary =>
+      'منزل أو أرض أو سيارة أو حصة في شركة، بالقيمة التي تحددها.';
+
+  @override
+  String get helpAssetsStep1Title => 'أضف أصلًا';
+
+  @override
+  String get helpAssetsStep1Body =>
+      'اختر النوع ثم أعطه قيمة وتاريخًا. الذهب والفضة بالوزن يُضافان كاستثمارات.';
+
+  @override
+  String get helpAssetsStep2Title => 'حدّث القيمة';
+
+  @override
+  String get helpAssetsStep2Body =>
+      'لكل تحديث تاريخ. الأحدث هو المحتسب، والقيم الأقدم تبقى سجلًا.';
+
+  @override
+  String get helpAssetsStep3Title => 'قرض عليه';
+
+  @override
+  String get helpAssetsStep3Body =>
+      'اربط القرض المضمون به لترى المتبقي بجانب قيمته.';
+
+  @override
+  String get helpAssetsStep4Title => 'تم البيع';
+
+  @override
+  String get helpAssetsStep4Body =>
+      'سجّل البيع: يدخل المال في حساب ويخرج الأصل من ميزانيتك.';
+
+  @override
+  String get helpImportStatementSummary =>
+      'أدخل المعاملات من ملف PDF أو Excel أو CSV من بنكك، أو لقطات شاشة، أو ملف منسوخ.';
+
+  @override
+  String get helpImportStatementStep1Title => 'اختر الملفات';
+
+  @override
+  String get helpImportStatementStep1Body =>
+      'من الملفات أو الصور أو الحافظة، أو مشاركة › قيمة من أي تطبيق. تُقرأ على هذا الجهاز.';
+
+  @override
+  String get helpImportStatementStep2Title => 'راجع كل سطر';
+
+  @override
+  String get helpImportStatementStep2Body =>
+      'اختر الحساب، وألغِ تحديد ما لا تريده، وصحّح أي فئة. الأسطر الموجودة في قيمة تبدأ غير محددة.';
+
+  @override
+  String get helpImportStatementStep3Title => 'طابق الرصيد';
+
+  @override
+  String get helpImportStatementStep3Body =>
+      'عندما يُظهر الكشف رصيدًا، حدّد «اجعل الرصيد» ليتطابق قيمة مع بنكك.';
+
+  @override
+  String get helpImportStatementStep4Title => 'أضفها';
+
+  @override
+  String get helpImportStatementStep4Body =>
+      'اضغط إضافة. تُحذف الملفات بعد الاستيراد.';
+
+  @override
+  String get helpBankMessagesSummary =>
+      'أضف المشتريات من الرسائل التي يرسلها بنكك، بعد مراجعة كل واحدة.';
+
+  @override
+  String get helpBankMessagesStep1Title => 'على أندرويد';
+
+  @override
+  String get helpBankMessagesStep1Body =>
+      'فعّل «قراءة رسائل البنك الجديدة» واسمح بالوصول. أحضر آخر 60 يومًا في المرة الأولى.';
+
+  @override
+  String get helpBankMessagesStep2Title => 'على آيفون';
+
+  @override
+  String get helpBankMessagesStep2Body =>
+      'اضبط أتمتة في الاختصارات مرة واحدة، لتذهب كل رسالة بنك إلى إجراء «Add a bank message» في قيمة.';
+
+  @override
+  String get helpBankMessagesStep3Title => 'راجع قبل الإضافة';
+
+  @override
+  String get helpBankMessagesStep3Body =>
+      'تنتظر الرسائل في مراجعة الاستيراد، وتُتجاهل الرموز والعروض والمكرر.';
+
+  @override
+  String get helpBankMessagesStep4Title => 'خاص';
+
+  @override
+  String get helpBankMessagesStep4Body =>
+      'تُقرأ الرسائل على هذا الجهاز ولا تغادره.';
+
+  @override
+  String get helpCategoriesSummary =>
+      'صنّف المصروفات في فئات، وعلّم قيمة أين يذهب كل اسم.';
+
+  @override
+  String get helpCategoriesStep1Title => 'بانتظار التصنيف';
+
+  @override
+  String get helpCategoriesStep1Body =>
+      'اختر فئة مرة واحدة لكل اسم، وستستخدمها المعاملات المستوردة منه من الآن.';
+
+  @override
+  String get helpCategoriesStep2Title => 'المعاملات السابقة';
+
+  @override
+  String get helpCategoriesStep2Body =>
+      'تعرض قيمة نقل المعاملات السابقة من الاسم نفسه أيضًا.';
+
+  @override
+  String get helpCategoriesStep3Title => 'فئاتك';
+
+  @override
+  String get helpCategoriesStep3Body =>
+      'أضف الفئات أو أعد تسميتها أو احذفها. المعاملات في فئة محذوفة تحتفظ بها في سجلها.';
+
+  @override
+  String get helpCategoriesStep4Title => 'انسَ اسمًا';
+
+  @override
+  String get helpCategoriesStep4Body =>
+      'انسَ ما تعلّمته قيمة لاسم ما، لتعود معاملاته المستوردة إلى التصنيف اليدوي.';
+
+  @override
+  String get helpBudgetSummary => 'مبلغ شهري لكل فئة تريد متابعتها.';
+
+  @override
+  String get helpBudgetStep1Title => 'حدّد مبلغًا';
+
+  @override
+  String get helpBudgetStep1Body =>
+      'اضغط على فئة وأدخل مبلغها الشهري. الصفر يزيلها.';
+
+  @override
+  String get helpBudgetStep2Title => 'المتبقي للإنفاق';
+
+  @override
+  String get helpBudgetStep2Body =>
+      'تعرض الرئيسية المتبقي هذا الشهر، وينبّه المال إلى الفئة التي تجاوزت وتيرتها.';
+
+  @override
+  String get helpBudgetStep3Title => 'ما يُحتسب';
+
+  @override
+  String get helpBudgetStep3Body =>
+      'سداد البطاقات والتحويلات وأصل القروض لا تُحتسب أبدًا.';
+
+  @override
+  String get helpRecurringSummary =>
+      'الإيجار والفواتير والاشتراكات، تظهر في «قادم» قبل موعدها.';
+
+  @override
+  String get helpRecurringStep1Title => 'أضف واحدًا';
+
+  @override
+  String get helpRecurringStep1Body =>
+      'أعطه اسمًا ومبلغًا والحساب الذي يُدفع منه ويومه في الشهر.';
+
+  @override
+  String get helpRecurringStep2Title => 'قادم';
+
+  @override
+  String get helpRecurringStep2Body =>
+      'تعرض الرئيسية المستحق قريبًا، فلا يفاجئك شيء.';
+
+  @override
+  String get helpRecurringStep3Title => 'عدّل أو احذف';
+
+  @override
+  String get helpRecurringStep3Body => 'اضغط على أحدها لتعديله أو حذفه.';
+
+  @override
+  String get helpPeopleSummary => 'من يدين لك، ولمن تدين، والسداد.';
+
+  @override
+  String get helpPeopleStep1Title => 'أقرضت أو اقترضت';
+
+  @override
+  String get helpPeopleStep1Body =>
+      'اضغط + › المزيد › أقرضت أو اقترضت، واكتب اسم الشخص.';
+
+  @override
+  String get helpPeopleStep2Title => 'السداد';
+
+  @override
+  String get helpPeopleStep2Body =>
+      'سجّل «سداد مستلم» أو «سداد مدفوع» لينخفض المبلغ المستحق.';
+
+  @override
+  String get helpPeopleStep3Title => 'تقسيم فاتورة';
+
+  @override
+  String get helpPeopleStep3Body =>
+      'ادفع الفاتورة كاملة وقسّمها: حصتك فقط مصروف، والباقي دين لك.';
+
+  @override
+  String get helpFeaturesSummary =>
+      'فعّل أجزاء من قيمة أو أوقفها. تعمل الميزات تلقائيًا أيضًا عند أول استخدام.';
+
+  @override
+  String get helpFeaturesStep1Title => 'أوقف ميزة';
+
+  @override
+  String get helpFeaturesStep1Body =>
+      'تُخفى شاشاتها لا مالك: تبقى مبالغها محتسبة في الميزانية.';
+
+  @override
+  String get helpFeaturesStep2Title => 'تعمل عند الاستخدام';
+
+  @override
+  String get helpFeaturesStep2Body =>
+      'سجّل أول سداد لقرض فتعمل ميزة القروض، مع خيار تراجع إن لم تردها.';
+
+  @override
   String get helpSheetAboutHeader => 'حول هذه الصفحة';
 
   @override
@@ -1218,11 +1639,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get helpIndexIntro => 'اختر صفحة لمعرفة وظيفتها وكيفية استخدامها.';
 
   @override
-  String get helpWatchlistTitle => 'قائمة المتابعة';
+  String get helpWatchlistTitle => 'الأسعار';
 
   @override
-  String get helpWatchlistSummary =>
-      'أسعار مباشرة لكل ما تتابعه، مع إجمالي محفظتك في الأعلى.';
+  String get helpWatchlistSummary => 'أسعار حية لكل ما تتابعه.';
 
   @override
   String get helpWatchlistStep1Title => 'افتح بطاقة';
@@ -1565,7 +1985,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get helpBackupStep1Body =>
-      'يحفظ قائمة متابعتك وممتلكاتك والتيكرات المخصصة وإعداداتك كملف ‎.json.';
+      'تحفظ حساباتك ومعاملاتك وأصولك وقائمة المتابعة والاستثمارات والإعدادات في ملف ‎.json.';
 
   @override
   String get helpBackupStep2Title => 'أضف كلمة مرور';
@@ -2121,7 +2541,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get helpZakatSummary =>
-      'يحسب Qima الزكاة من ممتلكاتك بأسعار اليوم. هو يحسب، والاختيارات وراء الحساب لك.';
+      'تحسب قيمة الزكاة مما تملكه بأسعار اليوم. هي تحسب، والاختيارات وراء الحساب لك.';
 
   @override
   String get helpZakatStep1Title => 'النصاب';
@@ -2135,7 +2555,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get helpZakatStep2Body =>
-      'المعادن والعملات المشفرة والنقد تُحتسب افتراضيًا، والأسهم لا. يُحتسب الذهب بعياره حسب محتواه من الذهب الخالص. ويمكنك استبعاد أي أصل من شاشة الزكاة.';
+      'يُحتسب النقد والمعادن والعملات الرقمية افتراضيًا، والأصول المعدّة للبيع بقيمتها، أما الأسهم فلا. تُخصم أرصدة البطاقات والديون التي عليك للناس. يمكنك استبعاد أي بند.';
 
   @override
   String get helpZakatStep3Title => 'الحول';
@@ -3975,6 +4395,13 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get addSheetTransactionSubtitle => 'مال صُرف أو دخل أو حُوّل';
+
+  @override
+  String get entryVoiceHint => 'قل ما حدث، مثل «دفعت 45 في بنده بالفيزا أمس»';
+
+  @override
+  String get entryVoiceNothing =>
+      'لم أفهم مبلغًا أو اسمًا. حاول مرة أخرى أو اكتبه.';
 
   @override
   String get entryNewTitle => 'معاملة جديدة';

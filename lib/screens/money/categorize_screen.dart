@@ -11,6 +11,8 @@ import '../../theme/design_system.dart';
 import '../../theme/money_labels.dart';
 import '../../theme/qima_colors.dart';
 import '../../widgets/money_widgets.dart';
+import '../../theme/help_topics.dart';
+import '../../widgets/help_button.dart';
 import 'entry_detail_screen.dart';
 
 /// Every uncategorized entry, grouped by merchant. One choice sorts a group
@@ -33,7 +35,7 @@ class ToCategorizeScreen extends StatelessWidget {
     return ScreenBackground(
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        appBar: AppBar(backgroundColor: Colors.transparent, title: Text(l10n.toCategorizeTitle)),
+        appBar: AppBar(backgroundColor: Colors.transparent, title: Text(l10n.toCategorizeTitle), actions: const [HelpButton(topic: HelpTopicId.categories)]),
         body: ListView(
           padding: const EdgeInsets.all(DS.spaceMD),
           children: [
