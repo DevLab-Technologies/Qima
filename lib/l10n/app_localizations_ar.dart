@@ -4174,6 +4174,52 @@ class AppLocalizationsAr extends AppLocalizations {
   String get importSignGuessed => 'تحقق: وارد أم صادر؟';
 
   @override
+  String get importFlagNotTransaction => 'يبدو نصًا من البنك وليس عملية';
+
+  @override
+  String importRefCard(String last4) {
+    return 'بطاقة •••• $last4';
+  }
+
+  @override
+  String importRefAccount(String last4) {
+    return 'حساب •••• $last4';
+  }
+
+  @override
+  String importRefIban(String last4) {
+    return 'آيبان •••• $last4';
+  }
+
+  @override
+  String importBalances(String opening, String closing) {
+    return 'الافتتاحي $opening ← الختامي $closing';
+  }
+
+  @override
+  String get importAddsUp => 'المجموع مطابق: لم يفُت شيء';
+
+  @override
+  String importGap(String amount) {
+    return '$amount غير محسوب: تحقق من عملية ناقصة';
+  }
+
+  @override
+  String importOpeningBalance(String amount) {
+    return 'أضف الرصيد الافتتاحي: $amount';
+  }
+
+  @override
+  String importMatchBalance(String amount) {
+    return 'اجعل الرصيد $amount';
+  }
+
+  @override
+  String importBalanceDetail(String date, String tracked) {
+    return 'كما يظهر في الكشف بتاريخ $date. وبدون ذلك سيكون الرصيد المسجّل $tracked.';
+  }
+
+  @override
   String get importStatusReading => 'جارٍ القراءة…';
 
   @override

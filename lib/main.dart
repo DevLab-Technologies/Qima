@@ -92,6 +92,7 @@ class _QimaAppState extends State<QimaApp> {
       inbox: createImportInbox(),
       recognition: _cubit.textRecognition,
       wasImported: _money.wasImported,
+      assist: () => _cubit.assist,
       languages: () => StatementFiles.languagesFor(
           _cubit.state.appLanguage.localeIdentifier ?? WidgetsBinding.instance.platformDispatcher.locale.languageCode),
     );

@@ -4,7 +4,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart' show BuildContext;
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../models/statement_facts.dart';
 import '../models/statement_reader.dart';
+import '../services/ai_assist_provider.dart';
 import '../services/import/import_inbox.dart';
 import '../services/import/statement_files.dart';
 import '../services/text_recognition_service.dart';
@@ -28,18 +30,21 @@ class ImportItem extends Equatable {
   final ImportFile file;
   final ImportStatus status;
   final List<StatementRow> rows;
+
+  /// What the file says about itself: balances, account, period.
+  final StatementFacts facts;
   final String? hash;
 
-  const ImportItem(this.file, {this.status = ImportStatus.waiting, this.rows = const [], this.hash});
+  const ImportItem(this.file, {this.status = ImportStatus.waiting, this.rows = const [], this.facts = StatementFacts.none, this.hash});
 
   String get id => file.id;
   bool get done => status != ImportStatus.waiting && status != ImportStatus.reading;
 
-  ImportItem copyWith({ImportStatus? status, List<StatementRow>? rows, String? hash}) =>
-      ImportItem(file, status: status ?? this.status, rows: rows ?? this.rows, hash: hash ?? this.hash);
+  ImportItem copyWith({ImportStatus? status, List<StatementRow>? rows, StatementFacts? facts, String? hash}) =>
+      ImportItem(file, status: status ?? this.status, rows: rows ?? this.rows, facts: facts ?? this.facts, hash: hash ?? this.hash);
 
   @override
-  List<Object?> get props => [file, status, rows, hash];
+  List<Object?> get props => [file, status, rows, facts, hash];
 }
 
 class ImportState extends Equatable {
@@ -76,7 +81,8 @@ class ImportCubit extends Cubit<ImportState> {
     required TextRecognitionService recognition,
     required this.wasImported,
     required this.languages,
-  })  : files = StatementFiles(recognition: recognition, inbox: inbox),
+    AiAssistProvider Function()? assist,
+  })  : files = StatementFiles(recognition: recognition, inbox: inbox, assist: assist ?? (() => const NullAiAssistProvider())),
         super(const ImportState());
 
   /// Picks up anything new in the inbox and reads it. Safe to call often
@@ -121,11 +127,12 @@ class ImportCubit extends Cubit<ImportState> {
         if (wasImported(hash) || duplicate) {
           result = item.copyWith(status: ImportStatus.alreadyImported, hash: hash);
         } else {
-          final (outcome, rows) = await files.read(item.file, languages: languages());
+          final read = await files.read(item.file, languages: languages());
           result = item.copyWith(
             hash: hash,
-            rows: rows,
-            status: switch (outcome) {
+            rows: read.rows,
+            facts: read.facts,
+            status: switch (read.outcome) {
               ReadOutcome.read => ImportStatus.read,
               ReadOutcome.unsupported => ImportStatus.unsupported,
               ReadOutcome.unreadable => ImportStatus.unreadable,

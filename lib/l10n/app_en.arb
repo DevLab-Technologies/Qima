@@ -2898,6 +2898,78 @@
   },
   "importDateGuessed": "No date found: set to the day it was shared",
   "importSignGuessed": "Check: in or out?",
+  "importFlagNotTransaction": "Looks like the bank's own text, not a transaction",
+  "importRefCard": "Card •••• {last4}",
+  "@importRefCard": {
+    "placeholders": {
+      "last4": {
+        "type": "String"
+      }
+    }
+  },
+  "importRefAccount": "Account •••• {last4}",
+  "@importRefAccount": {
+    "placeholders": {
+      "last4": {
+        "type": "String"
+      }
+    }
+  },
+  "importRefIban": "IBAN •••• {last4}",
+  "@importRefIban": {
+    "placeholders": {
+      "last4": {
+        "type": "String"
+      }
+    }
+  },
+  "importBalances": "Opening {opening} → closing {closing}",
+  "@importBalances": {
+    "placeholders": {
+      "opening": {
+        "type": "String"
+      },
+      "closing": {
+        "type": "String"
+      }
+    }
+  },
+  "importAddsUp": "Adds up: nothing missed",
+  "importGap": "{amount} not accounted for: check for a missed row",
+  "@importGap": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "importOpeningBalance": "Add the opening balance: {amount}",
+  "@importOpeningBalance": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "importMatchBalance": "Bring the balance to {amount}",
+  "@importMatchBalance": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "importBalanceDetail": "As the statement shows on {date}. Without it, Qima would have {tracked}.",
+  "@importBalanceDetail": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "tracked": {
+        "type": "String"
+      }
+    }
+  },
   "importStatusReading": "Reading…",
   "importStatusWaiting": "Waiting",
   "importStatusAlready": "Imported before",

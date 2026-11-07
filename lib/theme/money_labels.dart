@@ -179,10 +179,11 @@ class MoneyIcons {
 }
 
 /// Minor units as money text, masked when balances are hidden.
-String minorText(int minor, String currency, {required bool hidden}) =>
-    Masking.amount(Money(MinorUnits.toMajor(minor, currency), currency), hidden: hidden);
+String minorText(int minor, String currency, {required bool hidden}) => moneyText(MinorUnits.toMajor(minor, currency), currency, hidden: hidden);
 
-String moneyText(double amount, String currency, {required bool hidden}) => Masking.amount(Money(amount, currency), hidden: hidden);
+/// Money in the book: the currency's own decimals (3.50, not 3.5000).
+String moneyText(double amount, String currency, {required bool hidden}) =>
+    Masking.amount(Money(amount, currency), hidden: hidden, decimals: MinorUnits.digits(currency));
 
 /// Parses what the person typed ("1,250.5", "1250,50", "١٬٢٥٠٫٥") into minor
 /// units of [currency]. Null when it isn't a number.

@@ -162,6 +162,16 @@ class EntryBuilder {
     return _entry(EntryTemplate.cashCount, date, [_line(cash, d), _line(flow, -d, currency: cash.currency)], source: EntrySource.count);
   }
 
+  /// Brings [account] to the balance a statement shows: [tracked] is what
+  /// the book has, [statement] what the bank says, both as people read them.
+  /// The difference goes to Opening balances, so it is never counted as
+  /// spending or income. Null when they already agree.
+  BookEntry? balanceTo(BookAccount account, {required int tracked, required int statement, required DateTime date}) {
+    final stored = (statement - tracked) * account.side.shownSign;
+    if (stored == 0) return null;
+    return _entry(EntryTemplate.adjustment, date, [_line(account, stored), _line(_opening, -stored, currency: account.currency)]);
+  }
+
   /// A bill the person paid in full from [paidFrom] and split: only their
   /// own share is spending; each other share becomes money owed to them, in
   /// that person's currency at the split's rate.

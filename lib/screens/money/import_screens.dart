@@ -9,8 +9,14 @@ import 'package:intl/intl.dart' hide TextDirection;
 import '../../blocs/import_cubit.dart';
 import '../../blocs/money_cubit.dart';
 import '../../l10n/app_localizations.dart';
+import '../../models/book.dart';
 import '../../models/book_account.dart';
+import '../../models/book_entry.dart';
+import '../../models/entry_builder.dart';
 import '../../models/import_plan.dart';
+import '../../models/minor_units.dart';
+import '../../models/statement_facts.dart';
+import '../../models/statement_reader.dart';
 import '../../services/import/statement_files.dart';
 import '../../theme/design_system.dart';
 import '../../theme/money_labels.dart';
@@ -157,6 +163,7 @@ class _ImportReviewScreenState extends State<ImportReviewScreen> {
   final Map<String, bool> _ticked = {};
   final Map<String, bool> _isIn = {};
   final Map<String, String> _category = {};
+  bool? _fixBalance;
   bool _saving = false;
 
   @override
@@ -167,7 +174,9 @@ class _ImportReviewScreenState extends State<ImportReviewScreen> {
     final imports = context.watch<ImportCubit>().state;
     final accounts = money.balanceAccounts.where(ImportPlanner.canHoldStatement).toList();
     final allRows = [for (final i in imports.items) ...i.rows];
-    final account = accounts.where((a) => a.id == _accountId).firstOrNull ?? ImportPlanner.guessAccount(accounts, allRows, money.entries);
+    final refs = [for (final i in imports.items) ...i.facts.refs];
+    final account =
+        accounts.where((a) => a.id == _accountId).firstOrNull ?? ImportPlanner.guessAccount(accounts, allRows, money.entries, refs: refs);
 
     final candidates = account == null
         ? const <ImportCandidate>[]
@@ -178,6 +187,7 @@ class _ImportReviewScreenState extends State<ImportReviewScreen> {
     }
     bool ticked(ImportCandidate c) => _ticked[c.key] ?? c.suggested;
     final chosen = [for (final c in candidates) if (ticked(c)) c];
+    final balance = account == null || imports.reading ? null : _balance(account, chosen, imports, money.book, context.read<MoneyCubit>().builder);
 
     final body = <Widget>[];
     if (account == null) {
@@ -196,9 +206,13 @@ class _ImportReviewScreenState extends State<ImportReviewScreen> {
           label: l10n.importIntoAccount,
           accounts: accounts,
           value: account,
-          onChanged: (a) => setState(() => _accountId = a?.id),
+          onChanged: (a) => setState(() {
+            _accountId = a?.id;
+            _fixBalance = null;
+          }),
         ),
       ));
+      if (balance != null) body.add(_balanceTile(account, balance));
     }
     body.add(Padding(
       padding: const EdgeInsets.only(bottom: DS.spaceMD),
@@ -241,6 +255,8 @@ class _ImportReviewScreenState extends State<ImportReviewScreen> {
               Expanded(child: Text(status, style: TextStyle(color: colors.textTertiary, fontSize: 12))),
             ]),
           ),
+          if (item.status == ImportStatus.read && !item.facts.isEmpty)
+            _FactsLine(facts: item.facts, rows: item.rows, currency: item.facts.currency ?? account?.currency ?? ''),
           if (account != null)
             for (final c in rows)
               _CandidateRow(
@@ -357,7 +373,23 @@ class _ImportReviewScreenState extends State<ImportReviewScreen> {
     try {
       final book = money.state.book;
       final builder = money.builder;
-      final entries = [
+      final entries = _entries(account, chosen, book, builder);
+      final balance = _balance(account, chosen, imports, book, builder, entries: entries);
+      final fix = balance != null && (_fixBalance ?? balance.opening) ? balance.entry : null;
+      final finished = [for (final i in imports.items) if (i.done) i];
+      await money.importEntries([...entries, ?fix], fileHashes: [for (final i in finished) if (i.status == ImportStatus.read) ?i.hash]);
+      await _keepRefs(money, account, [for (final i in finished) if (i.status == ImportStatus.read) i.facts]);
+      await importer.remove(finished.map((i) => i.id));
+      if (entries.isNotEmpty) messenger.showSnackBar(SnackBar(content: Text(l10n.importAdded(entries.length))));
+      if (importer.state.isEmpty) navigator.pop();
+    } on BookRejected catch (e) {
+      messenger.showSnackBar(SnackBar(content: Text(e.issues.map((i) => i.detail).join('\n'))));
+    } finally {
+      if (mounted) setState(() => _saving = false);
+    }
+  }
+
+  List<BookEntry> _entries(BookAccount account, List<ImportCandidate> chosen, Book book, EntryBuilder builder) => [
         for (final c in chosen)
           ImportPlanner.entryFor(
             builder: builder,
@@ -367,16 +399,59 @@ class _ImportReviewScreenState extends State<ImportReviewScreen> {
             isIn: _isIn[c.key] ?? c.row.isIn,
           ),
       ];
-      final finished = [for (final i in imports.items) if (i.done) i];
-      await money.importEntries(entries, fileHashes: [for (final i in finished) if (i.status == ImportStatus.read) ?i.hash]);
-      await importer.remove(finished.map((i) => i.id));
-      if (entries.isNotEmpty) messenger.showSnackBar(SnackBar(content: Text(l10n.importAdded(entries.length))));
-      if (importer.state.isEmpty) navigator.pop();
-    } on BookRejected catch (e) {
-      messenger.showSnackBar(SnackBar(content: Text(e.issues.map((i) => i.detail).join('\n'))));
-    } finally {
-      if (mounted) setState(() => _saving = false);
+
+  /// The entry that brings [account] to the statement's closing balance
+  /// with the ticked rows in, and the figures to explain it. Null when the
+  /// statements give no balance or the book already agrees.
+  _BalanceFix? _balance(BookAccount account, List<ImportCandidate> chosen, ImportState imports, Book book, EntryBuilder builder,
+      {List<BookEntry>? entries}) {
+    final balance = ImportPlanner.statementBalance(
+        [for (final i in imports.items) if (i.status == ImportStatus.read) (i.facts, i.rows)], account);
+    if (balance == null) return null;
+    final added = entries ?? _entries(account, chosen, book, builder);
+    final entry = ImportPlanner.balanceEntry(builder: builder, book: book, account: account, added: added, balance: balance);
+    if (entry == null) return null;
+    final currency = account.currency ?? '';
+    final delta = entry.lines.where((l) => l.accountId == account.id).fold(0, (n, l) => n + l.amount) * account.side.shownSign;
+    final statement = MinorUnits.fromMajor(balance.closing, currency);
+    return _BalanceFix(entry, balance, currency, delta: delta, tracked: statement - delta);
+  }
+
+  Widget _balanceTile(BookAccount account, _BalanceFix fix) {
+    final l10n = AppLocalizations.of(context)!;
+    final colors = context.colors;
+    final locale = Localizations.localeOf(context).toLanguageTag();
+    String amount(int minor) => moneyText(MinorUnits.toMajor(minor, fix.currency), fix.currency, hidden: false);
+    return CheckboxListTile(
+      key: const ValueKey('importBalance'),
+      contentPadding: EdgeInsets.zero,
+      controlAffinity: ListTileControlAffinity.leading,
+      value: _fixBalance ?? fix.opening,
+      onChanged: _saving ? null : (v) => setState(() => _fixBalance = v ?? false),
+      title: Text(
+        fix.opening ? l10n.importOpeningBalance(amount(fix.delta)) : l10n.importMatchBalance(amount(fix.delta + fix.tracked)),
+        style: TextStyle(color: colors.textPrimary, fontSize: 15, fontWeight: FontWeight.w500),
+      ),
+      subtitle: Text(
+        l10n.importBalanceDetail(DateFormat.yMMMd(locale).format(fix.balance.date), amount(fix.tracked)),
+        style: TextStyle(color: colors.textTertiary, fontSize: 12),
+      ),
+    );
+  }
+
+  /// Remembers the statement's account or card number on [account], and
+  /// takes it off any other account, so the next statement from it is
+  /// matched straight away.
+  Future<void> _keepRefs(MoneyCubit money, BookAccount account, List<StatementFacts> files) async {
+    final keep = ImportPlanner.refsToKeep(files);
+    if (keep.isEmpty) return;
+    for (final other in money.state.accounts) {
+      if (other.id == account.id || !other.statementRefs.any(keep.contains)) continue;
+      await money.updateAccount(other.copyWith(statementRefs: [for (final r in other.statementRefs) if (!keep.contains(r)) r]));
     }
+    final current = money.state.book.accounts[account.id] ?? account;
+    if (keep.every(current.statementRefs.contains)) return;
+    await money.updateAccount(current.copyWith(statementRefs: {...current.statementRefs, ...keep}.toList()));
   }
 
   Future<void> _discardAll(ImportState imports) async {
@@ -428,6 +503,7 @@ class _CandidateRow extends StatelessWidget {
       if (candidate.flag == ImportFlag.inBook) (l10n.importFlagInBook, true),
       if (candidate.flag == ImportFlag.repeated) (l10n.importFlagRepeated, true),
       if (candidate.flag == ImportFlag.otherCurrency) (l10n.importFlagCurrency(row.currency ?? ''), true),
+      if (candidate.flag == ImportFlag.notTransaction) (l10n.importFlagNotTransaction, true),
       if (row.signGuessed && candidate.flag == null) (l10n.importSignGuessed, false),
       if (row.dateGuessed) (l10n.importDateGuessed, false),
     ];
@@ -463,6 +539,73 @@ class _CandidateRow extends StatelessWidget {
           ),
         ])),
       ),
+    );
+  }
+}
+
+/// A balance entry offered on the review screen, with what it explains.
+class _BalanceFix {
+  final BookEntry entry;
+  final StatementBalance balance;
+  final String currency;
+
+  /// What the entry adds to the account, as people read it, in minor units.
+  final int delta;
+
+  /// The account's balance on the statement's last day without the entry.
+  final int tracked;
+
+  const _BalanceFix(this.entry, this.balance, this.currency, {required this.delta, required this.tracked});
+
+  /// The account had nothing before this import: the entry is its opening
+  /// balance, offered ticked.
+  bool get opening => entry.template == EntryTemplate.opening;
+}
+
+/// What a statement says about itself, under its file name: the account,
+/// the period, the balances and whether the rows read add up to them.
+class _FactsLine extends StatelessWidget {
+  final StatementFacts facts;
+  final List<StatementRow> rows;
+  final String currency;
+
+  const _FactsLine({required this.facts, required this.rows, required this.currency});
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final colors = context.colors;
+    final locale = Localizations.localeOf(context).toLanguageTag();
+    String amount(double v) => moneyText(v, currency, hidden: false);
+    final from = facts.from, to = facts.to;
+    final about = [
+      for (final r in facts.refs.take(2))
+        switch (r.kind) {
+          StatementRefKind.card => l10n.importRefCard(r.last4),
+          StatementRefKind.account => l10n.importRefAccount(r.last4),
+          StatementRefKind.iban => l10n.importRefIban(r.last4),
+        },
+      if (from != null && to != null) '${DateFormat.yMMMd(locale).format(from)} – ${DateFormat.yMMMd(locale).format(to)}',
+    ];
+    final opening = facts.opening, closing = facts.closing;
+    final check = Reconciliation.of(facts, [for (final r in rows) if (!r.doubtful) r]);
+    final style = TextStyle(color: colors.textTertiary, fontSize: 12);
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(DS.spaceMD, 0, DS.spaceMD, DS.spaceXS),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        if (about.isNotEmpty) Text(about.join(' · '), maxLines: 2, overflow: TextOverflow.ellipsis, style: style),
+        if (opening != null && closing != null)
+          Text(l10n.importBalances(amount(opening), amount(closing)), maxLines: 2, overflow: TextOverflow.ellipsis, style: style),
+        if (check != null)
+          Row(children: [
+            Icon(check.addsUp ? Icons.check_circle_outline : Icons.error_outline, size: 14, color: check.addsUp ? colors.up : colors.down),
+            const SizedBox(width: DS.spaceXS),
+            Expanded(
+              child: Text(check.addsUp ? l10n.importAddsUp : l10n.importGap(amount(check.gap.abs())),
+                  maxLines: 2, overflow: TextOverflow.ellipsis, style: TextStyle(color: check.addsUp ? colors.up : colors.down, fontSize: 12)),
+            ),
+          ]),
+      ]),
     );
   }
 }

@@ -36,6 +36,114 @@ void main() {
       expect(rows[2].amount, -300);
     });
 
+    test('a card list: name, then the amount beside it, then the date under it', () {
+      // Positions as Vision gives them for a banking app's card screen; the
+      // riyal sign is read as '#'.
+      DocToken t(String s, double y, double x, double h, [double w = 0.5]) => DocToken(s, x, y, w, h);
+      final page = DocPage([
+        t('Latest Transactions', 0.128, 0.035, 0.021),
+        t('Completed', 0.196, 0.069, 0.017, 0.2),
+        t('Pending', 0.196, 0.318, 0.019, 0.2),
+        t('CAFE ROSE~~RIYADH~ SAU682', 0.247, 0.035, 0.017),
+        t('3.50 #', 0.256, 0.842, 0.021, 0.12),
+        t('03/11/2026', 0.272, 0.035, 0.015, 0.2),
+        t('Bookstore Online~~Riyadh~ SAU682', 0.422, 0.035, 0.019),
+        t('239.88 #', 0.43, 0.792, 0.021, 0.15),
+        t('19/10/2026', 0.445, 0.035, 0.015, 0.2),
+        // A name wrapped onto the amount's line.
+        t('Learning*P3106613144~Gardner', 0.499, 0.035, 0.016),
+        t('102.29 #', 0.514, 0.788, 0.024, 0.15),
+        t('House~LEARNING.COM~2 IRL372', 0.519, 0.035, 0.018),
+        t('15/10/2026', 0.542, 0.035, 0.015, 0.2),
+        t('CREDIT CARD PAYMENT', 0.844, 0.035, 0.018),
+        t('13,995.01 #', 0.853, 0.732, 0.023, 0.2),
+        // Its first slash read as '1'.
+        t('27109/2026', 0.869, 0.035, 0.015, 0.2),
+        t('Market SA~~Riyadh~ SAU682', 0.922, 0.035, 0.019),
+        t('#2,791.66', 0.93, 0.757, 0.022, 0.2),
+        t('22/09/2026', 0.944, 0.035, 0.016, 0.2),
+      ]);
+      final rows = reader.readPages([page]);
+      expect(rows.map((r) => r.description), [
+        'CAFE ROSE RIYADH',
+        'Bookstore Online Riyadh',
+        'Learning*P3106613144 Gardner House LEARNING.COM 2',
+        'CREDIT CARD PAYMENT',
+        'Market SA Riyadh',
+      ]);
+      expect(rows.map((r) => r.amount.abs()), [3.50, 239.88, 102.29, 13995.01, 2791.66]);
+      expect(rows.map((r) => r.date), [DateTime(2026, 11, 3), DateTime(2026, 10, 19), DateTime(2026, 10, 15), DateTime(2026, 9, 27), DateTime(2026, 9, 22)]);
+      expect(rows.every((r) => !r.dateGuessed), isTrue);
+    });
+
+    test('a screenshot of bank messages: one transaction per bubble, never the limit left', () {
+      List<DocToken> bubble(double y, List<String> lines) => [
+            for (var i = 0; i < lines.length; i++) DocToken(lines[i], 0.08, y + i * 0.025, 0.65, 0.018),
+          ];
+      final page = DocPage([
+        ...bubble(0.27, [
+          'يرجى العلم أنه تم خصم مبلغ EGP',
+          '64000.00 من حساب ********2377 عبر',
+          'شبكة المدفوعات اللحظية (IPN) من خلال',
+          'خدمات الإنترنت البنكية بتاريخ',
+          '2026-11-03 10:14 إلى Mohsen A.. E.',
+          'برقم مرجعي FT26307C783R',
+          'للمزيد، يرجى الاتصال بـ 19666',
+        ]),
+        DocToken('Yesterday 5:53 AM', 0.38, 0.48, 0.2, 0.012),
+        ...bubble(0.51, [
+          'Your credit card #1016 was charged',
+          'for EGP 4999.99 at CODASHOP on',
+          '06/11/26 at 04:10. Available limit is',
+          '34072.32 and the available',
+          'international limit to use is EGP',
+          '112614',
+        ]),
+      ]);
+      final rows = reader.readPages([page]);
+      expect(rows, hasLength(2));
+      expect(rows[0].amount, -64000);
+      expect(rows[0].currency, 'EGP');
+      expect(rows[0].date, DateTime(2026, 11, 3));
+      expect(rows[0].description, 'Mohsen A.. E.');
+      expect(rows[1].amount, -4999.99);
+      expect(rows[1].description, 'CODASHOP');
+      expect(rows[1].date, DateTime(2026, 11, 6));
+    });
+
+    test('a Saudi bank statement: Hijri dates, and the bank\'s own text around the table', () {
+      final page = DocPage([
+        // The statement's own date, in Hijri, above everything.
+        ...line(0.04, [('1448/04/20', 0.75, 0.15)]),
+        ...line(0.07, [('Account Statement', 0.05, 0.3), ('= +', 0.5, 0.05), ('30,975.91', 0.6, 0.1)]),
+        ...line(0.10, [('Date', 0.04, 0.08), ('Hijri Date', 0.14, 0.1), ('Description', 0.28, 0.2), ('Debit', 0.56, 0.08), ('Credit', 0.68, 0.08), ('Balance', 0.82, 0.1)]),
+        ...line(0.13, [('2026-10-05', 0.04, 0.09), ('1448/04/13', 0.14, 0.09), ('POS PANDA RIYADH', 0.28, 0.2), ('125.50', 0.56, 0.08), ('30,850.41', 0.82, 0.1)]),
+        ...line(0.16, [('2026-10-07', 0.04, 0.09), ('1448/04/15', 0.14, 0.09), ('SALARY', 0.28, 0.2), ('3,737.00', 0.68, 0.08), ('34,587.41', 0.82, 0.1)]),
+        // The foot of the page: phone, register and VAT numbers, capital.
+        ...line(0.85, [('scan the QR code or call 920024288', 0.28, 0.4), ('920024288', 0.56, 0.1)]),
+        ...line(0.88, [('The Saudi National Bank - A Saudi Joint Stock Company, paid-up capital SAR 60,000,000,000', 0.05, 0.9)]),
+        ...line(0.91, [('C.R. 4030001588', 0.56, 0.12), ('VAT 300002471110003', 0.68, 0.2)]),
+        ...line(0.94, [('Under the supervision and control of The Saudi Central Bank - Licensed', 0.05, 0.6), ('3,737', 0.68, 0.08)]),
+        ...line(0.97, [('Decree M/3 dated 26/12/1373', 0.05, 0.4)]),
+      ]);
+      final rows = reader.readPages([page]);
+      expect(rows.map((r) => r.description), ['POS PANDA RIYADH', 'SALARY']);
+      expect(rows.map((r) => r.amount), [-125.50, 3737]);
+      // The Gregorian column, not the Hijri one.
+      expect(rows.map((r) => r.date), [DateTime(2026, 10, 5), DateTime(2026, 10, 7)]);
+    });
+
+    test('a row with only a Hijri date is converted', () {
+      expect(StatementReader.hijriToGregorian(1448, 4, 20), DateTime(2026, 10, 1));
+      final page = DocPage([
+        ...line(0.10, [('Hijri Date', 0.04, 0.1), ('Description', 0.28, 0.2), ('Amount', 0.7, 0.1)]),
+        ...line(0.13, [('20/04/1448', 0.04, 0.1), ('STC BILL', 0.28, 0.2), ('-230.00', 0.7, 0.1)]),
+      ]);
+      final rows = reader.readPages([page]);
+      expect(rows.single.date, DateTime(2026, 10, 1));
+      expect(rows.single.amount, -230);
+    });
+
     test('without a header, the running balance gives each sign, newest first too', () {
       final page = DocPage([
         ...line(0.10, [('05/11/2026 TRANSFER FROM KHALID 1,000.00 40,378.25', 0.05, 0.9)]),

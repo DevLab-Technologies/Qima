@@ -31,10 +31,13 @@ class Money extends Equatable {
   ///
   /// [useFallbackSymbol] swaps in a symbol system fonts can render, for
   /// surfaces outside Flutter (see [CurrencyStyle.fallbackSymbol]).
-  String formatted({String? locale, bool useFallbackSymbol = false}) {
+  ///
+  /// [decimals] fixes the fraction digits (money in a book is shown in the
+  /// currency's own minor units, not with a price's precision).
+  String formatted({String? locale, bool useFallbackSymbol = false, int? decimals}) {
     final number = NumberFormat.decimalPatternDigits(
       locale: locale,
-      decimalDigits: fractionDigits,
+      decimalDigits: decimals ?? fractionDigits,
     ).format(magnitude);
     return CurrencyStyle.of(currencyCode).apply(
       number,

@@ -101,7 +101,7 @@ enum DocumentReader {
       for index in 0..<min(document.pageCount, maxPages) {
         guard let page = document.page(at: index) else { continue }
         var tokens = textLayer(page)
-        if tokens.count < 3, let image = render(page) {
+        if tokens.count < 3 || jumbled(tokens), let image = render(page) {
           tokens = recognizeBoxes(VNImageRequestHandler(cgImage: image, options: [:]), languages: languages) ?? []
         }
         pages.append(["tokens": tokens])
@@ -131,8 +131,12 @@ enum DocumentReader {
       let word = ns.substring(with: match.range)
       if let last = runs.last {
         let sameLine = abs(frame.midY - last.frame.midY) <= max(frame.height, last.frame.height) * 0.5
+        let space = max(min(frame.height, last.frame.height) * 0.7, 3)
         let gap = frame.minX - last.frame.maxX
-        if sameLine && gap >= -1 && gap <= max(min(frame.height, last.frame.height) * 0.7, 3) {
+        // Arabic runs right to left: its next word sits to the left.
+        let leftGap = last.frame.minX - frame.maxX
+        let rightToLeft = isArabic(word) && isArabic(last.text)
+        if sameLine && ((gap >= -1 && gap <= space) || (rightToLeft && leftGap >= -1 && leftGap <= space)) {
           runs[runs.count - 1] = (last.text + " " + word, last.frame.union(frame))
           continue
         }
@@ -148,6 +152,36 @@ enum DocumentReader {
         "h": Double(run.frame.height / box.height),
       ]
     }
+  }
+
+  /// Whether a page's own text can't be trusted: some PDFs store Arabic as
+  /// separate letter shapes (each one a "word"), or lay labels over values
+  /// so their letters interleave ("Accﻘﺎﻕ"). Figures read from such text
+  /// can be wrong, so the page is read from its picture instead.
+  static func jumbled(_ tokens: [[String: Any]]) -> Bool {
+    let words = tokens.flatMap { (($0["t"] as? String) ?? "").split(separator: " ") }
+    guard words.count >= 20 else { return false }
+    func isArabic(_ u: Unicode.Scalar) -> Bool {
+      (0x0600...0x06FF).contains(u.value) || (0xFB50...0xFDFF).contains(u.value) || (0xFE70...0xFEFF).contains(u.value)
+    }
+    func isLatin(_ u: Unicode.Scalar) -> Bool { (0x41...0x5A).contains(u.value) || (0x61...0x7A).contains(u.value) }
+    var arabic = 0, single = 0, mixed = 0
+    for word in words {
+      let scalars = word.unicodeScalars
+      let hasArabic = scalars.contains(where: isArabic)
+      if hasArabic {
+        arabic += 1
+        if scalars.count == 1 { single += 1 }
+        if scalars.contains(where: isLatin) { mixed += 1 }
+      }
+    }
+    let lettersApart = arabic >= 20 && Double(single) / Double(arabic) > 0.3
+    let interleaved = Double(mixed) / Double(words.count) > 0.015
+    return lettersApart || interleaved
+  }
+
+  static func isArabic(_ text: String) -> Bool {
+    text.unicodeScalars.contains { (0x0600...0x06FF).contains($0.value) || (0xFB50...0xFDFF).contains($0.value) || (0xFE70...0xFEFF).contains($0.value) }
   }
 
   /// A scanned page drawn at twice its size for Vision.

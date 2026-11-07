@@ -7145,6 +7145,66 @@ abstract class AppLocalizations {
   /// **'Check: in or out?'**
   String get importSignGuessed;
 
+  /// No description provided for @importFlagNotTransaction.
+  ///
+  /// In en, this message translates to:
+  /// **'Looks like the bank\'s own text, not a transaction'**
+  String get importFlagNotTransaction;
+
+  /// No description provided for @importRefCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Card •••• {last4}'**
+  String importRefCard(String last4);
+
+  /// No description provided for @importRefAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Account •••• {last4}'**
+  String importRefAccount(String last4);
+
+  /// No description provided for @importRefIban.
+  ///
+  /// In en, this message translates to:
+  /// **'IBAN •••• {last4}'**
+  String importRefIban(String last4);
+
+  /// No description provided for @importBalances.
+  ///
+  /// In en, this message translates to:
+  /// **'Opening {opening} → closing {closing}'**
+  String importBalances(String opening, String closing);
+
+  /// No description provided for @importAddsUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Adds up: nothing missed'**
+  String get importAddsUp;
+
+  /// No description provided for @importGap.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} not accounted for: check for a missed row'**
+  String importGap(String amount);
+
+  /// No description provided for @importOpeningBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'Add the opening balance: {amount}'**
+  String importOpeningBalance(String amount);
+
+  /// No description provided for @importMatchBalance.
+  ///
+  /// In en, this message translates to:
+  /// **'Bring the balance to {amount}'**
+  String importMatchBalance(String amount);
+
+  /// No description provided for @importBalanceDetail.
+  ///
+  /// In en, this message translates to:
+  /// **'As the statement shows on {date}. Without it, Qima would have {tracked}.'**
+  String importBalanceDetail(String date, String tracked);
+
   /// No description provided for @importStatusReading.
   ///
   /// In en, this message translates to:

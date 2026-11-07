@@ -1,6 +1,8 @@
 import 'dart:convert';
 
+import '../../models/statement_facts.dart';
 import '../../models/statement_reader.dart';
+import '../ai_assist_provider.dart';
 import '../csv/csv_reader.dart';
 import '../csv/xlsx_reader.dart';
 import '../text_recognition_service.dart';
@@ -8,6 +10,15 @@ import 'import_inbox.dart';
 
 /// What reading one file gave.
 enum ReadOutcome { read, unsupported, unreadable }
+
+/// One file, read: its rows and what it says about itself.
+class StatementRead {
+  final ReadOutcome outcome;
+  final List<StatementRow> rows;
+  final StatementFacts facts;
+
+  const StatementRead(this.outcome, [this.rows = const [], this.facts = StatementFacts.none]);
+}
 
 /// Turns one inbox file into statement rows, whatever it is: a PDF (text or
 /// scanned, tables included), a screenshot or photo, a CSV or Excel export,
@@ -20,42 +31,68 @@ class StatementFiles {
   final TextRecognitionService recognition;
   final ImportInbox inbox;
 
-  const StatementFiles({required this.recognition, required this.inbox});
+  /// The on-device model, when the person turned it on; it only labels
+  /// lines the reader then checks.
+  final AiAssistProvider Function() assist;
 
-  Future<(ReadOutcome, List<StatementRow>)> read(ImportFile file, {required List<String> languages}) async {
+  const StatementFiles({required this.recognition, required this.inbox, this.assist = _noModel});
+
+  static AiAssistProvider _noModel() => const NullAiAssistProvider();
+
+  Future<StatementRead> read(ImportFile file, {required List<String> languages}) async {
     final reader = StatementReader(received: file.receivedAt);
     final ext = file.extension;
-    if (!supported.contains(ext)) return (ReadOutcome.unsupported, const <StatementRow>[]);
+    if (!supported.contains(ext)) return const StatementRead(ReadOutcome.unsupported);
     try {
       if (ext == 'pdf' || images.contains(ext)) {
         final pages = await recognition.readDocument(file.path, languages);
-        if (pages == null) return (ReadOutcome.unreadable, const <StatementRow>[]);
-        return (ReadOutcome.read, reader.readPages(pages));
+        if (pages == null) return const StatementRead(ReadOutcome.unreadable);
+        return _labelled(reader, pages, languages.first);
       }
       final bytes = await inbox.bytes(file);
       if (ext == 'xlsx') {
         final rows = XlsxReader.read(bytes);
-        if (rows == null) return (ReadOutcome.unreadable, const <StatementRow>[]);
-        return (ReadOutcome.read, reader.readPages([DocPage.fromTable(rows)]));
+        if (rows == null) return const StatementRead(ReadOutcome.unreadable);
+        return _table(reader, [DocPage.fromTable(rows)]);
       }
       final text = utf8.decode(bytes, allowMalformed: true);
-      if (ext == 'txt') {
+      final table = _tablePages(text);
+      final asTable = table == null ? null : _table(reader, table);
+      if (ext == 'txt' && (asTable == null || asTable.rows.isEmpty)) {
         // A shared message, unless it is really a table.
-        final asTable = _tableRows(reader, text);
-        return (ReadOutcome.read, asTable.isNotEmpty ? asTable : reader.readMessages(text));
+        final rows = reader.readMessages(text);
+        return StatementRead(ReadOutcome.read, rows, reader.messageFacts(text, rows));
       }
-      return (ReadOutcome.read, _tableRows(reader, text));
+      return asTable ?? const StatementRead(ReadOutcome.read);
     } catch (_) {
-      return (ReadOutcome.unreadable, const <StatementRow>[]);
+      return const StatementRead(ReadOutcome.unreadable);
     }
   }
 
-  List<StatementRow> _tableRows(StatementReader reader, String text) {
-    final table = CsvReader.parse(text);
-    if (table.rows.length < 2 || table.header.length < 2) return const [];
-    return reader.readPages([DocPage.fromTable(table.rows)]);
+  /// A CSV or Excel export: its columns are named, so no model is needed.
+  StatementRead _table(StatementReader reader, List<DocPage> pages) {
+    final (rows, facts) = reader.read(pages);
+    return StatementRead(ReadOutcome.read, rows, facts);
   }
 
+  /// A PDF or a picture, read by the rules and then, when the model is on,
+  /// checked line by line against what the model says each line is.
+  Future<StatementRead> _labelled(StatementReader reader, List<DocPage> pages, String localeTag) async {
+    var (rows, facts) = reader.read(pages);
+    final model = assist();
+    if (await model.isAvailable()) {
+      final lines = reader.lineTexts(pages);
+      final labels = await model.labelStatementLines(lines, localeTag);
+      if (labels != null && labels.isNotEmpty) (rows, facts) = reader.withLabels(rows, facts, lines, labels);
+    }
+    return StatementRead(ReadOutcome.read, rows, facts);
+  }
+
+  List<DocPage>? _tablePages(String text) {
+    final table = CsvReader.parse(text);
+    if (table.rows.length < 2 || table.header.length < 2) return null;
+    return [DocPage.fromTable(table.rows)];
+  }
   /// The languages to read images in: the app's first.
   static List<String> languagesFor(String languageCode) => switch (languageCode) {
         'ar' => ['ar-SA', 'en-US'],

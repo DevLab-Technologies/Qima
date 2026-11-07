@@ -305,10 +305,14 @@ void main() {
     expect(find.text(l10n.importStatusUnsupported), findsOneWidget);
     // Three ticked: Panda, salary, Starbucks; Amazon in USD is not.
     expect(find.text(l10n.importAddCount(3)), findsOneWidget);
-    expect(find.byType(Checkbox), findsNWidgets(4));
+    // The four rows, and above them the offer to bring the account to the
+    // statement's running balance: unticked, as the account has history.
+    expect(find.byType(Checkbox), findsNWidgets(5));
+    final offer = tester.widget<CheckboxListTile>(find.byKey(const ValueKey('importBalance')));
+    expect(offer.value, isFalse);
 
     // Untick the coffee, then add.
-    await tester.tap(find.byType(Checkbox).at(2));
+    await tester.tap(find.byType(Checkbox).at(3));
     await tester.pump();
     expect(find.text(l10n.importAddCount(2)), findsOneWidget);
     await tester.runAsync(() async {
@@ -321,6 +325,15 @@ void main() {
     expect(money.state.book.balanceOf('rajhi'), before - sar(512.40) + sar(17500));
     expect(importer.state.isEmpty, isTrue);
     expect(money.state.settings.importedHashes, hasLength(2));
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('the import review in Arabic on a narrow phone: the balance offer fits', (tester) async {
+    await tester.runAsync(seed);
+    size(tester, const Size(320, 2400));
+    await tester.pumpWidget(wrap(const ImportReviewScreen(), const Locale('ar')));
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(find.byKey(const ValueKey('importBalance')), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 

@@ -146,6 +146,11 @@ class BookAccount extends Equatable implements Syncable {
   final int? creditLimit;
   final String note;
 
+  /// The account, IBAN or card numbers its statements show, as
+  /// `StatementRef.key` (`card:4417`), so the next statement from it is
+  /// recognised. Only the last four digits are kept.
+  final List<String> statementRefs;
+
   const BookAccount({
     required this.id,
     required this.name,
@@ -161,6 +166,7 @@ class BookAccount extends Equatable implements Syncable {
     this.heldForSale = false,
     this.creditLimit,
     this.note = '',
+    this.statementRefs = const [],
   });
 
   /// Why this account can't be used, or null when it is sound.
@@ -191,6 +197,7 @@ class BookAccount extends Equatable implements Syncable {
     int? creditLimit,
     bool clearCreditLimit = false,
     String? note,
+    List<String>? statementRefs,
   }) =>
       BookAccount(
         id: id,
@@ -207,6 +214,7 @@ class BookAccount extends Equatable implements Syncable {
         heldForSale: heldForSale ?? this.heldForSale,
         creditLimit: clearCreditLimit ? null : (creditLimit ?? this.creditLimit),
         note: note ?? this.note,
+        statementRefs: statementRefs ?? this.statementRefs,
       );
 
   @override
@@ -225,6 +233,7 @@ class BookAccount extends Equatable implements Syncable {
         if (heldForSale) 'heldForSale': true,
         if (creditLimit != null) 'creditLimit': creditLimit,
         if (note.isNotEmpty) 'note': note,
+        if (statementRefs.isNotEmpty) 'refs': statementRefs,
       };
 
   factory BookAccount.fromJson(Map<String, dynamic> json) => BookAccount(
@@ -242,11 +251,12 @@ class BookAccount extends Equatable implements Syncable {
         heldForSale: json['heldForSale'] as bool? ?? false,
         creditLimit: json['creditLimit'] as int?,
         note: json['note'] as String? ?? '',
+        statementRefs: (json['refs'] as List?)?.whereType<String>().toList() ?? const [],
       );
 
   @override
   List<Object?> get props =>
-      [id, name, side, type, currency, countsInNetWorth, archived, assetKind, boughtOn, cost, securedLoanId, heldForSale, creditLimit, note];
+      [id, name, side, type, currency, countsInNetWorth, archived, assetKind, boughtOn, cost, securedLoanId, heldForSale, creditLimit, note, statementRefs];
 }
 
 /// A calendar day as `yyyy-MM-dd`, so it is the same day on a device in

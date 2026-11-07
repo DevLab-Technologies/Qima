@@ -4182,6 +4182,53 @@ class AppLocalizationsEs extends AppLocalizations {
   String get importSignGuessed => 'Revisa: ¿entrada o salida?';
 
   @override
+  String get importFlagNotTransaction =>
+      'Parece texto del banco, no un movimiento';
+
+  @override
+  String importRefCard(String last4) {
+    return 'Tarjeta •••• $last4';
+  }
+
+  @override
+  String importRefAccount(String last4) {
+    return 'Cuenta •••• $last4';
+  }
+
+  @override
+  String importRefIban(String last4) {
+    return 'IBAN •••• $last4';
+  }
+
+  @override
+  String importBalances(String opening, String closing) {
+    return 'Inicial $opening → final $closing';
+  }
+
+  @override
+  String get importAddsUp => 'Cuadra: no falta nada';
+
+  @override
+  String importGap(String amount) {
+    return '$amount sin explicar: revisa si falta un movimiento';
+  }
+
+  @override
+  String importOpeningBalance(String amount) {
+    return 'Añadir el saldo inicial: $amount';
+  }
+
+  @override
+  String importMatchBalance(String amount) {
+    return 'Ajustar el saldo a $amount';
+  }
+
+  @override
+  String importBalanceDetail(String date, String tracked) {
+    return 'Como muestra el extracto el $date. Sin esto, Qima tendría $tracked.';
+  }
+
+  @override
   String get importStatusReading => 'Leyendo…';
 
   @override
