@@ -195,7 +195,7 @@ def build_mac_pkg!(build_number, profile_name, widget_profile_name)
         <key>#{APP_IDENTIFIER}</key>
         <string>#{profile_name}</string>
         <key>#{WIDGET_IDENTIFIER}</key>
-        <string>#{widget_profile_name}</string>#{share_profile_name ? "\n    <key>#{SHARE_IDENTIFIER}</key>\n    <string>#{share_profile_name}</string>" : ""}
+        <string>#{widget_profile_name}</string>
       </dict>
       <key>uploadSymbols</key>
       <true/>
@@ -225,6 +225,7 @@ end
 # checked into git because the profile names come from secrets at build time.
 def write_export_options!(profile_name, widget_profile_name, share_profile_name = nil)
   path = File.expand_path("../ExportOptions.plist", __dir__)
+  share_entry = share_profile_name ? "\n    <key>#{SHARE_IDENTIFIER}</key>\n    <string>#{share_profile_name}</string>" : ""
   File.write(path, <<~PLIST)
     <?xml version="1.0" encoding="UTF-8"?>
     <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -243,7 +244,7 @@ def write_export_options!(profile_name, widget_profile_name, share_profile_name 
         <key>#{APP_IDENTIFIER}</key>
         <string>#{profile_name}</string>
         <key>#{WIDGET_IDENTIFIER}</key>
-        <string>#{widget_profile_name}</string>
+        <string>#{widget_profile_name}</string>#{share_entry}
       </dict>
       <key>uploadBitcode</key>
       <false/>
