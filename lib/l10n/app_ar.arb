@@ -1393,5 +1393,6 @@
   "balanceWayTransaction": "أضف معاملة",
   "balanceWayTransactionDetail": "يُحسب الفرق إنفاقًا أو دخلًا في {other}",
   "balanceWayOpening": "عدّل الرصيد الافتتاحي",
-  "balanceWayOpeningDetail": "من يومه الأول، لا إنفاقًا ولا دخلًا"
+  "balanceWayOpeningDetail": "من يومه الأول، لا إنفاقًا ولا دخلًا",
+  "netLabel": "الصافي"
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../widgets/split_donut.dart';
 import '../../blocs/app_cubit.dart';
 import '../../blocs/app_state.dart';
 import '../../blocs/money_cubit.dart';
@@ -101,8 +102,16 @@ class BalanceSheetScreen extends StatelessWidget {
                     child: Text(moneyText(summary.netWorth, ccy, hidden: hidden),
                         style: TextStyle(color: colors.textPrimary, fontSize: DS.figureHero, fontWeight: FontWeight.w800)),
                   ),
-                  Text(l10n.ownOweLine(moneyText(summary.owned, ccy, hidden: hidden), moneyText(summary.owed, ccy, hidden: hidden)),
-                      style: TextStyle(color: colors.textSecondary, fontSize: 13)),
+                  const SizedBox(height: DS.spaceSM),
+                  SplitDonut(
+                    key: const ValueKey('ownOweDonut'),
+                    centerValue: moneyText(summary.netWorth, ccy, hidden: hidden),
+                    centerLabel: l10n.netLabel,
+                    parts: [
+                      DonutPart(label: l10n.youOwn, value: summary.owned, figure: moneyText(summary.owned, ccy, hidden: hidden), color: colors.accentGold),
+                      DonutPart(label: l10n.youOweSide, value: summary.owed, figure: moneyText(summary.owed, ccy, hidden: hidden), color: colors.down),
+                    ],
+                  ),
                 ],
               ),
             ),

@@ -4892,4 +4892,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get balanceWayOpeningDetail => 'من يومه الأول، لا إنفاقًا ولا دخلًا';
+
+  @override
+  String get netLabel => 'الصافي';
 }

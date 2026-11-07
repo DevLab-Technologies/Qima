@@ -784,4 +784,40 @@ void main() {
     expect(find.descendant(of: card, matching: find.text('6%')), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets('an account and a card chart their balance, with their own ranges', (tester) async {
+    await tester.runAsync(seed);
+    size(tester, const Size(390, 1600));
+    final l10n = await AppLocalizations.delegate.load(const Locale('en'));
+    for (final id in ['rajhi', 'visa']) {
+      await tester.pumpWidget(wrap(AccountDetailScreen(key: ValueKey(id), accountId: id), const Locale('en')));
+      await tester.pump(const Duration(milliseconds: 300));
+      final chart = find.byKey(const ValueKey('accountBalanceChart'));
+      expect(find.descendant(of: chart, matching: find.byType(PriceChartView)), findsOneWidget, reason: id);
+      await tester.tap(find.descendant(of: chart, matching: find.text(displayLabelFor(l10n, ChartRange.all.labelKey))));
+      await tester.pump();
+      expect(find.descendant(of: chart, matching: find.byType(PriceChartView)), findsOneWidget);
+    }
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('lent and borrowed, and own and owe, each show a donut with the net', (tester) async {
+    await tester.runAsync(seed);
+    size(tester, const Size(390, 3000));
+    final l10n = await AppLocalizations.delegate.load(const Locale('en'));
+    await tester.pumpWidget(wrap(const HomeScreen(), const Locale('en')));
+    await tester.pump(const Duration(milliseconds: 600));
+    // Faisal owes 500; nothing is owed to Khalid.
+    final people = find.byKey(const ValueKey('peopleDonut'));
+    expect(people, findsOneWidget);
+    expect(find.descendant(of: people, matching: find.text(l10n.netLabel)), findsOneWidget);
+    expect(find.descendant(of: people, matching: find.text(moneyText(500, 'SAR', hidden: false))), findsNWidgets(2));
+
+    await tester.pumpWidget(wrap(const BalanceSheetScreen(), const Locale('en')));
+    await tester.pump(const Duration(milliseconds: 300));
+    final sheet = find.byKey(const ValueKey('ownOweDonut'));
+    expect(find.descendant(of: sheet, matching: find.text(l10n.youOwn)), findsOneWidget);
+    expect(find.descendant(of: sheet, matching: find.text(l10n.youOweSide)), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
 }

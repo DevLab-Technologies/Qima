@@ -3264,5 +3264,9 @@
     }
   },
   "balanceWayOpening": "Change the opening balance",
-  "balanceWayOpeningDetail": "From its first day, not as spending or income"
+  "balanceWayOpeningDetail": "From its first day, not as spending or income",
+  "netLabel": "Net",
+  "@netLabel": {
+    "description": "Under the figure in the middle of a donut: what is left after subtracting one side from the other."
+  }
 }

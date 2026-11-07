@@ -29,6 +29,7 @@ import '../../widgets/help_button.dart';
 import '../../widgets/money_widgets.dart';
 import '../../widgets/portfolio_hero.dart';
 import '../../widgets/range_selector.dart';
+import '../../widgets/split_donut.dart';
 import '../add_instrument_screen.dart';
 import '../portfolio_detail_screen.dart';
 import '../zakat_screen.dart';
@@ -231,8 +232,23 @@ class HomeScreen extends StatelessWidget {
           title: l10n.featPeople,
           onTitleTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const PeopleScreen())),
           children: [
-            MoneyRow(icon: Icons.call_received, title: l10n.sheetOwedToYou, trailing: moneyText(owed.amount, ccy, hidden: hidden)),
-            MoneyRow(icon: Icons.call_made, title: l10n.sheetYouOwe, trailing: moneyText(owe.amount, ccy, hidden: hidden)),
+            GestureDetector(
+              key: const ValueKey('peopleDonut'),
+              onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const PeopleScreen())),
+              behavior: HitTestBehavior.opaque,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: DS.spaceMD, vertical: DS.spaceSM),
+                child: SplitDonut(
+                  size: 96,
+                  centerValue: moneyText(owed.amount - owe.amount, ccy, hidden: hidden),
+                  centerLabel: l10n.netLabel,
+                  parts: [
+                    DonutPart(label: l10n.sheetOwedToYou, value: owed.amount, figure: moneyText(owed.amount, ccy, hidden: hidden), color: context.colors.accentGold),
+                    DonutPart(label: l10n.sheetYouOwe, value: owe.amount, figure: moneyText(owe.amount, ccy, hidden: hidden), color: context.colors.down),
+                  ],
+                ),
+              ),
+            ),
           ],
         );
       case HomeCard.zakat:

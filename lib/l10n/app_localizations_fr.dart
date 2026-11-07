@@ -4906,4 +4906,7 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get balanceWayOpeningDetail =>
       'Depuis son premier jour, ni dépense ni revenu';
+
+  @override
+  String get netLabel => 'Net';
 }

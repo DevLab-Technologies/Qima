@@ -8278,6 +8278,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'From its first day, not as spending or income'**
   String get balanceWayOpeningDetail;
+
+  /// Under the figure in the middle of a donut: what is left after subtracting one side from the other.
+  ///
+  /// In en, this message translates to:
+  /// **'Net'**
+  String get netLabel;
 }
 
 class _AppLocalizationsDelegate

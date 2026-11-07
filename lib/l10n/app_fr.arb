@@ -1393,5 +1393,6 @@
   "balanceWayTransaction": "Ajouter une opération",
   "balanceWayTransactionDetail": "L’écart compte comme dépense ou revenu dans {other}",
   "balanceWayOpening": "Modifier le solde d’ouverture",
-  "balanceWayOpeningDetail": "Depuis son premier jour, ni dépense ni revenu"
+  "balanceWayOpeningDetail": "Depuis son premier jour, ni dépense ni revenu",
+  "netLabel": "Net"
 }

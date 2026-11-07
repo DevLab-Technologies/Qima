@@ -4905,4 +4905,7 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get balanceWayOpeningDetail =>
       'Desde su primer día, ni gasto ni ingreso';
+
+  @override
+  String get netLabel => 'Neto';
 }

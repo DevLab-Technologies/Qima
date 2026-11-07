@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../widgets/range_selector.dart';
+import '../../theme/price_chart.dart';
+import '../../models/display_point.dart';
+import '../../models/chart_range.dart';
+import '../../models/book.dart';
+import '../../models/account_history.dart';
 import '../../blocs/app_cubit.dart';
 import '../../blocs/money_cubit.dart';
 import '../../l10n/app_localizations.dart';
@@ -344,6 +350,8 @@ class AccountDetailScreen extends StatelessWidget {
                     Text(l10n.accountAvailable(minorText(limit - balance, ccy, hidden: hidden)), style: TextStyle(color: colors.textSecondary, fontSize: 12)),
                   ],
                   if (!a.countsInNetWorth) Text(l10n.accountLeftOut, style: TextStyle(color: colors.textTertiary, fontSize: 12)),
+                  const SizedBox(height: DS.spaceSM),
+                  _BalanceChart(book: state.book, accountId: a.id, hidden: hidden),
                 ],
               ),
             ),
@@ -384,6 +392,73 @@ class AccountDetailScreen extends StatelessWidget {
     if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.reconcileDone)));
     }
+  }
+}
+
+/// An account's balance over time, with its own ranges: cash held, or a
+/// card's debt.
+class _BalanceChart extends StatefulWidget {
+  final Book book;
+  final String accountId;
+  final bool hidden;
+
+  const _BalanceChart({required this.book, required this.accountId, required this.hidden});
+
+  @override
+  State<_BalanceChart> createState() => _BalanceChartState();
+}
+
+class _BalanceChartState extends State<_BalanceChart> {
+  var _range = ChartRange.month3;
+  // Rebuilt only when the book, the range or the day changes.
+  Book? _book;
+  ChartRange? _builtRange;
+  DateTime? _day;
+  List<DisplayPoint> _points = const [];
+
+  List<DisplayPoint> get _history {
+    final now = DateTime.now();
+    final day = DateUtils.dateOnly(now);
+    if (identical(_book, widget.book) && _builtRange == _range && _day == day) return _points;
+    _book = widget.book;
+    _builtRange = _range;
+    _day = day;
+    return _points = AccountHistory.build(book: widget.book, accountId: widget.accountId, range: _range, now: now);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final colors = context.colors;
+    final points = _history;
+    return Column(
+      key: const ValueKey('accountBalanceChart'),
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        SizedBox(
+          height: 90,
+          child: points.length >= 2
+              ? PriceChartView(
+                  points: points,
+                  isTrendingUp: points.last.value >= points.first.value,
+                  accent: colors.brand,
+                  lineColor: colors.accentGold,
+                  showsAxes: false,
+                  lineWidth: 2,
+                  maskValues: widget.hidden,
+                )
+              : Center(child: Text(l10n.portfolioNoHistory, style: TextStyle(color: colors.textTertiary, fontSize: 12))),
+        ),
+        const SizedBox(height: DS.spaceSM),
+        RangeSelector(
+          ranges: ChartRange.portfolioSelectable,
+          selected: _range,
+          onSelected: (r) => setState(() => _range = r),
+          accent: colors.brand,
+          fill: true,
+        ),
+      ],
+    );
   }
 }
 

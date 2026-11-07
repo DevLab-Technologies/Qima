@@ -1393,5 +1393,6 @@
   "balanceWayTransaction": "Añadir un movimiento",
   "balanceWayTransactionDetail": "La diferencia cuenta como gasto o ingreso en {other}",
   "balanceWayOpening": "Cambiar el saldo inicial",
-  "balanceWayOpeningDetail": "Desde su primer día, ni gasto ni ingreso"
+  "balanceWayOpeningDetail": "Desde su primer día, ni gasto ni ingreso",
+  "netLabel": "Neto"
 }
