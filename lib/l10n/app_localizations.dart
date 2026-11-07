@@ -7034,19 +7034,19 @@ abstract class AppLocalizations {
   /// No description provided for @importFromClipboard.
   ///
   /// In en, this message translates to:
-  /// **'Paste screenshot'**
+  /// **'From the clipboard'**
   String get importFromClipboard;
 
   /// No description provided for @importFromClipboardHint.
   ///
   /// In en, this message translates to:
-  /// **'A copied screenshot, such as your account balance'**
+  /// **'A copied statement, receipt, bank message or screenshot'**
   String get importFromClipboardHint;
 
   /// No description provided for @importPastedName.
   ///
   /// In en, this message translates to:
-  /// **'Pasted screenshot'**
+  /// **'Pasted'**
   String get importPastedName;
 
   /// No description provided for @importShareTip.
@@ -7072,6 +7072,114 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'A balance to check'**
   String get importReadyBalance;
+
+  /// No description provided for @bankMessagesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Bank text messages'**
+  String get bankMessagesTitle;
+
+  /// No description provided for @bankMessagesEntry.
+  ///
+  /// In en, this message translates to:
+  /// **'Bank text messages'**
+  String get bankMessagesEntry;
+
+  /// No description provided for @bankMessagesEntryHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Add purchases from your bank’s messages'**
+  String get bankMessagesEntryHint;
+
+  /// No description provided for @bankMessagesIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Your bank texts you each purchase, transfer and salary. Qima can read those messages and suggest them as transactions. You check each one before it’s added.'**
+  String get bankMessagesIntro;
+
+  /// No description provided for @bankMessagesRead.
+  ///
+  /// In en, this message translates to:
+  /// **'Read new bank messages'**
+  String get bankMessagesRead;
+
+  /// No description provided for @bankMessagesReadHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Only messages with an amount. Codes and personal messages are skipped.'**
+  String get bankMessagesReadHint;
+
+  /// No description provided for @bankMessagesRecent.
+  ///
+  /// In en, this message translates to:
+  /// **'Bring in the last 60 days'**
+  String get bankMessagesRecent;
+
+  /// No description provided for @bankMessagesRecentHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Messages already in Qima are skipped'**
+  String get bankMessagesRecentHint;
+
+  /// No description provided for @bankMessagesDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Qima needs permission to read messages. You can allow it in Settings.'**
+  String get bankMessagesDenied;
+
+  /// No description provided for @bankMessagesSetUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Set it up once in Shortcuts'**
+  String get bankMessagesSetUp;
+
+  /// No description provided for @bankMessagesStep1.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Shortcuts, go to Automation and tap +, then choose Message.'**
+  String get bankMessagesStep1;
+
+  /// No description provided for @bankMessagesStep2.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick your bank as the sender, or a word its messages always have, such as SAR.'**
+  String get bankMessagesStep2;
+
+  /// No description provided for @bankMessagesStep3.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose Run Immediately.'**
+  String get bankMessagesStep3;
+
+  /// No description provided for @bankMessagesStep4.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Qima’s “Add a bank message” action and pass it the message.'**
+  String get bankMessagesStep4;
+
+  /// No description provided for @bankMessagesOpenShortcuts.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Shortcuts'**
+  String get bankMessagesOpenShortcuts;
+
+  /// No description provided for @bankMessagesUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Bank messages can be added on iPhone and Android.'**
+  String get bankMessagesUnavailable;
+
+  /// No description provided for @bankMessagesPrivacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Messages are read on this device and never leave it.'**
+  String get bankMessagesPrivacy;
+
+  /// No description provided for @bankMessagesFound.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{No bank messages found} =1{1 bank message to check} other{{count} bank messages to check}}'**
+  String bankMessagesFound(int count);
 
   /// No description provided for @importBannerTitle.
   ///

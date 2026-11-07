@@ -23,12 +23,14 @@ import io.flutter.plugin.common.MethodChannel
  *
  * And the `system_settings` channel `SystemSettings` (Dart) uses to open
  * Qima's notification settings from the "Notifications are off" banner,
- * and on-device dictation ([DictationChannel]).
+ * and on-device dictation ([DictationChannel]), and bank text messages
+ * ([BankSmsChannel]).
  */
 class MainActivity : FlutterFragmentActivity() {
     private val channelName = "com.devlabtechnologies.qima/privacy"
     private val systemSettingsChannelName = "com.devlabtechnologies.qima/system_settings"
     private var dictation: DictationChannel? = null
+    private var bankSms: BankSmsChannel? = null
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
@@ -47,6 +49,7 @@ class MainActivity : FlutterFragmentActivity() {
             }
         }
         dictation = DictationChannel(this, flutterEngine.dartExecutor.binaryMessenger)
+        bankSms = BankSmsChannel(this, flutterEngine.dartExecutor.binaryMessenger)
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, systemSettingsChannelName).setMethodCallHandler { call, result ->
             when (call.method) {
                 "openNotificationSettings" -> {
@@ -63,6 +66,7 @@ class MainActivity : FlutterFragmentActivity() {
         if (requestCode == DictationChannel.PERMISSION_REQUEST) {
             dictation?.onPermissionResult(grantResults.firstOrNull() == PackageManager.PERMISSION_GRANTED)
         }
+        if (requestCode == BankSmsChannel.PERMISSION_REQUEST) bankSms?.onPermissionResult()
     }
 
     /** Qima's notification settings (Android 8+), else its app info page. */

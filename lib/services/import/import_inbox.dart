@@ -13,7 +13,12 @@ class ImportFile extends Equatable {
   /// On disk, for readers that take a path (PDFs and images).
   final String path;
 
-  const ImportFile({required this.id, required this.name, required this.receivedAt, required this.path});
+  /// A bank's text message that arrived on its own (an Android SMS, or a
+  /// Shortcuts automation on iOS) rather than a file the person chose: one
+  /// with no transaction in it, such as a one-time code, is dropped unseen.
+  final bool message;
+
+  const ImportFile({required this.id, required this.name, required this.receivedAt, required this.path, this.message = false});
 
   String get extension {
     final dot = name.lastIndexOf('.');
@@ -21,7 +26,7 @@ class ImportFile extends Equatable {
   }
 
   @override
-  List<Object?> get props => [id, name, receivedAt, path];
+  List<Object?> get props => [id, name, receivedAt, path, message];
 }
 
 abstract class ImportInbox {

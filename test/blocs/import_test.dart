@@ -117,10 +117,14 @@ void main() {
   });
 
   /// What the share extension writes: a folder with the file and meta.json.
-  Future<void> share(String name, List<int> bytes, {DateTime? at}) async {
+  Future<void> share(String name, List<int> bytes, {DateTime? at, String? kind}) async {
     final folder = Directory('${dir.path}/shared/${++ids}-shared')..createSync();
     File('${folder.path}/$name').writeAsBytesSync(bytes);
-    File('${folder.path}/meta.json').writeAsStringSync(jsonEncode({'name': name, 'receivedAt': (at ?? DateTime(2026, 11, 7, 12).add(Duration(seconds: ids))).toUtc().toIso8601String()}));
+    File('${folder.path}/meta.json').writeAsStringSync(jsonEncode({
+      'name': name,
+      'receivedAt': (at ?? DateTime(2026, 11, 7, 12).add(Duration(seconds: ids))).toUtc().toIso8601String(),
+      'kind': ?kind,
+    }));
   }
 
   group('the inbox and reading', () {
@@ -152,6 +156,18 @@ void main() {
       await importer.checkInbox();
       expect(importer.state.items[0].rows.single.amount, -89);
       expect(importer.state.items[1].status, ImportStatus.unsupported);
+    });
+
+    test('bank messages read by Qima: one with no transaction, or seen before, is dropped unseen', () async {
+      final purchase = utf8.encode('Purchase of SAR 89.00 at JARIR on 06/11/26');
+      await share('Bank message.txt', purchase, kind: 'message');
+      await share('Bank message.txt', utf8.encode('Your SAR balance statement is ready in the app'), kind: 'message');
+      await share('Bank message.txt', purchase, kind: 'message');
+      await importer.checkInbox();
+      final item = importer.state.items.single;
+      expect(item.file.message, isTrue);
+      expect(item.rows.single.amount, -89);
+      expect(await inbox.pending(), hasLength(1));
     });
 
     test('the same file shared twice, or imported before, is skipped', () async {

@@ -2,3 +2,4 @@
 "${applicationName} portfolio value" = "Valeur du portefeuille ${applicationName}";
 "Get a price in ${applicationName}" = "Obtenir un prix dans ${applicationName}";
 "${applicationName} price of ${asset}" = "Prix de ${asset} dans ${applicationName}";
+"Add a bank message to ${applicationName}" = "Ajouter un message bancaire à ${applicationName}";

@@ -144,6 +144,16 @@ class ImportCubit extends Cubit<ImportState> {
         result = item.copyWith(status: ImportStatus.unreadable);
       }
       if (isClosed) return;
+      // A message that arrived on its own and holds no transaction (a
+      // one-time code, an offer) or was seen before goes without a word.
+      final nothing = result.status == ImportStatus.alreadyImported ||
+          (result.status == ImportStatus.read && result.rows.isEmpty && result.facts.closing == null);
+      if (item.file.message && nothing) {
+        await inbox.remove(item.id);
+        if (isClosed) return;
+        emit(ImportState(items: [for (final i in state.items) if (i.id != item.id) i]));
+        continue;
+      }
       _update(result);
     }
   }

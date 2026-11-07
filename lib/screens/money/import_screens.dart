@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:typed_data';
 
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
@@ -19,29 +18,31 @@ import '../../models/import_plan.dart';
 import '../../models/minor_units.dart';
 import '../../models/statement_facts.dart';
 import '../../models/statement_reader.dart';
-import '../../services/import/pasted_image.dart';
+import '../../services/import/bank_messages.dart';
+import '../../services/import/pasted_files.dart';
 import '../../services/import/statement_files.dart';
 import '../../theme/design_system.dart';
 import '../../theme/money_labels.dart';
 import '../../theme/qima_colors.dart';
 import '../../widgets/money_widgets.dart';
 import 'accounts_screens.dart';
+import 'bank_messages_screen.dart';
 
 /// Import a statement: from Files (PDF, Excel, CSV), screenshots from
-/// Photos, or a screenshot on the clipboard. Share › Qima from another app
+/// Photos, or whatever of those is on the clipboard. Share › Qima from another app
 /// lands in the same place.
 Future<void> showImportSheet(BuildContext context) async {
   final l10n = AppLocalizations.of(context)!;
   final importer = context.read<ImportCubit>();
-  final canPaste = await PastedImage.hasImage();
+  final canPaste = await PastedFiles.available();
   if (!context.mounted) return;
-  // The system Paste button hands the image over while the sheet, the top
-  // route of this navigator, is open.
+  // The system Paste button hands the content over while the sheet, the
+  // top route of this navigator, is open.
   final navigator = Navigator.of(context);
   if (canPaste) {
-    PastedImage.listen((png) {
-      PastedImage.stopListening();
-      navigator.pop(png);
+    PastedFiles.listen((files) {
+      PastedFiles.stopListening();
+      navigator.pop(files);
     });
   }
   final choice = await showModalBottomSheet<Object>(
@@ -70,7 +71,15 @@ Future<void> showImportSheet(BuildContext context) async {
               leading: const Icon(Icons.content_paste_outlined),
               title: Text(l10n.importFromClipboard),
               subtitle: Text(l10n.importFromClipboardHint),
-              trailing: PastedImage.button(background: sheet.colors.brand, foreground: sheet.colors.onBrand),
+              trailing: PastedFiles.button(background: sheet.colors.brand, foreground: sheet.colors.onBrand),
+            ),
+          if (BankMessages.way != BankMessagesWay.none)
+            ListTile(
+              key: const ValueKey('importBankMessages'),
+              leading: const Icon(Icons.sms_outlined),
+              title: Text(l10n.bankMessagesEntry),
+              subtitle: Text(l10n.bankMessagesEntryHint),
+              onTap: () => Navigator.of(sheet).pop('messages'),
             ),
           Padding(
             padding: const EdgeInsets.fromLTRB(DS.spaceMD, DS.spaceXS, DS.spaceMD, DS.spaceMD),
@@ -84,8 +93,9 @@ Future<void> showImportSheet(BuildContext context) async {
       ),
     ),
   );
-  if (canPaste) PastedImage.stopListening();
+  if (canPaste) PastedFiles.stopListening();
   if (choice == null || !context.mounted) return;
+  if (choice == 'messages') return BankMessagesScreen.open(context);
   final picked = <(String, List<int>)>[];
   if (choice == 'files') {
     final files = await openFiles(acceptedTypeGroups: [
@@ -105,8 +115,12 @@ Future<void> showImportSheet(BuildContext context) async {
     for (final f in files) {
       picked.add((f.name, await f.readAsBytes()));
     }
-  } else if (choice is Uint8List) {
-    picked.add(('${l10n.importPastedName} ${DateFormat('yyyy-MM-dd HH.mm').format(DateTime.now())}.png', choice));
+  } else if (choice is List<PastedFile>) {
+    final when = DateFormat('yyyy-MM-dd HH.mm').format(DateTime.now());
+    for (final f in choice) {
+      final name = f.name ?? '${l10n.importPastedName} $when';
+      picked.add((name.toLowerCase().endsWith('.${f.extension}') ? name : '$name.${f.extension}', f.bytes));
+    }
   } else {
     final images = await ImagePicker().pickMultiImage(requestFullMetadata: false);
     for (final f in images) {

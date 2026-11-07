@@ -4071,13 +4071,14 @@ class AppLocalizationsAr extends AppLocalizations {
   String get importFromPhotosHint => 'عمليات تطبيق بنكك';
 
   @override
-  String get importFromClipboard => 'لصق لقطة شاشة';
+  String get importFromClipboard => 'من الحافظة';
 
   @override
-  String get importFromClipboardHint => 'لقطة شاشة منسوخة، مثل رصيد حسابك';
+  String get importFromClipboardHint =>
+      'كشف أو إيصال أو رسالة بنك أو لقطة شاشة منسوخة';
 
   @override
-  String get importPastedName => 'لقطة شاشة ملصقة';
+  String get importPastedName => 'ملصق';
 
   @override
   String get importShareTip =>
@@ -4112,6 +4113,79 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get importReadyBalance => 'رصيد للمراجعة';
+
+  @override
+  String get bankMessagesTitle => 'رسائل البنك النصية';
+
+  @override
+  String get bankMessagesEntry => 'رسائل البنك النصية';
+
+  @override
+  String get bankMessagesEntryHint => 'أضف المشتريات من رسائل بنكك';
+
+  @override
+  String get bankMessagesIntro =>
+      'يرسل لك بنكك رسالة بكل شراء وتحويل وراتب. يمكن لقيمة قراءة هذه الرسائل واقتراحها كعمليات، وتراجع كل واحدة قبل إضافتها.';
+
+  @override
+  String get bankMessagesRead => 'قراءة رسائل البنك الجديدة';
+
+  @override
+  String get bankMessagesReadHint =>
+      'الرسائل التي فيها مبلغ فقط، وتُتجاهل الرموز والرسائل الشخصية.';
+
+  @override
+  String get bankMessagesRecent => 'أحضر آخر 60 يومًا';
+
+  @override
+  String get bankMessagesRecentHint => 'تُتجاهل الرسائل الموجودة في قيمة';
+
+  @override
+  String get bankMessagesDenied =>
+      'تحتاج قيمة إلى إذن قراءة الرسائل، ويمكنك السماح بذلك من الإعدادات.';
+
+  @override
+  String get bankMessagesSetUp => 'اضبطها مرة واحدة في الاختصارات';
+
+  @override
+  String get bankMessagesStep1 =>
+      'افتح الاختصارات، ثم الأتمتة واضغط +، ثم اختر رسالة.';
+
+  @override
+  String get bankMessagesStep2 =>
+      'اختر بنكك كمرسل، أو كلمة تظهر دائمًا في رسائله مثل ر.س.';
+
+  @override
+  String get bankMessagesStep3 => 'اختر التشغيل فورًا.';
+
+  @override
+  String get bankMessagesStep4 =>
+      'أضف إجراء «Add a bank message» من قيمة ومرّر له الرسالة.';
+
+  @override
+  String get bankMessagesOpenShortcuts => 'افتح الاختصارات';
+
+  @override
+  String get bankMessagesUnavailable =>
+      'يمكن إضافة رسائل البنك على آيفون وأندرويد.';
+
+  @override
+  String get bankMessagesPrivacy => 'تُقرأ الرسائل على هذا الجهاز ولا تغادره.';
+
+  @override
+  String bankMessagesFound(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count رسالة بنك للمراجعة',
+      many: '$count رسالة بنك للمراجعة',
+      few: '$count رسائل بنك للمراجعة',
+      two: 'رسالتا بنك للمراجعة',
+      one: 'رسالة بنك واحدة للمراجعة',
+      zero: 'لم توجد رسائل بنك',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get importBannerTitle => 'مُشارك مع قيمة';

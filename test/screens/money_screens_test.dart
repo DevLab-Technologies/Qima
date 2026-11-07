@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -21,13 +22,15 @@ import 'package:qima/models/quote.dart';
 import 'package:qima/screens/money/accounts_screens.dart';
 import 'package:qima/screens/money/asset_screens.dart';
 import 'package:qima/screens/money/balance_sheet_screen.dart';
+import 'package:qima/screens/money/bank_messages_screen.dart';
 import 'package:qima/screens/money/categorize_screen.dart';
 import 'package:qima/screens/money/entry_detail_screen.dart';
 import 'package:qima/screens/money/entry_editor_screen.dart';
 import 'package:qima/screens/money/home_screen.dart';
 import 'package:qima/screens/money/import_screens.dart';
+import 'package:qima/services/import/bank_messages.dart';
 import 'package:qima/services/import/import_inbox_io.dart';
-import 'package:qima/services/import/pasted_image.dart';
+import 'package:qima/services/import/pasted_files.dart';
 import 'package:qima/models/statement_reader.dart';
 import 'package:qima/services/text_recognition_service.dart';
 import 'package:qima/screens/money/money_screen.dart';
@@ -409,15 +412,15 @@ void main() {
 
   group('pasting a screenshot', () {
     final messenger = TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
-    tearDown(() => messenger.setMockMethodCallHandler(PastedImage.channel, null));
+    tearDown(() => messenger.setMockMethodCallHandler(PastedFiles.channel, null));
 
     Widget opener() => Builder(builder: (context) => Scaffold(body: TextButton(onPressed: () => showImportSheet(context), child: const Text('open'))));
 
-    testWidgets('is offered when the clipboard has an image, and imports it', (tester) async {
+    testWidgets('is offered when the clipboard has a file or screenshot, and imports them', (tester) async {
       await tester.runAsync(seed);
       size(tester, const Size(390, 1200));
       final l10n = await AppLocalizations.delegate.load(const Locale('en'));
-      messenger.setMockMethodCallHandler(PastedImage.channel, (call) async => call.method == 'hasPastedImage');
+      messenger.setMockMethodCallHandler(PastedFiles.channel, (call) async => call.method == 'hasPastedFile');
       final before = importer.state.items.length;
       await tester.pumpWidget(wrap(opener(), const Locale('en')));
       await tester.tap(find.text('open'));
@@ -427,30 +430,103 @@ void main() {
       // The system Paste button sends the image; the sheet closes and the
       // file is added.
       await messenger.handlePlatformMessage(
-        PastedImage.pastes.name,
-        PastedImage.pastes.codec.encodeMethodCall(MethodCall('pasted', Uint8List.fromList([9, 9, 9]))),
+        PastedFiles.pastes.name,
+        PastedFiles.pastes.codec.encodeMethodCall(MethodCall('pasted', [
+          {'ext': 'png', 'bytes': Uint8List.fromList([9, 9, 9])},
+          {'name': 'November statement', 'ext': 'pdf', 'bytes': Uint8List.fromList([7, 7])},
+        ])),
         (_) {},
       );
-      for (var i = 0; i < 40 && importer.state.items.length == before; i++) {
+      for (var i = 0; i < 100 && importer.state.items.length < before + 2; i++) {
         await tester.pump(const Duration(milliseconds: 100));
         await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 20)));
       }
       await tester.pump(const Duration(milliseconds: 300));
+      // A screenshot without a name is named for when it was pasted; a
+      // copied file keeps its own name.
       final pasted = importer.state.items.where((i) => i.file.name.startsWith(l10n.importPastedName)).single.file;
       expect(pasted.extension, 'png');
+      expect(importer.state.items.where((i) => i.file.name == 'November statement.pdf'), hasLength(1));
       expect(find.byType(ImportReviewScreen), findsOneWidget);
     });
 
-    testWidgets('is not offered when the clipboard has no image', (tester) async {
+    testWidgets('is not offered when the clipboard has nothing to import', (tester) async {
       await tester.runAsync(seed);
       size(tester, const Size(390, 1200));
       final l10n = await AppLocalizations.delegate.load(const Locale('en'));
-      messenger.setMockMethodCallHandler(PastedImage.channel, (call) async => call.method == 'hasPastedImage' ? false : null);
+      messenger.setMockMethodCallHandler(PastedFiles.channel, (call) async => call.method == 'hasPastedFile' ? false : null);
       await tester.pumpWidget(wrap(opener(), const Locale('en')));
       await tester.tap(find.text('open'));
       await tester.pumpAndSettle();
       expect(find.text(l10n.importFromPhotos), findsOneWidget);
       expect(find.text(l10n.importFromClipboard), findsNothing);
+    });
+  });
+
+  group('bank messages', () {
+    final messenger = TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
+    tearDown(() {
+      debugDefaultTargetPlatformOverride = null;
+      messenger.setMockMethodCallHandler(BankMessages.sms, null);
+      messenger.setMockMethodCallHandler(PastedFiles.channel, null);
+    });
+
+    testWidgets('Android: turning it on asks for the permission, then recent messages can be brought in', (tester) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.android;
+      await tester.runAsync(seed);
+      size(tester, const Size(320, 900));
+      final l10n = await AppLocalizations.delegate.load(const Locale('ar'));
+      final calls = <String>[];
+      var on = false;
+      messenger.setMockMethodCallHandler(BankMessages.sms, (call) async {
+        calls.add(call.method);
+        if (call.method == 'enable') on = true;
+        if (call.method == 'disable') on = false;
+        if (call.method == 'importRecent') return 0;
+        return {'granted': on, 'enabled': on};
+      });
+      await tester.pumpWidget(wrap(const BankMessagesScreen(), const Locale('ar')));
+      await tester.pump(const Duration(milliseconds: 300));
+      expect(tester.takeException(), isNull);
+      expect(tester.widget<ListTile>(find.byKey(const ValueKey('bankMessagesRecent'))).enabled, isFalse);
+
+      await tester.tap(find.byKey(const ValueKey('bankMessagesSwitch')));
+      await tester.pump(const Duration(milliseconds: 300));
+      expect(calls, ['status', 'enable']);
+      expect(tester.widget<SwitchListTile>(find.byKey(const ValueKey('bankMessagesSwitch'))).value, isTrue);
+
+      await tester.tap(find.byKey(const ValueKey('bankMessagesRecent')));
+      for (var i = 0; i < 50 && find.text(l10n.bankMessagesFound(0)).evaluate().isEmpty; i++) {
+        await tester.pump(const Duration(milliseconds: 100));
+        await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 20)));
+      }
+      expect(calls.last, 'importRecent');
+      expect(find.text(l10n.bankMessagesFound(0)), findsOneWidget);
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    testWidgets('iOS: the Shortcuts steps, and the sheet leads there', (tester) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+      await tester.runAsync(seed);
+      size(tester, const Size(390, 1200));
+      final l10n = await AppLocalizations.delegate.load(const Locale('en'));
+      final opened = <String>[];
+      messenger.setMockMethodCallHandler(PastedFiles.channel, (call) async {
+        opened.add(call.method);
+        return call.method == 'hasPastedFile' ? false : null;
+      });
+      await tester.pumpWidget(wrap(Builder(builder: (context) => Scaffold(body: TextButton(onPressed: () => showImportSheet(context), child: const Text('open')))), const Locale('en')));
+      await tester.tap(find.text('open'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('importBankMessages')));
+      await tester.pumpAndSettle();
+      expect(find.byType(BankMessagesScreen), findsOneWidget);
+      expect(find.text(l10n.bankMessagesStep4), findsOneWidget);
+      expect(find.byKey(const ValueKey('bankMessagesSwitch')), findsNothing);
+      await tester.tap(find.byKey(const ValueKey('bankMessagesShortcuts')));
+      await tester.pump();
+      expect(opened, contains('openShortcuts'));
+      debugDefaultTargetPlatformOverride = null;
     });
   });
 

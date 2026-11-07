@@ -10,7 +10,8 @@ import 'import_inbox.dart';
 
 ImportInbox createImportInbox() => FolderInbox();
 
-/// Folders of `<id>/<file>` plus `<id>/meta.json` (`name`, `receivedAt`).
+/// Folders of `<id>/<file>` plus `<id>/meta.json` (`name`, `receivedAt`,
+/// and `kind: message` for a bank message that arrived on its own).
 /// The share extension writes the same layout and renames a folder into
 /// place only once it is complete; folders starting with a dot are still
 /// being written.
@@ -67,6 +68,7 @@ class FolderInbox implements ImportInbox {
             name: name,
             receivedAt: DateTime.tryParse(json['receivedAt'] as String? ?? '')?.toLocal() ?? (await meta.lastModified()),
             path: file.path,
+            message: json['kind'] == 'message',
           ));
         } catch (e) {
           debugPrint('ImportInbox: skipping $id: $e');

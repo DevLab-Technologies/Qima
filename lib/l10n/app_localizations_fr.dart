@@ -4086,14 +4086,14 @@ class AppLocalizationsFr extends AppLocalizations {
   String get importFromPhotosHint => 'Les opérations de votre appli bancaire';
 
   @override
-  String get importFromClipboard => 'Coller une capture';
+  String get importFromClipboard => 'Depuis le presse-papiers';
 
   @override
   String get importFromClipboardHint =>
-      'Une capture copiée, comme le solde de votre compte';
+      'Un relevé, reçu, message bancaire ou capture copié';
 
   @override
-  String get importPastedName => 'Capture collée';
+  String get importPastedName => 'Collé';
 
   @override
   String get importShareTip =>
@@ -4124,6 +4124,79 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get importReadyBalance => 'Un solde à vérifier';
+
+  @override
+  String get bankMessagesTitle => 'Messages de la banque';
+
+  @override
+  String get bankMessagesEntry => 'Messages de la banque';
+
+  @override
+  String get bankMessagesEntryHint =>
+      'Ajoutez les achats depuis les messages de votre banque';
+
+  @override
+  String get bankMessagesIntro =>
+      'Votre banque vous envoie un message à chaque achat, virement et salaire. Qima peut lire ces messages et les proposer comme opérations. Vous vérifiez chacune avant qu’elle soit ajoutée.';
+
+  @override
+  String get bankMessagesRead => 'Lire les nouveaux messages bancaires';
+
+  @override
+  String get bankMessagesReadHint =>
+      'Seulement les messages avec un montant. Les codes et messages personnels sont ignorés.';
+
+  @override
+  String get bankMessagesRecent => 'Importer les 60 derniers jours';
+
+  @override
+  String get bankMessagesRecentHint =>
+      'Les messages déjà dans Qima sont ignorés';
+
+  @override
+  String get bankMessagesDenied =>
+      'Qima a besoin de l’autorisation de lire les messages. Vous pouvez l’accorder dans les Réglages.';
+
+  @override
+  String get bankMessagesSetUp => 'Configurez-le une fois dans Raccourcis';
+
+  @override
+  String get bankMessagesStep1 =>
+      'Ouvrez Raccourcis, allez dans Automatisation et touchez +, puis choisissez Message.';
+
+  @override
+  String get bankMessagesStep2 =>
+      'Choisissez votre banque comme expéditeur, ou un mot toujours présent dans ses messages, comme EUR.';
+
+  @override
+  String get bankMessagesStep3 => 'Choisissez Exécuter immédiatement.';
+
+  @override
+  String get bankMessagesStep4 =>
+      'Ajoutez l’action « Add a bank message » de Qima et passez-lui le message.';
+
+  @override
+  String get bankMessagesOpenShortcuts => 'Ouvrir Raccourcis';
+
+  @override
+  String get bankMessagesUnavailable =>
+      'Les messages bancaires peuvent être ajoutés sur iPhone et Android.';
+
+  @override
+  String get bankMessagesPrivacy =>
+      'Les messages sont lus sur cet appareil et ne le quittent jamais.';
+
+  @override
+  String bankMessagesFound(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count messages bancaires à vérifier',
+      one: '1 message bancaire à vérifier',
+      zero: 'Aucun message bancaire trouvé',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get importBannerTitle => 'Partagé avec Qima';

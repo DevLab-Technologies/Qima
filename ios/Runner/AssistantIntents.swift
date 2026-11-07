@@ -4,8 +4,9 @@ import Foundation
 // Read-only answers for Siri, Shortcuts and Spotlight (v4 phase 5). They
 // read the snapshot the app publishes for its widgets (Snapshot.swift) and
 // price with the same rules, so an answer matches the widget and the app.
-// Nothing here writes: a system assistant can't show Qima's check-before-
-// saving step, so recording stays in the app.
+// Nothing here records: a system assistant can't show Qima's check-before-
+// saving step, so recording stays in the app. A bank message sent from a
+// Shortcuts automation only waits in the import inbox for that check.
 
 /// An asset the app has a price for: watchlist cards' assets first.
 @available(iOS 17.0, macOS 14.0, *)
@@ -102,6 +103,48 @@ struct GetPortfolioValueIntent: AppIntent {
     }
 }
 
+/// A bank's text message, sent by a Shortcuts automation ("When I get a
+/// message from my bank, add it to Qima"). It waits in the import inbox,
+/// as a shared file does, until the person checks it in the app; a message
+/// with no transaction in it is dropped there.
+@available(iOS 17.0, macOS 14.0, *)
+struct AddBankMessageIntent: AppIntent {
+    static let title: LocalizedStringResource = "Add a bank message"
+    static let description = IntentDescription("Sends a bank's text message to Qima. Nothing is added until you check it in the app.")
+    static let openAppWhenRun = false
+
+    @Parameter(title: "Message")
+    var message: String
+
+    func perform() async throws -> some IntentResult {
+        try MessageInbox.add(message)
+        return .result()
+    }
+}
+
+/// The share extension's inbox layout (`ShareViewController`): a folder per
+/// item, written under a dotted name and renamed once complete.
+enum MessageInbox {
+    struct Unavailable: Error {}
+
+    static func add(_ text: String, at date: Date = Date()) throws {
+        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return }
+        guard let container = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: "group.com.devlabtechnologies.qima") else {
+            throw Unavailable()
+        }
+        let inbox = container.appendingPathComponent("ImportInbox", isDirectory: true)
+        let id = UUID().uuidString
+        let staging = inbox.appendingPathComponent(".\(id)", isDirectory: true)
+        try FileManager.default.createDirectory(at: staging, withIntermediateDirectories: true)
+        let name = "Bank message.txt"
+        try Data(trimmed.utf8).write(to: staging.appendingPathComponent(name))
+        let meta: [String: Any] = ["name": name, "receivedAt": ISO8601DateFormatter().string(from: date), "kind": "message"]
+        try JSONSerialization.data(withJSONObject: meta).write(to: staging.appendingPathComponent("meta.json"))
+        try FileManager.default.moveItem(at: staging, to: inbox.appendingPathComponent(id, isDirectory: true))
+    }
+}
+
 @available(iOS 17.0, macOS 14.0, *)
 struct QimaShortcuts: AppShortcutsProvider {
     static var appShortcuts: [AppShortcut] {
@@ -122,6 +165,12 @@ struct QimaShortcuts: AppShortcutsProvider {
             ],
             shortTitle: "Price",
             systemImageName: "chart.line.uptrend.xyaxis"
+        )
+        AppShortcut(
+            intent: AddBankMessageIntent(),
+            phrases: ["Add a bank message to \(.applicationName)"],
+            shortTitle: "Bank message",
+            systemImageName: "message"
         )
     }
 }

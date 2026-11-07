@@ -4,7 +4,7 @@ import UniformTypeIdentifiers
 
 /// Where Share › Qima leaves files (`ImportInbox` in the app group), for
 /// `ShareInbox` (Dart), which reads and clears it; and the system Paste
-/// button that hands a copied image to `PastedImage` (Dart).
+/// button that hands a copied file or screenshot to `PastedFiles` (Dart).
 final class ShareInboxPlugin: NSObject, FlutterPlugin {
   static func register(with registrar: FlutterPluginRegistrar) {
     let channel = FlutterMethodChannel(name: "com.devlabtechnologies.qima/share_inbox", binaryMessenger: registrar.messenger())
@@ -16,11 +16,19 @@ final class ShareInboxPlugin: NSObject, FlutterPlugin {
   func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
     switch call.method {
     case "inboxPath": result(Self.inboxPath())
-    // Asking whether there is an image shows no prompt. Reading it from
-    // code is refused, so the image comes through the system Paste button,
+    // Asking what kinds the clipboard holds shows no prompt. Reading it from
+    // code is refused, so the content comes through the system Paste button,
     // which needs iOS 16.
-    case "hasPastedImage":
-      if #available(iOS 16.0, *) { result(UIPasteboard.general.hasImages) } else { result(false) }
+    case "hasPastedFile":
+      if #available(iOS 16.0, *) {
+        result(UIPasteboard.general.types.contains { type in Importable.accepts(UTType(type)) })
+      } else {
+        result(false)
+      }
+    // Where the "Add a bank message" automation is set up.
+    case "openShortcuts":
+      if let url = URL(string: "shortcuts://") { UIApplication.shared.open(url) }
+      result(nil)
     default: result(FlutterMethodNotImplemented)
     }
   }
@@ -35,9 +43,20 @@ final class ShareInboxPlugin: NSObject, FlutterPlugin {
   }
 }
 
+/// What the import reads: statements, tables, text and pictures.
+private enum Importable {
+  static let types: [UTType] = [.pdf, .commaSeparatedText, .tabSeparatedText, .plainText, .image] + [UTType("org.openxmlformats.spreadsheetml.sheet")].compactMap { $0 }
+
+  static func accepts(_ type: UTType?) -> Bool {
+    guard let type else { return false }
+    return types.contains { type.conforms(to: $0) }
+  }
+}
+
 /// The system Paste button (`UIPasteControl`) as a Flutter view. A tap on
-/// it is the person's own paste, so the system asks nothing; the image goes
-/// to Dart as PNG ("pasted" on the paste channel).
+/// it is the person's own paste, so the system asks nothing. Each item goes
+/// to Dart ("pasted" on the paste channel) as its name if it has one, a file
+/// extension and its bytes; pictures as PNG, so every kind of image reads.
 private final class PasteButtonFactory: NSObject, FlutterPlatformViewFactory {
   private let channel: FlutterMethodChannel
 
@@ -80,7 +99,7 @@ private final class PasteTarget: UIView {
   init(frame: CGRect, channel: FlutterMethodChannel, background: UIColor?, foreground: UIColor?) {
     self.channel = channel
     super.init(frame: frame)
-    pasteConfiguration = UIPasteConfiguration(acceptableTypeIdentifiers: [UTType.image.identifier])
+    pasteConfiguration = UIPasteConfiguration(acceptableTypeIdentifiers: Importable.types.map(\.identifier))
     let configuration = UIPasteControl.Configuration()
     configuration.displayMode = .iconAndLabel
     configuration.cornerStyle = .capsule
@@ -101,12 +120,33 @@ private final class PasteTarget: UIView {
   required init?(coder: NSCoder) { nil }
 
   override func paste(itemProviders: [NSItemProvider]) {
-    guard let provider = itemProviders.first(where: { $0.canLoadObject(ofClass: UIImage.self) }) else { return }
-    provider.loadObject(ofClass: UIImage.self) { [channel] object, _ in
-      guard let png = (object as? UIImage)?.pngData() else { return }
-      DispatchQueue.main.async {
-        channel.invokeMethod("pasted", arguments: FlutterStandardTypedData(bytes: png))
+    let group = DispatchGroup()
+    let lock = NSLock()
+    var items = [(Int, [String: Any])]()
+    for (index, provider) in itemProviders.enumerated() {
+      guard let id = provider.registeredTypeIdentifiers.first(where: { Importable.accepts(UTType($0)) }), let type = UTType(id) else { continue }
+      group.enter()
+      provider.loadDataRepresentation(forTypeIdentifier: id) { data, _ in
+        defer { group.leave() }
+        guard var data else { return }
+        var ext = type.preferredFilenameExtension ?? "txt"
+        if type.conforms(to: .image) {
+          guard let png = UIImage(data: data)?.pngData() else { return }
+          data = png
+          ext = "png"
+        } else if type.conforms(to: .plainText) {
+          ext = "txt"
+        }
+        var item: [String: Any] = ["ext": ext, "bytes": FlutterStandardTypedData(bytes: data)]
+        if let name = provider.suggestedName, !name.isEmpty { item["name"] = name }
+        lock.lock()
+        items.append((index, item))
+        lock.unlock()
       }
+    }
+    group.notify(queue: .main) { [channel] in
+      guard !items.isEmpty else { return }
+      channel.invokeMethod("pasted", arguments: items.sorted { $0.0 < $1.0 }.map(\.1))
     }
   }
 }
