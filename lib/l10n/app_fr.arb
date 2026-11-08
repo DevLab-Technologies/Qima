@@ -1435,7 +1435,7 @@
   "applePayIntro": "Chaque paiement Apple Pay peut arriver dans Qima au moment où vous payez, même pour les cartes qui n’envoient pas de SMS.",
   "applePayStep1": "Dans Raccourcis, allez dans Automatisation, touchez + et choisissez Cartes.",
   "applePayStep2": "Choisissez vos cartes, puis Exécuter immédiatement.",
-  "applePayStep3": "Ajoutez l’action « Add an Apple Pay payment » de Qima.",
+  "applePayStep3": "Ajoutez l’action « Add a Wallet payment » de Qima.",
   "applePayStep4": "Réglez Amount, Merchant et Card sur Montant, Marchand et Carte ou carte de l’entrée du raccourci.",
   "entryMarkAs": "Marquer comme",
   "splitByAmount": "Montant",

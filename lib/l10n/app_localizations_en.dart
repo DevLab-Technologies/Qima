@@ -5015,7 +5015,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get applePayStep2 => 'Pick your cards, then choose Run Immediately.';
 
   @override
-  String get applePayStep3 => 'Add Qima’s “Add an Apple Pay payment” action.';
+  String get applePayStep3 => 'Add Qima’s “Add a Wallet payment” action.';
 
   @override
   String get applePayStep4 =>

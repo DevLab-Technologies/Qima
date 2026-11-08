@@ -1435,7 +1435,7 @@
   "applePayIntro": "Cada pago con Apple Pay puede llegar a Qima al pagar, incluso de tarjetas que no envían mensajes.",
   "applePayStep1": "En Atajos, ve a Automatización, toca + y elige Cartera.",
   "applePayStep2": "Elige tus tarjetas y luego Ejecutar inmediatamente.",
-  "applePayStep3": "Añade la acción «Add an Apple Pay payment» de Qima.",
+  "applePayStep3": "Añade la acción «Add a Wallet payment» de Qima.",
   "applePayStep4": "Pon su Amount, Merchant y Card en Importe, Comercio y Tarjeta o pase de la entrada del atajo.",
   "entryMarkAs": "Marcar como",
   "splitByAmount": "Importe",

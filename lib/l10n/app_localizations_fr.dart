@@ -5050,7 +5050,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get applePayStep3 =>
-      'Ajoutez l’action « Add an Apple Pay payment » de Qima.';
+      'Ajoutez l’action « Add a Wallet payment » de Qima.';
 
   @override
   String get applePayStep4 =>

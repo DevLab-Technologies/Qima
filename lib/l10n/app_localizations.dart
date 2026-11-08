@@ -8528,7 +8528,7 @@ abstract class AppLocalizations {
   /// No description provided for @applePayStep3.
   ///
   /// In en, this message translates to:
-  /// **'Add Qima’s “Add an Apple Pay payment” action.'**
+  /// **'Add Qima’s “Add a Wallet payment” action.'**
   String get applePayStep3;
 
   /// No description provided for @applePayStep4.

@@ -5033,7 +5033,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get applePayStep2 => 'اختر بطاقاتك، ثم اختر التشغيل فورًا.';
 
   @override
-  String get applePayStep3 => 'أضف إجراء «Add an Apple Pay payment» من قيمة.';
+  String get applePayStep3 => 'أضف إجراء «Add a Wallet payment» من قيمة.';
 
   @override
   String get applePayStep4 =>

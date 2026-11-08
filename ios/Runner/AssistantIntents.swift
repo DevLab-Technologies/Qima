@@ -127,8 +127,8 @@ struct AddBankMessageIntent: AppIntent {
 /// reads bank texts reads it, and waiting for review like one.
 @available(iOS 17.0, macOS 14.0, *)
 struct AddApplePayIntent: AppIntent {
-    static let title: LocalizedStringResource = "Add an Apple Pay payment"
-    static let description = IntentDescription("Sends an Apple Pay payment from a Wallet automation to Qima. Nothing is added until you check it in the app.")
+    static let title: LocalizedStringResource = "Add a Wallet payment"
+    static let description = IntentDescription("Sends a card payment from a Wallet automation to Qima. Nothing is added until you check it in the app.")
     static let openAppWhenRun = false
 
     @Parameter(title: "Amount")
@@ -211,8 +211,8 @@ struct QimaShortcuts: AppShortcutsProvider {
         )
         AppShortcut(
             intent: AddApplePayIntent(),
-            phrases: ["Add an Apple Pay payment to \(.applicationName)"],
-            shortTitle: "Apple Pay payment",
+            phrases: ["Add a Wallet payment to \(.applicationName)"],
+            shortTitle: "Wallet payment",
             systemImageName: "wallet.pass"
         )
     }
