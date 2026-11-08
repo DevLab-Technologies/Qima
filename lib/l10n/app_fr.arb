@@ -960,6 +960,7 @@
   "chartDescription": "Du {from} au {to} : de {start} à {end}, {change}. Plus haut {high} le {highDate}, plus bas {low} le {lowDate}.",
   "chartDescriptionHidden": "Du {from} au {to} : {change}.",
   "dictationStart": "Dicter un achat",
+  "dictationLanguage": "Langue parlée",
   "dictationStop": "Arrêter l’écoute",
   "dictationUnsupported": "La saisie vocale dans cette langue n’est pas disponible sur cet appareil. Qima n’écoute que sur l’appareil, jamais via un serveur.",
   "dictationDenied": "Le micro ou la reconnaissance vocale est désactivé pour Qima. Activez-les dans Réglages pour dicter un achat.",

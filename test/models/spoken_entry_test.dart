@@ -15,6 +15,14 @@ void main() {
     expect(e.daysAgo, 1);
   });
 
+  test('"in" a shop, as recognizers often hear it', () {
+    final e = read('I spent 899 Saudi riyal in Panda for groceries today with SNB');
+    expect(e.amount, '899');
+    expect(e.merchant, 'Panda');
+    expect(e.categoryId, 'category.groceries');
+    expect(e.accountIds, ['snb']);
+  });
+
   test('a category said outright, and number words', () {
     final e = read('paid twenty one riyals on groceries at Danube');
     expect(e.amount, '21');

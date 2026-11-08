@@ -5675,6 +5675,12 @@ abstract class AppLocalizations {
   /// **'Speak a purchase'**
   String get dictationStart;
 
+  /// Tooltip on the button that picks the language New transaction listens in.
+  ///
+  /// In en, this message translates to:
+  /// **'Language you speak'**
+  String get dictationLanguage;
+
   /// No description provided for @dictationStop.
   ///
   /// In en, this message translates to:

@@ -121,7 +121,7 @@ class SpokenEntry {
 
   /// The words after "at" (في, chez, en…) up to the next joining word, a
   /// figure, or a name already placed.
-  static const _at = {'at', 'في', 'عند', 'لدى', 'من', 'chez', 'à', 'en', 'au'};
+  static const _at = {'at', 'in', 'في', 'عند', 'لدى', 'من', 'chez', 'à', 'en', 'au'};
   static const _stop = {
     'with', 'using', 'from', 'on', 'for', 'to', 'and', 'by', 'via', 'yesterday', 'today', 'riyals', 'riyal', 'pounds', 'dollars', 'euros', 'dirhams', 'sar', 'egp', 'usd', 'aed', 'eur',
     'ب', 'بال', 'على', 'الى', 'الي', 'امس', 'اليوم', 'امبارح', 'البارحه', 'ريال', 'ريالات', 'جنيه', 'دولار', 'درهم', 'يورو', 'و',

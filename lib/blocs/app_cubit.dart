@@ -220,6 +220,7 @@ class AppCubit extends Cubit<AppState> {
     final preferredPortfolioRange = preferences.preferredPortfolioRange;
     final hideBalances = preferences.hideBalances;
     final plainSummaries = preferences.plainSummaries;
+    final speechLanguage = preferences.speechLanguage;
     final onDeviceModel = preferences.onDeviceModel;
     final appLockEnabled = preferences.appLockEnabled;
     final lockGrace = preferences.lockGrace;
@@ -301,6 +302,7 @@ class AppCubit extends Cubit<AppState> {
       seriesByID: seriesByID,
       hideBalances: hideBalances,
       plainSummaries: plainSummaries,
+      speechLanguage: speechLanguage,
       onDeviceModel: onDeviceModel,
       appLockEnabled: appLockEnabled,
       lockGrace: lockGrace,
@@ -1011,6 +1013,12 @@ class AppCubit extends Cubit<AppState> {
     if (value == state.plainSummaries) return;
     await preferences.setPlainSummaries(value);
     emit(state.copyWith(plainSummaries: value));
+  }
+
+  Future<void> setSpeechLanguage(String languageCode) async {
+    if (languageCode == state.speechLanguage) return;
+    await preferences.setSpeechLanguage(languageCode);
+    emit(state.copyWith(speechLanguage: languageCode));
   }
 
   Future<void> setOnDeviceModel(bool value) async {

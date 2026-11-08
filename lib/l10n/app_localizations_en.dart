@@ -3303,6 +3303,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dictationStart => 'Speak a purchase';
 
   @override
+  String get dictationLanguage => 'Language you speak';
+
+  @override
   String get dictationStop => 'Stop listening';
 
   @override

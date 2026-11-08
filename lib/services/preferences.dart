@@ -143,6 +143,7 @@ class Preferences {
   static const String _preferredPortfolioRangeKey = 'preferredPortfolioRange';
   static const String _hideBalancesKey = 'hideBalances';
   static const String _plainSummariesKey = 'plainSummaries';
+  static const String _speechLanguageKey = 'speechLanguage';
   static const String _onDeviceModelKey = 'onDeviceModel';
   static const String _appLockEnabledKey = 'appLockEnabled';
   static const String _lockGraceKey = 'lockGrace';
@@ -329,6 +330,14 @@ class Preferences {
 
   Future<void> setPlainSummaries(bool value) async {
     await local.setBool(_plainSummariesKey, value);
+  }
+
+  /// v5: the language New transaction listens in, picked by the person
+  /// (Arabic speech while the app is in English). Per device.
+  String? get speechLanguage => local.getString(_speechLanguageKey);
+
+  Future<void> setSpeechLanguage(String languageCode) async {
+    await local.setString(_speechLanguageKey, languageCode);
   }
 
   /// v4: whether the OS's on-device model may help read typed purchases

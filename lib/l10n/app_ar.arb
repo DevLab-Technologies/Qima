@@ -960,6 +960,7 @@
   "chartDescription": "من {from} إلى {to}: من {start} إلى {end}، {change}. الأعلى {high} في {highDate}، والأدنى {low} في {lowDate}.",
   "chartDescriptionHidden": "من {from} إلى {to}: {change}.",
   "dictationStart": "قل عملية الشراء",
+  "dictationLanguage": "اللغة اللي هتتكلم بيها",
   "dictationStop": "إيقاف الاستماع",
   "dictationUnsupported": "الإدخال الصوتي بهذه اللغة غير متاح على هذا الجهاز. قيمة تستمع على الجهاز فقط، ولا تستخدم أي خادم.",
   "dictationDenied": "الميكروفون أو التعرّف على الكلام متوقف لقيمة. فعّلهما من الإعدادات لتقول عملية الشراء.",

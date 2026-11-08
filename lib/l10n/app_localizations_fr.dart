@@ -3330,6 +3330,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get dictationStart => 'Dicter un achat';
 
   @override
+  String get dictationLanguage => 'Langue parlée';
+
+  @override
   String get dictationStop => 'Arrêter l’écoute';
 
   @override

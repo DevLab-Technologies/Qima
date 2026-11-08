@@ -412,6 +412,9 @@ class _EntryEditorScreenState extends State<EntryEditorScreen> {
           );
 
     final heard = _heard;
+    final picked = context.select<AppCubit, String?>((c) => c.state.speechLanguage);
+    final appLanguage = Localizations.localeOf(context).languageCode;
+    final speech = _speechLanguages.containsKey(picked) ? picked! : (_speechLanguages.containsKey(appLanguage) ? appLanguage : 'en');
     final fields = <Widget>[
       ?kindTabs,
       if (_listening || heard != null)
@@ -503,8 +506,10 @@ class _EntryEditorScreenState extends State<EntryEditorScreen> {
           title: Text(title),
           actions: [
             const HelpButton(topic: HelpTopicId.newTransaction),
-            if (!missingAccount && widget.existing == null)
+            if (!missingAccount && widget.existing == null) ...[
+              _SpeechLanguageButton(language: speech, enabled: !_listening),
               DictationButton(
+                language: Locale(speech),
                 onText: (t) => setState(() => _heard = t),
                 onFinal: _applySpoken,
                 onListening: (on) => setState(() {
@@ -512,6 +517,7 @@ class _EntryEditorScreenState extends State<EntryEditorScreen> {
                   if (on) _heard = null;
                 }),
               ),
+            ],
             if (!missingAccount) TextButton(onPressed: _save, child: Text(l10n.holdingsSave)),
           ],
         ),
@@ -526,6 +532,36 @@ class _EntryEditorScreenState extends State<EntryEditorScreen> {
                   for (final f in fields) Padding(padding: const EdgeInsets.only(bottom: DS.spaceMD), child: f),
                 ],
               ),
+      ),
+    );
+  }
+}
+
+/// The languages the spoken-entry parser reads, each named in itself.
+const _speechLanguages = {'en': 'English', 'ar': 'العربية', 'fr': 'Français', 'es': 'Español'};
+
+/// Which language the mic listens in ("EN", "AR"…), so Arabic speech is
+/// heard as Arabic while the app is in English. The pick is remembered.
+class _SpeechLanguageButton extends StatelessWidget {
+  final String language;
+  final bool enabled;
+
+  const _SpeechLanguageButton({required this.language, required this.enabled});
+
+  @override
+  Widget build(BuildContext context) {
+    return PopupMenuButton<String>(
+      key: const ValueKey('speechLanguage'),
+      enabled: enabled,
+      tooltip: AppLocalizations.of(context)!.dictationLanguage,
+      initialValue: language,
+      onSelected: (code) => context.read<AppCubit>().setSpeechLanguage(code),
+      itemBuilder: (_) => [
+        for (final e in _speechLanguages.entries) PopupMenuItem(key: ValueKey('speechLanguage-${e.key}'), value: e.key, child: Text(e.value)),
+      ],
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: DS.spaceXS, vertical: DS.spaceSM),
+        child: Text(language.toUpperCase(), style: TextStyle(fontWeight: FontWeight.w600, color: context.colors.textSecondary)),
       ),
     );
   }

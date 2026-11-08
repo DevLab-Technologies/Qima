@@ -2321,6 +2321,8 @@
     }
   },
   "dictationStart": "Speak a purchase",
+  "dictationLanguage": "Language you speak",
+  "@dictationLanguage": {"description": "Tooltip on the button that picks the language New transaction listens in."},
   "dictationStop": "Stop listening",
   "dictationUnsupported": "Voice input in this language isn't available on this device. Qima only listens on the device, never through a server.",
   "dictationDenied": "Microphone or speech recognition is off for Qima. Turn them on in Settings to speak a purchase.",

@@ -71,6 +71,10 @@ class AppState extends Equatable {
   /// v4: whether Portfolio shows the past month as a sentence.
   final bool plainSummaries;
 
+  /// v5: the language speech is heard in on New transaction, as a language
+  /// code ("ar"). Null until the person picks one: the app's language.
+  final String? speechLanguage;
+
   /// v4: whether the on-device model may help (Settings · On-device
   /// intelligence).
   final bool onDeviceModel;
@@ -152,6 +156,7 @@ class AppState extends Equatable {
     this.hideBalances = false,
     this.appLockEnabled = false,
     this.plainSummaries = false,
+    this.speechLanguage,
     this.onDeviceModel = false,
     this.lockGrace = LockGrace.defaultValue,
     this.alerts = const [],
@@ -200,6 +205,7 @@ class AppState extends Equatable {
     bool? isLoadingHistory,
     bool? hideBalances,
     bool? plainSummaries,
+    String? speechLanguage,
     bool? onDeviceModel,
     bool? appLockEnabled,
     LockGrace? lockGrace,
@@ -237,6 +243,7 @@ class AppState extends Equatable {
       isLoadingHistory: isLoadingHistory ?? this.isLoadingHistory,
       hideBalances: hideBalances ?? this.hideBalances,
       plainSummaries: plainSummaries ?? this.plainSummaries,
+      speechLanguage: speechLanguage ?? this.speechLanguage,
       onDeviceModel: onDeviceModel ?? this.onDeviceModel,
       appLockEnabled: appLockEnabled ?? this.appLockEnabled,
       lockGrace: lockGrace ?? this.lockGrace,
@@ -274,6 +281,7 @@ class AppState extends Equatable {
         isLoadingHistory,
         hideBalances,
         plainSummaries,
+        speechLanguage,
         onDeviceModel,
         appLockEnabled,
         lockGrace,

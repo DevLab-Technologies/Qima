@@ -58,11 +58,17 @@ import 'package:shared_preferences/shared_preferences.dart';
 class _SpokenWords implements DictationService {
   StreamController<DictationEvent>? session;
 
+  /// The language each listen was in, in order.
+  final heardIn = <String>[];
+
   @override
   Future<DictationAvailability> availability(String localeTag) async => DictationAvailability.available;
 
   @override
-  Stream<DictationEvent> listen(String localeTag) => (session = StreamController<DictationEvent>()).stream;
+  Stream<DictationEvent> listen(String localeTag) {
+    heardIn.add(localeTag);
+    return (session = StreamController<DictationEvent>()).stream;
+  }
 
   @override
   Future<void> stop() async {}
@@ -628,6 +634,31 @@ void main() {
       await tester.pump();
       await tester.pump();
     }
+
+    testWidgets('speech can be heard in Arabic while the app is in English, and the pick is remembered', (tester) async {
+      await tester.runAsync(seed);
+      await withVoice();
+      SharedPreferences.setMockInitialValues({});
+      app.preferences = await Preferences.create();
+      size(tester, const Size(390, 1400));
+      final l10n = await AppLocalizations.delegate.load(const Locale('en'));
+      await tester.pumpWidget(wrap(const EntryEditorScreen(kind: EntryKind.spend), const Locale('en')));
+      await tester.pump(const Duration(milliseconds: 300));
+      expect(find.descendant(of: find.byKey(const ValueKey('speechLanguage')), matching: find.text('EN')), findsOneWidget);
+
+      await tester.tap(find.byKey(const ValueKey('speechLanguage')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('speechLanguage-ar')));
+      await tester.pumpAndSettle();
+      expect(app.state.speechLanguage, 'ar');
+      expect(app.preferences.speechLanguage, 'ar');
+      expect(find.descendant(of: find.byKey(const ValueKey('speechLanguage')), matching: find.text('AR')), findsOneWidget);
+
+      await say(tester, 'صرفت ٤٥ في بنده', l10n);
+      expect(voice.heardIn.single, startsWith('ar-'));
+      expect(find.widgetWithText(TextField, '45'), findsOneWidget);
+      expect(find.widgetWithText(TextField, 'بنده'), findsOneWidget);
+    });
 
     testWidgets('a spend fills in as said, with the category it usually has, and saves only on Save', (tester) async {
       await tester.runAsync(seed);

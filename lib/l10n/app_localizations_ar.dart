@@ -3317,6 +3317,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get dictationStart => 'قل عملية الشراء';
 
   @override
+  String get dictationLanguage => 'اللغة اللي هتتكلم بيها';
+
+  @override
   String get dictationStop => 'إيقاف الاستماع';
 
   @override

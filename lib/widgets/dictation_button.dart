@@ -23,7 +23,10 @@ class DictationButton extends StatefulWidget {
   /// Called when listening starts and ends.
   final ValueChanged<bool>? onListening;
 
-  const DictationButton({super.key, required this.onText, this.onFinal, this.onListening});
+  /// The language to listen in; the app's language when null.
+  final Locale? language;
+
+  const DictationButton({super.key, required this.onText, this.onFinal, this.onListening, this.language});
 
   @override
   State<DictationButton> createState() => _DictationButtonState();
@@ -36,11 +39,21 @@ class _DictationButtonState extends State<DictationButton> {
 
   DictationService get _service => context.read<AppCubit>().dictation;
 
-  String get _tag => dictationLocaleTag(Localizations.localeOf(context));
+  String get _tag => dictationLocaleTag(widget.language ?? Localizations.localeOf(context));
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    _recheck();
+  }
+
+  @override
+  void didUpdateWidget(DictationButton old) {
+    super.didUpdateWidget(old);
+    if (old.language != widget.language) _recheck();
+  }
+
+  void _recheck() {
     final tag = _tag;
     if (tag != _checkedTag) {
       _checkedTag = tag;
