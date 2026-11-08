@@ -484,7 +484,12 @@ class _EntryEditorScreenState extends State<EntryEditorScreen> {
           ),
         ),
       if (_categoryChoices.isNotEmpty)
-        AccountPicker(label: l10n.entryCategory, accounts: _categoryChoices, value: _category, onChanged: (a) => setState(() => _category = a)),
+        CategoryPicker(
+          accounts: _categoryChoices,
+          value: _category,
+          side: kind == EntryKind.income ? AccountSide.income : AccountSide.spending,
+          onChanged: (a) => setState(() => _category = a),
+        ),
       DateField(label: l10n.entryDate, value: _date, onChanged: (d) => setState(() => _date = d)),
       if ({EntryKind.spend, EntryKind.income, EntryKind.refund}.contains(kind))
         TextField(controller: _merchant, decoration: InputDecoration(labelText: l10n.entryMerchant, border: const OutlineInputBorder())),

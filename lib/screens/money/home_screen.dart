@@ -154,10 +154,13 @@ class HomeScreen extends StatelessWidget {
         return MoneySection(title: l10n.cardComingUp, children: [
           for (final (r, date) in due)
             MoneyRow(
-              icon: Icons.event_repeat,
+              icon: r.incoming ? Icons.south_west : Icons.event_repeat,
               title: r.name,
-              subtitle: DateFormat.MMMEd(locale).format(date),
-              trailing: book.accounts[r.fromAccountId] == null ? null : minorText(r.amount, book.accounts[r.fromAccountId]!.currency!, hidden: hidden),
+              subtitle: date.isBefore(DateUtils.dateOnly(DateTime.now())) ? l10n.planOverdue(DateFormat.MMMd(locale).format(date)) : DateFormat.MMMEd(locale).format(date),
+              trailing: book.accounts[r.fromAccountId] == null
+                  ? null
+                  : '${r.incoming ? '+' : ''}${minorText(r.amount, book.accounts[r.fromAccountId]!.currency!, hidden: hidden)}',
+              trailingColor: r.incoming ? context.colors.up : null,
               onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const RecurringScreen())),
             ),
         ]);
@@ -171,11 +174,25 @@ class HomeScreen extends StatelessWidget {
             if (!a.hasBudget)
               MoneyRow(icon: Icons.donut_large, title: l10n.budgetSet, onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const BudgetScreen())))
             else
-              MoneyRow(
-                icon: Icons.donut_large,
-                title: moneyText(a.leftToSpend, ccy, hidden: hidden),
-                subtitle: l10n.moneySpentOf(moneyText(a.spent, ccy, hidden: hidden), moneyText(a.budget, ccy, hidden: hidden)),
-              ),
+              Builder(builder: (context) {
+                // Planned payments in budgeted categories still to come this
+                // month will spend from the budget too.
+                var planned = 0.0;
+                for (final (r, _) in cubit.plannedOutThisMonth()) {
+                  final from = book.accounts[r.fromAccountId];
+                  if (from == null || !s.budgets.containsKey(r.categoryId)) continue;
+                  planned += NetWorthSummary.inCurrency(r.amount, from.currency!, ccy, app.rates) ?? 0;
+                }
+                return MoneyRow(
+                  key: const ValueKey('leftToSpend'),
+                  icon: Icons.donut_large,
+                  title: moneyText(a.leftToSpend - planned, ccy, hidden: hidden),
+                  subtitle: [
+                    l10n.moneySpentOf(moneyText(a.spent, ccy, hidden: hidden), moneyText(a.budget, ccy, hidden: hidden)),
+                    if (planned > 0) l10n.plannedThisMonth(moneyText(planned, ccy, hidden: hidden)),
+                  ].join(' · '),
+                );
+              }),
           ],
         );
       case HomeCard.holdings:

@@ -144,6 +144,7 @@ class Preferences {
   static const String _hideBalancesKey = 'hideBalances';
   static const String _plainSummariesKey = 'plainSummaries';
   static const String _speechLanguageKey = 'speechLanguage';
+  static const String _plannedReminderIdsKey = 'plannedReminderIds';
   static const String _onDeviceModelKey = 'onDeviceModel';
   static const String _appLockEnabledKey = 'appLockEnabled';
   static const String _lockGraceKey = 'lockGrace';
@@ -338,6 +339,14 @@ class Preferences {
 
   Future<void> setSpeechLanguage(String languageCode) async {
     await local.setString(_speechLanguageKey, languageCode);
+  }
+
+  /// v5: the planned-payment reminders scheduled on this device, so they
+  /// can be withdrawn when the plans change.
+  List<int> get plannedReminderIds => [for (final s in local.getStringList(_plannedReminderIdsKey) ?? const <String>[]) ?int.tryParse(s)];
+
+  Future<void> setPlannedReminderIds(List<int> ids) async {
+    await local.setStringList(_plannedReminderIdsKey, [for (final id in ids) '$id']);
   }
 
   /// v4: whether the OS's on-device model may help read typed purchases

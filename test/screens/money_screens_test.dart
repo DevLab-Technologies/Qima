@@ -852,4 +852,118 @@ void main() {
     expect(find.descendant(of: sheet, matching: find.text(l10n.youOweSide)), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
+
+  group('planned payments, categories and budgets', () {
+    /// Lets file writes started by a tap finish.
+    Future<void> settle(WidgetTester tester, bool Function() done) async {
+      for (var i = 0; i < 50 && !done(); i++) {
+        await tester.pump(const Duration(milliseconds: 100));
+        await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 20)));
+      }
+      await tester.pumpAndSettle();
+    }
+
+    testWidgets('planned income: coming in, into an account, under an income category, every month for 12 payments', (tester) async {
+      await tester.runAsync(seed);
+      size(tester, const Size(390, 1400));
+      final l10n = await AppLocalizations.delegate.load(const Locale('en'));
+      await tester.pumpWidget(wrap(const RecurringEditorScreen(), const Locale('en')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(l10n.planIn));
+      await tester.pumpAndSettle();
+      expect(find.text(l10n.planPaidInto), findsOneWidget);
+      await tester.enterText(find.widgetWithText(TextField, l10n.accountNameLabel), 'Bonus');
+      await tester.enterText(find.widgetWithText(TextField, l10n.entryAmount), '6000');
+      await tester.enterText(find.byKey(const ValueKey('planTimes')), '12');
+      await tester.tap(find.text(l10n.holdingsSave));
+      await settle(tester, () => money.state.recurring.any((r) => r.name == 'Bonus'));
+      final bonus = money.state.recurring.firstWhere((r) => r.name == 'Bonus');
+      expect(bonus.incoming, isTrue);
+      expect(bonus.times, 12);
+      expect(bonus.amount, sar(6000));
+      expect(money.state.book.accounts[bonus.categoryId]!.side, AccountSide.income);
+    });
+
+    testWidgets('changing only the name of an installment keeps how many are left of how many', (tester) async {
+      await tester.runAsync(seed);
+      final plan = RecurringPayment(id: 'tabby', name: 'Tabby', amount: sar(250), fromAccountId: 'rajhi', categoryId: 'category.shopping', start: DateTime(2026, 9, 20), times: 4, paid: 2);
+      await tester.runAsync(() => money.saveRecurring(plan));
+      size(tester, const Size(390, 1400));
+      final l10n = await AppLocalizations.delegate.load(const Locale('en'));
+      await tester.pumpWidget(wrap(RecurringEditorScreen(existing: plan), const Locale('en')));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.widgetWithText(TextField, l10n.accountNameLabel), 'Tabby phone');
+      await tester.tap(find.text(l10n.holdingsSave));
+      await settle(tester, () => money.state.recurring.any((r) => r.name == 'Tabby phone'));
+      final saved = money.state.recurring.firstWhere((r) => r.id == 'tabby');
+      expect((saved.paid, saved.times, saved.next), (2, 4, DateTime(2026, 11, 20)));
+    });
+
+    testWidgets('a planned payment is recorded or skipped from its row', (tester) async {
+      await tester.runAsync(seed);
+      size(tester, const Size(390, 1400));
+      await tester.pumpWidget(wrap(const RecurringScreen(), const Locale('en')));
+      await tester.pumpAndSettle();
+      final rent = money.state.recurring.single;
+      final balance = money.state.book.balanceOf('rajhi');
+      await tester.tap(find.byKey(ValueKey('plan-${rent.id}')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('planRecord')));
+      await settle(tester, () => money.state.recurring.single.paid == rent.paid + 1);
+      expect(money.state.book.balanceOf('rajhi'), balance - sar(3500));
+      await tester.tap(find.byKey(ValueKey('plan-${rent.id}')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('planSkip')));
+      await settle(tester, () => money.state.recurring.single.paid == rent.paid + 2);
+      expect(money.state.book.balanceOf('rajhi'), balance - sar(3500), reason: 'skipping records nothing');
+    });
+
+    testWidgets('a new category is made from the Category field and picked', (tester) async {
+      await tester.runAsync(seed);
+      size(tester, const Size(390, 1400));
+      final l10n = await AppLocalizations.delegate.load(const Locale('en'));
+      await tester.pumpWidget(wrap(const EntryEditorScreen(kind: EntryKind.spend), const Locale('en')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.widgetWithText(DropdownButtonFormField<String>, l10n.entryCategory));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(l10n.categoryNew).last);
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byKey(const ValueKey('categoryName')), 'Pets');
+      await tester.tap(find.text(l10n.holdingsSave).last);
+      await settle(tester, () => money.state.categories(AccountSide.spending).any((c) => c.name == 'Pets'));
+      expect(find.text('Pets'), findsOneWidget, reason: 'the new category is the one picked');
+    });
+
+    testWidgets('Categories has a clear add row for each side', (tester) async {
+      await tester.runAsync(seed);
+      size(tester, const Size(390, 2000));
+      final l10n = await AppLocalizations.delegate.load(const Locale('en'));
+      await tester.pumpWidget(wrap(const CategoriesScreen(), const Locale('en')));
+      await tester.pumpAndSettle();
+      expect(find.text(l10n.categoryAddSpending), findsOneWidget);
+      expect(find.text(l10n.categoryAddIncome), findsOneWidget);
+    });
+
+    testWidgets('Left to spend leaves room for planned payments in budgeted categories', (tester) async {
+      await tester.runAsync(seed);
+      await tester.runAsync(() => money.setBudget('category.home', sar(4000)));
+      size(tester, const Size(390, 3000));
+      final l10n = await AppLocalizations.delegate.load(const Locale('en'));
+      await tester.pumpWidget(wrap(const HomeScreen(), const Locale('en')));
+      await tester.pump(const Duration(milliseconds: 600));
+      final row = find.byKey(const ValueKey('leftToSpend'));
+      expect(find.descendant(of: row, matching: find.textContaining(l10n.plannedThisMonth('').trim())), findsOneWidget);
+    });
+
+    testWidgets('Budget and Planned payments are on Money even before they are turned on', (tester) async {
+      await tester.runAsync(seed);
+      await tester.runAsync(() => money.setFeatures({}));
+      size(tester, const Size(390, 3000));
+      final l10n = await AppLocalizations.delegate.load(const Locale('en'));
+      await tester.pumpWidget(wrap(const MoneyScreen(), const Locale('en')));
+      await tester.pump(const Duration(milliseconds: 600));
+      expect(find.text(l10n.featBudget), findsWidgets);
+      expect(find.text(l10n.featRecurring), findsWidgets);
+    });
+  });
 }

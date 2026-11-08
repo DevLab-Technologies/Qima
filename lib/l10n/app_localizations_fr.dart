@@ -1569,28 +1569,28 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get helpRecurringSummary =>
-      'Loyer, factures et abonnements, affichés dans À venir avant l’échéance.';
+      'Loyer, factures, échéances et revenus, affichés dans À venir avant leur date.';
 
   @override
   String get helpRecurringStep1Title => 'En ajouter un';
 
   @override
   String get helpRecurringStep1Body =>
-      'Donnez-lui un nom, un montant, le compte qui le paie et son jour du mois.';
+      'Donnez-lui un nom, un montant, le compte et sa date : une fois, ou chaque semaine, mois, trimestre ou année. Un paiement en plusieurs fois peut s’arrêter après un nombre d’échéances.';
 
   @override
   String get helpRecurringStep2Title => 'À venir';
 
   @override
   String get helpRecurringStep2Body =>
-      'L’accueil liste les prochains à payer, pour éviter les surprises.';
+      'L’accueil liste les prochains, entrées et sorties, et un rappel peut arriver la veille.';
 
   @override
   String get helpRecurringStep3Title => 'Modifier ou retirer';
 
   @override
   String get helpRecurringStep3Body =>
-      'Touchez-en un pour le modifier ou le retirer.';
+      'Touchez-en un pour l’enregistrer, le passer, le modifier ou le retirer.';
 
   @override
   String get helpPeopleSummary =>
@@ -3659,7 +3659,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get featBudget => 'Budget';
 
   @override
-  String get featRecurring => 'Paiements récurrents';
+  String get featRecurring => 'Paiements prévus';
 
   @override
   String get featPeople => 'Prêts entre proches';
@@ -3677,7 +3677,8 @@ class AppLocalizationsFr extends AppLocalizations {
   String get featBudgetDetail => 'Un montant mensuel par catégorie et le reste';
 
   @override
-  String get featRecurringDetail => 'Factures et abonnements avant l’échéance';
+  String get featRecurringDetail =>
+      'Factures, échéances et revenus avant leur date';
 
   @override
   String get featPeopleDetail => 'Qui vous doit et à qui vous devez';
@@ -4304,17 +4305,17 @@ class AppLocalizationsFr extends AppLocalizations {
   String get budgetTotal => 'Budget du mois';
 
   @override
-  String get recurringAdd => 'Ajouter un paiement récurrent';
+  String get recurringAdd => 'Ajouter un paiement prévu';
 
   @override
   String get recurringDay => 'Jour du mois';
 
   @override
-  String get recurringEmptyTitle => 'Aucun paiement récurrent';
+  String get recurringEmptyTitle => 'Aucun paiement prévu';
 
   @override
   String get recurringEmptyMessage =>
-      'Ajoutez loyer, factures et abonnements pour les voir dans À venir avant l’échéance.';
+      'Ajoutez loyer, factures, échéances ou salaire pour les voir dans À venir avant leur date.';
 
   @override
   String recurringNext(String date) {
@@ -4917,4 +4918,91 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get netLabel => 'Net';
+
+  @override
+  String get planOut => 'Sortie';
+
+  @override
+  String get planIn => 'Entrée';
+
+  @override
+  String get planRepeat => 'Répétition';
+
+  @override
+  String get planRepeatOnce => 'Une fois';
+
+  @override
+  String get planRepeatWeekly => 'Chaque semaine';
+
+  @override
+  String get planRepeatMonthly => 'Chaque mois';
+
+  @override
+  String get planRepeatQuarterly => 'Tous les 3 mois';
+
+  @override
+  String get planRepeatYearly => 'Chaque année';
+
+  @override
+  String get planDate => 'Échéance';
+
+  @override
+  String get planTimes => 'Nombre d’échéances';
+
+  @override
+  String get planTimesHelp =>
+      'Laissez vide pour sans fin, ou 4 pour un paiement en 4 fois.';
+
+  @override
+  String get planPaidInto => 'Versé sur';
+
+  @override
+  String get planRemind => 'Me le rappeler la veille';
+
+  @override
+  String planLeft(int left, int total) {
+    return '$left sur $total restantes';
+  }
+
+  @override
+  String get planFinished => 'Terminé';
+
+  @override
+  String planOverdue(String date) {
+    return 'En retard depuis le $date';
+  }
+
+  @override
+  String get planRecord => 'Enregistrer';
+
+  @override
+  String get planSkip => 'Passer celui-ci';
+
+  @override
+  String planDueTomorrow(String name) {
+    return '$name est à payer demain';
+  }
+
+  @override
+  String planExpectedTomorrow(String name) {
+    return '$name est attendu demain';
+  }
+
+  @override
+  String get planReminderBody =>
+      'Ouvrez Qima pour l’enregistrer le moment venu.';
+
+  @override
+  String plannedThisMonth(String amount) {
+    return '$amount encore prévus ce mois-ci';
+  }
+
+  @override
+  String get categoryNew => 'Nouvelle catégorie…';
+
+  @override
+  String get categoryNewTitle => 'Nouvelle catégorie';
+
+  @override
+  String get planEdit => 'Modifier';
 }

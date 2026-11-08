@@ -2771,7 +2771,7 @@ abstract class AppLocalizations {
   /// No description provided for @helpRecurringSummary.
   ///
   /// In en, this message translates to:
-  /// **'Rent, bills and subscriptions, shown in Coming up before they’re due.'**
+  /// **'Rent, bills, installments and income, shown in Coming up before they’re due.'**
   String get helpRecurringSummary;
 
   /// No description provided for @helpRecurringStep1Title.
@@ -2783,7 +2783,7 @@ abstract class AppLocalizations {
   /// No description provided for @helpRecurringStep1Body.
   ///
   /// In en, this message translates to:
-  /// **'Give it a name, an amount, the account it’s paid from and its day of the month.'**
+  /// **'Give it a name, an amount, the account and when it’s due: once, or every week, month, 3 months or year. An installment plan can end after a number of payments.'**
   String get helpRecurringStep1Body;
 
   /// No description provided for @helpRecurringStep2Title.
@@ -2795,7 +2795,7 @@ abstract class AppLocalizations {
   /// No description provided for @helpRecurringStep2Body.
   ///
   /// In en, this message translates to:
-  /// **'Home lists the next ones due, so nothing takes you by surprise.'**
+  /// **'Home lists the next ones due, money in and out, and a reminder can come the day before.'**
   String get helpRecurringStep2Body;
 
   /// No description provided for @helpRecurringStep3Title.
@@ -2807,7 +2807,7 @@ abstract class AppLocalizations {
   /// No description provided for @helpRecurringStep3Body.
   ///
   /// In en, this message translates to:
-  /// **'Tap one to change it or remove it.'**
+  /// **'Tap one to record it, skip it, change it or remove it.'**
   String get helpRecurringStep3Body;
 
   /// No description provided for @helpPeopleSummary.
@@ -6302,7 +6302,7 @@ abstract class AppLocalizations {
   /// No description provided for @featRecurring.
   ///
   /// In en, this message translates to:
-  /// **'Recurring payments'**
+  /// **'Planned payments'**
   String get featRecurring;
 
   /// No description provided for @featPeople.
@@ -6338,7 +6338,7 @@ abstract class AppLocalizations {
   /// No description provided for @featRecurringDetail.
   ///
   /// In en, this message translates to:
-  /// **'Bills and subscriptions, shown before they are due'**
+  /// **'Bills, installments and income, shown before they are due'**
   String get featRecurringDetail;
 
   /// No description provided for @featPeopleDetail.
@@ -7406,7 +7406,7 @@ abstract class AppLocalizations {
   /// No description provided for @recurringAdd.
   ///
   /// In en, this message translates to:
-  /// **'Add a recurring payment'**
+  /// **'Add a planned payment'**
   String get recurringAdd;
 
   /// No description provided for @recurringDay.
@@ -7418,13 +7418,13 @@ abstract class AppLocalizations {
   /// No description provided for @recurringEmptyTitle.
   ///
   /// In en, this message translates to:
-  /// **'No recurring payments'**
+  /// **'No planned payments'**
   String get recurringEmptyTitle;
 
   /// No description provided for @recurringEmptyMessage.
   ///
   /// In en, this message translates to:
-  /// **'Add rent, bills and subscriptions to see them in Coming up before they\'re due.'**
+  /// **'Add rent, bills, installments or your salary to see them in Coming up before they\'re due.'**
   String get recurringEmptyMessage;
 
   /// No description provided for @recurringNext.
@@ -8302,6 +8302,156 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Net'**
   String get netLabel;
+
+  /// No description provided for @planOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Going out'**
+  String get planOut;
+
+  /// No description provided for @planIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Coming in'**
+  String get planIn;
+
+  /// No description provided for @planRepeat.
+  ///
+  /// In en, this message translates to:
+  /// **'Repeats'**
+  String get planRepeat;
+
+  /// No description provided for @planRepeatOnce.
+  ///
+  /// In en, this message translates to:
+  /// **'Once'**
+  String get planRepeatOnce;
+
+  /// No description provided for @planRepeatWeekly.
+  ///
+  /// In en, this message translates to:
+  /// **'Every week'**
+  String get planRepeatWeekly;
+
+  /// No description provided for @planRepeatMonthly.
+  ///
+  /// In en, this message translates to:
+  /// **'Every month'**
+  String get planRepeatMonthly;
+
+  /// No description provided for @planRepeatQuarterly.
+  ///
+  /// In en, this message translates to:
+  /// **'Every 3 months'**
+  String get planRepeatQuarterly;
+
+  /// No description provided for @planRepeatYearly.
+  ///
+  /// In en, this message translates to:
+  /// **'Every year'**
+  String get planRepeatYearly;
+
+  /// No description provided for @planDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Due on'**
+  String get planDate;
+
+  /// No description provided for @planTimes.
+  ///
+  /// In en, this message translates to:
+  /// **'Number of payments'**
+  String get planTimes;
+
+  /// No description provided for @planTimesHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave empty for no end, or 4 for an installment plan in 4 parts.'**
+  String get planTimesHelp;
+
+  /// No description provided for @planPaidInto.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid into'**
+  String get planPaidInto;
+
+  /// No description provided for @planRemind.
+  ///
+  /// In en, this message translates to:
+  /// **'Remind me the day before'**
+  String get planRemind;
+
+  /// No description provided for @planLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'{left} of {total} left'**
+  String planLeft(int left, int total);
+
+  /// No description provided for @planFinished.
+  ///
+  /// In en, this message translates to:
+  /// **'Finished'**
+  String get planFinished;
+
+  /// No description provided for @planOverdue.
+  ///
+  /// In en, this message translates to:
+  /// **'Overdue since {date}'**
+  String planOverdue(String date);
+
+  /// No description provided for @planRecord.
+  ///
+  /// In en, this message translates to:
+  /// **'Record'**
+  String get planRecord;
+
+  /// No description provided for @planSkip.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip this one'**
+  String get planSkip;
+
+  /// No description provided for @planDueTomorrow.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} is due tomorrow'**
+  String planDueTomorrow(String name);
+
+  /// No description provided for @planExpectedTomorrow.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} is expected tomorrow'**
+  String planExpectedTomorrow(String name);
+
+  /// No description provided for @planReminderBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Qima to record it when it happens.'**
+  String get planReminderBody;
+
+  /// No description provided for @plannedThisMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} still planned this month'**
+  String plannedThisMonth(String amount);
+
+  /// No description provided for @categoryNew.
+  ///
+  /// In en, this message translates to:
+  /// **'New category…'**
+  String get categoryNew;
+
+  /// No description provided for @categoryNewTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'New category'**
+  String get categoryNewTitle;
+
+  /// No description provided for @planEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Change it'**
+  String get planEdit;
 }
 
 class _AppLocalizationsDelegate

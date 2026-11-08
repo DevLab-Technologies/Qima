@@ -1556,27 +1556,28 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get helpRecurringSummary =>
-      'الإيجار والفواتير والاشتراكات، تظهر في «قادم» قبل موعدها.';
+      'الإيجار والفواتير والأقساط والدخل، تظهر في «قادم» قبل موعدها.';
 
   @override
   String get helpRecurringStep1Title => 'أضف واحدًا';
 
   @override
   String get helpRecurringStep1Body =>
-      'أعطه اسمًا ومبلغًا والحساب الذي يُدفع منه ويومه في الشهر.';
+      'أعطها اسمًا ومبلغًا والحساب وموعدها: مرة واحدة، أو كل أسبوع أو شهر أو ٣ أشهر أو سنة. يمكن أن تنتهي خطة الأقساط بعد عدد من الدفعات.';
 
   @override
   String get helpRecurringStep2Title => 'قادم';
 
   @override
   String get helpRecurringStep2Body =>
-      'تعرض الرئيسية المستحق قريبًا، فلا يفاجئك شيء.';
+      'تعرض الرئيسية المستحق قريبًا، الداخل والخارج، ويمكن أن يصلك تذكير قبلها بيوم.';
 
   @override
   String get helpRecurringStep3Title => 'عدّل أو احذف';
 
   @override
-  String get helpRecurringStep3Body => 'اضغط على أحدها لتعديله أو حذفه.';
+  String get helpRecurringStep3Body =>
+      'اضغط على إحداها لتسجيلها أو تخطيها أو تعديلها أو حذفها.';
 
   @override
   String get helpPeopleSummary => 'من يدين لك، ولمن تدين، والسداد.';
@@ -3317,7 +3318,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get dictationStart => 'قل عملية الشراء';
 
   @override
-  String get dictationLanguage => 'اللغة اللي هتتكلم بيها';
+  String get dictationLanguage => 'اللغة التي تتحدث بها';
 
   @override
   String get dictationStop => 'إيقاف الاستماع';
@@ -3644,7 +3645,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get featBudget => 'الميزانية الشهرية';
 
   @override
-  String get featRecurring => 'المدفوعات المتكررة';
+  String get featRecurring => 'المدفوعات المخطط لها';
 
   @override
   String get featPeople => 'السلف والديون';
@@ -3662,7 +3663,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get featBudgetDetail => 'مبلغ شهري لكل فئة وما تبقى منه';
 
   @override
-  String get featRecurringDetail => 'الفواتير والاشتراكات قبل موعدها';
+  String get featRecurringDetail => 'الفواتير والأقساط والدخل قبل موعدها';
 
   @override
   String get featPeopleDetail => 'من لك عنده مال ومن لك عليه';
@@ -4285,17 +4286,17 @@ class AppLocalizationsAr extends AppLocalizations {
   String get budgetTotal => 'ميزانية هذا الشهر';
 
   @override
-  String get recurringAdd => 'إضافة دفعة متكررة';
+  String get recurringAdd => 'إضافة دفعة مخطط لها';
 
   @override
   String get recurringDay => 'يوم الشهر';
 
   @override
-  String get recurringEmptyTitle => 'لا مدفوعات متكررة';
+  String get recurringEmptyTitle => 'لا مدفوعات مخطط لها';
 
   @override
   String get recurringEmptyMessage =>
-      'أضف الإيجار والفواتير والاشتراكات لتراها في «قادم» قبل موعدها.';
+      'أضف الإيجار والفواتير والأقساط أو راتبك لتراها في «قادم» قبل موعدها.';
 
   @override
   String recurringNext(String date) {
@@ -4399,10 +4400,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get addSheetTransactionSubtitle => 'مال صُرف أو دخل أو حُوّل';
 
   @override
-  String get entryVoiceTitle => 'قولها بدل ما تكتب';
+  String get entryVoiceTitle => 'قلها بدلًا من الكتابة';
 
   @override
-  String get entryVoiceListening => 'بسمعك… دوس عشان توقف';
+  String get entryVoiceListening => 'أستمع… اضغط للإيقاف';
 
   @override
   String get entryVoiceHint => 'قل ما حدث، مثل «دفعت 45 في بنده بالفيزا أمس»';
@@ -4903,4 +4904,90 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get netLabel => 'الصافي';
+
+  @override
+  String get planOut => 'خارج';
+
+  @override
+  String get planIn => 'داخل';
+
+  @override
+  String get planRepeat => 'التكرار';
+
+  @override
+  String get planRepeatOnce => 'مرة واحدة';
+
+  @override
+  String get planRepeatWeekly => 'كل أسبوع';
+
+  @override
+  String get planRepeatMonthly => 'كل شهر';
+
+  @override
+  String get planRepeatQuarterly => 'كل ٣ أشهر';
+
+  @override
+  String get planRepeatYearly => 'كل سنة';
+
+  @override
+  String get planDate => 'موعدها';
+
+  @override
+  String get planTimes => 'عدد الدفعات';
+
+  @override
+  String get planTimesHelp =>
+      'اتركه فارغًا لدفعات بلا نهاية، أو ٤ لقسط على ٤ دفعات.';
+
+  @override
+  String get planPaidInto => 'يُدفع إلى';
+
+  @override
+  String get planRemind => 'ذكّرني قبلها بيوم';
+
+  @override
+  String planLeft(int left, int total) {
+    return 'بقي $left من $total';
+  }
+
+  @override
+  String get planFinished => 'انتهت';
+
+  @override
+  String planOverdue(String date) {
+    return 'متأخرة منذ $date';
+  }
+
+  @override
+  String get planRecord => 'تسجيل';
+
+  @override
+  String get planSkip => 'تخطي هذه';
+
+  @override
+  String planDueTomorrow(String name) {
+    return 'موعد $name غدًا';
+  }
+
+  @override
+  String planExpectedTomorrow(String name) {
+    return 'يُتوقع $name غدًا';
+  }
+
+  @override
+  String get planReminderBody => 'افتح قيمة لتسجيلها عند حدوثها.';
+
+  @override
+  String plannedThisMonth(String amount) {
+    return '$amount مخطط لها بقية هذا الشهر';
+  }
+
+  @override
+  String get categoryNew => 'فئة جديدة…';
+
+  @override
+  String get categoryNewTitle => 'فئة جديدة';
+
+  @override
+  String get planEdit => 'تعديلها';
 }

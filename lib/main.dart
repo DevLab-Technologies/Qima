@@ -21,6 +21,8 @@ import 'services/import/import_inbox.dart';
 import 'services/import/statement_files.dart';
 import 'services/backup/backup_reminder_notifier.dart';
 import 'services/notification_service.dart';
+import 'services/planned_reminders.dart';
+import 'screens/money/more_money_screens.dart';
 import 'services/preferences.dart';
 import 'services/zakat_reminder_notifier.dart';
 import 'theme/app_theme.dart';
@@ -142,6 +144,10 @@ class _QimaAppState extends State<QimaApp> {
         navigator.push(MaterialPageRoute(builder: (_) => const BackupScreen()));
         return;
       }
+      if (payload == plannedReminderPayload) {
+        navigator.push(MaterialPageRoute(builder: (_) => const RecurringScreen()));
+        return;
+      }
       if (payload == zakatReminderNotificationPayload) {
         navigator.push(MaterialPageRoute(builder: (_) => const ZakatScreen()));
         return;
@@ -200,7 +206,17 @@ class _QimaAppState extends State<QimaApp> {
               // ScaffoldMessenger/Navigator that `MaterialApp` itself
               // supplies around `builder`'s output, so in-app snackbars
               // triggered right after unlocking still surface normally.
-              return LockGate(child: content);
+              // Planned payment reminders follow the plans, in the language
+              // the app shows.
+              return BlocListener<MoneyCubit, MoneyState>(
+                listenWhen: (previous, current) => previous.recurring != current.recurring,
+                listener: (context, money) {
+                  final l10n = AppLocalizations.of(context);
+                  if (l10n == null || !_cubit.state.initialized) return;
+                  unawaited(PlannedReminders(notifications: _cubit.notificationService, preferences: _cubit.preferences).sync(money.recurring, l10n));
+                },
+                child: LockGate(child: content),
+              );
             },
             home: const _AppHome(),
           );

@@ -187,8 +187,20 @@ class MoneySettings extends Equatable implements Syncable {
   List<Object?> get props => [features, homeOrder, hiddenCards, budgets, budgetCurrency, seenWhatsNew, valueReviewMonths, importedHashes, categoryRules];
 }
 
-/// A payment that comes back every month, shown in Coming up until it is
-/// recorded for that month.
+/// How often a planned payment comes back.
+enum PlanRepeat {
+  once,
+  weekly,
+  monthly,
+  quarterly,
+  yearly;
+
+  static PlanRepeat fromName(String? name) => PlanRepeat.values.firstWhere((r) => r.name == name, orElse: () => PlanRepeat.monthly);
+}
+
+/// A planned payment: money going out (rent, a bill, an installment) or
+/// coming in (salary), once or on a repeat, shown in Coming up until it is
+/// recorded. Nothing is posted until the person marks it paid.
 class RecurringPayment extends Equatable implements Syncable {
   @override
   final String id;
@@ -196,42 +208,120 @@ class RecurringPayment extends Equatable implements Syncable {
 
   /// Minor units of [fromAccountId]'s currency.
   final int amount;
+
+  /// The account it is paid from, or paid into when [incoming].
   final String fromAccountId;
+
+  /// A spending category, or an income one when [incoming].
   final String categoryId;
 
-  /// Day of the month it is due, 1 to 28 (later days fall on the 28th so
-  /// every month has one).
-  final int dayOfMonth;
+  final PlanRepeat repeat;
 
-  /// The last month (first day) it was recorded for.
-  final DateTime? lastPaid;
+  /// The first due date; every later one is counted from it, so a monthly
+  /// payment on the 31st falls on the last day of shorter months and comes
+  /// back to the 31st.
+  final DateTime start;
 
-  const RecurringPayment({
+  /// How many payments in all ("4" for an installment plan); null for no
+  /// end. A one-off is always 1.
+  final int? times;
+
+  /// How many have been recorded or skipped.
+  final int paid;
+
+  /// Money coming in rather than going out.
+  final bool incoming;
+
+  /// Whether to post a reminder the day before it is due.
+  final bool remind;
+
+  RecurringPayment({
     required this.id,
     required this.name,
     required this.amount,
     required this.fromAccountId,
     required this.categoryId,
-    required this.dayOfMonth,
-    this.lastPaid,
-  });
+    this.repeat = PlanRepeat.monthly,
+    DateTime? start,
+    int? times,
+    int? paid,
+    this.incoming = false,
+    this.remind = true,
+    // The first version's fields: a day of the month and the last month
+    // paid, read into [start] and [paid].
+    int? dayOfMonth,
+    DateTime? lastPaid,
+  })  : start = start ?? _legacyStart(dayOfMonth ?? 1, lastPaid),
+        times = repeat == PlanRepeat.once ? 1 : times,
+        paid = paid ?? (start == null && lastPaid != null ? 1 : 0);
 
-  /// The next due date on or after the month after [lastPaid], or this
-  /// month's when it was never paid.
-  DateTime nextDue(DateTime today) {
-    final base = lastPaid == null ? DateTime(today.year, today.month) : DateTime(lastPaid!.year, lastPaid!.month + 1);
-    return DateTime(base.year, base.month, dayOfMonth.clamp(1, 28));
+  static DateTime _legacyStart(int day, DateTime? lastPaid) {
+    final month = lastPaid ?? DateTime.now();
+    return DateTime(month.year, month.month, _clampDay(month.year, month.month, day));
   }
 
-  RecurringPayment copyWith({String? name, int? amount, String? fromAccountId, String? categoryId, int? dayOfMonth, DateTime? lastPaid}) =>
+  static int _clampDay(int year, int month, int day) => day.clamp(1, DateTime(year, month + 1, 0).day);
+
+  /// The day of the month it falls on (for monthly and longer repeats).
+  int get dayOfMonth => start.day;
+
+  /// The [k]th due date, from 0.
+  DateTime dueAt(int k) {
+    final months = switch (repeat) {
+      PlanRepeat.monthly => 1,
+      PlanRepeat.quarterly => 3,
+      PlanRepeat.yearly => 12,
+      _ => 0,
+    };
+    if (repeat == PlanRepeat.weekly) return DateTime(start.year, start.month, start.day + 7 * k);
+    if (months == 0) return start;
+    final y = start.year, m = start.month + months * k;
+    return DateTime(y, m, _clampDay(DateTime(y, m).year, DateTime(y, m).month, start.day));
+  }
+
+  /// Every payment has been recorded or skipped.
+  bool get finished => times != null && paid >= times!;
+
+  /// The next one still to record (possibly overdue); null when [finished].
+  DateTime? get next => finished ? null : dueAt(paid);
+
+  /// [next], for callers that only handle open plans. [today] is unused and
+  /// kept for the first version's callers.
+  DateTime nextDue([DateTime? today]) => dueAt(paid);
+
+  /// The open due dates up to and including [until], from the next one.
+  List<DateTime> dueThrough(DateTime until) => [
+        for (var k = paid; (times == null || k < times!) && !dueAt(k).isAfter(until); k++) dueAt(k),
+      ];
+
+  /// Payments left after this one is recorded, for "2 of 4 left".
+  int? get left => times == null ? null : times! - paid;
+
+  RecurringPayment copyWith({
+    String? name,
+    int? amount,
+    String? fromAccountId,
+    String? categoryId,
+    PlanRepeat? repeat,
+    DateTime? start,
+    int? times,
+    bool clearTimes = false,
+    int? paid,
+    bool? incoming,
+    bool? remind,
+  }) =>
       RecurringPayment(
         id: id,
         name: name ?? this.name,
         amount: amount ?? this.amount,
         fromAccountId: fromAccountId ?? this.fromAccountId,
         categoryId: categoryId ?? this.categoryId,
-        dayOfMonth: dayOfMonth ?? this.dayOfMonth,
-        lastPaid: lastPaid ?? this.lastPaid,
+        repeat: repeat ?? this.repeat,
+        start: start ?? this.start,
+        times: clearTimes ? null : (times ?? this.times),
+        paid: paid ?? this.paid,
+        incoming: incoming ?? this.incoming,
+        remind: remind ?? this.remind,
       );
 
   @override
@@ -241,8 +331,12 @@ class RecurringPayment extends Equatable implements Syncable {
         'amount': amount,
         'from': fromAccountId,
         'category': categoryId,
-        'day': dayOfMonth,
-        if (lastPaid != null) 'lastPaid': dayToJson(lastPaid!),
+        'repeat': repeat.name,
+        'start': dayToJson(start),
+        if (times != null) 'times': times,
+        'paid': paid,
+        if (incoming) 'incoming': true,
+        if (!remind) 'remind': false,
       };
 
   factory RecurringPayment.fromJson(Map<String, dynamic> json) => RecurringPayment(
@@ -251,10 +345,16 @@ class RecurringPayment extends Equatable implements Syncable {
         amount: json['amount'] as int,
         fromAccountId: json['from'] as String,
         categoryId: json['category'] as String,
-        dayOfMonth: json['day'] as int,
+        repeat: PlanRepeat.fromName(json['repeat'] as String?),
+        start: json['start'] == null ? null : dayFromJson(json['start'] as String),
+        times: json['times'] as int?,
+        paid: json['paid'] as int?,
+        incoming: json['incoming'] as bool? ?? false,
+        remind: json['remind'] as bool? ?? true,
+        dayOfMonth: json['day'] as int?,
         lastPaid: json['lastPaid'] == null ? null : dayFromJson(json['lastPaid'] as String),
       );
 
   @override
-  List<Object?> get props => [id, name, amount, fromAccountId, categoryId, dayOfMonth, lastPaid];
+  List<Object?> get props => [id, name, amount, fromAccountId, categoryId, repeat, start, times, paid, incoming, remind];
 }

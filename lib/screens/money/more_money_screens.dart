@@ -86,6 +86,17 @@ class BudgetScreen extends StatelessWidget {
 }
 
 /// Recurring payments: what comes back every month, and when.
+/// How often a plan repeats, in words.
+String planRepeatLabel(AppLocalizations l10n, PlanRepeat r) => switch (r) {
+      PlanRepeat.once => l10n.planRepeatOnce,
+      PlanRepeat.weekly => l10n.planRepeatWeekly,
+      PlanRepeat.monthly => l10n.planRepeatMonthly,
+      PlanRepeat.quarterly => l10n.planRepeatQuarterly,
+      PlanRepeat.yearly => l10n.planRepeatYearly,
+    };
+
+/// Planned payments: money going out and coming in, once or on a repeat.
+/// Tapping one records it, skips it, or opens it to change.
 class RecurringScreen extends StatelessWidget {
   const RecurringScreen({super.key});
 
@@ -93,11 +104,35 @@ class RecurringScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final hidden = context.select<AppCubit, bool>((c) => c.state.hideBalances);
-    final money = context.read<MoneyCubit>();
     final state = context.watch<MoneyCubit>().state;
     final locale = Localizations.localeOf(context).toLanguageTag();
-    final now = DateTime.now();
-    final list = [...state.recurring]..sort((a, b) => a.nextDue(now).compareTo(b.nextDue(now)));
+    final today = DateUtils.dateOnly(DateTime.now());
+    final open = [for (final r in state.recurring) if (!r.finished) r]..sort((a, b) => a.next!.compareTo(b.next!));
+    final done = [for (final r in state.recurring) if (r.finished) r]..sort((a, b) => a.name.compareTo(b.name));
+
+    MoneyRow row(RecurringPayment r) {
+      final account = state.book.accounts[r.fromAccountId];
+      final next = r.next;
+      final when = next == null
+          ? l10n.planFinished
+          : next.isBefore(today)
+              ? l10n.planOverdue(DateFormat.MMMd(locale).format(next))
+              : l10n.recurringNext(DateFormat.MMMEd(locale).format(next));
+      return MoneyRow(
+        key: ValueKey('plan-${r.id}'),
+        icon: MoneyIcons.category(r.categoryId),
+        title: r.name,
+        subtitle: [
+          when,
+          planRepeatLabel(l10n, r.repeat),
+          if (r.times != null && r.repeat != PlanRepeat.once && !r.finished) l10n.planLeft(r.left!, r.times!),
+        ].join(' · '),
+        trailing: account == null ? '' : '${r.incoming ? '+' : ''}${minorText(r.amount, account.currency!, hidden: hidden)}',
+        trailingColor: r.incoming ? context.colors.up : null,
+        onTap: () => r.finished ? RecurringEditorScreen.open(context, existing: r) : _actions(context, r),
+      );
+    }
+
     return ScreenBackground(
       child: Scaffold(
         backgroundColor: Colors.transparent,
@@ -108,34 +143,49 @@ class RecurringScreen extends StatelessWidget {
         ),
         body: ListView(
           padding: const EdgeInsets.all(DS.spaceMD),
-          children: list.isEmpty
+          children: state.recurring.isEmpty
               ? [MoneyEmpty(icon: Icons.event_repeat, title: l10n.recurringEmptyTitle, message: l10n.recurringEmptyMessage, action: l10n.recurringAdd, onAction: () => RecurringEditorScreen.open(context))]
               : [
-                  MoneySection(children: [
-                    for (final r in list)
-                      Builder(builder: (context) {
-                        final from = state.book.accounts[r.fromAccountId];
-                        return MoneyRow(
-                          icon: MoneyIcons.category(r.categoryId),
-                          title: r.name,
-                          subtitle: l10n.recurringNext(DateFormat.MMMd(locale).format(r.nextDue(now))),
-                          trailing: from == null ? '' : minorText(r.amount, from.currency!, hidden: hidden),
-                          onTap: () => RecurringEditorScreen.open(context, existing: r),
-                        );
-                      }),
-                  ]),
-                  for (final (r, due) in money.comingUp())
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: DS.spaceSM),
-                      child: FilledButton.tonal(
-                        onPressed: () => money.payRecurring(r),
-                        child: Text(l10n.recurringRecord(r.name, DateFormat.MMMd(locale).format(due))),
-                      ),
-                    ),
+                  if (open.isNotEmpty) MoneySection(title: l10n.cardComingUp, children: [for (final r in open) row(r)]),
+                  if (done.isNotEmpty) MoneySection(title: l10n.planFinished, children: [for (final r in done) row(r)]),
+                  MoneySection(children: [MoneyRow(icon: Icons.add, title: l10n.recurringAdd, onTap: () => RecurringEditorScreen.open(context))]),
                 ],
         ),
       ),
     );
+  }
+
+  /// Record, skip, or change one plan.
+  static Future<void> _actions(BuildContext context, RecurringPayment r) async {
+    final l10n = AppLocalizations.of(context)!;
+    final money = context.read<MoneyCubit>();
+    final locale = Localizations.localeOf(context).toLanguageTag();
+    final next = r.next!;
+    final choice = await showModalBottomSheet<String>(
+      context: context,
+      showDragHandle: true,
+      builder: (sheet) => SafeArea(
+        child: Column(mainAxisSize: MainAxisSize.min, children: [
+          ListTile(
+            key: const ValueKey('planRecord'),
+            leading: const Icon(Icons.check_circle_outline),
+            title: Text(l10n.recurringRecord(r.name, DateFormat.MMMd(locale).format(next))),
+            onTap: () => Navigator.of(sheet).pop('record'),
+          ),
+          ListTile(key: const ValueKey('planSkip'), leading: const Icon(Icons.skip_next_outlined), title: Text(l10n.planSkip), onTap: () => Navigator.of(sheet).pop('skip')),
+          ListTile(leading: const Icon(Icons.edit_outlined), title: Text(l10n.planEdit), onTap: () => Navigator.of(sheet).pop('edit')),
+        ]),
+      ),
+    );
+    if (!context.mounted) return;
+    switch (choice) {
+      case 'record':
+        await money.payRecurring(r);
+      case 'skip':
+        await money.skipRecurring(r);
+      case 'edit':
+        await RecurringEditorScreen.open(context, existing: r);
+    }
   }
 }
 
@@ -154,9 +204,13 @@ class RecurringEditorScreen extends StatefulWidget {
 class _RecurringEditorScreenState extends State<RecurringEditorScreen> {
   final _name = TextEditingController();
   final _amount = TextEditingController();
-  BookAccount? _from;
+  final _times = TextEditingController();
+  BookAccount? _account;
   BookAccount? _category;
-  int _day = 1;
+  bool _incoming = false;
+  PlanRepeat _repeat = PlanRepeat.monthly;
+  late DateTime _date;
+  bool _remind = true;
   String? _error;
 
   @override
@@ -164,43 +218,66 @@ class _RecurringEditorScreenState extends State<RecurringEditorScreen> {
     super.initState();
     final s = context.read<MoneyCubit>().state;
     final r = widget.existing;
-    _from = r == null ? _accounts(s).firstOrNull : s.book.accounts[r.fromAccountId];
-    _category = r == null ? s.categories(AccountSide.spending).firstOrNull : s.book.accounts[r.categoryId];
+    _account = r == null ? _accounts(s).firstOrNull : s.book.accounts[r.fromAccountId];
     if (r != null) {
+      _incoming = r.incoming;
+      _repeat = r.repeat;
+      _remind = r.remind;
       _name.text = r.name;
-      _day = r.dayOfMonth;
-      if (_from != null) _amount.text = minorFieldText(r.amount, _from!.currency!);
+      // The date shown is the next one due; changing it moves the plan.
+      _date = r.next ?? r.dueAt(r.paid - 1);
+      if (r.left != null && r.repeat != PlanRepeat.once) _times.text = '${r.finished ? r.times : r.left}';
+      if (_account != null) _amount.text = minorFieldText(r.amount, _account!.currency!);
+      _category = s.book.accounts[r.categoryId];
     } else {
-      _day = DateTime.now().day.clamp(1, 28);
+      final now = DateTime.now();
+      _date = DateTime(now.year, now.month, now.day);
+      _category = s.categories(AccountSide.spending).firstOrNull;
     }
   }
 
   static List<BookAccount> _accounts(MoneyState s) => [...s.ofType(AccountType.debit), ...s.ofType(AccountType.credit), ...s.ofType(AccountType.cash)];
 
+  List<BookAccount> _categories(MoneyState s) => s.categories(_incoming ? AccountSide.income : AccountSide.spending);
+
   @override
   void dispose() {
     _name.dispose();
     _amount.dispose();
+    _times.dispose();
     super.dispose();
   }
 
   Future<void> _save() async {
     final l10n = AppLocalizations.of(context)!;
     final money = context.read<MoneyCubit>();
+    final app = context.read<AppCubit>();
     if (_name.text.trim().isEmpty) return setState(() => _error = l10n.accountErrorName);
-    if (_from == null || _category == null) return setState(() => _error = l10n.entryErrorAccount);
-    final amount = parseMinor(_amount.text, _from!.currency!);
+    if (_account == null || _category == null) return setState(() => _error = l10n.entryErrorAccount);
+    final amount = parseMinor(_amount.text, _account!.currency!);
     if (amount == null || amount <= 0) return setState(() => _error = l10n.entryErrorAmount);
+    final times = _repeat == PlanRepeat.once || _times.text.trim().isEmpty ? null : int.tryParse(_times.text.trim());
+    if (times != null && times < 1) return setState(() => _error = l10n.entryErrorAmount);
     final r = widget.existing;
-    await money.saveRecurring(RecurringPayment(
+    // Same date, repeat and count: the plan keeps its history ("2 of 4
+    // left"). Otherwise it is counted again from the date shown, with the
+    // count as what's left.
+    final same = r != null && !r.finished && r.next == _date && r.repeat == _repeat && times == (r.repeat == PlanRepeat.once ? null : r.left);
+    final plan = RecurringPayment(
       id: r?.id ?? money.newId(),
       name: _name.text.trim(),
       amount: amount,
-      fromAccountId: _from!.id,
+      fromAccountId: _account!.id,
       categoryId: _category!.id,
-      dayOfMonth: _day,
-      lastPaid: r?.lastPaid,
-    ));
+      repeat: _repeat,
+      start: same ? r.start : _date,
+      times: same ? r.times : times,
+      paid: same ? r.paid : 0,
+      incoming: _incoming,
+      remind: _remind,
+    );
+    await money.saveRecurring(plan);
+    if (_remind) await app.notificationService.requestPermission();
     if (mounted) Navigator.of(context).pop();
   }
 
@@ -209,16 +286,52 @@ class _RecurringEditorScreenState extends State<RecurringEditorScreen> {
     final l10n = AppLocalizations.of(context)!;
     final state = context.watch<MoneyCubit>().state;
     final accounts = _accounts(state);
+    final categories = _categories(state);
     final fields = <Widget>[
+      SegmentedButton<bool>(
+        key: const ValueKey('planDirection'),
+        showSelectedIcon: false,
+        segments: [
+          ButtonSegment(value: false, icon: const Icon(Icons.north_east), label: Text(l10n.planOut)),
+          ButtonSegment(value: true, icon: const Icon(Icons.south_west), label: Text(l10n.planIn)),
+        ],
+        selected: {_incoming},
+        onSelectionChanged: (v) => setState(() {
+          _incoming = v.first;
+          final choices = _categories(state);
+          if (!choices.any((c) => c.id == _category?.id)) _category = choices.firstOrNull;
+        }),
+      ),
       TextField(controller: _name, autofocus: widget.existing == null, decoration: InputDecoration(labelText: l10n.accountNameLabel, border: const OutlineInputBorder())),
-      AmountField(controller: _amount, label: l10n.entryAmount, currency: _from?.currency ?? context.read<AppCubit>().state.baseCurrency),
-      AccountPicker(label: l10n.entryPaidFrom, accounts: accounts, value: _from, onChanged: (a) => setState(() => _from = a)),
-      AccountPicker(label: l10n.entryCategory, accounts: state.categories(AccountSide.spending), value: _category, onChanged: (a) => setState(() => _category = a)),
-      DropdownButtonFormField<int>(
-        initialValue: _day,
-        decoration: InputDecoration(labelText: l10n.recurringDay, border: const OutlineInputBorder()),
-        items: [for (var d = 1; d <= 28; d++) DropdownMenuItem(value: d, child: Text('$d'))],
-        onChanged: (v) => setState(() => _day = v ?? _day),
+      AmountField(controller: _amount, label: l10n.entryAmount, currency: _account?.currency ?? context.read<AppCubit>().state.baseCurrency),
+      AccountPicker(label: _incoming ? l10n.planPaidInto : l10n.entryPaidFrom, accounts: accounts, value: _account, onChanged: (a) => setState(() => _account = a)),
+      CategoryPicker(
+        accounts: categories,
+        value: _category,
+        side: _incoming ? AccountSide.income : AccountSide.spending,
+        onChanged: (a) => setState(() => _category = a),
+      ),
+      DropdownButtonFormField<PlanRepeat>(
+        key: const ValueKey('planRepeat'),
+        initialValue: _repeat,
+        decoration: InputDecoration(labelText: l10n.planRepeat, border: const OutlineInputBorder()),
+        items: [for (final r in PlanRepeat.values) DropdownMenuItem(value: r, child: Text(planRepeatLabel(l10n, r)))],
+        onChanged: (v) => setState(() => _repeat = v ?? _repeat),
+      ),
+      DateField(label: l10n.planDate, value: _date, allowFuture: true, onChanged: (d) => setState(() => _date = d)),
+      if (_repeat != PlanRepeat.once)
+        TextField(
+          key: const ValueKey('planTimes'),
+          controller: _times,
+          keyboardType: TextInputType.number,
+          decoration: InputDecoration(labelText: l10n.planTimes, helperText: l10n.planTimesHelp, helperMaxLines: 2, border: const OutlineInputBorder()),
+        ),
+      SwitchListTile(
+        key: const ValueKey('planRemind'),
+        contentPadding: EdgeInsets.zero,
+        title: Text(l10n.planRemind),
+        value: _remind,
+        onChanged: (v) => setState(() => _remind = v),
       ),
       if (_error != null) Text(_error!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
       if (widget.existing != null)
@@ -485,23 +598,6 @@ class CategoriesScreen extends StatelessWidget {
       }
     }
 
-    Future<void> add(AccountSide side) async {
-      final controller = TextEditingController();
-      final name = await showDialog<String>(
-        context: context,
-        builder: (d) => AlertDialog(
-          title: Text(side == AccountSide.spending ? l10n.categoryAddSpending : l10n.categoryAddIncome),
-          content: TextField(controller: controller, autofocus: true),
-          actions: [
-            TextButton(onPressed: () => Navigator.of(d).pop(), child: Text(l10n.commonCancel)),
-            FilledButton(onPressed: () => Navigator.of(d).pop(controller.text.trim()), child: Text(l10n.holdingsSave)),
-          ],
-        ),
-      );
-      controller.dispose();
-      if (name != null && name.isNotEmpty) await money.addCategory(name, side);
-    }
-
     // What Qima learned from the person's choices, each one forgettable.
     final learned = [
       for (final MapEntry(:key, :value) in state.settings.categoryRules.entries)
@@ -518,9 +614,14 @@ class CategoriesScreen extends StatelessWidget {
 
     Widget list(String title, AccountSide side) => MoneySection(
           title: title,
-          trailing: IconButton(visualDensity: VisualDensity.compact, icon: const Icon(Icons.add), onPressed: () => add(side)),
           children: [
             for (final c in state.categories(side)) MoneyRow(icon: MoneyIcons.account(c), title: l10n.accountName(c), onTap: () => rename(c)),
+            MoneyRow(
+              key: ValueKey('addCategory-${side.name}'),
+              icon: Icons.add,
+              title: side == AccountSide.spending ? l10n.categoryAddSpending : l10n.categoryAddIncome,
+              onTap: () => addCategory(context, side),
+            ),
           ],
         );
 

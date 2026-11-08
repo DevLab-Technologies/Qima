@@ -1554,27 +1554,28 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get helpRecurringSummary =>
-      'Rent, bills and subscriptions, shown in Coming up before they’re due.';
+      'Rent, bills, installments and income, shown in Coming up before they’re due.';
 
   @override
   String get helpRecurringStep1Title => 'Add one';
 
   @override
   String get helpRecurringStep1Body =>
-      'Give it a name, an amount, the account it’s paid from and its day of the month.';
+      'Give it a name, an amount, the account and when it’s due: once, or every week, month, 3 months or year. An installment plan can end after a number of payments.';
 
   @override
   String get helpRecurringStep2Title => 'Coming up';
 
   @override
   String get helpRecurringStep2Body =>
-      'Home lists the next ones due, so nothing takes you by surprise.';
+      'Home lists the next ones due, money in and out, and a reminder can come the day before.';
 
   @override
   String get helpRecurringStep3Title => 'Change or remove';
 
   @override
-  String get helpRecurringStep3Body => 'Tap one to change it or remove it.';
+  String get helpRecurringStep3Body =>
+      'Tap one to record it, skip it, change it or remove it.';
 
   @override
   String get helpPeopleSummary =>
@@ -3630,7 +3631,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get featBudget => 'Budget';
 
   @override
-  String get featRecurring => 'Recurring payments';
+  String get featRecurring => 'Planned payments';
 
   @override
   String get featPeople => 'Lent and borrowed';
@@ -3650,7 +3651,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get featRecurringDetail =>
-      'Bills and subscriptions, shown before they are due';
+      'Bills, installments and income, shown before they are due';
 
   @override
   String get featPeopleDetail => 'Who owes you, and whom you owe';
@@ -4277,17 +4278,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get budgetTotal => 'This month\'s budget';
 
   @override
-  String get recurringAdd => 'Add a recurring payment';
+  String get recurringAdd => 'Add a planned payment';
 
   @override
   String get recurringDay => 'Day of the month';
 
   @override
-  String get recurringEmptyTitle => 'No recurring payments';
+  String get recurringEmptyTitle => 'No planned payments';
 
   @override
   String get recurringEmptyMessage =>
-      'Add rent, bills and subscriptions to see them in Coming up before they\'re due.';
+      'Add rent, bills, installments or your salary to see them in Coming up before they\'re due.';
 
   @override
   String recurringNext(String date) {
@@ -4885,4 +4886,90 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get netLabel => 'Net';
+
+  @override
+  String get planOut => 'Going out';
+
+  @override
+  String get planIn => 'Coming in';
+
+  @override
+  String get planRepeat => 'Repeats';
+
+  @override
+  String get planRepeatOnce => 'Once';
+
+  @override
+  String get planRepeatWeekly => 'Every week';
+
+  @override
+  String get planRepeatMonthly => 'Every month';
+
+  @override
+  String get planRepeatQuarterly => 'Every 3 months';
+
+  @override
+  String get planRepeatYearly => 'Every year';
+
+  @override
+  String get planDate => 'Due on';
+
+  @override
+  String get planTimes => 'Number of payments';
+
+  @override
+  String get planTimesHelp =>
+      'Leave empty for no end, or 4 for an installment plan in 4 parts.';
+
+  @override
+  String get planPaidInto => 'Paid into';
+
+  @override
+  String get planRemind => 'Remind me the day before';
+
+  @override
+  String planLeft(int left, int total) {
+    return '$left of $total left';
+  }
+
+  @override
+  String get planFinished => 'Finished';
+
+  @override
+  String planOverdue(String date) {
+    return 'Overdue since $date';
+  }
+
+  @override
+  String get planRecord => 'Record';
+
+  @override
+  String get planSkip => 'Skip this one';
+
+  @override
+  String planDueTomorrow(String name) {
+    return '$name is due tomorrow';
+  }
+
+  @override
+  String planExpectedTomorrow(String name) {
+    return '$name is expected tomorrow';
+  }
+
+  @override
+  String get planReminderBody => 'Open Qima to record it when it happens.';
+
+  @override
+  String plannedThisMonth(String amount) {
+    return '$amount still planned this month';
+  }
+
+  @override
+  String get categoryNew => 'New category…';
+
+  @override
+  String get categoryNewTitle => 'New category';
+
+  @override
+  String get planEdit => 'Change it';
 }

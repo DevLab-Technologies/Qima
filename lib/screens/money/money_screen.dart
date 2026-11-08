@@ -262,8 +262,10 @@ class _MoneyScreenState extends State<MoneyScreen> {
         sections.add(MoneySection(
           children: [
             MoneyRow(icon: Icons.account_balance_outlined, title: l10n.cardAccounts, onTap: () => AccountsScreen.open(context)),
-            if (settings.has(MoneyFeature.budget)) MoneyRow(icon: Icons.donut_large, title: l10n.featBudget, onTap: () => _push(context, const BudgetScreen())),
-            if (settings.has(MoneyFeature.recurring)) MoneyRow(icon: Icons.event_repeat, title: l10n.featRecurring, onTap: () => _push(context, const RecurringScreen())),
+            // Always here, so a budget can be set even when the feature was
+            // skipped at the start; setting one turns it on.
+            MoneyRow(icon: Icons.donut_large, title: l10n.featBudget, onTap: () => _push(context, const BudgetScreen())),
+            MoneyRow(icon: Icons.event_repeat, title: l10n.featRecurring, onTap: () => _push(context, const RecurringScreen())),
             if (settings.has(MoneyFeature.people)) MoneyRow(icon: Icons.people_outline, title: l10n.featPeople, onTap: () => _push(context, const PeopleScreen())),
             if (settings.has(MoneyFeature.billSplit)) MoneyRow(icon: Icons.call_split, title: l10n.featBillSplit, onTap: () => _push(context, const BillSplitScreen())),
             MoneyRow(icon: Icons.label_outline, title: l10n.categoriesTitle, onTap: () => _push(context, const CategoriesScreen())),

@@ -251,7 +251,7 @@ void main() {
       final m = cubit(now: DateTime(2026, 11, 10, 9));
       await m.load();
       await m.addAccount(account('rajhi', AccountType.debit), opening: sar(5000));
-      await m.saveRecurring(RecurringPayment(id: 'gym', name: 'Gym', amount: sar(200), fromAccountId: 'rajhi', categoryId: 'category.health', dayOfMonth: 20));
+      await m.saveRecurring(RecurringPayment(id: 'gym', name: 'Gym', amount: sar(200), fromAccountId: 'rajhi', categoryId: 'category.health', start: DateTime(2026, 11, 20)));
       await m.payRecurring(m.state.recurring.single);
       expect(m.state.entries.last.date, DateTime(2026, 11, 10, 9));
       expect(m.state.recurring.single.nextDue(DateTime(2026, 11, 10)), DateTime(2026, 12, 20));
@@ -262,7 +262,7 @@ void main() {
       await m.load();
       final rajhi = account('rajhi', AccountType.debit);
       await m.addAccount(rajhi, opening: sar(5000));
-      final rent = RecurringPayment(id: 'rent', name: 'Rent', amount: sar(3000), fromAccountId: 'rajhi', categoryId: 'category.home', dayOfMonth: 12);
+      final rent = RecurringPayment(id: 'rent', name: 'Rent', amount: sar(3000), fromAccountId: 'rajhi', categoryId: 'category.home', start: DateTime(2026, 11, 12));
       await m.saveRecurring(rent);
       expect(m.state.settings.has(MoneyFeature.recurring), isTrue);
       expect(m.comingUp().single.$2, DateTime(2026, 11, 12));
@@ -271,6 +271,39 @@ void main() {
       expect(m.state.entries.last.date, DateTime(2026, 11, 10), reason: 'paid two days early');
       expect(m.state.recurring.single.nextDue(DateTime(2026, 11, 10)), DateTime(2026, 12, 12));
       expect(m.comingUp(), isEmpty, reason: 'December 12 is more than 14 days away');
+    });
+
+    test('planned income records income into the account; skipping records nothing', () async {
+      final m = cubit(now: DateTime(2026, 11, 10));
+      await m.load();
+      await m.addAccount(account('rajhi', AccountType.debit), opening: sar(1000));
+      await m.saveRecurring(RecurringPayment(id: 'pay', name: 'Salary', amount: sar(18000), fromAccountId: 'rajhi', categoryId: 'category.salary', start: DateTime(2026, 11, 27), incoming: true));
+      expect(m.comingUp(days: 30).single.$1.incoming, isTrue);
+      expect(m.plannedOutThisMonth(), isEmpty, reason: 'income is not spending');
+      await m.payRecurring(m.state.recurring.single);
+      expect(m.state.book.balanceOf('rajhi'), sar(19000));
+      final entries = m.state.entries.length;
+      await m.skipRecurring(m.state.recurring.single);
+      expect(m.state.entries, hasLength(entries));
+      expect(m.state.recurring.single.next, DateTime(2027, 1, 27));
+    });
+
+    test('what is still planned this month counts each weekly payment, overdue ones too, and stops when a plan ends', () async {
+      final m = cubit(now: DateTime(2026, 11, 10));
+      await m.load();
+      await m.addAccount(account('rajhi', AccountType.debit), opening: sar(5000));
+      // Due Nov 3 (overdue), 10, 17, 24; December's are not this month.
+      await m.saveRecurring(RecurringPayment(id: 'w', name: 'Cleaner', amount: sar(150), fromAccountId: 'rajhi', categoryId: 'category.home', repeat: PlanRepeat.weekly, start: DateTime(2026, 11, 3)));
+      // Two payments left, one this month.
+      await m.saveRecurring(RecurringPayment(id: 't', name: 'Tabby', amount: sar(250), fromAccountId: 'rajhi', categoryId: 'category.shopping', start: DateTime(2026, 9, 20), times: 4, paid: 2));
+      final planned = m.plannedOutThisMonth();
+      expect([for (final (r, d) in planned) if (r.id == 'w') d], [DateTime(2026, 11, 3), DateTime(2026, 11, 10), DateTime(2026, 11, 17), DateTime(2026, 11, 24)]);
+      expect([for (final (r, d) in planned) if (r.id == 't') d], [DateTime(2026, 11, 20)]);
+      final tabby = m.state.recurring.firstWhere((r) => r.id == 't');
+      await m.payRecurring(tabby);
+      await m.payRecurring(m.state.recurring.firstWhere((r) => r.id == 't'));
+      expect(m.state.recurring.firstWhere((r) => r.id == 't').finished, isTrue);
+      expect(m.comingUp(days: 365).where((e) => e.$1.id == 't'), isEmpty);
     });
   });
 
@@ -343,7 +376,7 @@ void main() {
       await m.load();
       final rajhi = account('rajhi', AccountType.debit);
       await m.addAccount(rajhi, opening: sar(5000));
-      await m.saveRecurring(RecurringPayment(id: 'r', name: 'Gym', amount: sar(200), fromAccountId: 'rajhi', categoryId: 'category.health', dayOfMonth: 1));
+      await m.saveRecurring(RecurringPayment(id: 'r', name: 'Gym', amount: sar(200), fromAccountId: 'rajhi', categoryId: 'category.health', start: DateTime(2026, 11, 1)));
       await m.setBudget('category.dining', sar(600));
       final payload = await (await service(store)).buildPayload();
       expect(payload.book, isNotNull);

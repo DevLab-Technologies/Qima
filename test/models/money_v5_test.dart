@@ -207,8 +207,12 @@ void main() {
       // An instant from an earlier build still reads as its local day.
       final old = DateTime(2026, 3, 1).toUtc().toIso8601String();
       expect(dayFromJson(old), DateTime(2026, 3, 1));
-      final r = RecurringPayment(id: 'r', name: 'Rent', amount: 1, fromAccountId: 'a', categoryId: 'c', dayOfMonth: 1, lastPaid: DateTime(2026, 3));
-      expect(r.toJson()['lastPaid'], '2026-03-01');
+      // A first-version payment (a day of the month and the last month paid)
+      // reads as one paid, due next month, and is saved by its first date.
+      final r = RecurringPayment.fromJson({'id': 'r', 'name': 'Rent', 'amount': 1, 'from': 'a', 'category': 'c', 'day': 1, 'lastPaid': '2026-03-01'});
+      expect(r.next, DateTime(2026, 4, 1));
+      expect(r.toJson()['start'], '2026-03-01');
+      expect(RecurringPayment.fromJson(r.toJson()), r);
     });
   });
 
@@ -254,11 +258,33 @@ void main() {
       expect(MoneySettings.fromJson(json).features, {MoneyFeature.budget});
     });
 
-    test('a recurring payment is due this month until paid, then next month, on day 28 at the latest', () {
-      final r = RecurringPayment(id: 'r', name: 'Rent', amount: 100, fromAccountId: 'rajhi', categoryId: 'home', dayOfMonth: 31);
-      expect(r.nextDue(DateTime(2026, 2, 10)), DateTime(2026, 2, 28));
-      expect(r.copyWith(lastPaid: DateTime(2026, 2)).nextDue(DateTime(2026, 2, 10)), DateTime(2026, 3, 28));
+    test('a monthly payment on the 31st falls on the last day of short months and comes back to the 31st', () {
+      final r = RecurringPayment(id: 'r', name: 'Rent', amount: 100, fromAccountId: 'rajhi', categoryId: 'home', start: DateTime(2026, 1, 31));
+      expect([for (var k = 0; k < 4; k++) r.dueAt(k)], [DateTime(2026, 1, 31), DateTime(2026, 2, 28), DateTime(2026, 3, 31), DateTime(2026, 4, 30)]);
+      expect(r.copyWith(paid: 1).next, DateTime(2026, 2, 28));
       expect(RecurringPayment.fromJson(r.toJson()), r);
+    });
+
+    test('weekly, every 3 months and yearly count from the first date', () {
+      RecurringPayment plan(PlanRepeat repeat) => RecurringPayment(id: 'p', name: 'P', amount: 1, fromAccountId: 'a', categoryId: 'c', repeat: repeat, start: DateTime(2026, 11, 30));
+      expect(plan(PlanRepeat.weekly).dueAt(2), DateTime(2026, 12, 14));
+      expect(plan(PlanRepeat.quarterly).dueAt(1), DateTime(2027, 2, 28));
+      expect(plan(PlanRepeat.quarterly).dueAt(2), DateTime(2027, 5, 30));
+      expect(plan(PlanRepeat.yearly).dueAt(1), DateTime(2027, 11, 30));
+    });
+
+    test('a one-off and an installment plan end; an open repeat never does', () {
+      final once = RecurringPayment(id: 'o', name: 'School fees', amount: 1, fromAccountId: 'a', categoryId: 'c', repeat: PlanRepeat.once, start: DateTime(2026, 9, 1));
+      expect(once.times, 1);
+      expect(once.copyWith(paid: 1).finished, isTrue);
+      expect(once.copyWith(paid: 1).next, isNull);
+      final tabby = RecurringPayment(id: 't', name: 'Tabby', amount: 1, fromAccountId: 'a', categoryId: 'c', start: DateTime(2026, 11, 5), times: 4, paid: 1);
+      expect(tabby.left, 3);
+      expect(tabby.dueThrough(DateTime(2027, 12, 31)), [DateTime(2026, 12, 5), DateTime(2027, 1, 5), DateTime(2027, 2, 5)]);
+      expect(tabby.copyWith(paid: 4).finished, isTrue);
+      final open = RecurringPayment(id: 'g', name: 'Gym', amount: 1, fromAccountId: 'a', categoryId: 'c', start: DateTime(2026, 11, 5));
+      expect(open.copyWith(paid: 500).finished, isFalse);
+      expect(RecurringPayment.fromJson(tabby.toJson()), tabby);
     });
   });
 

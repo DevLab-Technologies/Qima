@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart' hide TextDirection;
 
+import '../blocs/money_cubit.dart';
 import '../l10n/app_localizations.dart';
 import '../models/book.dart';
 import '../models/book_account.dart';
@@ -242,26 +244,41 @@ class GroupedAmountFormatter extends TextInputFormatter {
   }
 }
 
-/// Picks one of [accounts].
-class AccountPicker extends StatelessWidget {
+/// Picks one of [accounts]. With [onAdd], the list ends with [addLabel]
+/// ("New category…"), which makes one and picks it.
+class AccountPicker extends StatefulWidget {
   final String label;
   final List<BookAccount> accounts;
   final BookAccount? value;
   final ValueChanged<BookAccount?> onChanged;
+  final String? addLabel;
+  final Future<BookAccount?> Function()? onAdd;
 
-  const AccountPicker({super.key, required this.label, required this.accounts, required this.value, required this.onChanged});
+  const AccountPicker({super.key, required this.label, required this.accounts, required this.value, required this.onChanged, this.addLabel, this.onAdd});
+
+  @override
+  State<AccountPicker> createState() => _AccountPickerState();
+}
+
+class _AccountPickerState extends State<AccountPicker> {
+  static const _add = '\u0000add';
+
+  /// Bumped after "add" so the field shows the real choice again, even
+  /// when nothing was made.
+  int _resets = 0;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final selected = accounts.any((a) => a.id == value?.id) ? value!.id : null;
+    final accounts = widget.accounts;
+    final selected = accounts.any((a) => a.id == widget.value?.id) ? widget.value!.id : null;
     return DropdownButtonFormField<String>(
       // The field keeps its own value after the first build; a new choice
       // or a new list from the caller starts it again.
-      key: ValueKey('$selected|${accounts.map((a) => a.id).join(',')}'),
+      key: ValueKey('$selected|${accounts.map((a) => a.id).join(',')}|$_resets'),
       initialValue: selected,
       isExpanded: true,
-      decoration: InputDecoration(labelText: label, border: const OutlineInputBorder()),
+      decoration: InputDecoration(labelText: widget.label, border: const OutlineInputBorder()),
       items: [
         for (final a in accounts)
           DropdownMenuItem(
@@ -274,8 +291,96 @@ class AccountPicker extends StatelessWidget {
               ],
             ),
           ),
+        if (widget.onAdd != null)
+          DropdownMenuItem(
+            value: _add,
+            child: Row(children: [
+              Icon(Icons.add, size: 18, color: context.colors.brandText),
+              const SizedBox(width: 8),
+              Expanded(child: Text(widget.addLabel ?? '', style: TextStyle(color: context.colors.brandText, fontWeight: FontWeight.w600))),
+            ]),
+          ),
       ],
-      onChanged: (id) => onChanged(accounts.where((a) => a.id == id).firstOrNull),
+      onChanged: (id) async {
+        if (id != _add) return widget.onChanged(accounts.where((a) => a.id == id).firstOrNull);
+        final made = await widget.onAdd!();
+        if (!mounted) return;
+        setState(() => _resets++);
+        if (made != null) widget.onChanged(made);
+      },
+    );
+  }
+}
+
+/// Asks for a name and makes a category on [side]. Returns it, or null when
+/// the person cancels.
+Future<BookAccount?> addCategory(BuildContext context, AccountSide side) async {
+  final l10n = AppLocalizations.of(context)!;
+  final money = context.read<MoneyCubit>();
+  final name = await showDialog<String>(
+    context: context,
+    builder: (_) => NamePrompt(title: side == AccountSide.spending ? l10n.categoryAddSpending : l10n.categoryAddIncome, fieldKey: const ValueKey('categoryName')),
+  );
+  if (name == null || name.isEmpty) return null;
+  return money.addCategory(name, side);
+}
+
+/// Asks for a name. The dialog owns its text field's controller, so it is
+/// never used after the dialog closes.
+class NamePrompt extends StatefulWidget {
+  final String title;
+  final String initial;
+  final Key? fieldKey;
+
+  const NamePrompt({super.key, required this.title, this.initial = '', this.fieldKey});
+
+  @override
+  State<NamePrompt> createState() => _NamePromptState();
+}
+
+class _NamePromptState extends State<NamePrompt> {
+  late final _controller = TextEditingController(text: widget.initial);
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return AlertDialog(
+      title: Text(widget.title),
+      content: TextField(key: widget.fieldKey, controller: _controller, autofocus: true, textCapitalization: TextCapitalization.sentences),
+      actions: [
+        TextButton(onPressed: () => Navigator.of(context).pop(), child: Text(l10n.commonCancel)),
+        FilledButton(onPressed: () => Navigator.of(context).pop(_controller.text.trim()), child: Text(l10n.holdingsSave)),
+      ],
+    );
+  }
+}
+
+/// The category field: the person's categories on [side], and "New
+/// category…" at the end.
+class CategoryPicker extends StatelessWidget {
+  final List<BookAccount> accounts;
+  final BookAccount? value;
+  final AccountSide side;
+  final ValueChanged<BookAccount?> onChanged;
+
+  const CategoryPicker({super.key, required this.accounts, required this.value, required this.side, required this.onChanged});
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return AccountPicker(
+      label: l10n.entryCategory,
+      accounts: accounts,
+      value: value,
+      onChanged: onChanged,
+      addLabel: l10n.categoryNew,
+      onAdd: () => addCategory(context, side),
     );
   }
 }

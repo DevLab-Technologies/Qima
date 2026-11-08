@@ -404,29 +404,53 @@ class MoneyCubit extends Cubit<MoneyState> {
     if (!isClosed) emit(state.copyWith(recurring: list));
   }
 
-  /// Records this month's payment of [r] as a spend and moves it to next
-  /// month.
+  /// Records the next payment of [r] (a spend, or income when it is
+  /// incoming) and moves it on to the one after.
   Future<void> payRecurring(RecurringPayment r, {DateTime? date}) async {
-    final from = state.book.accounts[r.fromAccountId];
+    final account = state.book.accounts[r.fromAccountId];
     final category = state.book.accounts[r.categoryId];
-    if (from == null || category == null) throw StateError('The account or category of ${r.name} is gone.');
+    if (account == null || category == null) throw StateError('The account or category of ${r.name} is gone.');
+    final due = r.next;
+    if (due == null) return;
     final now = _now();
-    final due = r.nextDue(now);
     // Paid before it is due: it happened today, not on the due day.
-    await saveEntry(builder.spend(from, category, r.amount, date ?? (due.isAfter(now) ? now : due), merchant: r.name));
-    final list = await store.recurring.upsert(r.copyWith(lastPaid: DateTime(due.year, due.month)));
+    final on = date ?? (due.isAfter(now) ? now : due);
+    await saveEntry(r.incoming ? builder.income(account, category, r.amount, on, merchant: r.name) : builder.spend(account, category, r.amount, on, merchant: r.name));
+    await _advance(r);
+  }
+
+  /// Moves [r] past its next payment without recording anything (a month
+  /// it wasn't due, or paid some other way).
+  Future<void> skipRecurring(RecurringPayment r) => _advance(r);
+
+  Future<void> _advance(RecurringPayment r) async {
+    final list = await store.recurring.upsert(r.copyWith(paid: r.paid + 1));
     if (!isClosed) emit(state.copyWith(recurring: list));
   }
 
-  /// Payments due within [days] (overdue ones included), soonest first.
+  /// Payments due within [days] (overdue ones included), soonest first, in
+  /// and out.
   List<(RecurringPayment, DateTime)> comingUp({int days = 14}) {
     final today = _now();
     final until = DateTime(today.year, today.month, today.day + days);
     final out = [
       for (final r in state.recurring)
-        if (!r.nextDue(today).isAfter(until)) (r, r.nextDue(today)),
+        if (r.next != null && !r.next!.isAfter(until)) (r, r.next!),
     ]..sort((a, b) => a.$2.compareTo(b.$2));
     return out;
+  }
+
+  /// Outgoing payments still to record through the end of this month
+  /// (overdue ones included), each with its due date: what Left to spend
+  /// still has to cover.
+  List<(RecurringPayment, DateTime)> plannedOutThisMonth() {
+    final today = _now();
+    final end = DateTime(today.year, today.month + 1, 0);
+    return [
+      for (final r in state.recurring)
+        if (!r.incoming)
+          for (final d in r.dueThrough(end)) (r, d),
+    ];
   }
 
   // -------------------------------------------------------------------
