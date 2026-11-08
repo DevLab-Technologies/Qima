@@ -165,6 +165,34 @@ void main() {
       expect(ImportPlanner.guessAccount([bank, card], const [], const [], refs: const [StatementRef(StatementRefKind.card, '4417')]), card);
     });
 
+    test('a card never imported before: its number in a name, else a credit card for a message about a limit', () {
+      final plain = BookAccount(id: 'snbVisa', name: 'SNB Visa', side: AccountSide.owe, type: AccountType.credit, currency: 'SAR');
+      final named = BookAccount(id: 'sab', name: 'SAB card 9902', side: AccountSide.owe, type: AccountType.credit, currency: 'SAR');
+      const ref = [StatementRef(StatementRefKind.card, '9902')];
+      final rows = [StatementRow(date: DateTime(2026, 10, 14), description: 'Corner Cafe', detail: 'Card XX9902 Amount: SAR 27.00 Remaining limit SAR 900.00', amount: -27, currency: 'SAR')];
+      expect(ImportPlanner.guessAccount([bank, plain, named], rows, const [], refs: ref), named);
+      expect(ImportPlanner.guessAccount([bank, plain], rows, const [], refs: ref), plain);
+      // A debit card message without a limit stays on the bank account.
+      final mada = [StatementRow(date: DateTime(2026, 10, 14), description: 'Bakery', detail: 'mada card 9902 SAR 12.00', amount: -12, currency: 'SAR')];
+      expect(ImportPlanner.guessAccount([bank, plain], mada, const [], refs: ref), bank);
+    });
+
+    test('Apple Pay from Wallet names the card: the account with the longest name in it', () {
+      final snb = BookAccount(id: 'snb', name: 'SNB', side: AccountSide.own, type: AccountType.debit, currency: 'SAR');
+      final snbVisa = BookAccount(id: 'snbVisa', name: 'SNB Visa', side: AccountSide.owe, type: AccountType.credit, currency: 'SAR');
+      final rows = [StatementRow(date: DateTime(2026, 10, 14), description: 'Corner Cafe', detail: 'Apple Pay purchase Card: SNB Visa Signature Amount: SAR 27.00 Merchant: Corner Cafe', amount: -27, currency: 'SAR')];
+      expect(ImportPlanner.guessAccount([bank, snb, snbVisa], rows, const []), snbVisa);
+    });
+
+    test('a number typed for an account keeps only its last four, with the length of a whole account number or IBAN', () {
+      expect(StatementRef.typed(StatementRefKind.card, '4821'), const StatementRef(StatementRefKind.card, '4821'));
+      expect(StatementRef.typed(StatementRefKind.card, '4111 1111 1111 4821'), const StatementRef(StatementRefKind.card, '4821'));
+      expect(StatementRef.typed(StatementRefKind.account, '0123-4567-8901'), const StatementRef(StatementRefKind.account, '8901', 12));
+      expect(StatementRef.typed(StatementRefKind.account, '8901'), const StatementRef(StatementRefKind.account, '8901'));
+      expect(StatementRef.typed(StatementRefKind.iban, 'SA03 8000 0000 6080 1016 7519'), const StatementRef(StatementRefKind.iban, '7519', 22));
+      expect(StatementRef.typed(StatementRefKind.card, '48'), isNull);
+    });
+
     test('a row the model doubts starts unticked', () {
       final rows = [StatementRow(date: DateTime(2026, 11, 1), description: 'Closing balance', amount: 900, doubtful: true)];
       final plan = ImportPlanner.plan(files: [('f', rows)], account: bank, book: Book([bank], const []));

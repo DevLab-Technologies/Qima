@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -14,6 +15,7 @@ import '../../models/book_account.dart';
 import '../../models/entry_builder.dart';
 import '../../models/money_settings.dart';
 import '../../models/net_worth.dart';
+import '../../models/statement_facts.dart';
 import '../../theme/design_system.dart';
 import '../../theme/money_labels.dart';
 import '../../theme/qima_colors.dart';
@@ -132,6 +134,10 @@ class _AccountEditorScreenState extends State<AccountEditorScreen> {
   final _name = TextEditingController();
   final _balance = TextEditingController();
   final _limit = TextEditingController();
+  // The numbers statements and bank messages show, by kind; with what each
+  // field started with, so an untouched one keeps every number learned.
+  final _numbers = {for (final k in StatementRefKind.values) k: TextEditingController()};
+  final _numbersAtStart = <StatementRefKind, String>{};
   late AccountType _type;
   late String _currency;
   DateTime _since = DateTime.now();
@@ -150,7 +156,40 @@ class _AccountEditorScreenState extends State<AccountEditorScreen> {
       _name.text = e.name;
       _counts = e.countsInNetWorth;
       if (e.creditLimit != null) _limit.text = minorFieldText(e.creditLimit!, _currency);
+      for (final key in e.statementRefs) {
+        final r = StatementRef.fromKey(key);
+        if (r != null && _numbers[r.kind]!.text.isEmpty) _numbers[r.kind]!.text = r.last4;
+      }
     }
+    for (final k in StatementRefKind.values) {
+      _numbersAtStart[k] = _numbers[k]!.text;
+    }
+  }
+
+  /// The numbers this kind of account is matched by.
+  static List<StatementRefKind> numberKinds(AccountType type) => switch (type) {
+        AccountType.debit => const [StatementRefKind.account, StatementRefKind.iban, StatementRefKind.card],
+        AccountType.credit => const [StatementRefKind.card],
+        _ => const [],
+      };
+
+  /// The statement numbers to save, or null when one typed is too short.
+  List<String>? _statementRefs() {
+    final kinds = numberKinds(_type);
+    final existing = [for (final k in widget.existing?.statementRefs ?? const <String>[]) ?StatementRef.fromKey(k)];
+    final out = <String>[];
+    for (final kind in StatementRefKind.values) {
+      final text = _numbers[kind]!.text.trim();
+      if (!kinds.contains(kind) || text == _numbersAtStart[kind]) {
+        out.addAll([for (final r in existing) if (r.kind == kind) r.key]);
+        continue;
+      }
+      if (text.isEmpty) continue;
+      final r = StatementRef.typed(kind, text);
+      if (r == null) return null;
+      out.add(r.key);
+    }
+    return out;
   }
 
   @override
@@ -158,6 +197,9 @@ class _AccountEditorScreenState extends State<AccountEditorScreen> {
     _name.dispose();
     _balance.dispose();
     _limit.dispose();
+    for (final c in _numbers.values) {
+      c.dispose();
+    }
     super.dispose();
   }
 
@@ -175,9 +217,16 @@ class _AccountEditorScreenState extends State<AccountEditorScreen> {
     final name = _name.text.trim();
     if (name.isEmpty) return setState(() => _error = l10n.accountErrorName);
     final limit = _limit.text.trim().isEmpty ? null : parseMinor(_limit.text, _currency);
+    final refs = _statementRefs();
+    if (refs == null) return setState(() => _error = l10n.accountNumberShort);
     final e = widget.existing;
     if (e != null) {
-      await money.updateAccount(e.copyWith(name: name, countsInNetWorth: _counts, creditLimit: limit, clearCreditLimit: limit == null));
+      final updated = e.copyWith(name: name, countsInNetWorth: _counts, creditLimit: limit, clearCreditLimit: limit == null);
+      if (listEquals(refs, e.statementRefs)) {
+        await money.updateAccount(updated);
+      } else {
+        await money.giveStatementRefs(updated, refs);
+      }
       if (mounted) Navigator.of(context).pop();
       return;
     }
@@ -191,8 +240,11 @@ class _AccountEditorScreenState extends State<AccountEditorScreen> {
       currency: _currency,
       countsInNetWorth: _counts,
       creditLimit: _type == AccountType.credit ? limit : null,
+      statementRefs: refs,
     );
     final turnedOn = await money.addAccount(account, opening: opening, openedOn: _since);
+    // A number another account had is now this one's alone.
+    if (refs.isNotEmpty) await money.giveStatementRefs(account, refs);
     if (!mounted) return;
     final messenger = ScaffoldMessenger.of(context);
     Navigator.of(context).pop();
@@ -242,6 +294,25 @@ class _AccountEditorScreenState extends State<AccountEditorScreen> {
       if (!_editing) AmountField(controller: _balance, label: _balanceLabel(l10n), currency: _currency, helper: l10n.accountBalanceHelp),
       if (!_editing) DateField(label: l10n.accountSince, value: _since, onChanged: (d) => setState(() => _since = d)),
       if (_type == AccountType.credit) AmountField(controller: _limit, label: l10n.accountLimit, currency: _currency),
+      for (final (i, kind) in numberKinds(_type).indexed)
+        TextField(
+          key: ValueKey('accountNumber-${kind.name}'),
+          controller: _numbers[kind],
+          keyboardType: kind == StatementRefKind.iban ? TextInputType.text : TextInputType.number,
+          textCapitalization: TextCapitalization.characters,
+          autocorrect: false,
+          enableSuggestions: false,
+          decoration: InputDecoration(
+            labelText: switch (kind) {
+              StatementRefKind.account => l10n.accountNumberAccount,
+              StatementRefKind.iban => l10n.accountNumberIban,
+              StatementRefKind.card => l10n.accountNumberCard,
+            },
+            helperText: i == numberKinds(_type).length - 1 ? l10n.accountNumberHelp : null,
+            helperMaxLines: 3,
+            border: const OutlineInputBorder(),
+          ),
+        ),
       SwitchListTile(
         contentPadding: EdgeInsets.zero,
         title: Text(l10n.accountCounts),

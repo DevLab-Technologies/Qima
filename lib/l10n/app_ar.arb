@@ -1425,5 +1425,16 @@
   "plannedThisMonth": "{amount} مخطط لها بقية هذا الشهر",
   "categoryNew": "فئة جديدة…",
   "categoryNewTitle": "فئة جديدة",
-  "planEdit": "تعديلها"
+  "planEdit": "تعديلها",
+  "accountNumberAccount": "رقم الحساب",
+  "accountNumberIban": "رقم الآيبان (IBAN)",
+  "accountNumberCard": "رقم البطاقة",
+  "accountNumberHelp": "تكفي آخر 4 أرقام. تحتفظ قيمة بآخر 4 أرقام فقط لتطابق كشوف الحساب ورسائل البنك مع هذا الحساب.",
+  "accountNumberShort": "أدخل آخر 4 أرقام على الأقل",
+  "applePaySetUp": "مدفوعات Apple Pay",
+  "applePayIntro": "يمكن أن تصل كل عملية دفع بـ Apple Pay إلى قيمة لحظة الدفع، حتى من البطاقات التي لا ترسل رسائل.",
+  "applePayStep1": "في الاختصارات، افتح الأتمتة واضغط +، ثم اختر المحفظة.",
+  "applePayStep2": "اختر بطاقاتك، ثم اختر التشغيل فورًا.",
+  "applePayStep3": "أضف إجراء «Add an Apple Pay payment» من قيمة.",
+  "applePayStep4": "اجعل Amount وMerchant وCard فيه هي المبلغ والتاجر والبطاقة أو التذكرة من مُدخل الاختصار."
 }

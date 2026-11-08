@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:qima/models/statement_reader.dart';
+import 'package:qima/models/statement_facts.dart';
 
 /// A line of cells at [y], each cell (text, x, width).
 List<DocToken> line(double y, List<(String, double, double)> cells, {double h = 0.012}) =>
@@ -109,6 +110,61 @@ void main() {
       expect(rows[1].amount, -4999.99);
       expect(rows[1].description, 'CODASHOP');
       expect(rows[1].date, DateTime(2026, 11, 6));
+    });
+
+    test('a screenshot of a labelled bank message: the merchant line names it, the limit left is no transaction', () {
+      // A made-up card message, laid out where Vision puts such lines.
+      final page = DocPage(const [
+        DocToken('Today 9:15 AM', 0.406, 0.033, 0.188, 0.048),
+        DocToken('POS Purchase (Apple Pay)', 0.077, 0.189, 0.458, 0.072),
+        DocToken('Card: Visa card XX4821', 0.079, 0.291, 0.402, 0.066),
+        DocToken('Amount: SAR 27.00', 0.077, 0.405, 0.333, 0.069),
+        DocToken('Merchant: Corner Cafe Riyadh', 0.079, 0.508, 0.627, 0.075),
+        DocToken('In: SAUDI ARABIA', 0.074, 0.622, 0.309, 0.063),
+        DocToken('Remaining limit SAR 18,450.20', 0.079, 0.723, 0.520, 0.092),
+        DocToken('On: 2026-10-14 09:15:40', 0.079, 0.838, 0.436, 0.063),
+      ]);
+      final rows = reader.readPages([page]);
+      expect(rows, hasLength(1));
+      expect(rows.single.amount, -27);
+      expect(rows.single.signGuessed, isFalse);
+      expect(rows.single.currency, 'SAR');
+      expect(rows.single.description, 'Corner Cafe Riyadh');
+      expect(rows.single.date, DateTime(2026, 10, 14));
+      final facts = reader.facts([page], rows);
+      expect(facts.refs, contains(const StatementRef(StatementRefKind.card, '4821')));
+    });
+
+    test('a labelled bank message pasted as text: the merchant line, and the limit left before the amount', () {
+      final rows = reader.readMessages(
+        'POS Purchase (Apple Pay)\nCard: Visa card XX4821\nRemaining limit SAR 18,450.20\nAmount: SAR 27.00\n'
+        'Merchant: Corner Cafe Riyadh\nIn: SAUDI ARABIA\nOn: 2026-10-14 09:15:40\n\n'
+        'شراء عبر نقاط البيع\nبطاقة: مدى 7730\nالمبلغ: 85.50 ريال\nلدى: مخبز الحي\nالرصيد المتبقي: 2,310.00 ريال\nفي: 2026-10-12',
+      );
+      expect(rows, hasLength(2));
+      expect(rows[0].amount, -27);
+      expect(rows[0].description, 'Corner Cafe Riyadh');
+      expect(rows[1].amount, -85.5);
+      expect(rows[1].currency, 'SAR');
+      expect(rows[1].description, 'مخبز الحي');
+    });
+
+    test('Apple Pay payments from a Wallet automation, with the amount as Shortcuts writes it', () {
+      String pay(String amount) => 'Apple Pay purchase\nCard: SNB Visa\nAmount: $amount\nMerchant: Corner Cafe\nOn: 2026-10-14 09:15:40';
+      for (final (amount, major, currency) in [
+        ('SAR 27.00', 27.0, 'SAR'),
+        ('27.00 SAR', 27.0, 'SAR'),
+        ('\u200f27.00 ر.س.\u200f', 27.0, 'SAR'),
+        ('\u0662\u0667\u066b\u0665\u0660 ر.س.\u200f', 27.5, 'SAR'),
+        (r'$1,250.00', 1250.0, 'USD'),
+        ('12,50 €', 12.5, 'EUR'),
+      ]) {
+        final rows = reader.readMessages(pay(amount));
+        expect(rows, hasLength(1), reason: amount);
+        expect((rows.single.amount, rows.single.currency, rows.single.description, rows.single.date, rows.single.signGuessed),
+            (-major, currency, 'Corner Cafe', DateTime(2026, 10, 14), false),
+            reason: amount);
+      }
     });
 
     test('a Saudi bank statement: Hijri dates, and the bank\'s own text around the table', () {

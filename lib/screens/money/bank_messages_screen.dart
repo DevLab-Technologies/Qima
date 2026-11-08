@@ -96,17 +96,27 @@ class _BankMessagesScreenState extends State<BankMessagesScreen> {
           ),
         ]));
       case BankMessagesWay.shortcutsAutomation:
-        final steps = [l10n.bankMessagesStep1, l10n.bankMessagesStep2, l10n.bankMessagesStep3, l10n.bankMessagesStep4];
+        Widget numbered(List<String> steps) => Column(children: [
+              for (final (i, step) in steps.indexed)
+                ListTile(
+                  leading: CircleAvatar(
+                    radius: 13,
+                    backgroundColor: colors.brand.withValues(alpha: 0.16),
+                    child: Text('${i + 1}', style: TextStyle(color: colors.brandText, fontSize: 13, fontWeight: FontWeight.w700)),
+                  ),
+                  title: Text(step, style: const TextStyle(fontSize: 15)),
+                ),
+            ]);
         children.add(MoneySection(title: l10n.bankMessagesSetUp, children: [
-          for (final (i, step) in steps.indexed)
-            ListTile(
-              leading: CircleAvatar(
-                radius: 13,
-                backgroundColor: colors.brand.withValues(alpha: 0.16),
-                child: Text('${i + 1}', style: TextStyle(color: colors.brandText, fontSize: 13, fontWeight: FontWeight.w700)),
-              ),
-              title: Text(step, style: const TextStyle(fontSize: 15)),
-            ),
+          numbered([l10n.bankMessagesStep1, l10n.bankMessagesStep2, l10n.bankMessagesStep3, l10n.bankMessagesStep4]),
+        ]));
+        // Wallet's own automation: every Apple Pay payment, texted or not.
+        children.add(MoneySection(key: const ValueKey('applePaySetUp'), title: l10n.applePaySetUp, children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: DS.spaceMD, vertical: DS.spaceXS),
+            child: Text(l10n.applePayIntro, style: note),
+          ),
+          numbered([l10n.applePayStep1, l10n.applePayStep2, l10n.applePayStep3, l10n.applePayStep4]),
         ]));
         children.add(FilledButton.icon(
           key: const ValueKey('bankMessagesShortcuts'),

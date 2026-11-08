@@ -27,6 +27,17 @@ class StatementRef extends Equatable {
     return kind == null ? null : StatementRef(kind, m[2]!, m[3] == null ? null : int.parse(m[3]!));
   }
 
+  /// A number the person typed for an account: the whole number or just its
+  /// last four digits. Only the last four are kept, with the length of a
+  /// whole account number or IBAN to tell apart two that end alike. Null
+  /// when fewer than four digits were typed.
+  static StatementRef? typed(StatementRefKind kind, String input) {
+    final digits = input.replaceAll(RegExp(r'\D'), '');
+    if (digits.length < 4) return null;
+    final whole = kind != StatementRefKind.card && digits.length > 4;
+    return StatementRef(kind, digits.substring(digits.length - 4), whole ? digits.length : null);
+  }
+
   /// Whether a stored [key] names the same number. A length known on only
   /// one side doesn't tell them apart.
   bool matches(String key) {

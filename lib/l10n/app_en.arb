@@ -3297,5 +3297,16 @@
   "@plannedThisMonth": {"placeholders": {"amount": {"type": "String"}}},
   "categoryNew": "New category…",
   "categoryNewTitle": "New category",
-  "planEdit": "Change it"
+  "planEdit": "Change it",
+  "accountNumberAccount": "Account number",
+  "accountNumberIban": "IBAN",
+  "accountNumberCard": "Card number",
+  "accountNumberHelp": "The last 4 digits are enough. Qima keeps only the last 4, to match statements and bank messages to this account.",
+  "accountNumberShort": "Enter at least the last 4 digits",
+  "applePaySetUp": "Apple Pay payments",
+  "applePayIntro": "Each Apple Pay payment can come to Qima as you pay, even from cards that never text you.",
+  "applePayStep1": "In Shortcuts, go to Automation, tap + and choose Wallet.",
+  "applePayStep2": "Pick your cards, then choose Run Immediately.",
+  "applePayStep3": "Add Qima’s “Add an Apple Pay payment” action.",
+  "applePayStep4": "Set its Amount, Merchant and Card to the Shortcut Input’s Amount, Merchant and Card or Pass."
 }

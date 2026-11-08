@@ -8470,6 +8470,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Change it'**
   String get planEdit;
+
+  /// No description provided for @accountNumberAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Account number'**
+  String get accountNumberAccount;
+
+  /// No description provided for @accountNumberIban.
+  ///
+  /// In en, this message translates to:
+  /// **'IBAN'**
+  String get accountNumberIban;
+
+  /// No description provided for @accountNumberCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Card number'**
+  String get accountNumberCard;
+
+  /// No description provided for @accountNumberHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'The last 4 digits are enough. Qima keeps only the last 4, to match statements and bank messages to this account.'**
+  String get accountNumberHelp;
+
+  /// No description provided for @accountNumberShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter at least the last 4 digits'**
+  String get accountNumberShort;
+
+  /// No description provided for @applePaySetUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Apple Pay payments'**
+  String get applePaySetUp;
+
+  /// No description provided for @applePayIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Each Apple Pay payment can come to Qima as you pay, even from cards that never text you.'**
+  String get applePayIntro;
+
+  /// No description provided for @applePayStep1.
+  ///
+  /// In en, this message translates to:
+  /// **'In Shortcuts, go to Automation, tap + and choose Wallet.'**
+  String get applePayStep1;
+
+  /// No description provided for @applePayStep2.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick your cards, then choose Run Immediately.'**
+  String get applePayStep2;
+
+  /// No description provided for @applePayStep3.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Qima’s “Add an Apple Pay payment” action.'**
+  String get applePayStep3;
+
+  /// No description provided for @applePayStep4.
+  ///
+  /// In en, this message translates to:
+  /// **'Set its Amount, Merchant and Card to the Shortcut Input’s Amount, Merchant and Card or Pass.'**
+  String get applePayStep4;
 }
 
 class _AppLocalizationsDelegate

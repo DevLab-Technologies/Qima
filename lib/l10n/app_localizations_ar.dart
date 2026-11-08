@@ -5001,4 +5001,41 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get planEdit => 'تعديلها';
+
+  @override
+  String get accountNumberAccount => 'رقم الحساب';
+
+  @override
+  String get accountNumberIban => 'رقم الآيبان (IBAN)';
+
+  @override
+  String get accountNumberCard => 'رقم البطاقة';
+
+  @override
+  String get accountNumberHelp =>
+      'تكفي آخر 4 أرقام. تحتفظ قيمة بآخر 4 أرقام فقط لتطابق كشوف الحساب ورسائل البنك مع هذا الحساب.';
+
+  @override
+  String get accountNumberShort => 'أدخل آخر 4 أرقام على الأقل';
+
+  @override
+  String get applePaySetUp => 'مدفوعات Apple Pay';
+
+  @override
+  String get applePayIntro =>
+      'يمكن أن تصل كل عملية دفع بـ Apple Pay إلى قيمة لحظة الدفع، حتى من البطاقات التي لا ترسل رسائل.';
+
+  @override
+  String get applePayStep1 =>
+      'في الاختصارات، افتح الأتمتة واضغط +، ثم اختر المحفظة.';
+
+  @override
+  String get applePayStep2 => 'اختر بطاقاتك، ثم اختر التشغيل فورًا.';
+
+  @override
+  String get applePayStep3 => 'أضف إجراء «Add an Apple Pay payment» من قيمة.';
+
+  @override
+  String get applePayStep4 =>
+      'اجعل Amount وMerchant وCard فيه هي المبلغ والتاجر والبطاقة أو التذكرة من مُدخل الاختصار.';
 }

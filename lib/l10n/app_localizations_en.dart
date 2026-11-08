@@ -4983,4 +4983,41 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get planEdit => 'Change it';
+
+  @override
+  String get accountNumberAccount => 'Account number';
+
+  @override
+  String get accountNumberIban => 'IBAN';
+
+  @override
+  String get accountNumberCard => 'Card number';
+
+  @override
+  String get accountNumberHelp =>
+      'The last 4 digits are enough. Qima keeps only the last 4, to match statements and bank messages to this account.';
+
+  @override
+  String get accountNumberShort => 'Enter at least the last 4 digits';
+
+  @override
+  String get applePaySetUp => 'Apple Pay payments';
+
+  @override
+  String get applePayIntro =>
+      'Each Apple Pay payment can come to Qima as you pay, even from cards that never text you.';
+
+  @override
+  String get applePayStep1 =>
+      'In Shortcuts, go to Automation, tap + and choose Wallet.';
+
+  @override
+  String get applePayStep2 => 'Pick your cards, then choose Run Immediately.';
+
+  @override
+  String get applePayStep3 => 'Add Qima’s “Add an Apple Pay payment” action.';
+
+  @override
+  String get applePayStep4 =>
+      'Set its Amount, Merchant and Card to the Shortcut Input’s Amount, Merchant and Card or Pass.';
 }

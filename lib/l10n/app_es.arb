@@ -1425,5 +1425,16 @@
   "plannedThisMonth": "{amount} aún previstos este mes",
   "categoryNew": "Nueva categoría…",
   "categoryNewTitle": "Nueva categoría",
-  "planEdit": "Cambiar"
+  "planEdit": "Cambiar",
+  "accountNumberAccount": "Número de cuenta",
+  "accountNumberIban": "IBAN",
+  "accountNumberCard": "Número de tarjeta",
+  "accountNumberHelp": "Bastan los últimos 4 dígitos. Qima solo guarda esos 4, para asociar extractos y mensajes del banco a esta cuenta.",
+  "accountNumberShort": "Escribe al menos los últimos 4 dígitos",
+  "applePaySetUp": "Pagos con Apple Pay",
+  "applePayIntro": "Cada pago con Apple Pay puede llegar a Qima al pagar, incluso de tarjetas que no envían mensajes.",
+  "applePayStep1": "En Atajos, ve a Automatización, toca + y elige Cartera.",
+  "applePayStep2": "Elige tus tarjetas y luego Ejecutar inmediatamente.",
+  "applePayStep3": "Añade la acción «Add an Apple Pay payment» de Qima.",
+  "applePayStep4": "Pon su Amount, Merchant y Card en Importe, Comercio y Tarjeta o pase de la entrada del atajo."
 }

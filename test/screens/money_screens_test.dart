@@ -603,6 +603,10 @@ void main() {
       expect(find.byType(BankMessagesScreen), findsOneWidget);
       expect(find.text(l10n.bankMessagesStep4), findsOneWidget);
       expect(find.byKey(const ValueKey('bankMessagesSwitch')), findsNothing);
+      // Wallet's automation for Apple Pay, below the messages one.
+      expect(find.text(l10n.applePayStep3), findsOneWidget);
+      await tester.scrollUntilVisible(find.byKey(const ValueKey('bankMessagesShortcuts')), 200, scrollable: find.byType(Scrollable).last);
+      await tester.pumpAndSettle();
       await tester.tap(find.byKey(const ValueKey('bankMessagesShortcuts')));
       await tester.pump();
       expect(opened, contains('openShortcuts'));
@@ -917,6 +921,34 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byKey(const ValueKey('entryClears')), findsNothing);
       expect(find.byKey(const ValueKey('entryVoice')), findsNothing, reason: 'voice reads spending, income and transfers only');
+    });
+
+    testWidgets('a bank account takes its account number, IBAN and card; a card number moves off the card that had it', (tester) async {
+      await tester.runAsync(seed);
+      await tester.runAsync(() => money.updateAccount(money.state.book.accounts['visa']!.copyWith(statementRefs: const ['card:4821'])));
+      size(tester, const Size(390, 1400));
+      final l10n = await AppLocalizations.delegate.load(const Locale('en'));
+      await tester.pumpWidget(wrap(AccountEditorScreen(existing: money.state.book.accounts['visa']), const Locale('en')));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey('accountNumber-card')), findsOneWidget);
+      expect(find.byKey(const ValueKey('accountNumber-iban')), findsNothing);
+      expect(find.widgetWithText(TextField, '4821'), findsOneWidget, reason: 'the card number it was matched by');
+
+      await tester.pumpWidget(const SizedBox());
+      await tester.pumpWidget(wrap(AccountEditorScreen(existing: money.state.book.accounts['rajhi']), const Locale('en')));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byKey(const ValueKey('accountNumber-account')), '12');
+      await tester.tap(find.text(l10n.holdingsSave));
+      await tester.pumpAndSettle();
+      expect(find.text(l10n.accountNumberShort), findsOneWidget);
+
+      await tester.enterText(find.byKey(const ValueKey('accountNumber-account')), '');
+      await tester.enterText(find.byKey(const ValueKey('accountNumber-iban')), 'SA03 8000 0000 6080 1016 7519');
+      await tester.enterText(find.byKey(const ValueKey('accountNumber-card')), '4821');
+      await tester.tap(find.text(l10n.holdingsSave));
+      await settle(tester, () => money.state.book.accounts['rajhi']!.statementRefs.isNotEmpty);
+      expect(money.state.book.accounts['rajhi']!.statementRefs, ['iban:7519/22', 'card:4821']);
+      expect(money.state.book.accounts['visa']!.statementRefs, isEmpty);
     });
 
     testWidgets('changing only the name of an installment keeps how many are left of how many', (tester) async {

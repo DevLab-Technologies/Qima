@@ -1093,7 +1093,9 @@ class StatementReader {
         if (found.isEmpty) continue;
         final rest = found.fold(text, (t, a) => t.replaceRange(a.span.start, a.span.end, ' '.padRight(a.span.end - a.span.start)));
         final restWords = rest.split(RegExp(r'\s+')).where((w) => RegExp(r'\p{L}{2,}', unicode: true).hasMatch(w) && _currencyOf(w) == null).length;
-        if (restWords < 2) return;
+        // A message written as fields ("Amount: SAR 13.00") names each
+        // figure with one word.
+        if (restWords < 2 && !_fieldLabel.hasMatch(text)) return;
         inSentence = true;
       }
       if (inSentence) out[start] = block;
@@ -1178,6 +1180,18 @@ class StatementReader {
   static final _paidFrom = RegExp(r'(?:\bfrom\b|(?:^|\s)من(?=\s))\s*:?\s*([^\d\s*][^·]{1,40})', caseSensitive: false);
   // Where a name stops: the date, a reference, the next sentence.
   static final _nameEnd = RegExp(r'(?:\s(?:on|at|ref|reference|بتاريخ|في|برقم|رقم|le|el|via|عبر)(?:\s|$)|(?<![\s.]\p{L})(?<!\.)\.(?=\s|$)|[،,;:](?:\s|$)|\s\d).*$', caseSensitive: false, unicode: true);
+  // A message's "Label: value" line, and the labels that name who was paid.
+  static final _fieldLabel = RegExp(r'^\s*\p{L}[\p{L}\s()/.-]{0,30}:\s*\S', unicode: true);
+  static final _payeeField = RegExp(
+    r'^\s*(?:merchant(?: name)?|payee|beneficiary|store|shop|اسم التاجر|التاجر|المتجر|لدى|المستفيد|marchand|commerçant|bénéficiaire|comercio|beneficiario)\s*:\s*(.+)$',
+    caseSensitive: false,
+  );
+  // The figure a message gives after the transaction: the limit or the
+  // balance left.
+  static final _leftBefore = RegExp(
+    r'(?:limit|balance|available|remaining|الرصيد|المتبقي|المتاح|الحد|المتوفر|solde|plafond|disponible|saldo|límite)[^\d]{0,20}$',
+    caseSensitive: false,
+  );
   static final _accountWords = RegExp(r'^(?:your\s)?(?:account|card|a/c|حساب|حسابك|بطاقة|بطاقتك|compte|cuenta)', caseSensitive: false);
 
   /// One message as its lines: the amount with a currency, the date, and
@@ -1193,7 +1207,10 @@ class StatementReader {
     if (amounts.isEmpty) return null;
     // The first amount with a currency is the transaction; a later one is
     // usually the balance or the limit left.
-    final main = amounts.firstWhere((a) => a.value.currency != null, orElse: () => amounts.first);
+    bool left(_Found<_Money> a) => _leftBefore.hasMatch(flat.substring(math.max(0, a.span.start - 40), a.span.start));
+    final main = amounts.where((a) => a.value.currency != null && !left(a)).firstOrNull ??
+        amounts.where((a) => a.value.currency != null).firstOrNull ??
+        amounts.first;
     var sign = main.value.sign;
     final guessed = sign == 0;
     if (guessed) sign = _incomeWords.hasMatch(flat) && !_spendWords.hasMatch(flat) ? 1 : -1;
@@ -1206,7 +1223,16 @@ class StatementReader {
       return '';
     }
 
-    var description = name(_merchantAt);
+    var description = '';
+    for (final l in lines) {
+      final m = _payeeField.firstMatch(l);
+      final n = m == null ? '' : _clean(m[1]!.replaceAll(_nameEnd, ''));
+      if (n.length >= 2 && !_accountWords.hasMatch(n)) {
+        description = n;
+        break;
+      }
+    }
+    if (description.isEmpty) description = name(_merchantAt);
     if (description.isEmpty) description = sign < 0 ? name(_paidTo) : name(_paidFrom);
     if (description.isEmpty) description = sign < 0 ? name(_paidFrom) : name(_paidTo);
     if (description.isEmpty) {

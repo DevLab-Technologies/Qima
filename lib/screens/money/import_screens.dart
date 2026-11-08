@@ -529,15 +529,9 @@ class _ImportReviewScreenState extends State<ImportReviewScreen> {
   Future<void> _keepRefs(MoneyCubit money, BookAccount account, List<StatementFacts> files) async {
     final keep = ImportPlanner.refsToKeep(files);
     if (keep.isEmpty) return;
-    final refs = keep.map(StatementRef.fromKey).nonNulls.toList();
-    bool named(String key) => refs.any((r) => r.matches(key));
-    for (final other in money.state.accounts) {
-      if (other.id == account.id || !other.statementRefs.any(named)) continue;
-      await money.updateAccount(other.copyWith(statementRefs: [for (final r in other.statementRefs) if (!named(r)) r]));
-    }
     final current = money.state.book.accounts[account.id] ?? account;
     if (keep.every(current.statementRefs.contains)) return;
-    await money.updateAccount(current.copyWith(statementRefs: {...current.statementRefs, ...keep}.toList()));
+    await money.giveStatementRefs(current, {...current.statementRefs, ...keep}.toList());
   }
 
   Future<void> _discardAll(ImportState imports) async {

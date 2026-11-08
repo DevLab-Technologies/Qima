@@ -12,6 +12,7 @@ import '../models/money.dart';
 import '../models/minor_units.dart';
 import '../models/money_settings.dart';
 import '../models/net_worth.dart';
+import '../models/statement_facts.dart';
 import '../services/book_store.dart';
 
 /// Everything Money shows: the books, recurring payments and Money's own
@@ -186,6 +187,19 @@ class MoneyCubit extends Cubit<MoneyState> {
   Future<void> updateAccount(BookAccount account) async {
     final accounts = await store.accounts.upsert(account);
     if (!isClosed) emit(state.copyWith(accounts: accounts));
+  }
+
+  /// Saves [account] with these statement numbers (`StatementRef.key`) and
+  /// takes them off any other account, so a statement or bank message is
+  /// matched to one account only.
+  Future<void> giveStatementRefs(BookAccount account, List<String> keys) async {
+    final refs = keys.map(StatementRef.fromKey).nonNulls.toList();
+    bool named(String key) => refs.any((r) => r.matches(key));
+    for (final other in state.accounts) {
+      if (other.id == account.id || !other.statementRefs.any(named)) continue;
+      await updateAccount(other.copyWith(statementRefs: [for (final r in other.statementRefs) if (!named(r)) r]));
+    }
+    await updateAccount(account.copyWith(statementRefs: keys));
   }
 
   /// An account with entries is archived, so its history still adds up;

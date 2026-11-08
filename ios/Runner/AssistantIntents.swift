@@ -122,6 +122,43 @@ struct AddBankMessageIntent: AppIntent {
     }
 }
 
+/// One Apple Pay payment from a Shortcuts Wallet automation ("When I tap
+/// any of my cards"), written as a labelled message so the same reader that
+/// reads bank texts reads it, and waiting for review like one.
+@available(iOS 17.0, macOS 14.0, *)
+struct AddApplePayIntent: AppIntent {
+    static let title: LocalizedStringResource = "Add an Apple Pay payment"
+    static let description = IntentDescription("Sends an Apple Pay payment from a Wallet automation to Qima. Nothing is added until you check it in the app.")
+    static let openAppWhenRun = false
+
+    @Parameter(title: "Amount")
+    var amount: String
+
+    @Parameter(title: "Merchant")
+    var merchant: String
+
+    @Parameter(title: "Card")
+    var card: String?
+
+    func perform() async throws -> some IntentResult {
+        try MessageInbox.add(Self.message(amount: amount, merchant: merchant, card: card, at: Date()))
+        return .result()
+    }
+
+    static func message(amount: String, merchant: String, card: String?, at date: Date) -> String {
+        let when = DateFormatter()
+        when.locale = Locale(identifier: "en_US_POSIX")
+        when.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        func clean(_ s: String) -> String { s.trimmingCharacters(in: .whitespacesAndNewlines) }
+        var lines = ["Apple Pay purchase"]
+        if let card, !clean(card).isEmpty { lines.append("Card: \(clean(card))") }
+        lines.append("Amount: \(clean(amount))")
+        if !clean(merchant).isEmpty { lines.append("Merchant: \(clean(merchant))") }
+        lines.append("On: \(when.string(from: date))")
+        return lines.joined(separator: "\n")
+    }
+}
+
 /// The share extension's inbox layout (`ShareViewController`): a folder per
 /// item, written under a dotted name and renamed once complete.
 enum MessageInbox {
@@ -171,6 +208,12 @@ struct QimaShortcuts: AppShortcutsProvider {
             phrases: ["Add a bank message to \(.applicationName)"],
             shortTitle: "Bank message",
             systemImageName: "message"
+        )
+        AppShortcut(
+            intent: AddApplePayIntent(),
+            phrases: ["Add an Apple Pay payment to \(.applicationName)"],
+            shortTitle: "Apple Pay payment",
+            systemImageName: "wallet.pass"
         )
     }
 }

@@ -85,14 +85,36 @@ class ImportPlanner {
         use[l.accountId] = (use[l.accountId] ?? 0) + 1;
       }
     }
+    // A card's number in the account's name or note ("Visa 4821").
+    bool namesNumber(BookAccount a) => named.any((r) => RegExp('(?<!\\d)${r.last4}(?!\\d)').hasMatch('${a.name} ${a.note}'));
+    // A card message about a limit is from a credit card.
+    final creditCard = named.any((r) => r.kind == StatementRefKind.card) &&
+        !named.any((r) => r.kind != StatementRefKind.card) &&
+        rows.any((r) => _creditWords.hasMatch('${r.detail} ${r.description}'));
+    final preferred = creditCard ? AccountType.credit : AccountType.debit;
+    // The card a message names by its name, as Wallet does for Apple Pay
+    // ("Card: SNB Visa"): the account with the longest name in it.
+    final cardNames = [
+      for (final r in rows)
+        for (final m in _cardField.allMatches(r.detail)) m[1]!.toLowerCase(),
+    ];
+    int nameFit(BookAccount a) {
+      final n = a.name.trim().toLowerCase();
+      return n.length >= 3 && cardNames.any((c) => c.contains(n)) ? n.length : 0;
+    }
     int score(BookAccount a) =>
         (a.statementRefs.any((k) => named.any((r) => r.matches(k))) ? 1 << 40 : 0) +
+        (namesNumber(a) ? 1 << 39 : 0) +
+        (nameFit(a) > 0 ? (1 << 38) + (nameFit(a) << 20) : 0) +
         (currencies[a.currency] ?? 0) * 1000 +
-        (a.type == AccountType.debit ? 500 : 0) +
+        (a.type == preferred ? 500 : 0) +
         (use[a.id] ?? 0).clamp(0, 499);
     options.sort((a, b) => score(b) - score(a));
     return options.first;
   }
+
+  static final _cardField = RegExp(r'(?:^|\s)(?:card|بطاقة|carte|tarjeta)\s*:\s*(.+?)(?=\s+\p{L}+\s*:|$)', caseSensitive: false, unicode: true);
+  static final _creditWords = RegExp(r'credit|limit|ائتمان|ائتمانية|الحد|crédit|plafond|crédito|límite', caseSensitive: false);
 
   static List<ImportCandidate> plan({
     required List<(String fileId, List<StatementRow> rows)> files,

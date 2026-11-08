@@ -5016,4 +5016,43 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get planEdit => 'Modifier';
+
+  @override
+  String get accountNumberAccount => 'Numéro de compte';
+
+  @override
+  String get accountNumberIban => 'IBAN';
+
+  @override
+  String get accountNumberCard => 'Numéro de carte';
+
+  @override
+  String get accountNumberHelp =>
+      'Les 4 derniers chiffres suffisent. Qima ne garde que ces 4 chiffres, pour rattacher relevés et messages de la banque à ce compte.';
+
+  @override
+  String get accountNumberShort => 'Saisissez au moins les 4 derniers chiffres';
+
+  @override
+  String get applePaySetUp => 'Paiements Apple Pay';
+
+  @override
+  String get applePayIntro =>
+      'Chaque paiement Apple Pay peut arriver dans Qima au moment où vous payez, même pour les cartes qui n’envoient pas de SMS.';
+
+  @override
+  String get applePayStep1 =>
+      'Dans Raccourcis, allez dans Automatisation, touchez + et choisissez Cartes.';
+
+  @override
+  String get applePayStep2 =>
+      'Choisissez vos cartes, puis Exécuter immédiatement.';
+
+  @override
+  String get applePayStep3 =>
+      'Ajoutez l’action « Add an Apple Pay payment » de Qima.';
+
+  @override
+  String get applePayStep4 =>
+      'Réglez Amount, Merchant et Card sur Montant, Marchand et Carte ou carte de l’entrée du raccourci.';
 }
