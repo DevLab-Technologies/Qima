@@ -28,6 +28,7 @@ import 'package:qima/screens/help_sheet.dart';
 import 'package:qima/screens/money/accounts_screens.dart';
 import 'package:qima/screens/money/asset_screens.dart';
 import 'package:qima/screens/money/balance_sheet_screen.dart';
+import 'package:qima/screens/zakat_screen.dart';
 import 'package:qima/theme/price_chart.dart';
 import 'package:qima/theme/strings.dart';
 import 'package:qima/screens/money/bank_messages_screen.dart';
@@ -243,7 +244,7 @@ void main() {
       'people': () => const PeopleScreen(),
       'bill split': () => const BillSplitScreen(),
       'categories': () => const CategoriesScreen(),
-      'zakat': () => const ZakatBookScreen(),
+      'zakat': () => const ZakatScreen(),
       'import review': () => const ImportReviewScreen(),
       for (final k in EntryKind.values) 'editor ${k.name}': () => EntryEditorScreen(kind: k),
       'edit spend': () => EntryEditorScreen(kind: EntryKind.spend, existing: spend),

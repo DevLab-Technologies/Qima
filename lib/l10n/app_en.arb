@@ -1685,7 +1685,7 @@
   "zakatCalendar": "Calendar",
   "zakatCalendarHijri": "Hijri",
   "zakatCalendarGregorian": "Gregorian",
-  "zakatGregorianNote": "A Gregorian year is about 11 days longer than a lunar one. Some scholars raise the rate to {solarRate} to account for it; Qima keeps {rate}.",
+  "zakatGregorianNote": "Dates show in the Gregorian calendar. The hawl is still a lunar year, so it completes about 11 days earlier each Gregorian year.",
   "zakatHawlClear": "Clear hawl date",
   "zakatRemind": "Remind me",
   "zakatRemindSubtitle": "A notification on the day your hawl completes",
@@ -1753,16 +1753,6 @@
   "helpZakatStep4Body": "Scholars differ on the basis, on equities and on jewelry. Every default here can be changed — when unsure, ask a scholar you trust.",
   "@zakatDueLabel": {
     "placeholders": {
-      "rate": {
-        "type": "String"
-      }
-    }
-  },
-  "@zakatGregorianNote": {
-    "placeholders": {
-      "solarRate": {
-        "type": "String"
-      },
       "rate": {
         "type": "String"
       }

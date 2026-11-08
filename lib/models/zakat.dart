@@ -24,9 +24,9 @@ enum NisabBasis {
       NisabBasis.values.firstWhere((b) => b.name == name, orElse: () => ZakatSettings.defaultBasis);
 }
 
-/// Which calendar the hawl (the zakat year) is counted in. Hijri is the
-/// default: the hawl is a lunar year, about 11 days shorter than a
-/// Gregorian one.
+/// Which calendar hawl dates are picked and shown in. The hawl itself is
+/// always a lunar year (354 or 355 days) whichever is chosen, so in
+/// Gregorian terms it completes about 11 days earlier each year.
 enum HawlCalendar {
   hijri,
   gregorian;
@@ -194,7 +194,7 @@ class HawlSchedule extends Equatable {
     // its first completion is still one year after it.
     DateTime? previous;
     for (var k = 1; k < 200; k++) {
-      final anniversary = anniversaryOf(startDay, k, settings.calendar);
+      final anniversary = anniversaryOf(startDay, k);
       if (anniversary == null) return null;
       if (!anniversary.isBefore(today)) {
         // Calendar-day difference, immune to DST hour shifts.
@@ -209,19 +209,18 @@ class HawlSchedule extends Equatable {
     return null;
   }
 
-  /// The [years]-th anniversary of [start]. Hijri anniversaries go through
-  /// the Umm al-Qura table; a start outside the table falls back to
-  /// Gregorian rather than failing. Gregorian 29 February clamps to 28
-  /// February in common years.
-  static DateTime? anniversaryOf(DateTime start, int years, HawlCalendar calendar) {
-    if (calendar == HawlCalendar.hijri) {
-      final hijri = HijriDate.fromGregorian(start);
-      if (hijri != null) return hijri.addYears(years)?.toGregorian();
-    }
-    final year = start.year + years;
-    final lastDay = DateTime(year, start.month + 1, 0).day;
-    return DateTime(year, start.month, start.day > lastDay ? lastDay : start.day);
+  /// The [years]-th Hijri anniversary of [start], through the Umm al-Qura
+  /// table. The hawl is a lunar year whichever calendar the dates are shown
+  /// in. A start outside the table counts mean lunar years instead.
+  static DateTime? anniversaryOf(DateTime start, int years) {
+    final hijri = HijriDate.fromGregorian(start);
+    final exact = hijri?.addYears(years)?.toGregorian();
+    if (exact != null) return exact;
+    return DateTime(start.year, start.month, start.day + (years * meanLunarYearDays).round());
   }
+
+  /// The mean length of a Hijri year in days.
+  static const double meanLunarYearDays = 354.367;
 
   @override
   List<Object?> get props => [lastCompleted, next, daysUntilNext];

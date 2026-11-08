@@ -2440,9 +2440,8 @@ class AppLocalizationsAr extends AppLocalizations {
   String get zakatCalendarGregorian => 'ميلادي';
 
   @override
-  String zakatGregorianNote(String solarRate, String rate) {
-    return 'السنة الميلادية أطول من القمرية بنحو 11 يومًا، ويرفع بعض العلماء النسبة إلى $solarRate لذلك، بينما يُبقي Qima على $rate.';
-  }
+  String get zakatGregorianNote =>
+      'تظهر التواريخ بالتقويم الميلادي. يبقى الحول سنة قمرية، لذا يكتمل قبل موعده الميلادي بنحو 11 يومًا كل سنة.';
 
   @override
   String get zakatHawlClear => 'مسح تاريخ الحول';

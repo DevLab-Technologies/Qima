@@ -727,7 +727,7 @@
   "zakatCalendar": "التقويم",
   "zakatCalendarHijri": "هجري",
   "zakatCalendarGregorian": "ميلادي",
-  "zakatGregorianNote": "السنة الميلادية أطول من القمرية بنحو 11 يومًا، ويرفع بعض العلماء النسبة إلى {solarRate} لذلك، بينما يُبقي Qima على {rate}.",
+  "zakatGregorianNote": "تظهر التواريخ بالتقويم الميلادي. يبقى الحول سنة قمرية، لذا يكتمل قبل موعده الميلادي بنحو 11 يومًا كل سنة.",
   "zakatHawlClear": "مسح تاريخ الحول",
   "zakatRemind": "ذكّرني",
   "zakatRemindSubtitle": "إشعار في يوم اكتمال حولك",

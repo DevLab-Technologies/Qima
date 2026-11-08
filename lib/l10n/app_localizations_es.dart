@@ -2457,9 +2457,8 @@ class AppLocalizationsEs extends AppLocalizations {
   String get zakatCalendarGregorian => 'Gregoriano';
 
   @override
-  String zakatGregorianNote(String solarRate, String rate) {
-    return 'Un año gregoriano dura unos 11 días más que uno lunar. Algunos sabios suben el porcentaje al $solarRate por ello; Qima mantiene el $rate.';
-  }
+  String get zakatGregorianNote =>
+      'Las fechas se muestran en el calendario gregoriano. El hawl sigue siendo un año lunar, así que se cumple unos 11 días antes cada año gregoriano.';
 
   @override
   String get zakatHawlClear => 'Borrar fecha del hawl';

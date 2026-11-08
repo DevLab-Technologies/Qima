@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../models/money.dart';
+import '../models/zakat_book.dart';
+import '../blocs/money_cubit.dart';
 import '../blocs/app_cubit.dart';
 import '../blocs/app_state.dart';
 import '../l10n/app_localizations.dart';
@@ -352,16 +355,15 @@ class _ZakatEntry extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final colors = context.colors;
-    final String subtitle;
-    switch (assessment.status) {
-      case NisabStatus.above:
-        subtitle = l10n.zakatEntryDue(Masking.amount(assessment.due, hidden: hidden));
-      case NisabStatus.below:
-        subtitle = l10n.zakatStatusBelow;
-      case NisabStatus.thresholdUnknown:
-      case NisabStatus.noHoldings:
-        subtitle = l10n.zakatEntryCalculate;
-    }
+    // The same figure as the Zakat screen: the whole balance sheet, not
+    // the holdings alone.
+    final app = context.read<AppCubit>().state;
+    final z = ZakatOnBook.of(book: context.watch<MoneyCubit>().state.book, holdings: assessment, currency: app.baseCurrency, rates: app.rates);
+    final String subtitle = !z.thresholdKnown
+        ? l10n.zakatEntryCalculate
+        : z.above
+            ? l10n.zakatEntryDue(Masking.amount(Money(z.due, z.currency), hidden: hidden))
+            : l10n.zakatStatusBelow;
     return DSCard(
       padding: EdgeInsets.zero,
       child: ListTile(
@@ -370,7 +372,7 @@ class _ZakatEntry extends StatelessWidget {
         title: Text(l10n.zakatTitle, style: TextStyle(color: colors.textPrimary, fontWeight: FontWeight.w600)),
         subtitle: Text(subtitle, style: TextStyle(color: colors.textTertiary, fontSize: 12)),
         trailing: Icon(Icons.chevron_right, color: colors.textTertiary),
-        onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ZakatScreen())),
+        onTap: () => ZakatScreen.open(context),
       ),
     );
   }

@@ -178,7 +178,7 @@ class _ZakatSettingsScreenState extends State<ZakatSettingsScreen> with WidgetsB
                       ),
                       if (settings.calendar == HawlCalendar.gregorian) ...[
                         const SizedBox(height: DS.spaceXS),
-                        Text(l10n.zakatGregorianNote(percentLabel(context, 2.577), percentLabel(context, ZakatAssessment.rate * 100)), style: TextStyle(color: colors.textTertiary, fontSize: 12)),
+                        Text(l10n.zakatGregorianNote, style: TextStyle(color: colors.textTertiary, fontSize: 12)),
                       ],
                       const SizedBox(height: DS.spaceSM),
                       // The date sits under the label, not in `trailing`: a

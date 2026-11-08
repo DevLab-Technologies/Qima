@@ -2462,9 +2462,8 @@ class AppLocalizationsFr extends AppLocalizations {
   String get zakatCalendarGregorian => 'Grégorien';
 
   @override
-  String zakatGregorianNote(String solarRate, String rate) {
-    return 'Une année grégorienne compte environ 11 jours de plus qu’une année lunaire. Certains savants portent le taux à $solarRate pour en tenir compte ; Qima garde $rate.';
-  }
+  String get zakatGregorianNote =>
+      'Les dates s’affichent dans le calendrier grégorien. Le hawl reste une année lunaire : il se termine environ 11 jours plus tôt chaque année grégorienne.';
 
   @override
   String get zakatHawlClear => 'Effacer la date du hawl';

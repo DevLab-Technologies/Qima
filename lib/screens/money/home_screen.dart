@@ -255,13 +255,14 @@ class HomeScreen extends StatelessWidget {
         final z = ZakatOnBook.of(book: book, holdings: context.read<AppCubit>().zakatAssessment, currency: ccy, rates: app.rates);
         return MoneySection(
           title: l10n.featZakat,
-          onTitleTap: () => ZakatBookScreen.open(context),
+          onTitleTap: () => ZakatScreen.open(context),
           children: [
             MoneyRow(
               icon: Icons.volunteer_activism_outlined,
-              title: z.above ? l10n.zakatDueLine(moneyText(z.due, ccy, hidden: hidden)) : l10n.zakatBelowLine,
-              subtitle: l10n.zakatBaseLine(moneyText(z.base, ccy, hidden: hidden)),
-              onTap: () => ZakatBookScreen.open(context),
+              // Always the amount to pay, 0 below the nisab, then why.
+              title: l10n.zakatDueLine(moneyText(z.due, ccy, hidden: hidden)),
+              subtitle: [if (z.thresholdKnown && !z.above) l10n.zakatBelowLine, l10n.zakatBaseLine(moneyText(z.base, ccy, hidden: hidden))].join(' · '),
+              onTap: () => ZakatScreen.open(context),
             ),
           ],
         );
@@ -709,71 +710,3 @@ Future<void> showWhatsNew(BuildContext context) async {
   );
 }
 
-/// Zakat over the balance sheet: the holdings the zakat settings count,
-/// plus cash, money owed to the person and assets held for sale, less
-/// debts due.
-class ZakatBookScreen extends StatelessWidget {
-  const ZakatBookScreen({super.key});
-
-  static Future<void> open(BuildContext context) => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ZakatBookScreen()));
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    final colors = context.colors;
-    final app = context.watch<AppCubit>();
-    final s = app.state;
-    final money = context.watch<MoneyCubit>().state;
-    final z = ZakatOnBook.of(book: money.book, holdings: app.zakatAssessment, currency: s.baseCurrency, rates: s.rates);
-    final ccy = s.baseCurrency;
-    final hidden = s.hideBalances;
-    String label(ZakatPart p) => switch (p) {
-          ZakatPart.holdings => l10n.sheetHoldings,
-          ZakatPart.cash => l10n.sheetCash,
-          ZakatPart.owedToYou => l10n.sheetOwedToYou,
-          ZakatPart.heldForSale => l10n.zakatHeldForSale,
-          ZakatPart.debtsDue => l10n.zakatDebtsDue,
-        };
-    return ScreenBackground(
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        appBar: AppBar(backgroundColor: Colors.transparent, title: Text(l10n.featZakat), actions: const [HelpButton(topic: HelpTopicId.zakat)]),
-        body: ListView(
-          padding: const EdgeInsets.all(DS.spaceMD),
-          children: [
-            DSHeroCard(
-              accent: colors.accentGold,
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text(l10n.zakatDueTitle, style: TextStyle(color: colors.textTertiary, fontSize: 12)),
-                Directionality(
-                  textDirection: TextDirection.ltr,
-                  child: Text(moneyText(z.due, ccy, hidden: hidden), style: TextStyle(color: colors.textPrimary, fontSize: DS.figureHero, fontWeight: FontWeight.w800)),
-                ),
-                Text(
-                  !z.thresholdKnown
-                      ? l10n.zakatNoThreshold
-                      : (z.above ? l10n.zakatAbove(moneyText(z.threshold!.amount, ccy, hidden: hidden)) : l10n.zakatBelow(moneyText(z.threshold!.amount, ccy, hidden: hidden))),
-                  style: TextStyle(color: colors.textSecondary, fontSize: 13),
-                ),
-              ]),
-            ),
-            const SizedBox(height: DS.spaceMD),
-            MoneySection(children: [
-              for (final p in ZakatPart.values)
-                MoneyRow(title: label(p), trailing: '${p == ZakatPart.debtsDue ? '−' : '+'} ${moneyText(z.parts[p] ?? 0, ccy, hidden: hidden)}'),
-              const Divider(height: 1),
-              MoneyRow(title: l10n.zakatBase, bold: true, trailing: moneyText(z.base, ccy, hidden: hidden)),
-            ]),
-            Text(l10n.zakatBookHelp, style: TextStyle(color: colors.textTertiary, fontSize: 13)),
-            if (z.missingRates.isNotEmpty) Text(l10n.sheetMissingRates(z.missingRates.join(', ')), style: TextStyle(color: colors.down)),
-            const SizedBox(height: DS.spaceMD),
-            OutlinedButton(
-              onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ZakatScreen())),
-              child: Text(l10n.zakatHoldingsDetail),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}

@@ -727,7 +727,7 @@
   "zakatCalendar": "Calendrier",
   "zakatCalendarHijri": "Hégirien",
   "zakatCalendarGregorian": "Grégorien",
-  "zakatGregorianNote": "Une année grégorienne compte environ 11 jours de plus qu’une année lunaire. Certains savants portent le taux à {solarRate} pour en tenir compte ; Qima garde {rate}.",
+  "zakatGregorianNote": "Les dates s’affichent dans le calendrier grégorien. Le hawl reste une année lunaire : il se termine environ 11 jours plus tôt chaque année grégorienne.",
   "zakatHawlClear": "Effacer la date du hawl",
   "zakatRemind": "Me le rappeler",
   "zakatRemindSubtitle": "Une notification le jour où votre hawl s’achève",

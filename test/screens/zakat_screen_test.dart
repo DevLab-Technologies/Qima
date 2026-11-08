@@ -1,6 +1,12 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:qima/services/local_file_store.dart';
+import 'package:qima/theme/money_labels.dart';
+import 'package:qima/models/minor_units.dart';
+import 'package:qima/models/book_account.dart';
+import 'package:qima/blocs/money_cubit.dart';
 import 'package:qima/blocs/app_cubit.dart';
 import 'package:qima/l10n/app_localizations.dart';
 import 'package:qima/l10n/app_localizations_ar.dart';
@@ -194,7 +200,32 @@ void main() {
       await tester.drag(find.byType(ListView), const Offset(0, 2000));
       await tester.pumpAndSettle();
       expect(find.text(usd(250)), findsOneWidget);
+      await tester.dragUntilVisible(find.textContaining(en.zakatExcludedHolding), find.byType(ListView), const Offset(0, -150));
       expect(find.textContaining(en.zakatExcludedHolding), findsOneWidget);
+    });
+
+    testWidgets('the amount to pay counts cash, money owed to you and debts, not the holdings alone', (tester) async {
+      phone(tester);
+      final dir = (await tester.runAsync(() => Directory.systemTemp.createTemp('qima_zakat')))!;
+      LocalFileStore.overrideDirectoryForTesting(dir);
+      addTearDown(() => dir.delete(recursive: true));
+      final cubit = await cubitWith([lot('crypto.BTC', 1)]);
+      await tester.pumpWidget(harness(cubit, const ZakatScreen()));
+      await tester.pumpAndSettle();
+      final money = tester.element(find.byType(ZakatScreen)).read<MoneyCubit>();
+      final bank = BookAccount(id: 'bank', name: 'Bank', side: AccountSide.own, type: AccountType.debit, currency: 'USD');
+      final card = BookAccount(id: 'card', name: 'Card', side: AccountSide.owe, type: AccountType.credit, currency: 'USD');
+      await tester.runAsync(() async {
+        // Let the book finish loading first, so it doesn't replace these.
+        await money.load();
+        await money.addAccount(bank, opening: MinorUnits.fromMajor(12000, 'USD'), openedOn: DateTime(2026));
+        await money.addAccount(card, opening: MinorUnits.fromMajor(2000, 'USD'), openedOn: DateTime(2026));
+      });
+      await tester.pumpAndSettle();
+      expect(find.text(usd(60000 * 0.025)), findsOneWidget);
+      // 50,000 in bitcoin + 12,000 cash − 2,000 on the card = 60,000.
+      await tester.dragUntilVisible(find.byKey(const ValueKey('zakatBase')), find.byType(ListView), const Offset(0, -150));
+      expect(find.descendant(of: find.byKey(const ValueKey('zakatBase')), matching: find.text(moneyText(60000, 'USD', hidden: false))), findsOneWidget);
     });
 
     testWidgets('equities are listed as excluded by class by default', (tester) async {

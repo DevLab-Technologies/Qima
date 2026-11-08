@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../helpers/money_provider.dart';
 import 'package:qima/blocs/app_cubit.dart';
 import 'package:qima/l10n/app_localizations.dart';
 import 'package:qima/l10n/app_localizations_ar.dart';
@@ -61,8 +62,7 @@ void main() {
     return cubit;
   }
 
-  Widget harness(AppCubit cubit, Widget home, {Locale locale = const Locale('en')}) => BlocProvider<AppCubit>.value(
-        value: cubit,
+  Widget harness(AppCubit cubit, Widget home, {Locale locale = const Locale('en')}) => MultiBlocProvider(providers: [BlocProvider<AppCubit>.value(value: cubit), testMoneyProvider(cubit)],
         child: MaterialApp(
           locale: locale,
           localizationsDelegates: AppLocalizations.localizationsDelegates,
