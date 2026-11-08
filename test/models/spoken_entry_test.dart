@@ -23,6 +23,32 @@ void main() {
     expect(e.accountIds, ['snb']);
   });
 
+  test('Arabic speech names accounts written in English, and the shop keeps its spelling', () {
+    final e = read('اشتريت ب ٨٩٩ ريال في بندة امبارح من كارت الراجحي');
+    expect(e.amount, '899');
+    expect(e.merchant, 'بندة');
+    expect(e.accountIds, ['rajhi']);
+    expect(e.daysAgo, 1);
+    expect(read('دفعت ٥٠ بالفيزا').accountIds, ['visa']);
+    // "حساب الأهلي" is written in Arabic, so it wins over SNB's other name.
+    expect(read('حولت ١٠٠٠ من الاهلي للراجحي').accountIds, ['ahli', 'rajhi']);
+  });
+
+  test('any name said in the other script, by its sound', () {
+    const mine = {'rahalah': 'ENBD Rahalah', 'snb': 'SNB', 'cash': 'Cash'};
+    final e = SpokenEntry.parse('اشتريت او صرفت ٨٩٩ ريال في بندة امبارح من حساب من كارت راحلة', accounts: mine);
+    expect(e.accountIds, ['rahalah']);
+    expect(e.merchant, 'بندة');
+    expect(SpokenEntry.parse('دفعت ١٠٠ من الكاش', accounts: mine).accountIds, ['cash']);
+    // Words that only share a letter or two never match.
+    expect(SpokenEntry.parse('صرفت ٥٠ ريال اليوم', accounts: mine).accountIds, isEmpty);
+  });
+
+  test('English speech names an account written in Arabic', () {
+    final e = SpokenEntry.parse('spent 20 with Ahli on Rajhi card', accounts: const {'ahli': 'حساب الأهلي', 'rajhi': 'بطاقة الراجحي'});
+    expect(e.accountIds, ['ahli', 'rajhi']);
+  });
+
   test('a category said outright, and number words', () {
     final e = read('paid twenty one riyals on groceries at Danube');
     expect(e.amount, '21');
