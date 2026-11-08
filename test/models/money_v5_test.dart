@@ -274,8 +274,8 @@ void main() {
       expect(parseMinor('abc', 'SAR'), isNull);
     });
 
-    test('minorFieldText writes the currency’s places', () {
-      expect(minorFieldText(125050, 'SAR'), '1250.50');
+    test('minorFieldText writes the currency’s places, grouped', () {
+      expect(minorFieldText(125050, 'SAR'), '1,250.50');
       expect(minorFieldText(1234, 'KWD'), '1.234');
       expect(minorFieldText(500, 'JPY'), '500');
     });

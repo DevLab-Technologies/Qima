@@ -4415,6 +4415,12 @@ class AppLocalizationsEs extends AppLocalizations {
   String get addSheetTransactionSubtitle => 'Dinero gastado, recibido o movido';
 
   @override
+  String get entryVoiceTitle => 'Dilo en vez de escribir';
+
+  @override
+  String get entryVoiceListening => 'Escuchando… toca para parar';
+
+  @override
   String get entryVoiceHint =>
       'Di lo que pasó, por ejemplo «Gasté 45 en Mercadona con la Visa ayer»';
 

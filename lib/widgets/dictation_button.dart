@@ -9,6 +9,19 @@ import '../models/spoken_numbers.dart';
 import '../services/dictation_service.dart';
 import '../theme/qima_colors.dart';
 
+/// What a custom [DictationButton.builder] draws from.
+class DictationLook {
+  final bool listening;
+
+  /// Whether listening can start in this language on this device.
+  final bool ready;
+  final IconData icon;
+  final String tooltip;
+  final VoidCallback onPressed;
+
+  const DictationLook({required this.listening, required this.ready, required this.icon, required this.tooltip, required this.onPressed});
+}
+
 /// The mic in the Add field (v4 phase 4), in one of four states: ready,
 /// listening, unavailable for this language, or turned off in Settings.
 /// What it hears goes into the field as text, with number words as digits,
@@ -26,7 +39,10 @@ class DictationButton extends StatefulWidget {
   /// The language to listen in; the app's language when null.
   final Locale? language;
 
-  const DictationButton({super.key, required this.onText, this.onFinal, this.onListening, this.language});
+  /// Draws the button another way (a large card); a plain icon when null.
+  final Widget Function(BuildContext context, DictationLook look)? builder;
+
+  const DictationButton({super.key, required this.onText, this.onFinal, this.onListening, this.language, this.builder});
 
   @override
   State<DictationButton> createState() => _DictationButtonState();
@@ -134,6 +150,13 @@ class _DictationButtonState extends State<DictationButton> {
       DictationAvailability.denied => (Icons.mic_off, colors.textTertiary, l10n.dictationDenied),
       _ => (Icons.mic_none, colors.textTertiary.withValues(alpha: 0.5), l10n.dictationUnsupported),
     };
+    final builder = widget.builder;
+    if (builder != null) {
+      return builder(
+        context,
+        DictationLook(listening: listening, ready: _availability == DictationAvailability.available, icon: icon, tooltip: tooltip, onPressed: _toggle),
+      );
+    }
     return IconButton(
       icon: Icon(icon, color: color),
       tooltip: tooltip,

@@ -4418,6 +4418,12 @@ class AppLocalizationsFr extends AppLocalizations {
   String get addSheetTransactionSubtitle => 'Argent dépensé, reçu ou déplacé';
 
   @override
+  String get entryVoiceTitle => 'Dites-le au lieu de taper';
+
+  @override
+  String get entryVoiceListening => 'J’écoute… touchez pour arrêter';
+
+  @override
   String get entryVoiceHint =>
       'Dites ce qui s’est passé, par exemple « Payé 45 chez Carrefour avec la Visa hier »';
 

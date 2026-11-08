@@ -1280,6 +1280,8 @@
   "valueReviewMonths": "{months, plural, =1{Cada mes} other{Cada {months} meses}}",
   "addSheetTransaction": "Movimiento",
   "addSheetTransactionSubtitle": "Dinero gastado, recibido o movido",
+  "entryVoiceTitle": "Dilo en vez de escribir",
+  "entryVoiceListening": "Escuchando… toca para parar",
   "entryVoiceHint": "Di lo que pasó, por ejemplo «Gasté 45 en Mercadona con la Visa ayer»",
   "entryVoiceNothing": "No se entendió un importe ni un nombre. Inténtalo de nuevo o escríbelo.",
   "entryNewTitle": "Nuevo movimiento",

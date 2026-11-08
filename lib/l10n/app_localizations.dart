@@ -7595,6 +7595,18 @@ abstract class AppLocalizations {
   /// **'Money spent, earned or moved'**
   String get addSheetTransactionSubtitle;
 
+  /// The large voice button at the top of New transaction.
+  ///
+  /// In en, this message translates to:
+  /// **'Say it instead of typing'**
+  String get entryVoiceTitle;
+
+  /// No description provided for @entryVoiceListening.
+  ///
+  /// In en, this message translates to:
+  /// **'Listening… tap to stop'**
+  String get entryVoiceListening;
+
   /// No description provided for @entryVoiceHint.
   ///
   /// In en, this message translates to:

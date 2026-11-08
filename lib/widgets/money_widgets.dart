@@ -200,9 +200,45 @@ class AmountField extends StatelessWidget {
       onChanged: onChanged,
       keyboardType: const TextInputType.numberWithOptions(decimal: true),
       textDirection: TextDirection.ltr,
-      inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9.,٠-٩٫٬]'))],
+      inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9.,٠-٩٫٬]')), const GroupedAmountFormatter()],
       decoration: InputDecoration(labelText: label, suffixText: currency, helperText: helper, border: const OutlineInputBorder()),
     );
+  }
+}
+
+/// Groups an amount by thousands as it's typed ("1250" → "1,250"), with
+/// "." for decimals. Arabic digits become ASCII, and a comma typed from a
+/// keyboard whose decimal key is a comma starts the decimals. The caret
+/// stays after the same digit.
+class GroupedAmountFormatter extends TextInputFormatter {
+  const GroupedAmountFormatter();
+
+  @override
+  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
+    final text = newValue.text;
+    final caret = newValue.selection.isValid ? newValue.selection.end.clamp(0, text.length) : text.length;
+    // One comma typed just now, where none was before: a decimal key.
+    final typedComma = text.length == oldValue.text.length + 1 && caret > 0 && text[caret - 1] == ',';
+    final kept = StringBuffer();
+    var keptBeforeCaret = 0;
+    var hasDot = false;
+    for (var i = 0; i < text.length; i++) {
+      var c = text[i];
+      final r = c.codeUnitAt(0);
+      if (r >= 0x0660 && r <= 0x0669) c = String.fromCharCode(r - 0x0660 + 0x30);
+      if (c == '٫' || (typedComma && i == caret - 1)) c = '.';
+      final digit = c.codeUnitAt(0) >= 0x30 && c.codeUnitAt(0) <= 0x39;
+      if (!digit && !(c == '.' && !hasDot)) continue;
+      if (c == '.') hasDot = true;
+      kept.write(c);
+      if (i < caret) keptBeforeCaret++;
+    }
+    final formatted = groupedAmount(kept.toString());
+    var at = 0;
+    for (var seen = 0; at < formatted.length && seen < keptBeforeCaret; at++) {
+      if (formatted[at] != ',') seen++;
+    }
+    return TextEditingValue(text: formatted, selection: TextSelection.collapsed(offset: at));
   }
 }
 

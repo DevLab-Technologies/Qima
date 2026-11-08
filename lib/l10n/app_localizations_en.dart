@@ -4390,6 +4390,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get addSheetTransactionSubtitle => 'Money spent, earned or moved';
 
   @override
+  String get entryVoiceTitle => 'Say it instead of typing';
+
+  @override
+  String get entryVoiceListening => 'Listening… tap to stop';
+
+  @override
   String get entryVoiceHint =>
       'Say what happened, like “Spent 45 at Panda with Visa yesterday”';
 

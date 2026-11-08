@@ -1280,6 +1280,8 @@
   "valueReviewMonths": "{months, plural, =1{Chaque mois} other{Tous les {months} mois}}",
   "addSheetTransaction": "Opération",
   "addSheetTransactionSubtitle": "Argent dépensé, reçu ou déplacé",
+  "entryVoiceTitle": "Dites-le au lieu de taper",
+  "entryVoiceListening": "J’écoute… touchez pour arrêter",
   "entryVoiceHint": "Dites ce qui s’est passé, par exemple « Payé 45 chez Carrefour avec la Visa hier »",
   "entryVoiceNothing": "Aucun montant ni nom compris. Réessayez ou tapez-le.",
   "entryNewTitle": "Nouvelle opération",

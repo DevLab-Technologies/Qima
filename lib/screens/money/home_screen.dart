@@ -443,7 +443,10 @@ class _HoldingsCard extends StatelessWidget {
       if (pricesAt != null) l10n.pricesAt(DateFormat.Hm(Localizations.localeOf(context).toLanguageTag()).format(pricesAt!)),
     ].join(' · ');
 
-    return Semantics(
+    // The same gap below as the section cards around it.
+    return Padding(
+      padding: const EdgeInsets.only(bottom: DS.spaceMD),
+      child: Semantics(
       button: true,
       child: GestureDetector(
         key: const ValueKey('holdingsCard'),
@@ -508,6 +511,7 @@ class _HoldingsCard extends StatelessWidget {
           ),
         ),
       ),
+    ),
     );
   }
 }

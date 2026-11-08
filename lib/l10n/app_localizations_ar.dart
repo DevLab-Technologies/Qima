@@ -4399,6 +4399,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get addSheetTransactionSubtitle => 'مال صُرف أو دخل أو حُوّل';
 
   @override
+  String get entryVoiceTitle => 'قولها بدل ما تكتب';
+
+  @override
+  String get entryVoiceListening => 'بسمعك… دوس عشان توقف';
+
+  @override
   String get entryVoiceHint => 'قل ما حدث، مثل «دفعت 45 في بنده بالفيزا أمس»';
 
   @override

@@ -99,7 +99,6 @@ class _EntryEditorScreenState extends State<EntryEditorScreen> {
 
   /// What the mic heard, shown while and after listening.
   String? _heard;
-  bool _listening = false;
 
   late EntryKind kind = widget.kind;
 
@@ -226,7 +225,7 @@ class _EntryEditorScreenState extends State<EntryEditorScreen> {
     BookAccount? pick(List<BookAccount> choices, String? id) => id == null ? null : choices.where((a) => a.id == id).firstOrNull;
     setState(() {
       _error = null;
-      if (heard.amount != null) _amount.text = heard.amount!;
+      if (heard.amount != null) _amount.text = groupedAmount(heard.amount!);
       if (heard.merchant != null) _merchant.text = heard.merchant!;
       if (heard.daysAgo != null) {
         final now = DateTime.now();
@@ -244,6 +243,10 @@ class _EntryEditorScreenState extends State<EntryEditorScreen> {
           _to = pick(_toChoices, ids.first) ?? _to;
         } else {
           _from = pick(_fromChoices, ids.first) ?? _from;
+        }
+        // Money never moves from an account to itself.
+        if (kind == EntryKind.transfer && _to != null && _to!.id == _from?.id) {
+          _to = _toChoices.where((a) => a.id != _from?.id).firstOrNull;
         }
       }
       final said = pick(_categoryChoices, heard.categoryId);
@@ -417,17 +420,16 @@ class _EntryEditorScreenState extends State<EntryEditorScreen> {
     final speech = _speechLanguages.containsKey(picked) ? picked! : (_speechLanguages.containsKey(appLanguage) ? appLanguage : 'en');
     final fields = <Widget>[
       ?kindTabs,
-      if (_listening || heard != null)
-        Row(key: const ValueKey('entryHeard'), crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Icon(Icons.graphic_eq, size: 18, color: _listening ? context.colors.brand : context.colors.textTertiary),
-          const SizedBox(width: DS.spaceSM),
-          Expanded(
-            child: Text(
-              heard == null || heard.isEmpty ? l10n.entryVoiceHint : '“$heard”',
-              style: TextStyle(color: context.colors.textSecondary, fontStyle: heard == null || heard.isEmpty ? FontStyle.normal : FontStyle.italic),
-            ),
-          ),
-        ]),
+      if (!missingAccount && widget.existing == null)
+        DictationButton(
+          language: Locale(speech),
+          onText: (t) => setState(() => _heard = t),
+          onFinal: _applySpoken,
+          onListening: (on) {
+            if (on) setState(() => _heard = null);
+          },
+          builder: (context, look) => _VoiceCard(look: look, heard: heard, language: speech),
+        ),
       AmountField(
         controller: _amount,
         autofocus: widget.existing == null,
@@ -506,18 +508,6 @@ class _EntryEditorScreenState extends State<EntryEditorScreen> {
           title: Text(title),
           actions: [
             const HelpButton(topic: HelpTopicId.newTransaction),
-            if (!missingAccount && widget.existing == null) ...[
-              _SpeechLanguageButton(language: speech, enabled: !_listening),
-              DictationButton(
-                language: Locale(speech),
-                onText: (t) => setState(() => _heard = t),
-                onFinal: _applySpoken,
-                onListening: (on) => setState(() {
-                  _listening = on;
-                  if (on) _heard = null;
-                }),
-              ),
-            ],
             if (!missingAccount) TextButton(onPressed: _save, child: Text(l10n.holdingsSave)),
           ],
         ),
@@ -540,6 +530,69 @@ class _EntryEditorScreenState extends State<EntryEditorScreen> {
 /// The languages the spoken-entry parser reads, each named in itself.
 const _speechLanguages = {'en': 'English', 'ar': 'العربية', 'fr': 'Français', 'es': 'Español'};
 
+/// The voice button, large and first on the page, since many people would
+/// rather say a transaction than type it: a big mic, what to say (then what
+/// was heard), and the language it listens in.
+class _VoiceCard extends StatelessWidget {
+  final DictationLook look;
+  final String? heard;
+  final String language;
+
+  const _VoiceCard({required this.look, required this.heard, required this.language});
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final colors = context.colors;
+    final said = heard;
+    final title = look.listening ? l10n.entryVoiceListening : l10n.entryVoiceTitle;
+    final detail = said == null || said.isEmpty ? l10n.entryVoiceHint : '“$said”';
+    return Material(
+      color: colors.brand.withValues(alpha: look.listening ? 0.16 : 0.08),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(DS.radiusTile),
+        side: BorderSide(color: colors.brand.withValues(alpha: look.listening ? 0.8 : 0.35)),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        key: const ValueKey('entryVoice'),
+        onTap: look.onPressed,
+        child: Padding(
+          padding: const EdgeInsets.all(DS.spaceMD),
+          child: Row(children: [
+            Tooltip(
+              message: look.tooltip,
+              child: Semantics(
+                button: true,
+                label: look.tooltip,
+                child: Container(
+                  width: 52,
+                  height: 52,
+                  decoration: BoxDecoration(shape: BoxShape.circle, color: look.ready || look.listening ? colors.brand : colors.textTertiary.withValues(alpha: 0.4)),
+                  child: Icon(look.listening ? Icons.stop_rounded : Icons.mic_rounded, color: colors.onBrand, size: 28),
+                ),
+              ),
+            ),
+            const SizedBox(width: DS.spaceMD),
+            Expanded(
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
+                Text(title, style: TextStyle(fontWeight: FontWeight.w600, color: colors.textPrimary)),
+                const SizedBox(height: 2),
+                Text(
+                  detail,
+                  key: said == null ? null : const ValueKey('entryHeard'),
+                  style: TextStyle(color: colors.textSecondary, fontSize: 13, fontStyle: said == null || said.isEmpty ? FontStyle.normal : FontStyle.italic),
+                ),
+              ]),
+            ),
+            _SpeechLanguageButton(language: language, enabled: !look.listening),
+          ]),
+        ),
+      ),
+    );
+  }
+}
+
 /// Which language the mic listens in ("EN", "AR"…), so Arabic speech is
 /// heard as Arabic while the app is in English. The pick is remembered.
 class _SpeechLanguageButton extends StatelessWidget {
@@ -559,9 +612,13 @@ class _SpeechLanguageButton extends StatelessWidget {
       itemBuilder: (_) => [
         for (final e in _speechLanguages.entries) PopupMenuItem(key: ValueKey('speechLanguage-${e.key}'), value: e.key, child: Text(e.value)),
       ],
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: DS.spaceXS, vertical: DS.spaceSM),
-        child: Text(language.toUpperCase(), style: TextStyle(fontWeight: FontWeight.w600, color: context.colors.textSecondary)),
+      child: Container(
+        padding: const EdgeInsets.fromLTRB(DS.spaceSM, DS.space2XS, DS.space2XS, DS.space2XS),
+        decoration: BoxDecoration(borderRadius: BorderRadius.circular(999), border: Border.all(color: context.colors.hairlineStrong)),
+        child: Row(mainAxisSize: MainAxisSize.min, children: [
+          Text(language.toUpperCase(), style: TextStyle(fontWeight: FontWeight.w600, color: context.colors.textSecondary)),
+          Icon(Icons.arrow_drop_down, size: 18, color: context.colors.textTertiary),
+        ]),
       ),
     );
   }

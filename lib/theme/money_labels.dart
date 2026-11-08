@@ -209,8 +209,26 @@ int? parseMinor(String text, String currency) {
   return MinorUnits.fromMajor(v, currency);
 }
 
-/// Minor units as plain text for an editable field ("1250.50").
+/// Minor units as text for an editable field, grouped as the field shows
+/// it while typing ("1,250.50"). [parseMinor] reads it back.
 String minorFieldText(int minor, String currency) {
   final digits = MinorUnits.digits(currency);
-  return MinorUnits.toMajor(minor, currency).toStringAsFixed(digits);
+  return groupedAmount(MinorUnits.toMajor(minor, currency).toStringAsFixed(digits));
+}
+
+/// [text] ("1250.5", "-38000") with its whole part grouped by thousands
+/// ("1,250.5", "-38,000"); the decimals stay as typed. Commas already in it
+/// are dropped first, so it can be applied again.
+String groupedAmount(String text) {
+  final sign = text.startsWith('-') ? '-' : '';
+  final body = sign.isEmpty ? text : text.substring(1);
+  final dot = body.indexOf('.');
+  final whole = (dot < 0 ? body : body.substring(0, dot)).replaceAll(',', '');
+  final b = StringBuffer(sign);
+  for (var i = 0; i < whole.length; i++) {
+    if (i > 0 && (whole.length - i) % 3 == 0) b.write(',');
+    b.write(whole[i]);
+  }
+  if (dot >= 0) b.write(body.substring(dot));
+  return b.toString();
 }

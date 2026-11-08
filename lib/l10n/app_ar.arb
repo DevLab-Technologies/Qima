@@ -1280,6 +1280,8 @@
   "valueReviewMonths": "{months, plural, =1{كل شهر} =2{كل شهرين} few{كل {months} أشهر} many{كل {months} شهرًا} other{كل {months} شهر}}",
   "addSheetTransaction": "معاملة",
   "addSheetTransactionSubtitle": "مال صُرف أو دخل أو حُوّل",
+  "entryVoiceTitle": "قولها بدل ما تكتب",
+  "entryVoiceListening": "بسمعك… دوس عشان توقف",
   "entryVoiceHint": "قل ما حدث، مثل «دفعت 45 في بنده بالفيزا أمس»",
   "entryVoiceNothing": "لم أفهم مبلغًا أو اسمًا. حاول مرة أخرى أو اكتبه.",
   "entryNewTitle": "معاملة جديدة",
