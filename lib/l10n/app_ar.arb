@@ -1436,5 +1436,11 @@
   "applePayStep1": "في الاختصارات، افتح الأتمتة واضغط +، ثم اختر المحفظة.",
   "applePayStep2": "اختر بطاقاتك، ثم اختر التشغيل فورًا.",
   "applePayStep3": "أضف إجراء «Add an Apple Pay payment» من قيمة.",
-  "applePayStep4": "اجعل Amount وMerchant وCard فيه هي المبلغ والتاجر والبطاقة أو التذكرة من مُدخل الاختصار."
+  "applePayStep4": "اجعل Amount وMerchant وCard فيه هي المبلغ والتاجر والبطاقة أو التذكرة من مُدخل الاختصار.",
+  "entryMarkAs": "تحديدها كـ",
+  "splitByAmount": "مبلغ",
+  "splitByEqually": "بالتساوي",
+  "splitByPercent": "نسبة",
+  "splitByShares": "حصص",
+  "splitYou": "أنت"
 }

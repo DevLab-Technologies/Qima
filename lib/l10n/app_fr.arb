@@ -1436,5 +1436,11 @@
   "applePayStep1": "Dans Raccourcis, allez dans Automatisation, touchez + et choisissez Cartes.",
   "applePayStep2": "Choisissez vos cartes, puis Exécuter immédiatement.",
   "applePayStep3": "Ajoutez l’action « Add an Apple Pay payment » de Qima.",
-  "applePayStep4": "Réglez Amount, Merchant et Card sur Montant, Marchand et Carte ou carte de l’entrée du raccourci."
+  "applePayStep4": "Réglez Amount, Merchant et Card sur Montant, Marchand et Carte ou carte de l’entrée du raccourci.",
+  "entryMarkAs": "Marquer comme",
+  "splitByAmount": "Montant",
+  "splitByEqually": "À parts égales",
+  "splitByPercent": "Pourcentage",
+  "splitByShares": "Parts",
+  "splitYou": "Vous"
 }

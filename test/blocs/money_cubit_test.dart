@@ -93,6 +93,9 @@ void main() {
     expect(m.state.settings.has(MoneyFeature.people), isTrue);
     expect(await m.personAccount(' faisal ', 'SAR', owesMe: true), p, reason: 'the same person is reused');
     expect((await m.personAccount('Faisal', 'SAR', owesMe: false)).id, isNot(p.id), reason: 'owing them is its own account');
+    expect((await m.personAccount('FAISAL', 'SAR', owesMe: false)).name, 'Faisal', reason: 'the name they were first given');
+    final ahmad = await m.personAccount('أحمد', 'SAR', owesMe: true);
+    expect(await m.personAccount('احمد ', 'SAR', owesMe: true), ahmad, reason: 'however the alef was typed');
   });
 
   test('an entry that doesn’t balance is refused and nothing is saved', () async {

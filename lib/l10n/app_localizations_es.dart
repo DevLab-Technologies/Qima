@@ -5053,4 +5053,22 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get applePayStep4 =>
       'Pon su Amount, Merchant y Card en Importe, Comercio y Tarjeta o pase de la entrada del atajo.';
+
+  @override
+  String get entryMarkAs => 'Marcar como';
+
+  @override
+  String get splitByAmount => 'Importe';
+
+  @override
+  String get splitByEqually => 'A partes iguales';
+
+  @override
+  String get splitByPercent => 'Porcentaje';
+
+  @override
+  String get splitByShares => 'Partes';
+
+  @override
+  String get splitYou => 'Tú';
 }

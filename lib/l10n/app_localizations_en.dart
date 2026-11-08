@@ -5020,4 +5020,22 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get applePayStep4 =>
       'Set its Amount, Merchant and Card to the Shortcut Input’s Amount, Merchant and Card or Pass.';
+
+  @override
+  String get entryMarkAs => 'Mark as';
+
+  @override
+  String get splitByAmount => 'Amount';
+
+  @override
+  String get splitByEqually => 'Equally';
+
+  @override
+  String get splitByPercent => 'Percent';
+
+  @override
+  String get splitByShares => 'Shares';
+
+  @override
+  String get splitYou => 'You';
 }

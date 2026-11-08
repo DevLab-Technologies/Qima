@@ -9,6 +9,7 @@ import '../models/book.dart';
 import '../models/book_account.dart';
 import '../models/book_entry.dart';
 import '../models/entry_builder.dart';
+import '../models/people.dart';
 import '../theme/design_system.dart';
 import '../theme/money_labels.dart';
 import '../theme/qima_colors.dart';
@@ -357,6 +358,72 @@ class _NamePromptState extends State<NamePrompt> {
         TextButton(onPressed: () => Navigator.of(context).pop(), child: Text(l10n.commonCancel)),
         FilledButton(onPressed: () => Navigator.of(context).pop(_controller.text.trim()), child: Text(l10n.holdingsSave)),
       ],
+    );
+  }
+}
+
+/// A person's name, offering everyone already in the book as it's typed,
+/// so lending to the same person again adds to what they owe.
+class PersonField extends StatefulWidget {
+  final TextEditingController controller;
+  final String label;
+  final ValueChanged<String>? onChanged;
+
+  const PersonField({super.key, required this.controller, required this.label, this.onChanged});
+
+  @override
+  State<PersonField> createState() => _PersonFieldState();
+}
+
+class _PersonFieldState extends State<PersonField> {
+  final _focus = FocusNode();
+
+  @override
+  void dispose() {
+    _focus.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final names = Person.names(context.select<MoneyCubit, List<BookAccount>>((c) => c.state.accounts));
+    return RawAutocomplete<String>(
+      textEditingController: widget.controller,
+      focusNode: _focus,
+      optionsBuilder: (v) {
+        final typed = personKey(v.text);
+        return [
+          for (final n in names)
+            if (personKey(n).contains(typed) && personKey(n) != typed) n,
+        ];
+      },
+      onSelected: (v) => widget.onChanged?.call(v),
+      fieldViewBuilder: (context, controller, focus, submit) => TextField(
+        controller: controller,
+        focusNode: focus,
+        textCapitalization: TextCapitalization.words,
+        onChanged: widget.onChanged,
+        onSubmitted: (_) => submit(),
+        decoration: InputDecoration(labelText: widget.label, border: const OutlineInputBorder(), suffixIcon: const Icon(Icons.person_outline)),
+      ),
+      optionsViewBuilder: (context, onSelected, options) => Align(
+        alignment: AlignmentDirectional.topStart,
+        child: Material(
+          elevation: 4,
+          borderRadius: BorderRadius.circular(DS.radiusTile),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxHeight: 240, maxWidth: 320),
+            child: ListView(
+              padding: EdgeInsets.zero,
+              shrinkWrap: true,
+              children: [
+                for (final o in options)
+                  ListTile(leading: const Icon(Icons.person_outline), title: Text(o), onTap: () => onSelected(o)),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

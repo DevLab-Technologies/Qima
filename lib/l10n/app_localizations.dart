@@ -8536,6 +8536,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Set its Amount, Merchant and Card to the Shortcut Input’s Amount, Merchant and Card or Pass.'**
   String get applePayStep4;
+
+  /// No description provided for @entryMarkAs.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as'**
+  String get entryMarkAs;
+
+  /// No description provided for @splitByAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount'**
+  String get splitByAmount;
+
+  /// No description provided for @splitByEqually.
+  ///
+  /// In en, this message translates to:
+  /// **'Equally'**
+  String get splitByEqually;
+
+  /// No description provided for @splitByPercent.
+  ///
+  /// In en, this message translates to:
+  /// **'Percent'**
+  String get splitByPercent;
+
+  /// No description provided for @splitByShares.
+  ///
+  /// In en, this message translates to:
+  /// **'Shares'**
+  String get splitByShares;
+
+  /// No description provided for @splitYou.
+  ///
+  /// In en, this message translates to:
+  /// **'You'**
+  String get splitYou;
 }
 
 class _AppLocalizationsDelegate

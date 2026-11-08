@@ -5038,4 +5038,22 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get applePayStep4 =>
       'اجعل Amount وMerchant وCard فيه هي المبلغ والتاجر والبطاقة أو التذكرة من مُدخل الاختصار.';
+
+  @override
+  String get entryMarkAs => 'تحديدها كـ';
+
+  @override
+  String get splitByAmount => 'مبلغ';
+
+  @override
+  String get splitByEqually => 'بالتساوي';
+
+  @override
+  String get splitByPercent => 'نسبة';
+
+  @override
+  String get splitByShares => 'حصص';
+
+  @override
+  String get splitYou => 'أنت';
 }

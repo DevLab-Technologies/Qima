@@ -191,7 +191,16 @@ class _EntryEditorScreenState extends State<EntryEditorScreen> {
         _to = acct(own, positive: true);
         _amount.text = minorFieldText(lineOf(_to).abs(), _to?.currency ?? 'USD');
         if (kind == EntryKind.lent || kind == EntryKind.borrowed) {
-          _person.text = (kind == EntryKind.lent ? _to : _from)?.name ?? '';
+          final person = kind == EntryKind.lent ? _to : _from;
+          _person.text = person?.name ?? '';
+          // A spend marked as lent, or an income as borrowed: the money
+          // account and amount stay, and whom it was paid to or came from
+          // is the first guess at the person.
+          if (person == null) {
+            final money = kind == EntryKind.lent ? _from : _to;
+            _amount.text = minorFieldText(lineOf(money).abs(), money?.currency ?? 'USD');
+            _person.text = e.merchant;
+          }
         }
     }
   }
@@ -499,20 +508,7 @@ class _EntryEditorScreenState extends State<EntryEditorScreen> {
           onChanged: (a) => setState(() => _to = a),
         ),
       if (kind == EntryKind.lent || kind == EntryKind.borrowed)
-        Autocomplete<String>(
-          initialValue: TextEditingValue(text: _person.text),
-          optionsBuilder: (v) => {
-            for (final a in state.accounts)
-              if ((a.type == AccountType.receivable || a.type == AccountType.payable) && a.name.toLowerCase().contains(v.text.toLowerCase())) a.name,
-          },
-          onSelected: (v) => _person.text = v,
-          fieldViewBuilder: (context, controller, focus, submit) => TextField(
-            controller: controller,
-            focusNode: focus,
-            onChanged: (v) => _person.text = v,
-            decoration: InputDecoration(labelText: l10n.entryPerson, border: const OutlineInputBorder()),
-          ),
-        ),
+        PersonField(key: const ValueKey('entryPerson'), controller: _person, label: l10n.entryPerson),
       if (_categoryChoices.isNotEmpty)
         CategoryPicker(
           accounts: _categoryChoices,

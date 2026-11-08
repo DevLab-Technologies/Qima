@@ -5055,4 +5055,22 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get applePayStep4 =>
       'Réglez Amount, Merchant et Card sur Montant, Marchand et Carte ou carte de l’entrée du raccourci.';
+
+  @override
+  String get entryMarkAs => 'Marquer comme';
+
+  @override
+  String get splitByAmount => 'Montant';
+
+  @override
+  String get splitByEqually => 'À parts égales';
+
+  @override
+  String get splitByPercent => 'Pourcentage';
+
+  @override
+  String get splitByShares => 'Parts';
+
+  @override
+  String get splitYou => 'Vous';
 }

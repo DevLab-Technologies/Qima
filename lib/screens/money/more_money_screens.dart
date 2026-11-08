@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart' hide TextDirection;
 
 import '../../blocs/app_cubit.dart';
 import '../../blocs/money_cubit.dart';
 import '../../l10n/app_localizations.dart';
+import '../../models/bill_split.dart';
+import '../../models/people.dart';
 import '../../models/book_account.dart';
 import '../../models/money_analysis.dart';
 import '../../models/money_settings.dart';
@@ -371,16 +374,45 @@ class PeopleScreen extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
     final hidden = context.select<AppCubit, bool>((c) => c.state.hideBalances);
     final state = context.watch<MoneyCubit>().state;
-    Widget group(String title, AccountType type) {
-      final people = state.ofType(type);
+    // One row per person and currency: what was lent to them and borrowed
+    // from them nets out, in the group the net falls in.
+    final everyone = Person.of(state.accounts);
+    Future<void> open(Person p) async {
+      final accounts = p.accounts;
+      if (accounts.length == 1) return AccountDetailScreen.open(context, accounts.single.id);
+      final id = await showModalBottomSheet<String>(
+        context: context,
+        showDragHandle: true,
+        builder: (sheet) => SafeArea(
+          child: Column(mainAxisSize: MainAxisSize.min, children: [
+            for (final a in accounts)
+              MoneyRow(
+                icon: MoneyIcons.type(a.type),
+                title: a.type == AccountType.receivable ? l10n.sheetOwedToYou : l10n.sheetYouOwe,
+                trailing: minorText(state.book.balanceOf(a.id), a.currency!, hidden: hidden),
+                onTap: () => Navigator.of(sheet).pop(a.id),
+              ),
+          ]),
+        ),
+      );
+      if (id != null && context.mounted) await AccountDetailScreen.open(context, id);
+    }
+
+    Widget group(String title, bool owedToMe) {
+      final people = [for (final p in everyone) if ((p.net(state.book) >= 0) == owedToMe) p];
       if (people.isEmpty) return const SizedBox.shrink();
       return MoneySection(title: title, children: [
         for (final p in people)
           MoneyRow(
-            icon: MoneyIcons.type(type),
+            key: ValueKey('person-${p.name}-${p.currency}'),
+            icon: MoneyIcons.type(owedToMe ? AccountType.receivable : AccountType.payable),
             title: p.name,
-            trailing: minorText(state.book.balanceOf(p.id), p.currency!, hidden: hidden),
-            onTap: () => AccountDetailScreen.open(context, p.id),
+            subtitle: p.accounts.length > 1
+                ? '${l10n.tplLent} ${minorText(state.book.balanceOf(p.owesMe!.id), p.currency, hidden: hidden)} · '
+                    '${l10n.tplBorrowed} ${minorText(state.book.balanceOf(p.iOwe!.id), p.currency, hidden: hidden)}'
+                : null,
+            trailing: minorText(p.net(state.book).abs(), p.currency, hidden: hidden),
+            onTap: () => open(p),
           ),
       ]);
     }
@@ -399,8 +431,8 @@ class PeopleScreen extends StatelessWidget {
             ]),
             const SizedBox(height: DS.spaceMD),
             if (none) MoneyEmpty(icon: Icons.people_outline, title: l10n.peopleEmptyTitle, message: l10n.peopleEmptyMessage),
-            group(l10n.sheetOwedToYou, AccountType.receivable),
-            group(l10n.sheetYouOwe, AccountType.payable),
+            group(l10n.sheetOwedToYou, true),
+            group(l10n.sheetYouOwe, false),
           ],
         ),
       ),
@@ -421,6 +453,8 @@ class _BillSplitScreenState extends State<BillSplitScreen> {
   final _total = TextEditingController();
   final _merchant = TextEditingController();
   final List<(TextEditingController, TextEditingController)> _people = [];
+  final _myShares = TextEditingController(text: '1');
+  SplitBy _by = SplitBy.equally;
   BookAccount? _from;
   BookAccount? _category;
   DateTime _date = DateTime.now();
@@ -435,12 +469,41 @@ class _BillSplitScreenState extends State<BillSplitScreen> {
     _addPerson();
   }
 
-  void _addPerson() => setState(() => _people.add((TextEditingController(), TextEditingController())));
+  void _addPerson() => setState(() => _people.add((TextEditingController(), TextEditingController(text: _by == SplitBy.shares ? '1' : ''))));
+
+  /// A typed percentage or share count; blank is zero.
+  static num? _number(String text) {
+    final t = text.trim().replaceAll(',', '.');
+    return t.isEmpty ? 0 : num.tryParse(t);
+  }
+
+  /// The people named so far, with what each typed, and every part of the
+  /// bill; null parts when the values don't fit the total.
+  /// While typing ([forSave] false) a row without a name yet still counts.
+  ({List<(String, int)> named, int? mine, String? problem}) _parts(String ccy, AppLocalizations l10n, {bool forSave = true}) {
+    final total = parseMinor(_total.text, ccy);
+    final rows = [for (final (name, value) in _people) if (name.text.trim().isNotEmpty || value.text.trim().isNotEmpty) (name.text.trim(), value.text)];
+    final values = <num>[];
+    for (final (name, value) in rows) {
+      final v = switch (_by) {
+        SplitBy.amount => parseMinor(value, ccy),
+        SplitBy.equally => 0,
+        _ => _number(value),
+      };
+      if ((forSave && name.isEmpty) || v == null) return (named: const [], mine: null, problem: l10n.splitErrorPerson);
+      values.add(v);
+    }
+    if (total == null || total <= 0) return (named: const [], mine: null, problem: l10n.entryErrorAmount);
+    final split = BillSplit.divide(total, _by, values, myShares: _number(_myShares.text) ?? -1);
+    if (rows.isEmpty || split == null) return (named: const [], mine: null, problem: l10n.splitErrorShares);
+    return (named: [for (var i = 0; i < rows.length; i++) (rows[i].$1, split.others[i])], mine: split.mine, problem: null);
+  }
 
   @override
   void dispose() {
     _total.dispose();
     _merchant.dispose();
+    _myShares.dispose();
     for (final (a, b) in _people) {
       a.dispose();
       b.dispose();
@@ -448,42 +511,22 @@ class _BillSplitScreenState extends State<BillSplitScreen> {
     super.dispose();
   }
 
-  /// Splits what's left of the total evenly between the person and everyone
-  /// whose share is blank.
-  void _even() {
-    final ccy = _from?.currency;
-    if (ccy == null) return;
-    final total = parseMinor(_total.text, ccy);
-    if (total == null) return;
-    final each = total ~/ (_people.length + 1);
-    for (final (_, share) in _people) {
-      share.text = minorFieldText(each, ccy);
-    }
-    setState(() {});
-  }
-
   Future<void> _save() async {
     final l10n = AppLocalizations.of(context)!;
     final money = context.read<MoneyCubit>();
     if (_from == null || _category == null) return setState(() => _error = l10n.entryErrorAccount);
     final ccy = _from!.currency!;
-    final total = parseMinor(_total.text, ccy);
-    if (total == null || total <= 0) return setState(() => _error = l10n.entryErrorAmount);
-    final shares = <(String, int)>[];
-    for (final (name, share) in _people) {
-      if (name.text.trim().isEmpty && share.text.trim().isEmpty) continue;
-      final v = parseMinor(share.text, ccy);
-      if (name.text.trim().isEmpty || v == null || v <= 0) return setState(() => _error = l10n.splitErrorPerson);
-      shares.add((name.text.trim(), v));
-    }
-    final others = shares.fold<int>(0, (a, s) => a + s.$2);
-    final mine = total - others;
-    if (shares.isEmpty || mine < 0) return setState(() => _error = l10n.splitErrorShares);
+    final total = parseMinor(_total.text, ccy) ?? 0;
+    final parts = _parts(ccy, l10n);
+    if (parts.problem != null) return setState(() => _error = parts.problem);
+    final mine = parts.mine!;
     final owed = <BookAccount, int>{};
-    for (final (name, v) in shares) {
+    for (final (name, v) in parts.named) {
+      if (v <= 0) continue;
       final p = await money.personAccount(name, ccy, owesMe: true);
       owed[p] = (owed[p] ?? 0) + v;
     }
+    if (owed.isEmpty) return setState(() => _error = l10n.splitErrorShares);
     if (mine == 0) {
       // Paid entirely for others: no spending, only money owed.
       final e = money.builder.billSplit(_from!, _category!, total: total, myShare: 0, others: owed, date: _date, merchant: _merchant.text.trim());
@@ -503,7 +546,8 @@ class _BillSplitScreenState extends State<BillSplitScreen> {
     final accounts = [...state.ofType(AccountType.credit), ...state.ofType(AccountType.debit), ...state.ofType(AccountType.cash)];
     final ccy = _from?.currency ?? context.read<AppCubit>().state.baseCurrency;
     final total = parseMinor(_total.text, ccy) ?? 0;
-    final others = _people.fold<int>(0, (a, p) => a + (parseMinor(p.$2.text, ccy) ?? 0));
+    final parts = _parts(ccy, l10n, forSave: false);
+    final others = parts.mine == null ? null : total - parts.mine!;
     final hidden = context.select<AppCubit, bool>((c) => c.state.hideBalances);
 
     return ScreenBackground(
@@ -531,23 +575,75 @@ class _BillSplitScreenState extends State<BillSplitScreen> {
                   const SizedBox(height: DS.spaceMD),
                   Text(l10n.splitWho, style: TextStyle(color: colors.textSecondary, fontWeight: FontWeight.w700)),
                   const SizedBox(height: DS.spaceSM),
-                  for (final (name, share) in _people)
+                  SizedBox(
+                    width: double.infinity,
+                    child: SegmentedButton<SplitBy>(
+                      key: const ValueKey('splitBy'),
+                      showSelectedIcon: false,
+                      segments: [
+                        for (final by in SplitBy.values)
+                          ButtonSegment(
+                            value: by,
+                            label: FittedBox(
+                              child: Text(switch (by) {
+                                SplitBy.amount => l10n.splitByAmount,
+                                SplitBy.equally => l10n.splitByEqually,
+                                SplitBy.percent => l10n.splitByPercent,
+                                SplitBy.shares => l10n.splitByShares,
+                              }),
+                            ),
+                          ),
+                      ],
+                      selected: {_by},
+                      onSelectionChanged: (v) => setState(() {
+                        _by = v.first;
+                        for (final (_, value) in _people) {
+                          value.text = _by == SplitBy.shares ? '1' : '';
+                        }
+                      }),
+                    ),
+                  ),
+                  const SizedBox(height: DS.spaceMD),
+                  if (_by == SplitBy.shares)
                     Padding(
                       padding: const EdgeInsets.only(bottom: DS.spaceSM),
                       child: Row(children: [
-                        Expanded(flex: 3, child: TextField(controller: name, decoration: InputDecoration(labelText: l10n.entryPerson, border: const OutlineInputBorder()))),
+                        Expanded(flex: 3, child: Text(l10n.splitYou, style: const TextStyle(fontSize: 16))),
                         const SizedBox(width: DS.spaceSM),
-                        Expanded(flex: 2, child: AmountField(controller: share, label: l10n.splitShare, currency: ccy, onChanged: (_) => setState(() {}))),
+                        Expanded(flex: 2, child: _NumberField(key: const ValueKey('splitMyShares'), controller: _myShares, label: l10n.splitByShares, onChanged: () => setState(() {}))),
                       ]),
                     ),
-                  // Wraps rather than overflows where the labels are long (French).
-                  Wrap(alignment: WrapAlignment.spaceBetween, children: [
-                    TextButton.icon(onPressed: _addPerson, icon: const Icon(Icons.person_add_alt), label: Text(l10n.splitAddPerson)),
-                    TextButton(onPressed: _even, child: Text(l10n.splitEvenly)),
-                  ]),
+                  for (final (i, (name, share)) in _people.indexed)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: DS.spaceSM),
+                      child: Row(children: [
+                        Expanded(flex: 3, child: PersonField(key: ValueKey('splitPerson$i'), controller: name, label: l10n.entryPerson, onChanged: (_) => setState(() {}))),
+                        if (_by != SplitBy.equally) ...[
+                          const SizedBox(width: DS.spaceSM),
+                          Expanded(
+                            flex: 2,
+                            child: switch (_by) {
+                              SplitBy.amount => AmountField(key: ValueKey('splitShare$i'), controller: share, label: l10n.splitShare, currency: ccy, onChanged: (_) => setState(() {})),
+                              SplitBy.percent => _NumberField(key: ValueKey('splitShare$i'), controller: share, label: '%', onChanged: () => setState(() {})),
+                              _ => _NumberField(key: ValueKey('splitShare$i'), controller: share, label: l10n.splitByShares, onChanged: () => setState(() {})),
+                            },
+                          ),
+                        ],
+                      ]),
+                    ),
+                  Align(
+                    alignment: AlignmentDirectional.centerStart,
+                    child: TextButton.icon(onPressed: _addPerson, icon: const Icon(Icons.person_add_alt), label: Text(l10n.splitAddPerson)),
+                  ),
                   MoneySection(children: [
-                    MoneyRow(title: l10n.splitMine, trailing: minorText(total - others, ccy, hidden: hidden), trailingColor: total - others < 0 ? colors.down : null),
-                    MoneyRow(title: l10n.splitOwedToYou, trailing: minorText(others, ccy, hidden: hidden)),
+                    MoneyRow(
+                      key: const ValueKey('splitMine'),
+                      title: l10n.splitMine,
+                      trailing: parts.mine == null ? '—' : minorText(parts.mine!, ccy, hidden: hidden),
+                    ),
+                    if (_by != SplitBy.amount)
+                      for (final (name, v) in parts.named) MoneyRow(title: name.isEmpty ? l10n.entryPerson : name, trailing: minorText(v, ccy, hidden: hidden)),
+                    MoneyRow(title: l10n.splitOwedToYou, trailing: others == null ? '—' : minorText(others, ccy, hidden: hidden)),
                   ]),
                   Text(l10n.splitHelp, style: TextStyle(color: colors.textTertiary, fontSize: 12)),
                   if (_error != null) Text(_error!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
@@ -556,6 +652,24 @@ class _BillSplitScreenState extends State<BillSplitScreen> {
       ),
     );
   }
+}
+
+/// A percentage or share count.
+class _NumberField extends StatelessWidget {
+  final TextEditingController controller;
+  final String label;
+  final VoidCallback onChanged;
+
+  const _NumberField({super.key, required this.controller, required this.label, required this.onChanged});
+
+  @override
+  Widget build(BuildContext context) => TextField(
+        controller: controller,
+        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+        inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9.,]'))],
+        onChanged: (_) => onChanged(),
+        decoration: InputDecoration(labelText: label, border: const OutlineInputBorder()),
+      );
 }
 
 /// Spending and income categories: add, rename, archive.

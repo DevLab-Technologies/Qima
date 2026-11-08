@@ -12,6 +12,7 @@ import '../models/money.dart';
 import '../models/minor_units.dart';
 import '../models/money_settings.dart';
 import '../models/net_worth.dart';
+import '../models/people.dart';
 import '../models/statement_facts.dart';
 import '../services/book_store.dart';
 
@@ -224,11 +225,15 @@ class MoneyCubit extends Cubit<MoneyState> {
   Future<BookAccount> personAccount(String name, String currency, {required bool owesMe}) async {
     final type = owesMe ? AccountType.receivable : AccountType.payable;
     for (final a in state.accounts) {
-      if (a.type == type && a.currency == currency && !a.archived && a.name.trim().toLowerCase() == name.trim().toLowerCase()) return a;
+      if (a.type == type && a.currency == currency && !a.archived && personKey(a.name) == personKey(name)) return a;
     }
+    // Someone already in the book keeps the name they were first given.
+    final known = state.accounts
+        .where((a) => (a.type == AccountType.receivable || a.type == AccountType.payable) && !a.archived && personKey(a.name) == personKey(name))
+        .firstOrNull;
     final a = BookAccount(
       id: _newId(),
-      name: name.trim(),
+      name: known?.name ?? name.trim(),
       side: owesMe ? AccountSide.own : AccountSide.owe,
       type: type,
       currency: currency,

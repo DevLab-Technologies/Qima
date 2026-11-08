@@ -951,6 +951,80 @@ void main() {
       expect(money.state.book.accounts['visa']!.statementRefs, isEmpty);
     });
 
+    testWidgets('a spend marked as lent stays the same transaction, and adds to what that person already owes', (tester) async {
+      await tester.runAsync(seed);
+      size(tester, const Size(390, 1400));
+      final l10n = await AppLocalizations.delegate.load(const Locale('en'));
+      final panda = money.state.entries.firstWhere((e) => e.merchant == 'Panda');
+      final faisal = money.state.accounts.firstWhere((a) => a.name == 'Faisal');
+      final owed = money.state.book.balanceOf(faisal.id);
+      final bank = money.state.book.balanceOf('rajhi');
+      await tester.pumpWidget(wrap(EntryDetailScreen(entryId: panda.id), const Locale('en')));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey('markAs-repaymentOut')), findsOneWidget, reason: 'someone is owed, so paying them back is offered');
+      await tester.tap(find.byKey(const ValueKey('markAs-lent')));
+      await tester.pumpAndSettle();
+      expect(find.widgetWithText(TextField, '642.10'), findsOneWidget);
+      expect(find.widgetWithText(TextField, 'Panda'), findsOneWidget, reason: 'whom it was paid to is the first guess');
+      await tester.enterText(find.descendant(of: find.byKey(const ValueKey('entryPerson')), matching: find.byType(TextField)), ' faisal');
+      await tester.tap(find.text(l10n.holdingsSave));
+      await settle(tester, () => money.state.entries.any((e) => e.id == panda.id && e.template == EntryTemplate.lent));
+      expect(money.state.entries.where((e) => e.id == panda.id), hasLength(1));
+      expect(money.state.book.balanceOf(faisal.id), owed + sar(642.10));
+      expect(money.state.book.balanceOf('rajhi'), bank, reason: 'the money that left is the same');
+      expect(money.state.accounts.where((a) => a.type == AccountType.receivable && a.name.toLowerCase() == 'faisal'), hasLength(1));
+    });
+
+    testWidgets('a bill split by shares: the payer\'s shares count, and each share is owed', (tester) async {
+      await tester.runAsync(seed);
+      size(tester, const Size(390, 1600));
+      final l10n = await AppLocalizations.delegate.load(const Locale('en'));
+      await tester.pumpWidget(wrap(const BillSplitScreen(), const Locale('en')));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.widgetWithText(TextField, l10n.splitTotal), '400');
+      await tester.tap(find.text(l10n.splitByShares));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.descendant(of: find.byKey(const ValueKey('splitMyShares')), matching: find.byType(TextField)), '2');
+      await tester.enterText(find.descendant(of: find.byKey(const ValueKey('splitPerson0')), matching: find.byType(TextField)), 'Faisal');
+      FocusManager.instance.primaryFocus?.unfocus();
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(find.text(l10n.splitAddPerson));
+      await tester.tap(find.text(l10n.splitAddPerson));
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(find.byKey(const ValueKey('splitPerson1')));
+      await tester.enterText(find.descendant(of: find.byKey(const ValueKey('splitPerson1')), matching: find.byType(TextField)), 'Omar');
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(find.byKey(const ValueKey('splitMine')));
+      expect(find.descendant(of: find.byKey(const ValueKey('splitMine')), matching: find.textContaining('200.00')), findsOneWidget);
+      final faisal = money.state.accounts.firstWhere((a) => a.name == 'Faisal');
+      final owed = money.state.book.balanceOf(faisal.id);
+      await tester.tap(find.text(l10n.holdingsSave));
+      await settle(tester, () => money.state.entries.any((e) => e.template == EntryTemplate.billSplit));
+      final split = money.state.entries.firstWhere((e) => e.template == EntryTemplate.billSplit);
+      final omar = money.state.accounts.firstWhere((a) => a.name == 'Omar');
+      expect(money.state.book.balanceOf(faisal.id), owed + sar(100));
+      expect(split.lines.firstWhere((l) => l.accountId == omar.id).amount, sar(100));
+    });
+
+    testWidgets('someone lent to and borrowed from is one row, netted', (tester) async {
+      await tester.runAsync(seed);
+      final faisal = money.state.accounts.firstWhere((a) => a.name == 'Faisal');
+      final owed = money.state.book.balanceOf(faisal.id);
+      await tester.runAsync(() async {
+        final them = await money.personAccount('faisal', 'SAR', owesMe: false);
+        await money.saveEntry(money.builder.borrowed(money.state.book.accounts['rajhi']!, them, sar(200), DateTime.now()));
+      });
+      size(tester, const Size(390, 1400));
+      await tester.pumpWidget(wrap(const PeopleScreen(), const Locale('en')));
+      await tester.pumpAndSettle();
+      final row = find.byKey(const ValueKey('person-Faisal-SAR'));
+      expect(row, findsOneWidget);
+      expect(find.descendant(of: row, matching: find.textContaining(minorText(owed - sar(200), 'SAR', hidden: false))), findsOneWidget);
+      await tester.tap(row);
+      await tester.pumpAndSettle();
+      expect(find.byType(BottomSheet), findsOneWidget, reason: 'which of the two to open');
+    });
+
     testWidgets('changing only the name of an installment keeps how many are left of how many', (tester) async {
       await tester.runAsync(seed);
       final plan = RecurringPayment(id: 'tabby', name: 'Tabby', amount: sar(250), fromAccountId: 'rajhi', categoryId: 'category.shopping', start: DateTime(2026, 9, 20), times: 4, paid: 2);

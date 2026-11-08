@@ -94,6 +94,27 @@ class EntryDetailScreen extends StatelessWidget {
                 ],
               ),
             ),
+            // A spend that was really a loan or a repayment, or an income
+            // that was: the same transaction becomes that, kept in place.
+            if (entry.counts && (entry.template == EntryTemplate.spend || entry.template == EntryTemplate.income)) ...[
+              const SizedBox(height: DS.spaceMD),
+              MoneySection(key: const ValueKey('entryMarkAs'), title: l10n.entryMarkAs, children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: DS.spaceMD),
+                  child: Wrap(spacing: 8, runSpacing: 8, children: [
+                    for (final k in entry.template == EntryTemplate.spend
+                        ? [EntryKind.lent, if (state.ofType(AccountType.payable).isNotEmpty) EntryKind.repaymentOut]
+                        : [EntryKind.borrowed, if (state.ofType(AccountType.receivable).isNotEmpty) EntryKind.repaymentIn])
+                      ActionChip(
+                        key: ValueKey('markAs-${k.name}'),
+                        avatar: Icon(MoneyIcons.template(k.template), size: 18),
+                        label: Text(l10n.template(k.template)),
+                        onPressed: () => EntryEditorScreen.open(context, k, existing: entry),
+                      ),
+                  ]),
+                ),
+              ]),
+            ],
             const SizedBox(height: DS.spaceMD),
             MoneySection(
               title: l10n.howItAddsUp,
