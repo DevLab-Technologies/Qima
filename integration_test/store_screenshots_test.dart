@@ -1,5 +1,5 @@
 // Drives the real app through the store-listing screens with the seeded demo
-// portfolio. Run it through tool/store_screenshots.sh, which captures the
+// book and portfolio. Run it through tool/store_screenshots.sh, which captures the
 // simulator (status bar included) each time a screen is announced.
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,14 +8,17 @@ import 'package:integration_test/integration_test.dart';
 import 'package:qima/blocs/app_cubit.dart';
 import 'package:qima/main.dart';
 import 'package:qima/models/zakat.dart';
-import 'package:qima/screens/allocation_screen.dart';
+import 'package:qima/blocs/money_cubit.dart';
 import 'package:qima/screens/home_shell.dart';
-import 'package:qima/screens/instrument_detail_screen.dart';
-import 'package:qima/screens/share_asset_sheet.dart';
+import 'package:qima/screens/money/accounts_screens.dart';
+import 'package:qima/screens/money/asset_screens.dart';
+import 'package:qima/screens/money/balance_sheet_screen.dart';
+import 'package:qima/screens/money/more_money_screens.dart';
 import 'package:qima/screens/zakat_screen.dart';
 import 'package:qima/services/preferences.dart';
 import 'package:qima/widgets/instrument_row.dart';
 
+import 'store_book_seed.dart';
 import 'store_demo_seed.dart';
 
 /// `en` or `ar`; selects the in-app language for the run.
@@ -66,8 +69,14 @@ void main() {
     while (!cubit.state.initialized && DateTime.now().isBefore(ready)) {
       await _wait(const Duration(milliseconds: 250));
     }
-    await seedStoreDemo(cubit, language: _language == 'ar' ? AppLanguage.ar : AppLanguage.en);
+    final arabic = _language == 'ar';
+    await seedStoreDemo(cubit, language: arabic ? AppLanguage.ar : AppLanguage.en, currency: 'SAR');
+    final money = tester.element(find.byType(MaterialApp)).read<MoneyCubit>();
+    await seedStoreBook(money, arabic: arabic);
     await _waitFor(find.byType(HomeShell, skipOffstage: false));
+    // What's new opens on first launch, before the seed marks it seen.
+    await _wait(const Duration(seconds: 2));
+    tester.state<NavigatorState>(find.byType(Navigator).first).popUntil((route) => route.isFirst);
     // A fresh simulator can still be fetching when the seed returns; every
     // card needs its price before the first shot.
     final priced = DateTime.now().add(const Duration(seconds: 60));
@@ -75,40 +84,31 @@ void main() {
       if (DateTime.now().isAfter(priced)) throw TestFailure('Prices did not load.');
       await _wait(const Duration(milliseconds: 500));
     }
-    await _shot(tester, '1_watchlist');
+    await _shot(tester, '1_home');
 
-    await tester.tap((await _waitFor(find.byType(InstrumentRow))).first);
-    await _shot(tester, '2_gold_detail');
-
-    await tester.tap(find.byIcon(Icons.adaptive.share));
-    await _waitFor(find.byType(ShareAssetSheet));
-    await _shot(tester, '3_share');
-    Navigator.of(tester.element(find.byType(ShareAssetSheet))).pop();
+    _push(tester, const BalanceSheetScreen());
+    await _shot(tester, '2_balance_sheet');
+    _popRoute(tester);
     await _wait(const Duration(seconds: 1));
 
-    // Scroll the page itself to its end (the holdings card) rather than drag:
-    // a synthetic swipe can land on the back gesture, notably in RTL.
-    final page = find
-        .descendant(
-          of: find.byType(InstrumentDetailScreen),
-          matching: find.byWidgetPredicate((w) => w is Scrollable && w.axisDirection == AxisDirection.down),
-        )
-        .first;
-    final position = tester.state<ScrollableState>(page).position;
-    await position.animateTo(
-      position.maxScrollExtent,
-      duration: const Duration(milliseconds: 600),
-      curve: Curves.easeOut,
-    );
-    await _shot(tester, '4_gold_holdings');
+    await tester.tap(find.byIcon(Icons.account_balance_wallet_outlined));
+    await _shot(tester, '3_money');
 
+    _push(tester, const AccountDetailScreen(accountId: 'shot-card'));
+    await _shot(tester, '4_card');
     _popRoute(tester);
-    await _wait(const Duration(seconds: 2));
-    await tester.tap(find.byIcon(Icons.pie_chart_outline));
-    await _shot(tester, '5_portfolio');
+    await _wait(const Duration(seconds: 1));
 
-    _push(tester, const AllocationScreen());
-    await _shot(tester, '6_allocation');
+    _push(tester, const AssetDetailScreen(assetId: 'shot-land'));
+    await _shot(tester, '5_land');
+    _popRoute(tester);
+    await _wait(const Duration(seconds: 1));
+
+    await tester.tap(find.byIcon(Icons.show_chart_outlined));
+    await _shot(tester, '6_prices');
+
+    await tester.tap((await _waitFor(find.byType(InstrumentRow))).first);
+    await _shot(tester, '7_gold_detail');
     _popRoute(tester);
     await _wait(const Duration(seconds: 1));
 
@@ -119,18 +119,11 @@ void main() {
       if (DateTime.now().isAfter(nisab)) throw TestFailure('Nisab prices did not load.');
       await _wait(const Duration(milliseconds: 500));
     }
-    await _shot(tester, '7_zakat');
+    await _shot(tester, '8_zakat');
     _popRoute(tester);
     await _wait(const Duration(seconds: 1));
 
-    await tester.tap(find.byIcon(Icons.list_alt_outlined));
-    await _wait(const Duration(seconds: 1));
-    await tester.tap(find.byIcon(Icons.add).first);
-    await _wait(const Duration(seconds: 1));
-    await tester.tap(find.byKey(const ValueKey('addSheetWatch')));
-    await _wait(const Duration(seconds: 1));
-    // The search field focuses itself; keep the keyboard out of the shot.
-    FocusManager.instance.primaryFocus?.unfocus();
-    await _shot(tester, '8_add_asset');
+    _push(tester, const PeopleScreen());
+    await _shot(tester, '9_people');
   });
 }

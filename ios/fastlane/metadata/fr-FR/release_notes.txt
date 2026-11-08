@@ -1,7 +1,9 @@
-Qima 4.0.0
-• Touchez + pour ajouter au suivi ou ajouter une position
-• Enregistrez un achat avec vos mots : saisissez-le, dictez-le ou scannez le reçu. Il est lu sur votre appareil et enregistré seulement quand vous confirmez
-• Cherchez des actifs en français, anglais, arabe ou espagnol
-• Un résumé simple de votre dernier mois
-• Demandez à Siri la valeur de votre portefeuille
-• Choisir la devise est plus clair en ajoutant un actif ou une transaction
+Qima 5.0 : tout ce que vous possédez et devez, au même endroit
+• L'accueil montre votre patrimoine net dans le temps, avec vos comptes, placements, dépenses et zakat
+• Ajoutez comptes bancaires, espèces, cartes et prêts, et suivez chaque solde dans le temps
+• Dépenses par catégorie, budget mensuel et paiements récurrents
+• Importez vos relevés en PDF, tableur ou capture d'écran, lus sur votre appareil
+• Ajoutez une opération en l'écrivant ou en la disant
+• Estimez vous-même un bien, une voiture ou tout autre actif
+• Suivez l'argent prêté et emprunté, et partagez les additions
+• La zakat porte sur tout votre bilan, et le hawl est toujours une année lunaire

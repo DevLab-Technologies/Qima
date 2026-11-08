@@ -1,27 +1,38 @@
-Qima adds up everything you own, starting with gold, into one number in the currency you choose.
+Qima adds up everything you own and everything you owe into one number, in the currency you choose: bank accounts, cash, cards, loans, gold, crypto, property and money between people.
 
-BUILT FOR GOLD
-• Prices for gold, silver, platinum and palladium per troy ounce, gram or kilogram, with 24K, 22K, 21K and 18K.
+YOUR NET WORTH
+• Net worth day by day, with a chart from one week to all time.
+• A balance sheet of what you own and what you owe.
+• Value property, cars and other assets yourself. Each value keeps its date, and nothing is made up in between.
+
+EVERYDAY MONEY
+• Bank accounts, cash, credit cards and loans, each with its balance over time.
+• Spending by category, a monthly budget and recurring payments.
+• Add a transaction by typing it or saying it.
+• Import bank statements as PDF, spreadsheet or screenshot. They're read on your device, and you check every row before it's added.
+• Bring in bank text messages through a Shortcuts automation.
+• Check a balance against your bank and choose how a difference comes in: as a transaction or as a new opening balance.
+
+PEOPLE
+• Money you lent and borrowed, with the net at a glance.
+• Split a bill and keep only your share as spending.
+
+GOLD AND PRICES
+• Gold, silver, platinum and palladium per troy ounce, gram or kilogram, with 24K, 22K, 21K and 18K.
+• Bitcoin and Ethereum, stocks, indices and world currencies beside your metals.
 • Record each buy, sell, transfer and fee, and see value, average cost and gain.
+• Price alerts, and widgets for the Home Screen and Lock Screen.
 
 ZAKAT
-• See whether you're above nisab and what's due, on 85 g of gold or 595 g of silver.
-• Set your hawl on the Hijri or Gregorian calendar and get a reminder.
+• The zakat to pay over your whole balance sheet: holdings, cash, money owed to you and assets held for sale, less debts due.
+• Nisab on 85 g of gold or 595 g of silver, and a hawl counted in lunar years, with a reminder.
 • Qima calculates; the choices behind the calculation are yours.
-
-ONE PORTFOLIO
-• Bitcoin and Ethereum, stocks, indices and world currencies beside your metals.
-• Allocation by asset class and gold by karat.
-• Price alerts when a price crosses a level or moves by a percent in 24 hours or 7 days.
-• Charts from one day to all time.
-• Import and export your holdings as a spreadsheet (CSV).
-• Price and portfolio widgets for the Home Screen and Lock Screen.
 
 PRIVATE BY DESIGN
 • No account, no sign-up, no ads, no analytics, no tracking.
-• Your data stays on your devices, with optional iCloud sync.
+• Your data stays on your devices.
 • Lock the app with Face ID or Touch ID, hide balances, and back up to a file you can protect with a password (AES-256).
 
 English, Arabic, Spanish and French, with full right-to-left Arabic. Free, with no subscription and no in-app purchases.
 
-Prices come from third-party sources and may be delayed. Qima is not investment advice and not a broker, exchange or custodian.
+Prices come from third-party sources and may be delayed. Qima is not investment advice and not a broker, exchange, bank or custodian.
