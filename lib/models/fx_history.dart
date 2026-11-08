@@ -1,5 +1,7 @@
 import 'package:equatable/equatable.dart';
 
+import 'money.dart';
+
 /// A single historical FX sample: `perUSD` units of the currency per 1 USD.
 class FXHistoryPoint extends Equatable {
   final DateTime date;
@@ -91,6 +93,64 @@ class FXHistory extends Equatable {
     }
     final merged = byDay.values.toList()..sort((a, b) => a.date.compareTo(b.date));
     return FXHistory(series: {...series, code: merged});
+  }
+
+  /// A daily close that jumps more than this from both neighbours, in the
+  /// same direction, while they agree with each other, is a bad tick. A
+  /// trend or a real step (a devaluation) never looks like that: the days
+  /// on one side follow it.
+  static const double spikeTolerance = 0.01;
+
+  /// A series whose newest close and recent closes both sit this far from
+  /// the live rate is from a feed that has gone wrong, so none of it is used.
+  static const double liveTolerance = 0.02;
+
+  /// This history with bad samples left out, checked against [live]: one-day
+  /// spikes are dropped from every series, and a series whose recent closes
+  /// disagree with the live rate is dropped whole (charts then show live
+  /// prices only, never a made-up path). The stored history is untouched, so
+  /// it comes back once the feed is right again.
+  FXHistory checkedAgainst(FXRates live) {
+    final out = <String, List<FXHistoryPoint>>{};
+    series.forEach((code, points) {
+      final kept = withoutSpikes(points);
+      if (kept.isEmpty) return;
+      final rate = live.rate(code), usd = live.rate('USD');
+      if (rate != null && usd != null && usd > 0) {
+        final perUSD = rate / usd;
+        bool off(double v) => (v - perUSD).abs() / perUSD > liveTolerance;
+        // Wrong only when both the newest close and the recent closes as a
+        // whole disagree: a fast real move passes on the newest close, and
+        // one bad last tick passes on the median and is trimmed below.
+        final recent = [for (final p in kept.skip(kept.length > 5 ? kept.length - 5 : 0)) p.perUSD]..sort();
+        if (off(kept.last.perUSD) && off(recent[recent.length ~/ 2])) return;
+        while (kept.isNotEmpty && off(kept.last.perUSD)) {
+          kept.removeLast();
+        }
+        if (kept.isEmpty) return;
+      }
+      out[code] = kept;
+    });
+    return FXHistory(series: out);
+  }
+
+  /// [points] without one-day spikes (see [spikeTolerance]). The first and
+  /// last closes have one neighbour and are kept; the live check covers the
+  /// newest one.
+  static List<FXHistoryPoint> withoutSpikes(List<FXHistoryPoint> points) {
+    if (points.length < 3) return List.of(points);
+    double gap(double a, double b) => (a - b).abs() / b;
+    bool spike(double before, double v, double after) =>
+        before > 0 &&
+        after > 0 &&
+        gap(v, before) > spikeTolerance &&
+        gap(v, after) > spikeTolerance &&
+        (v > before) == (v > after) &&
+        gap(after, before) <= spikeTolerance;
+    return [
+      for (var i = 0; i < points.length; i++)
+        if (i == 0 || i == points.length - 1 || !spike(points[i - 1].perUSD, points[i].perUSD, points[i + 1].perUSD)) points[i],
+    ];
   }
 
   Map<String, dynamic> toJson() => {

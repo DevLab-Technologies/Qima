@@ -46,6 +46,10 @@ class WatchlistScreen extends StatefulWidget {
   /// lives on Home.
   final bool asPrices;
 
+  /// Told when Edit order opens and closes, so the shell can hide its tab
+  /// bar and + button while the person reorders.
+  final ValueChanged<bool>? onEditingOrderChanged;
+
   const WatchlistScreen({
     super.key,
     this.manageRefreshLifecycle = true,
@@ -53,6 +57,7 @@ class WatchlistScreen extends StatefulWidget {
     this.onOpenSettings,
     this.scrollController,
     this.asPrices = false,
+    this.onEditingOrderChanged,
   });
 
   @override
@@ -67,6 +72,15 @@ class _WatchlistScreenState extends State<WatchlistScreen> with WidgetsBindingOb
   /// sorts, and rows stop opening the detail screen or swiping to delete,
   /// so a drag never turns into either by accident.
   bool _editingOrder = false;
+
+  void _setEditingOrder(bool on) {
+    if (_editingOrder == on) return;
+    setState(() {
+      _editingOrder = on;
+      if (on) _filter = null;
+    });
+    widget.onEditingOrderChanged?.call(on);
+  }
 
   @override
   void initState() {
@@ -113,7 +127,7 @@ class _WatchlistScreenState extends State<WatchlistScreen> with WidgetsBindingOb
     return PopScope(
       canPop: !_editingOrder,
       onPopInvokedWithResult: (didPop, _) {
-        if (!didPop) setState(() => _editingOrder = false);
+        if (!didPop) _setEditingOrder(false);
       },
       child: ScreenBackground(
         child: Scaffold(
@@ -125,7 +139,7 @@ class _WatchlistScreenState extends State<WatchlistScreen> with WidgetsBindingOb
                   title: Text(l10n.watchlistEditOrder),
                   actions: [
                     TextButton(
-                      onPressed: () => setState(() => _editingOrder = false),
+                      onPressed: () => _setEditingOrder(false),
                       child: Text(l10n.commonDone, style: const TextStyle(fontWeight: FontWeight.w700)),
                     ),
                   ],
@@ -144,10 +158,7 @@ class _WatchlistScreenState extends State<WatchlistScreen> with WidgetsBindingOb
                         return IconButton(
                           icon: const Icon(Icons.swap_vert),
                           tooltip: l10n.watchlistEditOrder,
-                          onPressed: () => setState(() {
-                            _editingOrder = true;
-                            _filter = null;
-                          }),
+                          onPressed: () => _setEditingOrder(true),
                         );
                       },
                     ),
@@ -181,7 +192,7 @@ class _WatchlistScreenState extends State<WatchlistScreen> with WidgetsBindingOb
               if (state.cards.isEmpty) {
                 if (_editingOrder) {
                   WidgetsBinding.instance.addPostFrameCallback((_) {
-                    if (mounted) setState(() => _editingOrder = false);
+                    if (mounted) _setEditingOrder(false);
                   });
                 }
                 return Center(
@@ -253,7 +264,7 @@ class _WatchlistScreenState extends State<WatchlistScreen> with WidgetsBindingOb
               return ListView(
                 controller: widget.scrollController,
                 // Extra room at the end so the docked + never covers the last row.
-                padding: EdgeInsets.fromLTRB(DS.spaceMD, DS.spaceMD, DS.spaceMD, DS.spaceXL * (widget.asPrices ? 4 : 2)),
+                padding: EdgeInsets.fromLTRB(DS.spaceMD, DS.spaceMD, DS.spaceMD, widget.asPrices ? DS.tabListEnd(context) : DS.spaceXL * 2),
                 children: [
                   if (valuation != null) ...[
                     PortfolioHero(
@@ -344,8 +355,16 @@ class _WatchlistScreenState extends State<WatchlistScreen> with WidgetsBindingOb
 
     return ListView(
       controller: widget.scrollController,
-      padding: const EdgeInsets.all(DS.spaceMD),
+      // The shell hides its tab bar and + here, so only the home indicator
+      // is left to clear.
+      padding: EdgeInsets.fromLTRB(DS.spaceMD, DS.spaceMD, DS.spaceMD, MediaQuery.paddingOf(context).bottom + DS.spaceMD),
       children: [
+        Text(
+          l10n.watchlistEditOrderHint,
+          key: const ValueKey('editOrderHint'),
+          style: TextStyle(color: colors.textTertiary, fontSize: 13),
+        ),
+        const SizedBox(height: DS.spaceMD),
         Text(l10n.watchlistSortBy, style: TextStyle(color: colors.textTertiary, fontSize: 13)),
         const SizedBox(height: DS.spaceXS),
         Wrap(
@@ -388,12 +407,6 @@ class _WatchlistScreenState extends State<WatchlistScreen> with WidgetsBindingOb
               );
             },
           ),
-        ),
-        const SizedBox(height: DS.spaceSM),
-        Text(
-          l10n.watchlistEditOrderHint,
-          textAlign: TextAlign.center,
-          style: TextStyle(color: colors.textTertiary, fontSize: 12),
         ),
       ],
     );

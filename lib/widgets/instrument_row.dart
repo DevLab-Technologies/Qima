@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../l10n/app_localizations.dart';
 import '../models/instrument_presentation.dart';
 import '../theme/design_system.dart';
 import '../theme/price_chart.dart';
@@ -43,14 +44,10 @@ class InstrumentRow extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 2),
-                  Text.rich(
-                    TextSpan(children: [
-                      TextSpan(text: '${presentation.symbol} · ${presentation.displayCurrency}$unitSuffix$karat'),
-                      if (MarketClosedMark.closed(presentation.instrument, now)) ...MarketClosedMark.spans(context),
-                    ]),
+                  InstrumentDetailLine(
+                    text: '${presentation.symbol} · ${presentation.displayCurrency}$unitSuffix$karat',
+                    closed: MarketClosedMark.closed(presentation.instrument, now),
                     style: TextStyle(color: colors.textTertiary, fontSize: 12),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),
@@ -102,5 +99,40 @@ class InstrumentRow extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+/// The symbol line. When "· (moon) Closed" would not fit, the word goes
+/// and the moon stays, so the symbol and currency are never cut short.
+class InstrumentDetailLine extends StatelessWidget {
+  final String text;
+  final bool closed;
+  final TextStyle style;
+
+  const InstrumentDetailLine({super.key, required this.text, required this.closed, required this.style});
+
+  @override
+  Widget build(BuildContext context) {
+    Widget line({required bool label}) => Text.rich(
+          TextSpan(children: [
+            TextSpan(text: text),
+            if (closed) ...MarketClosedMark.spans(context, label: label),
+          ]),
+          style: style,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        );
+    if (!closed) return line(label: false);
+    return LayoutBuilder(builder: (context, constraints) {
+      final painter = TextPainter(
+        text: TextSpan(text: '$text ·    ${AppLocalizations.of(context)!.marketClosed}', style: style),
+        textDirection: Directionality.of(context),
+        textScaler: MediaQuery.textScalerOf(context),
+        maxLines: 1,
+      )..layout();
+      final fits = painter.width + style.fontSize! <= constraints.maxWidth;
+      painter.dispose();
+      return line(label: fits);
+    });
   }
 }

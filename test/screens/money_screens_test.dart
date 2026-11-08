@@ -916,6 +916,7 @@ void main() {
       await tester.pumpWidget(wrap(const EntryEditorScreen(kind: EntryKind.repaymentIn, toAccountId: 'rajhi'), const Locale('en')));
       await tester.pumpAndSettle();
       expect(find.byKey(const ValueKey('entryClears')), findsNothing);
+      expect(find.byKey(const ValueKey('entryVoice')), findsNothing, reason: 'voice reads spending, income and transfers only');
     });
 
     testWidgets('changing only the name of an installment keeps how many are left of how many', (tester) async {

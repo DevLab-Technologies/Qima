@@ -119,7 +119,7 @@ class HomeScreen extends StatelessWidget {
             ),
             body: ListView(
               controller: scrollController,
-              padding: const EdgeInsets.fromLTRB(DS.spaceMD, DS.spaceSM, DS.spaceMD, DS.spaceXL * 3),
+              padding: EdgeInsets.fromLTRB(DS.spaceMD, DS.spaceSM, DS.spaceMD, DS.tabListEnd(context)),
               children: children,
             ),
           ),

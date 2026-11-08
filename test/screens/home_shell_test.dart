@@ -213,6 +213,34 @@ void main() {
     expect(tester.widget<ChoiceChip>(cryptoChip).selected, isTrue);
   });
 
+  testWidgets('Edit order hides the tab bar and the +, puts the hint first, and lets the last card clear the screen edge', (tester) async {
+    cubit.emit(cubit.state.copyWith(cards: [
+      for (var i = 0; i < 10; i++) WatchCard(id: 'm$i', instrumentID: i.isEven ? gold.id : silver.id, currency: 'USD', unit: PriceUnit.troyOunce),
+    ]));
+    setSurfaceSize(tester, const Size(400, 700));
+    await tester.pumpWidget(app(cubit));
+    await settle(tester);
+    final l10n = await AppLocalizations.delegate.load(const Locale('en'));
+
+    await tapTab(tester, l10n.navPrices);
+    await tester.tap(find.byTooltip(l10n.watchlistEditOrder));
+    await settle(tester);
+    expect(find.byTooltip(l10n.addButton), findsNothing);
+    expect(tabButton(l10n.navHome), findsNothing);
+    expect(tester.getRect(find.byKey(const ValueKey('editOrderHint'))).top, lessThan(tester.getRect(find.text(l10n.watchlistSortBy)).top));
+
+    final list = tester.state<ScrollableState>(find.ancestor(of: find.text(l10n.watchlistSortBy), matching: find.byType(Scrollable)).first);
+    list.position.jumpTo(list.position.maxScrollExtent);
+    await settle(tester);
+    expect(tester.getRect(find.byIcon(Icons.drag_handle).last).bottom, lessThanOrEqualTo(700));
+
+    // Android back closes Edit order and stays on Prices.
+    await tester.binding.handlePopRoute();
+    await settle(tester);
+    expect(find.byTooltip(l10n.addButton), findsOneWidget);
+    expectTabSelected(tester, l10n.navPrices);
+  });
+
   testWidgets('the Prices tab has no portfolio total and no back button', (tester) async {
     setSurfaceSize(tester, const Size(400, 800));
     await tester.pumpWidget(app(cubit));

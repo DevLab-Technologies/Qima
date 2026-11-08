@@ -40,6 +40,9 @@ const double _kRailBreakpoint = 600;
 
 class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
   int _index = 0;
+
+  /// The Prices tab is in Edit order: no tab bar and no + until Done.
+  bool _reordering = false;
   Timer? _timer;
   bool _whatsNewShown = false;
 
@@ -131,7 +134,12 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
           children: [
             HomeScreen(scrollController: _homeScroll, onOpenSettings: phone ? _openSettings : null),
             MoneyScreen(scrollController: _moneyScroll),
-            WatchlistScreen(manageRefreshLifecycle: false, asPrices: true, scrollController: _pricesScroll),
+            WatchlistScreen(
+              manageRefreshLifecycle: false,
+              asPrices: true,
+              scrollController: _pricesScroll,
+              onEditingOrderChanged: (on) => setState(() => _reordering = on),
+            ),
           ],
         );
 
@@ -141,8 +149,9 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
       child: PopScope(
         canPop: _index == 0,
         onPopInvokedWithResult: (didPop, _) {
-          // Android back from Money or Prices goes to Home first.
-          if (!didPop) setState(() => _index = 0);
+          // Android back from Money or Prices goes to Home first; in Edit
+          // order it only closes Edit order (the Prices tab handles that).
+          if (!didPop && !_reordering) setState(() => _index = 0);
         },
         child: LayoutBuilder(
           builder: (context, constraints) {
@@ -151,9 +160,9 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
               return Scaffold(
                 extendBody: true,
                 body: tabs(phone: true),
-                floatingActionButton: const AddButton(),
+                floatingActionButton: _reordering ? null : const AddButton(),
                 floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-                bottomNavigationBar: _FloatingTabBar(destinations: destinations, selectedIndex: _index, onSelected: _selectTab),
+                bottomNavigationBar: _reordering ? null : _FloatingTabBar(destinations: destinations, selectedIndex: _index, onSelected: _selectTab),
               );
             }
 

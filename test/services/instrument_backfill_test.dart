@@ -244,4 +244,20 @@ void main() {
       expect(provider.requestedRanges, ['5y'], reason: 'leveled now; the tail waits for its interval');
     });
   });
+
+  test("a currency's closes kept from a feed since found wrong are cleared, and today's live samples stay", () async {
+    final sar = InstrumentCatalog.instrument('fx.SAR')!;
+    await store.save(QuoteSeries(instrumentID: sar.id, quotes: [
+      for (var d = DateTime.utc(2026, 6, 1); d.isBefore(DateTime.utc(2026, 10, 15)); d = d.add(const Duration(days: 1)))
+        Quote(instrumentID: sar.id, timestamp: d, canonicalUSD: 1 / 3.64),
+      Quote(instrumentID: sar.id, timestamp: now, canonicalUSD: 1 / 3.75),
+    ]));
+    final provider = _FakeHistoryProvider(now, now);
+
+    // The checked history has no SAR: its feed disagreed with the live rate.
+    await repositoryWith(provider).backfillInstruments([sar], FXHistory.empty, force: true, now: now);
+
+    final series = await store.load(sar.id);
+    expect(series.quotes.map((q) => q.canonicalUSD), [1 / 3.75]);
+  });
 }

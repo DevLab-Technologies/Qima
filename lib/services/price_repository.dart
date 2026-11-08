@@ -85,7 +85,9 @@ class PriceRepository {
 
   Future<FXRates> cachedRates() async => (await fxRateStore.load()) ?? FXRates.usdIdentity;
 
-  Future<FXHistory> cachedFXHistory() => fxHistoryStore.load();
+  /// The stored FX history, checked against the live rates (see
+  /// [FXHistory.checkedAgainst]); the store keeps the raw feed.
+  Future<FXHistory> cachedFXHistory() async => (await fxHistoryStore.load()).checkedAgainst(await cachedRates());
 
   Future<PriceConverter> converter({
     required String currency,
@@ -235,7 +237,7 @@ class PriceRepository {
       }
     }
 
-    return history;
+    return history.checkedAgainst(await cachedRates());
   }
 
   String? _historySymbol(Instrument instrument) {
@@ -334,8 +336,12 @@ class PriceRepository {
       if (instrument.assetClass == AssetClass.fiat) {
         if (!force && deep && !tailDue) continue;
         final quotes = fiatQuotes(instrument, fxHistory, fxHistory.allDates());
-        if (quotes.isEmpty) continue;
-        final merged = existing.merging(quotes, effectiveNow);
+        // The derived closes are the whole record before today's live
+        // samples, so closes kept from a feed since found wrong go too.
+        final dailyUntil = effectiveNow.subtract(QuoteSeries.intradayWindow);
+        final stale = existing.quotes.any((q) => q.timestamp.isBefore(dailyUntil));
+        if (quotes.isEmpty && !stale) continue;
+        final merged = existing.merging(quotes, effectiveNow, replacing: (from: DateTime.utc(1970), to: dailyUntil));
         final persisted = await quoteHistoryStore.save(merged);
         result[instrument.id] = merged;
         if (!force && deep && persisted) await _stamp(prefs, tailKey, effectiveNow);

@@ -55,15 +55,18 @@ class MarketClosedMark {
 
   static bool closed(Instrument instrument, DateTime now) => MarketHours.statusOf(instrument, now)?.open == false;
 
-  static List<InlineSpan> spans(BuildContext context) {
+  /// " · (moon) Closed". With [label] false, the moon alone, for a line
+  /// with no room for the word; screen readers still hear "Closed".
+  static List<InlineSpan> spans(BuildContext context, {bool label = true}) {
     final colors = context.colors;
+    final closed = AppLocalizations.of(context)!.marketClosed;
     return [
       const TextSpan(text: ' · '),
       WidgetSpan(
         alignment: PlaceholderAlignment.middle,
-        child: Icon(Icons.bedtime_outlined, key: const ValueKey('marketClosed'), size: 12, color: colors.textTertiary),
+        child: Icon(Icons.bedtime_outlined, key: const ValueKey('marketClosed'), size: 12, color: colors.textTertiary, semanticLabel: label ? null : closed),
       ),
-      TextSpan(text: ' ${AppLocalizations.of(context)!.marketClosed}'),
+      if (label) TextSpan(text: ' $closed'),
     ];
   }
 }

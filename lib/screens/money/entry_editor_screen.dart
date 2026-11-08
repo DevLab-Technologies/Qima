@@ -439,7 +439,8 @@ class _EntryEditorScreenState extends State<EntryEditorScreen> {
     final speech = _speechLanguages.containsKey(picked) ? picked! : (_speechLanguages.containsKey(appLanguage) ? appLanguage : 'en');
     final fields = <Widget>[
       ?kindTabs,
-      if (!missingAccount && widget.existing == null)
+      // Voice reads spending, income and transfers only.
+      if (!missingAccount && widget.existing == null && tabs.contains(kind))
         DictationButton(
           language: Locale(speech),
           onText: (t) => setState(() => _heard = t),
