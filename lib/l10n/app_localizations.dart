@@ -6683,6 +6683,24 @@ abstract class AppLocalizations {
   /// **'Sent'**
   String get entrySent;
 
+  /// No description provided for @entryClearsTheirs.
+  ///
+  /// In en, this message translates to:
+  /// **'Clears of what they owe'**
+  String get entryClearsTheirs;
+
+  /// No description provided for @entryClearsMine.
+  ///
+  /// In en, this message translates to:
+  /// **'Clears of what you owe'**
+  String get entryClearsMine;
+
+  /// No description provided for @entryClearsHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave empty for today\'s rate: {amount}'**
+  String entryClearsHelp(String amount);
+
   /// No description provided for @entryReceived.
   ///
   /// In en, this message translates to:

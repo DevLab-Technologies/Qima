@@ -86,7 +86,7 @@ class EntryEditorScreen extends StatefulWidget {
 
 class _EntryEditorScreenState extends State<EntryEditorScreen> {
   final _amount = TextEditingController();
-  final _second = TextEditingController(); // received (swap) or profit (loan)
+  final _second = TextEditingController(); // received (swap), profit (loan) or debt cleared (repayment)
   final _merchant = TextEditingController();
   final _note = TextEditingController();
   final _person = TextEditingController();
@@ -179,16 +179,17 @@ class _EntryEditorScreenState extends State<EntryEditorScreen> {
         _to = acct(own, positive: true);
         _amount.text = minorFieldText(-lineOf(_from), _from?.currency ?? 'USD');
         _second.text = minorFieldText(lineOf(_to), _to?.currency ?? 'USD');
+      case EntryKind.repaymentIn || EntryKind.repaymentOut:
+        // The editor's "from" is the person, "to" the money.
+        final debt = acct((a) => a.type == AccountType.receivable || a.type == AccountType.payable);
+        _from = debt;
+        _to = acct((a) => own(a) && a.id != debt?.id);
+        _amount.text = minorFieldText(lineOf(_to).abs(), _to?.currency ?? 'USD');
+        if (_crossCurrency) _second.text = minorFieldText(lineOf(_from).abs(), _from!.currency!);
       default:
         _from = acct(own, negative: true);
         _to = acct(own, positive: true);
         _amount.text = minorFieldText(lineOf(_to).abs(), _to?.currency ?? 'USD');
-        // Repaying someone: the editor's "from" is the person, "to" the money.
-        if (kind == EntryKind.repaymentOut) {
-          final person = _to;
-          _to = _from;
-          _from = person;
-        }
         if (kind == EntryKind.lent || kind == EntryKind.borrowed) {
           _person.text = (kind == EntryKind.lent ? _to : _from)?.name ?? '';
         }
@@ -303,17 +304,33 @@ class _EntryEditorScreenState extends State<EntryEditorScreen> {
   /// The money account the amount is in.
   String get _currency {
     final a = switch (kind) {
-      EntryKind.income || EntryKind.refund || EntryKind.borrowed || EntryKind.repaymentIn => _to,
+      EntryKind.income || EntryKind.refund || EntryKind.borrowed || EntryKind.repaymentIn || EntryKind.repaymentOut => _to,
       EntryKind.cardPayment || EntryKind.loanPayment => _to ?? _from,
       _ => _from,
     };
     return a?.currency ?? context.read<AppCubit>().state.baseCurrency;
   }
 
+  /// A repayment whose money is in another currency than the debt: the
+  /// second amount is how much of the debt it clears.
+  bool get _crossCurrency =>
+      (kind == EntryKind.repaymentIn || kind == EntryKind.repaymentOut) && _from != null && _to != null && _from!.currency != _to!.currency;
+
   EntryBuilder get _builder {
     final id = widget.existing?.id;
     final b = _money.builder;
     return id == null ? b : EntryBuilder(baseCurrency: b.baseCurrency, rates: b.rates, newId: () => id);
+  }
+
+  /// What the amount clears of the debt at today's rate, for the helper.
+  String? _todayClears(EntryBuilder b) {
+    final amount = parseMinor(_amount.text, _currency);
+    if (amount == null || amount <= 0) return null;
+    try {
+      return minorText(b.convert(amount, _to!.currency!, _from!.currency!), _from!.currency!, hidden: false);
+    } on ArgumentError {
+      return null;
+    }
   }
 
   Future<void> _save() async {
@@ -360,14 +377,16 @@ class _EntryEditorScreenState extends State<EntryEditorScreen> {
           if (name.isEmpty) return setState(() => _error = l10n.entryErrorPerson);
           final person = await _money.personAccount(name, money.currency!, owesMe: kind == EntryKind.lent);
           entry = kind == EntryKind.lent ? b.lent(money, person, amount, _date) : b.borrowed(money, person, amount, _date);
-        case EntryKind.repaymentIn:
+        case EntryKind.repaymentIn || EntryKind.repaymentOut:
           if (_from == null || _to == null) return setState(() => _error = l10n.entryErrorAccount);
-          if (_from!.currency != _to!.currency) return setState(() => _error = l10n.entryErrorSameCurrency);
-          entry = b.repaymentIn(_to!, _from!, amount, _date);
-        case EntryKind.repaymentOut:
-          if (_from == null || _to == null) return setState(() => _error = l10n.entryErrorAccount);
-          if (_from!.currency != _to!.currency) return setState(() => _error = l10n.entryErrorSameCurrency);
-          entry = b.repaymentOut(_to!, _from!, amount, _date);
+          int? clears;
+          if (_crossCurrency && _second.text.trim().isNotEmpty) {
+            clears = parseMinor(_second.text, _from!.currency!);
+            if (clears == null || clears <= 0) return setState(() => _error = l10n.entryErrorAmount);
+          }
+          entry = kind == EntryKind.repaymentIn
+              ? b.repaymentIn(_to!, _from!, amount, _date, clears: clears)
+              : b.repaymentOut(_to!, _from!, amount, _date, clears: clears);
       }
     } on ArgumentError {
       return setState(() => _error = l10n.entryErrorRate);
@@ -439,9 +458,19 @@ class _EntryEditorScreenState extends State<EntryEditorScreen> {
           _ => l10n.entryAmount,
         },
         currency: _currency,
+        // The cleared-at-today's-rate hint follows the amount.
+        onChanged: _crossCurrency ? (_) => setState(() {}) : null,
       ),
       if (kind == EntryKind.loanPayment) AmountField(controller: _second, label: l10n.entryProfit, currency: _currency, helper: l10n.entryProfitHelp),
       if (kind == EntryKind.swap && _to != null) AmountField(controller: _second, label: l10n.entryReceived, currency: _to!.currency!),
+      if (_crossCurrency)
+        AmountField(
+          key: const ValueKey('entryClears'),
+          controller: _second,
+          label: kind == EntryKind.repaymentIn ? l10n.entryClearsTheirs : l10n.entryClearsMine,
+          currency: _from!.currency!,
+          helper: l10n.entryClearsHelp(_todayClears(_builder) ?? ''),
+        ),
       if (_fromChoices.isNotEmpty)
         AccountPicker(
           label: switch (kind) {

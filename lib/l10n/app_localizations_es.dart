@@ -3870,6 +3870,17 @@ class AppLocalizationsEs extends AppLocalizations {
   String get entrySent => 'Enviado';
 
   @override
+  String get entryClearsTheirs => 'Salda de lo que te debe';
+
+  @override
+  String get entryClearsMine => 'Salda de lo que debes';
+
+  @override
+  String entryClearsHelp(String amount) {
+    return 'Déjalo vacío para usar el cambio de hoy: $amount';
+  }
+
+  @override
   String get entryReceived => 'Recibido';
 
   @override

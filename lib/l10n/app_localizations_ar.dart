@@ -3855,6 +3855,17 @@ class AppLocalizationsAr extends AppLocalizations {
   String get entrySent => 'المرسل';
 
   @override
+  String get entryClearsTheirs => 'يسدّد من دينه لك';
+
+  @override
+  String get entryClearsMine => 'يسدّد من دينك له';
+
+  @override
+  String entryClearsHelp(String amount) {
+    return 'اتركه فارغًا لاستخدام سعر اليوم: $amount';
+  }
+
+  @override
   String get entryReceived => 'المستلم';
 
   @override

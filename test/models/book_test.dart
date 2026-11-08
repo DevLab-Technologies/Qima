@@ -192,6 +192,34 @@ void main() {
       expect(b.balanceOf('faisal'), sar(1470));
     });
 
+    test('Faisal owes 4,000 EGP and pays back 300 SAR: the debt is cleared at the rate the two figures set', () {
+      final x = builder();
+      final b = book([x.lent(cib, faisalEgp, egp(4000), day), x.repaymentIn(rajhi, faisalEgp, sar(300), day, clears: egp(4000))]);
+      expect(b.issues, isEmpty);
+      expect(b.balanceOf('faisal.egp'), 0);
+      expect(b.balanceOf('rajhi'), sar(300));
+      expect(b.balanceOf('cib'), -egp(4000));
+      expect(b.spending(), isEmpty);
+      expect(b.income(), isEmpty);
+    });
+
+    test('a repayment in another currency with no cleared figure clears at today\'s rate', () {
+      final x = builder();
+      final b = book([x.lent(cib, faisalEgp, egp(4000), day), x.repaymentIn(rajhi, faisalEgp, sar(260), day)]);
+      expect(b.issues, isEmpty);
+      expect(b.balanceOf('faisal.egp'), egp(4000 - 260 * 13));
+    });
+
+    test('paying back an EGP debt from a SAR account lowers the debt by what it clears', () {
+      final khalidEgp = owe('khalid.egp', AccountType.payable, 'EGP');
+      final x = builder();
+      final b = Book([...allAccounts, khalidEgp], [x.borrowed(cib, khalidEgp, egp(1300), day), x.repaymentOut(rajhi, khalidEgp, sar(100), day, clears: egp(1300))]);
+      expect(b.issues, isEmpty);
+      expect(b.balanceOf('khalid.egp'), 0);
+      expect(b.balanceOf('rajhi'), -sar(100));
+      expect(b.spending(), isEmpty);
+    });
+
     test('a cash count of 700.00 against 735.57 tracked spends the 35.57 difference in Other', () {
       final x = builder();
       final b = book([

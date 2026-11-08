@@ -3847,6 +3847,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get entrySent => 'Sent';
 
   @override
+  String get entryClearsTheirs => 'Clears of what they owe';
+
+  @override
+  String get entryClearsMine => 'Clears of what you owe';
+
+  @override
+  String entryClearsHelp(String amount) {
+    return 'Leave empty for today\'s rate: $amount';
+  }
+
+  @override
   String get entryReceived => 'Received';
 
   @override

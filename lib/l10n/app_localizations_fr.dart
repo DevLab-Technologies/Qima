@@ -3873,6 +3873,17 @@ class AppLocalizationsFr extends AppLocalizations {
   String get entrySent => 'Envoyé';
 
   @override
+  String get entryClearsTheirs => 'Règle sur ce qu\'on vous doit';
+
+  @override
+  String get entryClearsMine => 'Règle sur ce que vous devez';
+
+  @override
+  String entryClearsHelp(String amount) {
+    return 'Laissez vide pour le taux du jour : $amount';
+  }
+
+  @override
   String get entryReceived => 'Reçu';
 
   @override

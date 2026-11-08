@@ -884,6 +884,40 @@ void main() {
       expect(money.state.book.accounts[bonus.categoryId]!.side, AccountSide.income);
     });
 
+    testWidgets('an EGP loan paid back in SAR clears the debt by the EGP figure typed, and edits back the same', (tester) async {
+      await tester.runAsync(seed);
+      late BookAccount omar;
+      await tester.runAsync(() async {
+        omar = await money.personAccount('Omar', 'EGP', owesMe: true);
+        await money.saveEntry(money.builder.lent(money.state.book.accounts['cib']!, omar, MinorUnits.fromMajor(4000, 'EGP'), DateTime.now()));
+      });
+      size(tester, const Size(390, 1400));
+      final l10n = await AppLocalizations.delegate.load(const Locale('en'));
+      await tester.pumpWidget(wrap(EntryEditorScreen(kind: EntryKind.repaymentIn, fromAccountId: omar.id, toAccountId: 'rajhi'), const Locale('en')));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey('entryClears')), findsOneWidget);
+      expect(find.text(l10n.entryClearsTheirs), findsOneWidget);
+      await tester.enterText(find.widgetWithText(TextField, l10n.entryAmount), '300');
+      await tester.enterText(find.descendant(of: find.byKey(const ValueKey('entryClears')), matching: find.byType(TextField)), '4000');
+      await tester.tap(find.text(l10n.holdingsSave));
+      await settle(tester, () => money.state.book.balanceOf(omar.id) == 0);
+      expect(money.state.book.issues, isEmpty);
+      final repaid = money.state.book.entries.lastWhere((e) => e.template == EntryTemplate.repaymentIn);
+      await tester.pumpWidget(const SizedBox()); // Save closed the only page.
+      await tester.pumpWidget(wrap(EntryEditorScreen(kind: EntryKind.repaymentIn, existing: repaid), const Locale('en')));
+      await tester.pumpAndSettle();
+      expect(find.text('300.00'), findsOneWidget);
+      expect(find.text('4,000.00'), findsOneWidget);
+    });
+
+    testWidgets('a repayment in the debt\'s own currency has no cleared field', (tester) async {
+      await tester.runAsync(seed);
+      size(tester, const Size(390, 1400));
+      await tester.pumpWidget(wrap(const EntryEditorScreen(kind: EntryKind.repaymentIn, toAccountId: 'rajhi'), const Locale('en')));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey('entryClears')), findsNothing);
+    });
+
     testWidgets('changing only the name of an installment keeps how many are left of how many', (tester) async {
       await tester.runAsync(seed);
       final plan = RecurringPayment(id: 'tabby', name: 'Tabby', amount: sar(250), fromAccountId: 'rajhi', categoryId: 'category.shopping', start: DateTime(2026, 9, 20), times: 4, paid: 2);

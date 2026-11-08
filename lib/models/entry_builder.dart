@@ -110,19 +110,32 @@ class EntryBuilder {
   BookEntry transfer(BookAccount from, BookAccount to, int amount, DateTime date, {bool atm = false}) =>
       _entry(atm ? EntryTemplate.atm : EntryTemplate.transfer, date, [_line(to, amount), _line(from, -amount)]);
 
+  /// [amount] of [from] at today's rate, in minor units of [to].
+  int convert(int amount, String from, String to) {
+    if (from == to) return amount;
+    return MinorUnits.fromMajor(MinorUnits.toMajor(amount, from) / rateOf(from) * rateOf(to), to);
+  }
+
   /// Changing money: [sent] of [from]'s currency became [received] of
   /// [to]'s. The rate is the one the swap happened at, so the base amounts
   /// are made equal and opposite instead of using today's rate twice.
-  BookEntry swap(BookAccount from, int sent, BookAccount to, int received, DateTime date) {
-    final int baseOut;
-    if (to.currency == baseCurrency) {
-      baseOut = received;
-    } else if (from.currency == baseCurrency) {
-      baseOut = sent;
+  BookEntry swap(BookAccount from, int sent, BookAccount to, int received, DateTime date) =>
+      _entry(EntryTemplate.swap, date, _exchanged(from, -sent, to, received));
+
+  /// Two lines that move [outAmount] (negative) of [out]'s currency and
+  /// [inAmount] of [into]'s, at the rate between the two figures: the base
+  /// amounts are equal and opposite, taken from whichever side is already
+  /// in the base currency.
+  List<EntryLine> _exchanged(BookAccount out, int outAmount, BookAccount into, int inAmount) {
+    final int base;
+    if (into.currency == baseCurrency) {
+      base = inAmount;
+    } else if (out.currency == baseCurrency) {
+      base = -outAmount;
     } else {
-      baseOut = toBase(sent, from.currency!);
+      base = toBase(-outAmount, out.currency!);
     }
-    return _entry(EntryTemplate.swap, date, [_line(from, -sent, baseAmount: -baseOut), _line(to, received, baseAmount: baseOut)]);
+    return [_line(out, outAmount, baseAmount: -base), _line(into, inAmount, baseAmount: base)];
   }
 
   /// Paying a card from a bank: the bank down, the card's debt down. Not
@@ -147,13 +160,29 @@ class EntryBuilder {
   BookEntry borrowed(BookAccount to, BookAccount owedByMe, int amount, DateTime date) =>
       _entry(EntryTemplate.borrowed, date, [_line(to, amount), _line(owedByMe, -amount)]);
 
-  /// Someone pays the person back.
-  BookEntry repaymentIn(BookAccount to, BookAccount owedByThem, int amount, DateTime date) =>
-      _entry(EntryTemplate.repaymentIn, date, [_line(to, amount), _line(owedByThem, -amount)]);
+  /// Someone pays the person back: [amount] arrives in [to]. When the
+  /// debt is in another currency, [clears] is how much of it this settles,
+  /// in the debt's currency (today's rate when left out); the two figures
+  /// set the rate, as in a swap.
+  BookEntry repaymentIn(BookAccount to, BookAccount owedByThem, int amount, DateTime date, {int? clears}) {
+    if (to.currency == owedByThem.currency) {
+      return _entry(EntryTemplate.repaymentIn, date, [_line(to, amount), _line(owedByThem, -amount)]);
+    }
+    final settled = clears ?? convert(amount, to.currency!, owedByThem.currency!);
+    final [debt, money] = _exchanged(owedByThem, -settled, to, amount);
+    return _entry(EntryTemplate.repaymentIn, date, [money, debt]);
+  }
 
-  /// The person pays someone back.
-  BookEntry repaymentOut(BookAccount from, BookAccount owedByMe, int amount, DateTime date) =>
-      _entry(EntryTemplate.repaymentOut, date, [_line(owedByMe, amount), _line(from, -amount)]);
+  /// The person pays someone back: [amount] leaves [from]. [clears] is
+  /// how much of the debt this settles when it is in another currency.
+  BookEntry repaymentOut(BookAccount from, BookAccount owedByMe, int amount, DateTime date, {int? clears}) {
+    if (from.currency == owedByMe.currency) {
+      return _entry(EntryTemplate.repaymentOut, date, [_line(owedByMe, amount), _line(from, -amount)]);
+    }
+    final settled = clears ?? convert(amount, from.currency!, owedByMe.currency!);
+    final [money, debt] = _exchanged(from, -amount, owedByMe, settled);
+    return _entry(EntryTemplate.repaymentOut, date, [debt, money]);
+  }
 
   /// A cash count. Less than tracked is spending in [short]; more is income
   /// in [over]. Null when the count matches.
