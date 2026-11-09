@@ -210,6 +210,9 @@ class _ImportReviewScreenState extends State<ImportReviewScreen> {
   final Map<String, bool> _ticked = {};
   final Map<String, bool> _isIn = {};
   final Map<String, String> _category = {};
+
+  /// Rows the person corrected (name, amount, date), by candidate key.
+  final Map<String, StatementRow> _edited = {};
   bool? _fixBalance;
   BalanceWay _balanceWay = BalanceWay.opening;
   bool _saving = false;
@@ -228,7 +231,7 @@ class _ImportReviewScreenState extends State<ImportReviewScreen> {
 
     final candidates = account == null
         ? const <ImportCandidate>[]
-        : ImportPlanner.plan(files: [for (final i in imports.items) (i.id, i.rows)], account: account, book: money.book, rules: money.settings.categoryRules);
+        : ImportPlanner.plan(files: [for (final i in imports.items) (i.id, _rowsOf(i))], account: account, book: money.book, rules: money.settings.categoryRules);
     final byFile = <String, List<ImportCandidate>>{};
     for (final c in candidates) {
       (byFile[c.fileId] ??= []).add(c);
@@ -307,7 +310,16 @@ class _ImportReviewScreenState extends State<ImportReviewScreen> {
             ]),
           ),
           if (item.status == ImportStatus.read && !item.facts.isEmpty)
-            _FactsLine(facts: item.facts, rows: item.rows, currency: item.facts.currency ?? account?.currency ?? ''),
+            _FactsLine(
+              facts: item.facts,
+              // The check runs on what will be added: the ticked rows, as
+              // corrected, each the way it was set to go.
+              rows: [
+                for (final c in rows)
+                  if (ticked(c)) c.row.copyWith(amount: (_isIn[c.key] ?? c.row.isIn) ? c.row.amount.abs() : -c.row.amount.abs()),
+              ],
+              currency: item.facts.currency ?? account?.currency ?? '',
+            ),
           if (account != null)
             for (final c in rows)
               _CandidateRow(
@@ -315,9 +327,9 @@ class _ImportReviewScreenState extends State<ImportReviewScreen> {
                 currency: c.row.currency ?? account.currency ?? '',
                 ticked: ticked(c),
                 isIn: _isIn[c.key] ?? c.row.isIn,
-                categoryName: l10n.accountName(money.book.accounts[_category[c.key] ?? c.categoryId] ?? money.book.accounts.values.first),
+                categoryName: _categoryName(l10n, money.book.accounts[_category[c.key] ?? c.categoryId] ?? money.book.accounts.values.first),
                 onTicked: (v) => setState(() => _ticked[c.key] = v),
-                onTap: () => _edit(c, money),
+                onTap: () => _edit(c, money, account),
               ),
         ],
       ));
@@ -356,67 +368,132 @@ class _ImportReviewScreenState extends State<ImportReviewScreen> {
     );
   }
 
-  Future<void> _edit(ImportCandidate c, MoneyState money) async {
+  /// A file's rows with the person's corrections in.
+  List<StatementRow> _rowsOf(ImportItem item) => [
+        for (var i = 0; i < item.rows.length; i++) _edited['${item.id}:$i'] ?? item.rows[i],
+      ];
+
+  String _categoryName(AppLocalizations l10n, BookAccount a) =>
+      a.side.onBalanceSheet ? l10n.importTransferWith(l10n.accountName(a)) : l10n.accountName(a);
+
+  /// Lets the person correct a row before it is added: its name, amount,
+  /// date and direction, and what it is (a category, or a move to or from
+  /// another of their accounts).
+  Future<void> _edit(ImportCandidate c, MoneyState money, BookAccount account) async {
     final l10n = AppLocalizations.of(context)!;
+    final currency = account.currency ?? 'SAR';
     var isIn = _isIn[c.key] ?? c.row.isIn;
     var category = _category[c.key] ?? c.categoryId;
-    final result = await showModalBottomSheet<(bool, String)>(
+    var date = c.row.date;
+    final nameText = c.row.description.isEmpty ? c.row.detail : c.row.description;
+    final amountText = minorFieldText(MinorUnits.fromMajor(c.row.amount.abs(), currency), currency);
+    final others = ImportPlanner.counterparts(money.balanceAccounts, account);
+    final result = await showModalBottomSheet<(bool, String, StatementRow)>(
       context: context,
       showDragHandle: true,
       isScrollControlled: true,
       useSafeArea: true,
-      builder: (sheet) => StatefulBuilder(builder: (sheet, setSheet) {
+      builder: (_) => _SheetFields(name: nameText, amount: amountText, builder: (sheet, name, amount) => StatefulBuilder(builder: (sheet, setSheet) {
         final side = isIn ? AccountSide.income : AccountSide.spending;
         final cats = money.categories(side);
         // Money back from a shop keeps its spending category (a refund).
         final options = isIn ? [...cats, ...money.categories(AccountSide.spending)] : cats;
-        if (!options.any((a) => a.id == category)) category = cats.firstOrNull?.id ?? category;
+        if (!options.any((a) => a.id == category) && !others.any((a) => a.id == category)) category = cats.firstOrNull?.id ?? category;
+        StatementRow? edited() {
+          final minor = parseMinor(amount.text, currency);
+          if (minor == null || minor <= 0) return null;
+          final text = name.text.trim();
+          final major = MinorUnits.toMajor(minor, currency);
+          final changedName = text != nameText;
+          return StatementRow(
+            date: date,
+            dateGuessed: c.row.dateGuessed && date == c.row.date,
+            description: changedName ? text : c.row.description,
+            detail: changedName ? '' : c.row.detail,
+            amount: isIn ? major : -major,
+            signGuessed: false,
+            currency: c.row.currency,
+            balance: c.row.balance,
+            line: c.row.line,
+            doubtful: c.row.doubtful,
+          );
+        }
+
+        void done(String id) {
+          final row = edited();
+          if (row == null) return;
+          Navigator.of(sheet).pop((isIn, id, row));
+        }
+
+        Widget tile(BookAccount a, {required String title}) => ListTile(
+              key: ValueKey('importPick-${a.id}'),
+              leading: Icon(MoneyIcons.account(a)),
+              title: Text(title),
+              trailing: a.id == category ? Icon(Icons.check, color: sheet.colors.brandText) : null,
+              onTap: () => done(a.id),
+            );
+        final heading = TextStyle(color: sheet.colors.textSecondary, fontSize: 13, fontWeight: FontWeight.w700);
         return SafeArea(
-          child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: DS.spaceMD),
-              child: Text(c.row.description.isEmpty ? l10n.importEditRow : c.row.description,
-                  maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700)),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(DS.spaceMD),
-              child: SegmentedButton<bool>(
-                segments: [
-                  ButtonSegment(value: false, label: Text(l10n.moneyOut), icon: const Icon(Icons.north_east, size: 16)),
-                  ButtonSegment(value: true, label: Text(l10n.moneyIn), icon: const Icon(Icons.south_west, size: 16)),
-                ],
-                selected: {isIn},
-                onSelectionChanged: (v) => setSheet(() {
-                  isIn = v.first;
-                  category = ImportPlanner.guessCategory(c.row.description,
-                          detail: c.row.detail, isIn: isIn, categorizer: Categorizer(money.book, rules: money.settings.categoryRules))
-                      .categoryId;
-                }),
+          child: Padding(
+            padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(sheet).bottom),
+            child: ListView(shrinkWrap: true, padding: const EdgeInsets.only(bottom: DS.spaceMD), children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: DS.spaceMD),
+                child: Row(children: [
+                  Expanded(child: Text(l10n.importEditRow, style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700))),
+                  TextButton(key: const ValueKey('importRowDone'), onPressed: () => done(category), child: Text(l10n.commonDone)),
+                ]),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: DS.spaceMD),
-              child: Text(l10n.importCategory, style: TextStyle(color: sheet.colors.textSecondary, fontSize: 13, fontWeight: FontWeight.w700)),
-            ),
-            Flexible(
-              child: ListView(shrinkWrap: true, children: [
-                for (final a in options)
-                  ListTile(
-                    leading: Icon(MoneyIcons.account(a)),
-                    title: Text(l10n.accountName(a)),
-                    trailing: a.id == category ? Icon(Icons.check, color: sheet.colors.brandText) : null,
-                    onTap: () => Navigator.of(sheet).pop((isIn, a.id)),
-                  ),
-              ]),
-            ),
-          ]),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(DS.spaceMD, DS.spaceSM, DS.spaceMD, 0),
+                child: TextField(
+                  key: const ValueKey('importRowName'),
+                  controller: name,
+                  decoration: InputDecoration(labelText: l10n.importRowName, border: const OutlineInputBorder()),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(DS.spaceMD, DS.spaceSM, DS.spaceMD, 0),
+                child: AmountField(key: const ValueKey('importRowAmount'), controller: amount, label: l10n.entryAmount, currency: currency),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(DS.spaceMD, DS.spaceSM, DS.spaceMD, 0),
+                child: DateField(label: l10n.entryDate, value: date, onChanged: (d) => setSheet(() => date = DateTime(d.year, d.month, d.day, date.hour, date.minute))),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(DS.spaceMD),
+                child: SegmentedButton<bool>(
+                  segments: [
+                    ButtonSegment(value: false, label: Text(l10n.moneyOut), icon: const Icon(Icons.north_east, size: 16)),
+                    ButtonSegment(value: true, label: Text(l10n.moneyIn), icon: const Icon(Icons.south_west, size: 16)),
+                  ],
+                  selected: {isIn},
+                  onSelectionChanged: (v) => setSheet(() {
+                    isIn = v.first;
+                    if (others.any((a) => a.id == category)) return;
+                    category = ImportPlanner.guessCategory(c.row.description,
+                            detail: c.row.detail, isIn: isIn, categorizer: Categorizer(money.book, rules: money.settings.categoryRules))
+                        .categoryId;
+                  }),
+                ),
+              ),
+              if (others.isNotEmpty) ...[
+                Padding(padding: const EdgeInsets.symmetric(horizontal: DS.spaceMD), child: Text(l10n.importBetweenAccounts, style: heading)),
+                for (final a in others) tile(a, title: l10n.accountName(a)),
+                const SizedBox(height: DS.spaceSM),
+              ],
+              Padding(padding: const EdgeInsets.symmetric(horizontal: DS.spaceMD), child: Text(l10n.importCategory, style: heading)),
+              for (final a in options) tile(a, title: l10n.accountName(a)),
+            ]),
+          ),
         );
-      }),
+      })),
     );
     if (result == null || !mounted) return;
     setState(() {
       _isIn[c.key] = result.$1;
       _category[c.key] = result.$2;
+      if (result.$3 != c.row) _edited[c.key] = result.$3;
       _ticked[c.key] = true;
     });
   }
@@ -455,7 +532,7 @@ class _ImportReviewScreenState extends State<ImportReviewScreen> {
     for (final c in chosen) {
       final picked = _category[c.key];
       final category = picked == null ? null : book.accounts[picked];
-      if (category == null || picked == c.categoryId || Categorizer.isUncategorized(picked!)) continue;
+      if (category == null || picked == c.categoryId || Categorizer.isUncategorized(picked!) || category.side.onBalanceSheet) continue;
       var key = Categorizer.merchantKey(c.row.description);
       if (key.isEmpty) key = Categorizer.merchantKey(c.row.detail);
       if (key.isNotEmpty) out[Categorizer.ruleKey(key, isIn: category.side == AccountSide.income)] = category.id;
@@ -554,6 +631,43 @@ class _ImportReviewScreenState extends State<ImportReviewScreen> {
   }
 }
 
+/// Owns the row editor's text fields for as long as the sheet is on
+/// screen, closing animation included.
+class _SheetFields extends StatefulWidget {
+  final String name;
+  final String amount;
+  final Widget Function(BuildContext context, TextEditingController name, TextEditingController amount) builder;
+
+  const _SheetFields({required this.name, required this.amount, required this.builder});
+
+  @override
+  State<_SheetFields> createState() => _SheetFieldsState();
+}
+
+class _SheetFieldsState extends State<_SheetFields> {
+  late final _name = TextEditingController(text: widget.name);
+  late final _amount = TextEditingController(text: widget.amount);
+
+  @override
+  void dispose() {
+    _name.dispose();
+    _amount.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => widget.builder(context, _name, _amount);
+}
+
+/// What a matched entry is called on a flag: its merchant, else the text
+/// it arrived as, else "Transaction".
+String _matchName(AppLocalizations l10n, BookEntry? e) {
+  if (e == null) return l10n.importEditRow;
+  if (e.merchant.trim().isNotEmpty) return e.merchant.trim();
+  if (e.rawMerchant.trim().isNotEmpty) return e.rawMerchant.trim();
+  return l10n.importEditRow;
+}
+
 class _CandidateRow extends StatelessWidget {
   final ImportCandidate candidate;
   final String currency;
@@ -581,6 +695,8 @@ class _CandidateRow extends StatelessWidget {
     final locale = Localizations.localeOf(context).toLanguageTag();
     final notes = <(String, bool)>[
       if (candidate.flag == ImportFlag.inBook) (l10n.importFlagInBook, true),
+      if (candidate.flag == ImportFlag.maybeInBook)
+        (l10n.importFlagMaybeInBook(_matchName(l10n, candidate.match), DateFormat.MMMd(locale).format(candidate.match?.date ?? row.date)), true),
       if (candidate.flag == ImportFlag.repeated) (l10n.importFlagRepeated, true),
       if (candidate.flag == ImportFlag.otherCurrency) (l10n.importFlagCurrency(row.currency ?? ''), true),
       if (candidate.flag == ImportFlag.notTransaction) (l10n.importFlagNotTransaction, true),

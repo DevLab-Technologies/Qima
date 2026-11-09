@@ -6,6 +6,10 @@ import 'package:qima/models/backup.dart';
 import 'package:qima/models/book_account.dart';
 import 'package:qima/models/book_entry.dart';
 import 'package:qima/models/default_categories.dart';
+import 'package:qima/models/entry_builder.dart';
+import 'package:qima/models/holding_transaction.dart';
+import 'package:qima/models/asset.dart';
+import 'package:qima/models/net_worth.dart';
 import 'package:qima/models/minor_units.dart';
 import 'package:qima/models/money.dart';
 import 'package:qima/models/money_settings.dart';
@@ -247,6 +251,79 @@ void main() {
     await m.removeAccount('wallet');
     expect(m.state.book.accounts['wallet']!.archived, isTrue);
     expect(m.state.book.netWorth('SAR', rates).amount, closeTo(1000, 1e-9));
+  });
+
+  group('one Left to spend', () {
+    test('planned payments still to come this month come off it, on every screen alike', () async {
+      final m = cubit(now: DateTime(2026, 11, 10));
+      await m.load();
+      final rajhi = account('rajhi', AccountType.debit);
+      await m.addAccount(rajhi, opening: sar(5000));
+      await m.setBudget('category.home', sar(4000));
+      await m.saveEntry(m.builder.spend(rajhi, m.state.book.accounts['category.home']!, sar(500), DateTime(2026, 11, 2)));
+      await m.saveRecurring(RecurringPayment(id: 'rent', name: 'Rent', amount: sar(3000), fromAccountId: 'rajhi', categoryId: 'category.home', start: DateTime(2026, 11, 20)));
+      // Not in a budgeted category: not promised from the budget.
+      await m.saveRecurring(RecurringPayment(id: 'gym', name: 'Gym', amount: sar(200), fromAccountId: 'rajhi', categoryId: 'category.health', start: DateTime(2026, 11, 20)));
+      final now = m.monthAnalysis(DateTime(2026, 11, 10), currency: 'SAR', rates: rates);
+      expect(now.planned, 3000);
+      expect(now.leftToSpend, 500);
+      // A past month has nothing still to come.
+      expect(m.monthAnalysis(DateTime(2026, 10, 1), currency: 'SAR', rates: rates).planned, 0);
+    });
+
+    test('a currency with no rate is named, never silently dropped', () async {
+      final m = cubit(now: DateTime(2026, 11, 10));
+      await m.load();
+      final usd = account('usd', AccountType.debit, ccy: 'USD');
+      await m.addAccount(account('rajhi', AccountType.debit), opening: sar(100));
+      await m.addAccount(usd);
+      final ok = m.monthAnalysis(DateTime(2026, 11, 10), currency: 'SAR', rates: rates);
+      expect(ok.complete, isTrue);
+      // Spent in dollars on a day the rates had USD; today's don't.
+      final withUsd = FXRates(base: 'SAR', rates: const {'SAR': 1, 'USD': 0.2667}, updatedAt: DateTime.utc(2026, 11, 7));
+      final builder = EntryBuilder(baseCurrency: 'SAR', rates: withUsd, newId: () => 'id${++ids}');
+      await m.saveEntry(builder.spend(usd, m.state.book.accounts['category.dining']!, 1000, DateTime(2026, 11, 3)));
+      final a = m.monthAnalysis(DateTime(2026, 11, 10), currency: 'SAR', rates: rates);
+      expect(a.missingRates, {'USD'});
+      expect(a.complete, isFalse);
+    });
+  });
+
+  group('holdings and cash', () {
+    HoldingTransaction trade(TransactionKind kind, {double qty = 10, double price = 300, double fee = 0, String id = 't1'}) =>
+        HoldingTransaction(id: id, instrumentID: 'gold', kind: kind, quantity: qty, unit: PriceUnit.gram, unitPrice: price, fee: fee, currency: 'SAR', date: DateTime(2026, 11, 5));
+
+    test('a buy paid from the bank lowers it and leaves net worth where it was', () async {
+      final m = cubit();
+      await m.load();
+      await m.addAccount(account('rajhi', AccountType.debit), opening: sar(10000), openedOn: DateTime(2026, 10, 1));
+      final before = NetWorthSummary.of(book: m.state.book, holdingsValue: 0, currency: 'SAR', rates: rates).netWorth;
+      await m.syncHoldingCash(trade(TransactionKind.buy, fee: 20), accountId: 'rajhi', label: 'Gold');
+      expect(m.state.book.balanceOf('rajhi'), sar(6980));
+      expect(m.holdingCashAccount('t1')?.id, 'rajhi');
+      final after = NetWorthSummary.of(book: m.state.book, holdingsValue: 3020, currency: 'SAR', rates: rates).netWorth;
+      expect(after, before);
+      // Not spending, so budgets never see it.
+      expect(m.state.book.spending(from: DateTime(2026, 11), to: DateTime(2026, 12)), isEmpty);
+    });
+
+    test('editing the trade replaces its cash entry; no account or a delete removes it', () async {
+      final m = cubit();
+      await m.load();
+      await m.addAccount(account('rajhi', AccountType.debit), opening: sar(10000), openedOn: DateTime(2026, 10, 1));
+      await m.syncHoldingCash(trade(TransactionKind.buy), accountId: 'rajhi');
+      await m.syncHoldingCash(trade(TransactionKind.buy, qty: 5), accountId: 'rajhi');
+      expect(m.state.entries.where((e) => e.template == EntryTemplate.holdingTrade), hasLength(1));
+      expect(m.state.book.balanceOf('rajhi'), sar(8500));
+      await m.syncHoldingCash(trade(TransactionKind.sell, qty: 2, price: 320, fee: 5), accountId: 'rajhi');
+      expect(m.state.book.balanceOf('rajhi'), sar(10635));
+      await m.syncHoldingCash(trade(TransactionKind.buy));
+      expect(m.state.book.balanceOf('rajhi'), sar(10000));
+      await m.syncHoldingCash(trade(TransactionKind.buy), accountId: 'rajhi');
+      await m.removeHoldingCash('t1');
+      expect(m.state.book.balanceOf('rajhi'), sar(10000));
+      expect(m.holdingCashAccount('t1'), isNull);
+    });
   });
 
   group('recurring payments', () {

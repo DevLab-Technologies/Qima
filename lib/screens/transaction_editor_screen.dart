@@ -4,17 +4,20 @@ import 'package:uuid/uuid.dart';
 
 import '../blocs/app_cubit.dart';
 import '../blocs/app_state.dart';
+import '../blocs/money_cubit.dart';
 import '../l10n/app_localizations.dart';
 import '../models/asset.dart';
 import '../models/holding_totals.dart';
 import '../models/holding_transaction.dart';
 import '../models/ledger.dart';
 import '../models/metal_breakdown.dart';
+import '../models/book_account.dart';
 import '../models/money.dart';
 import '../theme/design_system.dart';
 import '../theme/help_topics.dart';
 import '../theme/instrument_theme.dart';
 import '../theme/masking.dart';
+import '../theme/money_labels.dart';
 import '../theme/qima_colors.dart';
 import '../theme/strings.dart';
 import '../widgets/currency_field.dart';
@@ -76,6 +79,13 @@ class _TransactionEditorScreenState extends State<TransactionEditorScreen> {
   late String _currency;
   late DateTime _date;
 
+  /// The Money side, when the app has one; holdings work without it.
+  MoneyCubit? _money;
+
+  /// The account a buy, sell or fee was paid from or into; null when no
+  /// cash moved (something already held).
+  String? _cashAccountId;
+
   @override
   void initState() {
     super.initState();
@@ -93,6 +103,14 @@ class _TransactionEditorScreenState extends State<TransactionEditorScreen> {
     _note = TextEditingController(text: e?.note ?? '');
     _currency = e?.currency ?? widget.defaultCurrency;
     _date = e?.date ?? _today();
+    try {
+      _money = context.read<MoneyCubit>();
+    } catch (_) {
+      // No Money in this tree (some tests, the holdings-only screens).
+      _money = null;
+    }
+    final existing = widget.existing;
+    _cashAccountId = existing == null ? null : _money?.holdingCashAccount(existing.id)?.id;
     if (e != null) {
       _unit = e.unit;
       _karat = e.karat;
@@ -191,14 +209,69 @@ class _TransactionEditorScreenState extends State<TransactionEditorScreen> {
     return fine / _unit.multiplier / c.purity;
   }
 
+  bool get _movesCash => _kind == _Kind.buy || _kind == _Kind.sell || _kind == _Kind.fee;
+
+  /// Accounts the trade can be paid from or into: cash, bank and card
+  /// accounts whose currency converts to the trade's.
+  List<BookAccount> _cashAccounts() {
+    final money = _money;
+    if (money == null) return const [];
+    final b = money.builder;
+    bool converts(String? c) {
+      if (c == null) return false;
+      try {
+        b.rateOf(c);
+        b.rateOf(_currency);
+        return true;
+      } on ArgumentError {
+        return false;
+      }
+    }
+    return [for (final a in money.holdingCashAccounts) if (a.currency == _currency || converts(a.currency)) a];
+  }
+
   Future<void> _save(AppCubit cubit) async {
-    final conflict = await cubit.saveTransaction(_candidate);
+    final candidate = _candidate;
+    final conflict = await cubit.saveTransaction(candidate);
     if (!mounted) return;
     if (conflict != null) {
       await showLedgerConflict(context, conflict, deleting: false);
       return;
     }
+    final money = _money;
+    if (money != null) {
+      final account = _movesCash && _cashAccounts().any((a) => a.id == _cashAccountId) ? _cashAccountId : null;
+      try {
+        await money.syncHoldingCash(candidate, accountId: account, label: displayLabel(context, widget.instrument.nameKey));
+      } on BookRejected catch (e) {
+        if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.issues.map((i) => i.detail).join('\n'))));
+        return;
+      }
+      if (!mounted) return;
+    }
     Navigator.of(context).pop();
+  }
+
+  Widget _cashPicker(AppLocalizations l10n, QimaColors colors) {
+    final accounts = _cashAccounts();
+    final value = accounts.any((a) => a.id == _cashAccountId) ? _cashAccountId : null;
+    return DropdownButtonFormField<String?>(
+      key: const ValueKey('holdingCashAccount'),
+      initialValue: value,
+      isExpanded: true,
+      decoration: InputDecoration(
+        labelText: _kind == _Kind.sell ? l10n.holdingPaidInto : l10n.holdingPaidFrom,
+        helperText: value == null ? null : l10n.holdingCashHelp,
+        helperMaxLines: 2,
+        border: const OutlineInputBorder(),
+      ),
+      items: [
+        DropdownMenuItem<String?>(value: null, child: Text(l10n.holdingNoCash, overflow: TextOverflow.ellipsis)),
+        for (final a in accounts)
+          DropdownMenuItem<String?>(value: a.id, child: Text('${l10n.accountName(a)} · ${a.currency}', overflow: TextOverflow.ellipsis)),
+      ],
+      onChanged: (v) => setState(() => _cashAccountId = v),
+    );
   }
 
   Future<void> _pickDate() async {
@@ -403,6 +476,10 @@ class _TransactionEditorScreenState extends State<TransactionEditorScreen> {
           trailing: Text(transactionDateLabel(context, _date), style: TextStyle(color: colors.textSecondary)),
           onTap: _pickDate,
         ),
+        if (_movesCash && _cashAccounts().isNotEmpty) ...[
+          _cashPicker(l10n, colors),
+          const SizedBox(height: DS.spaceMD),
+        ],
         TextField(
           controller: _note,
           maxLength: 120,

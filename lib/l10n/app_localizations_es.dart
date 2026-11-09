@@ -4708,6 +4708,22 @@ class AppLocalizationsEs extends AppLocalizations {
   String get importFlagInBook => 'Ya está en Qima';
 
   @override
+  String importFlagMaybeInBook(String merchant, String date) {
+    return 'Mismo importe que $merchant el $date: comprueba que no es la misma';
+  }
+
+  @override
+  String get importBetweenAccounts => 'Entre tus cuentas';
+
+  @override
+  String importTransferWith(String name) {
+    return 'Transferencia · $name';
+  }
+
+  @override
+  String get importRowName => 'Descripción';
+
+  @override
   String get importFlagRepeated => 'También en otro archivo';
 
   @override
@@ -4747,7 +4763,8 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
-  String get importAddsUp => 'Cuadra: no falta nada';
+  String get importAddsUp =>
+      'Las filas marcadas cuadran con los saldos inicial y final del extracto';
 
   @override
   String importGap(String amount) {
@@ -5070,4 +5087,27 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get splitYou => 'Tú';
+
+  @override
+  String get tplHoldingTrade => 'Operación de inversión';
+
+  @override
+  String get sysHoldings => 'Inversiones';
+
+  @override
+  String get holdingPaidFrom => 'Pagado desde';
+
+  @override
+  String get holdingPaidInto => 'Ingresado en';
+
+  @override
+  String get holdingNoCash => 'Sin movimiento de dinero (ya lo tenía)';
+
+  @override
+  String get holdingCashHelp =>
+      'El importe se resta de esta cuenta para no contarlo dos veces.';
+
+  @override
+  String get entryFromHoldings =>
+      'Viene de una operación de inversión. Cámbiala o bórrala en Inversiones.';
 }

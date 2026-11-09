@@ -12,8 +12,14 @@ import 'statement_reader.dart';
 
 /// Why a row starts unticked on the review screen.
 enum ImportFlag {
-  /// The book already has this amount on this account within two days.
+  /// The book already has this transaction: the same amount, the same way,
+  /// on this account within two days, from the same merchant (or one with
+  /// no merchant, such as a transfer).
   inBook,
+
+  /// The book has the same amount the same way within two days, but from a
+  /// different merchant: maybe the same, maybe not, so the person decides.
+  maybeInBook,
 
   /// The same row is in an earlier file of this batch (overlapping
   /// screenshots).
@@ -48,12 +54,16 @@ class ImportCandidate extends Equatable {
   final ImportFlag? flag;
   final String categoryId;
 
-  const ImportCandidate({required this.key, required this.fileId, required this.row, required this.categoryId, this.flag});
+  /// The entry already in the book that [flag] ([ImportFlag.inBook] or
+  /// [ImportFlag.maybeInBook]) is about.
+  final BookEntry? match;
+
+  const ImportCandidate({required this.key, required this.fileId, required this.row, required this.categoryId, this.flag, this.match});
 
   bool get suggested => flag == null;
 
   @override
-  List<Object?> get props => [key, fileId, row, flag, categoryId];
+  List<Object?> get props => [key, fileId, row, flag, categoryId, match?.id];
 }
 
 /// Plans a batch of statement rows against the book: which account they
@@ -116,6 +126,16 @@ class ImportPlanner {
   static final _cardField = RegExp(r'(?:^|\s)(?:card|بطاقة|carte|tarjeta)\s*:\s*(.+?)(?=\s+\p{L}+\s*:|$)', caseSensitive: false, unicode: true);
   static final _creditWords = RegExp(r'credit|limit|ائتمان|ائتمانية|الحد|crédit|plafond|crédito|límite', caseSensitive: false);
 
+  /// Each row with a flag when it should start unticked and a category.
+  ///
+  /// A row is "in the book" only when an entry not already matched to
+  /// another row has the same amount going the same way on [account]: two
+  /// equal charges on one day stay two, and a purchase never hides its
+  /// refund. Rows from the same merchant are matched first, so a row that
+  /// only shares the amount never takes the entry from the row that is
+  /// really it. A row is "repeated" only when an earlier file (an
+  /// overlapping screenshot) has it as many times; equal rows in one file
+  /// are all kept.
   static List<ImportCandidate> plan({
     required List<(String fileId, List<StatementRow> rows)> files,
     required BookAccount account,
@@ -123,32 +143,52 @@ class ImportPlanner {
     Map<String, String> rules = const {},
   }) {
     final categorizer = Categorizer(book, rules: rules);
-    final seen = <String>{};
-    final out = <ImportCandidate>[];
-    for (final (fileId, rows) in files) {
-      for (var i = 0; i < rows.length; i++) {
-        final r = rows[i];
+    final earlier = <String, int>{};
+    final flags = <String, ImportFlag>{};
+    final rows = <(String key, String fileId, StatementRow row)>[];
+    for (final (fileId, fileRows) in files) {
+      final here = <String, int>{};
+      for (var i = 0; i < fileRows.length; i++) {
+        final r = fileRows[i];
+        final key = '$fileId:$i';
+        rows.add((key, fileId, r));
         final sameKey = '${_day(r.date)}|${r.amount.toStringAsFixed(3)}|${Categorizer.merchantKey(r.description)}';
-        ImportFlag? flag;
+        final nth = here[sameKey] = (here[sameKey] ?? 0) + 1;
         if (r.doubtful) {
-          flag = ImportFlag.notTransaction;
+          flags[key] = ImportFlag.notTransaction;
         } else if (r.currency != null && r.currency != account.currency) {
-          flag = ImportFlag.otherCurrency;
-        } else if (!seen.add(sameKey)) {
-          flag = ImportFlag.repeated;
-        } else if (_inBook(book, account, r)) {
-          flag = ImportFlag.inBook;
+          flags[key] = ImportFlag.otherCurrency;
+        } else if (nth <= (earlier[sameKey] ?? 0)) {
+          flags[key] = ImportFlag.repeated;
         }
-        out.add(ImportCandidate(
-          key: '$fileId:$i',
-          fileId: fileId,
-          row: r,
-          flag: flag,
-          categoryId: guessCategory(r.description, detail: r.detail, isIn: r.isIn, categorizer: categorizer).categoryId,
-        ));
+      }
+      here.forEach((k, n) {
+        if (n > (earlier[k] ?? 0)) earlier[k] = n;
+      });
+    }
+    final claimed = <String>{};
+    final matches = <String, BookEntry>{};
+    for (final sameOnly in [true, false]) {
+      for (final (key, _, r) in rows) {
+        if (flags.containsKey(key)) continue;
+        final found = _inBook(book, account, r, claimed, sameMerchantOnly: sameOnly);
+        if (found == null) continue;
+        claimed.add(found.entry.id);
+        matches[key] = found.entry;
+        flags[key] = found.sameMerchant ? ImportFlag.inBook : ImportFlag.maybeInBook;
       }
     }
-    return out;
+    return [
+      for (final (key, fileId, r) in rows)
+        ImportCandidate(
+          key: key,
+          fileId: fileId,
+          row: r,
+          flag: flags[key],
+          match: matches[key],
+          categoryId: guessCategory(r.description, detail: r.detail, isIn: r.isIn, categorizer: categorizer).categoryId,
+        ),
+    ];
   }
 
   /// The closing balance of the newest statement that gives one in the
@@ -211,18 +251,39 @@ class ImportPlanner {
     return first.toList()..sort();
   }
 
-  static bool _inBook(Book book, BookAccount account, StatementRow r) {
+  /// The entry in the book that is most likely [r], not yet [claimed]:
+  /// the same amount going the same way on [account] within two days,
+  /// closest in date, one from the same merchant first.
+  static ({BookEntry entry, bool sameMerchant})? _inBook(Book book, BookAccount account, StatementRow r, Set<String> claimed, {bool sameMerchantOnly = false}) {
     final currency = account.currency ?? 'SAR';
     final minor = MinorUnits.fromMajor(r.amount.abs(), currency);
+    final day = DateTime(r.date.year, r.date.month, r.date.day);
+    final rowWords = _words('${r.description} ${r.detail}');
+    ({BookEntry entry, bool sameMerchant, int days})? best;
     for (final e in book.entries) {
-      if (!e.counts || e.template == EntryTemplate.opening) continue;
-      if (e.date.difference(r.date).inDays.abs() > 2) continue;
-      for (final l in e.lines) {
-        if (l.accountId == account.id && l.amount.abs() == minor) return true;
-      }
+      if (!e.counts || e.template == EntryTemplate.opening || claimed.contains(e.id)) continue;
+      final days = DateTime(e.date.year, e.date.month, e.date.day).difference(day).inDays.abs();
+      if (days > 2) continue;
+      // A row whose sign was guessed matches either way.
+      final fits = e.lines.any((l) => l.accountId == account.id && l.amount.abs() == minor && (r.signGuessed || (l.amount > 0) == r.isIn));
+      if (!fits) continue;
+      final entryWords = _words('${e.merchant} ${e.rawMerchant}');
+      // No merchant on one side (a transfer, a row with only a code) can't
+      // contradict the other.
+      final same = rowWords.isEmpty || entryWords.isEmpty || rowWords.any(entryWords.contains);
+      if (sameMerchantOnly && !same) continue;
+      final b = best;
+      if (b == null || (same && !b.sameMerchant) || (same == b.sameMerchant && days < b.days)) best = (entry: e, sameMerchant: same, days: days);
     }
-    return false;
+    final b = best;
+    return b == null ? null : (entry: b.entry, sameMerchant: b.sameMerchant);
   }
+
+  /// The words a merchant is known by, without codes, places and labels.
+  static Set<String> _words(String text) => {
+        for (final w in text.toLowerCase().split(RegExp(r'[^\p{L}]+', unicode: true)))
+          if (w.length >= 3 && !Categorizer.isNoiseWord(w)) w,
+      };
 
   static String _day(DateTime d) => '${d.year}-${d.month}-${d.day}';
 
@@ -243,7 +304,17 @@ class ImportPlanner {
   static CategoryGuess guessCategory(String description, {String detail = '', required bool isIn, required Categorizer categorizer}) =>
       categorizer.guess(description, detail: detail, isIn: isIn, keywords: _keywords, isIncomeKeyword: DefaultCategories.income.containsKey);
 
-  /// The entry for a row: a spend from the account, or money into it.
+  /// The other accounts a row can move money to or from, in the account's
+  /// currency: a transfer, a card or loan payment.
+  static List<BookAccount> counterparts(Iterable<BookAccount> accounts, BookAccount account) => [
+        for (final a in accounts)
+          if (a.id != account.id && canHoldStatement(a) && a.currency == account.currency) a,
+      ];
+
+  /// The entry for a row: a spend from the account or money into it, or,
+  /// when [category] is another of the person's accounts, a move between
+  /// the two (a card payment when money goes from a bank account to a
+  /// card).
   static BookEntry entryFor({
     required EntryBuilder builder,
     required BookAccount account,
@@ -253,11 +324,19 @@ class ImportPlanner {
   }) {
     final amount = MinorUnits.fromMajor(row.amount.abs(), account.currency ?? 'SAR');
     final name = row.description.isEmpty ? row.detail : row.description;
-    final made = isIn
-        ? (category.side == AccountSide.spending
-            ? builder.refund(account, category, amount, row.date, merchant: name)
-            : builder.income(account, category, amount, row.date, merchant: name))
-        : builder.spend(account, category, amount, row.date, merchant: name);
+    final BookEntry made;
+    if (category.side.onBalanceSheet) {
+      final from = isIn ? category : account, to = isIn ? account : category;
+      made = to.type == AccountType.credit && from.type != AccountType.credit
+          ? builder.cardPayment(from, to, amount, row.date)
+          : builder.transfer(from, to, amount, row.date);
+    } else {
+      made = isIn
+          ? (category.side == AccountSide.spending
+              ? builder.refund(account, category, amount, row.date, merchant: name)
+              : builder.income(account, category, amount, row.date, merchant: name))
+          : builder.spend(account, category, amount, row.date, merchant: name);
+    }
     return made.copyWith(source: EntrySource.import, rawMerchant: [row.description, row.detail].where((s) => s.isNotEmpty).join(' · '));
   }
 }

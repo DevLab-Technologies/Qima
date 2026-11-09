@@ -29,6 +29,7 @@ import 'package:qima/screens/money/accounts_screens.dart';
 import 'package:qima/screens/money/asset_screens.dart';
 import 'package:qima/screens/money/balance_sheet_screen.dart';
 import 'package:qima/screens/zakat_screen.dart';
+import 'package:qima/screens/transaction_editor_screen.dart';
 import 'package:qima/theme/price_chart.dart';
 import 'package:qima/theme/strings.dart';
 import 'package:qima/screens/money/bank_messages_screen.dart';
@@ -254,6 +255,7 @@ void main() {
       'import review': () => const ImportReviewScreen(),
       for (final k in EntryKind.values) 'editor ${k.name}': () => EntryEditorScreen(kind: k),
       'edit spend': () => EntryEditorScreen(kind: EntryKind.spend, existing: spend),
+      'holding buy': () => TransactionEditorScreen(instrument: InstrumentCatalog.instrument('metal.XAU')!, defaultCurrency: 'SAR'),
     };
   }
 
@@ -312,6 +314,38 @@ void main() {
     });
     await tester.pump();
     expect(money.state.book.balanceOf('rajhi'), before - sar(25.50));
+  });
+
+  testWidgets('a holdings buy paid from a bank account lowers it, and the entry points back to Holdings', (tester) async {
+    await tester.runAsync(seed);
+    size(tester, const Size(390, 1600));
+    final l10n = await AppLocalizations.delegate.load(const Locale('en'));
+    final before = money.state.book.balanceOf('rajhi');
+    await tester.pumpWidget(wrap(TransactionEditorScreen(instrument: InstrumentCatalog.instrument('metal.XAU')!, defaultCurrency: 'SAR'), const Locale('en')));
+    await tester.pump();
+    final fields = find.byType(TextField);
+    await tester.enterText(fields.at(0), '10');
+    await tester.enterText(fields.at(1), '300');
+    await tester.pump();
+    expect(find.text(l10n.holdingNoCash), findsOneWidget);
+    await tester.tap(find.byKey(const ValueKey('holdingCashAccount')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Al Rajhi current account · SAR').last);
+    await tester.pumpAndSettle();
+    expect(find.text(l10n.holdingCashHelp), findsOneWidget);
+    await tester.runAsync(() async {
+      await tester.tap(find.text(l10n.holdingsSave));
+      for (var i = 0; i < 40 && money.state.book.balanceOf('rajhi') == before; i++) {
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+      }
+    });
+    await tester.pump();
+    expect(money.state.book.balanceOf('rajhi'), before - sar(3000));
+    final cash = money.state.entries.firstWhere((e) => e.template == EntryTemplate.holdingTrade);
+    await tester.pumpWidget(wrap(EntryDetailScreen(entryId: cash.id), const Locale('en')));
+    await tester.pump();
+    expect(find.byKey(const ValueKey('entryFromHoldings')), findsOneWidget);
+    expect(find.byTooltip(l10n.commonDelete), findsNothing);
   });
 
   testWidgets('spend, income and transfer are tabs of one page that keep the amount', (tester) async {
@@ -399,6 +433,41 @@ void main() {
     expect(importer.state.isEmpty, isTrue);
     expect(money.state.settings.importedHashes, hasLength(2));
     expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('an imported row can be corrected and made a transfer before it is added', (tester) async {
+    await tester.runAsync(seed);
+    size(tester, const Size(390, 2400));
+    final l10n = await AppLocalizations.delegate.load(const Locale('en'));
+    final rajhi = money.state.book.balanceOf('rajhi'), wallet = money.state.book.balanceOf('wallet');
+    await tester.pumpWidget(wrap(const ImportReviewScreen(), const Locale('en')));
+    await tester.pump(const Duration(milliseconds: 300));
+    await tester.tap(find.text('SALARY NOVEMBER'));
+    await tester.pumpAndSettle();
+    expect(find.text(l10n.importBetweenAccounts), findsOneWidget);
+    await tester.enterText(find.byKey(const ValueKey('importRowName')), 'Cash deposit');
+    await tester.enterText(find.byKey(const ValueKey('importRowAmount')), '1700');
+    await tester.tap(find.byKey(const ValueKey('importPick-wallet')));
+    await tester.pumpAndSettle();
+    expect(find.text('Cash deposit'), findsOneWidget);
+    expect(find.textContaining(l10n.importTransferWith('Wallet')), findsOneWidget);
+    // Only the corrected row goes in.
+    for (final text in ['PANDA RIYADH', 'Starbucks Olaya Riyadh with a long branch name']) {
+      final row = find.ancestor(of: find.text(text), matching: find.byType(InkWell)).first;
+      await tester.tap(find.descendant(of: row, matching: find.byType(Checkbox)));
+      await tester.pump();
+    }
+    expect(find.text(l10n.importAddCount(1)), findsOneWidget);
+    await tester.runAsync(() async {
+      await tester.tap(find.byKey(const ValueKey('importAdd')));
+      for (var i = 0; i < 40 && importer.state.items.isNotEmpty; i++) {
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+      }
+    });
+    await tester.pump();
+    expect(money.state.book.balanceOf('rajhi'), rajhi + sar(1700));
+    expect(money.state.book.balanceOf('wallet'), wallet - sar(1700));
+    expect(money.state.entries.last.template, EntryTemplate.transfer);
   });
 
   testWidgets('the import review in Arabic on a narrow phone: the balance offer fits', (tester) async {

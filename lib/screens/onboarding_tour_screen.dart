@@ -263,6 +263,18 @@ class _PrivacyIllustrationAndCurrency extends StatefulWidget {
 }
 
 class _PrivacyIllustrationAndCurrencyState extends State<_PrivacyIllustrationAndCurrency> {
+  /// App lock is only shown where Settings offers it, so the tour never
+  /// promises a lock this device can't have.
+  bool _lockSupported = false;
+
+  @override
+  void initState() {
+    super.initState();
+    context.read<AppCubit>().appLockService.isSupported.then((v) {
+      if (mounted && v != _lockSupported) setState(() => _lockSupported = v);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -308,17 +320,19 @@ class _PrivacyIllustrationAndCurrencyState extends State<_PrivacyIllustrationAnd
                         ),
                         Divider(color: colors.hairline, height: DS.spaceLG),
                       ],
-                      _PrivacyRow(
-                        icon: Icons.fingerprint,
-                        title: l10n.onboardingStep5AppLockTitle,
-                        subtitle: isMac
-                            ? l10n.onboardingStep5AppLockSubtitleMac
-                            : isIOS
-                            ? l10n.onboardingStep5AppLockSubtitleApple
-                            : l10n.onboardingStep5AppLockSubtitleGeneric,
-                        value: true,
-                      ),
-                      Divider(color: colors.hairline, height: DS.spaceLG),
+                      if (_lockSupported) ...[
+                        _PrivacyRow(
+                          icon: Icons.fingerprint,
+                          title: l10n.onboardingStep5AppLockTitle,
+                          subtitle: isMac
+                              ? l10n.onboardingStep5AppLockSubtitleMac
+                              : isIOS
+                              ? l10n.onboardingStep5AppLockSubtitleApple
+                              : l10n.onboardingStep5AppLockSubtitleGeneric,
+                          value: true,
+                        ),
+                        Divider(color: colors.hairline, height: DS.spaceLG),
+                      ],
                       _PrivacyRow(
                         icon: Icons.visibility_off_outlined,
                         title: l10n.onboardingStep5HideBalancesTitle,

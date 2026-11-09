@@ -179,6 +179,17 @@ class Categorizer {
   // The country a card network appends.
   static const _countries = {'sau', 'ksa', 'usa', 'nld', 'egy', 'are', 'uae', 'gbr', 'irl', 'deu', 'fra', 'kwt', 'qat', 'bhr', 'omn', 'jor', 'lux', 'sgp'};
 
+  // Words any bank message carries, whoever was paid.
+  static const _bankWords = {
+    'purchase', 'payment', 'card', 'mada', 'visa', 'mastercard', 'apple', 'pay', 'online', 'pos', 'atm', 'debit', 'credit', //
+    'amount', 'merchant', 'store', 'the', 'and', 'for', 'with', 'via', 'sar', 'usd', 'eur', 'egp', 'aed',
+    'شراء', 'عملية', 'بطاقة', 'مدى', 'دفع', 'مبلغ', 'لدى', 'عبر', 'من', 'الى', 'إلى', 'تحويل',
+  };
+
+  /// A word that says nothing about who was paid: a field label, a country
+  /// code or a word every bank message carries.
+  static bool isNoiseWord(String word) => _labels.contains(word) || _countries.contains(word) || _bankWords.contains(word);
+
   /// A merchant's text reduced for matching: lower case, the first two
   /// words that name someone. Reference codes ("FT26312Q1LQJ"), numbers,
   /// masks ("A.. E."), field labels ("PayeeName") and the country code go,

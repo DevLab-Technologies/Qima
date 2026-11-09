@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 
 import '../blocs/app_cubit.dart';
 import '../blocs/app_state.dart';
+import '../blocs/money_cubit.dart';
 import '../l10n/app_localizations.dart';
 import '../models/asset.dart';
 import '../models/holding.dart';
@@ -430,6 +431,13 @@ String transactionDateLabel(BuildContext context, DateTime date) => dateWithYear
 /// which sale and keeps the row. Returns whether it was deleted.
 Future<bool> confirmDeleteTransaction(BuildContext context, AppCubit cubit, HoldingTransaction transaction) async {
   final l10n = AppLocalizations.of(context)!;
+  MoneyCubit? money;
+  try {
+    money = context.read<MoneyCubit>();
+  } catch (_) {
+    // No Money in this tree: there is no cash entry to remove.
+    money = null;
+  }
   final blocking = cubit.conflictForDelete(transaction);
   if (blocking != null) {
     await showLedgerConflict(context, blocking, deleting: true);
@@ -447,6 +455,7 @@ Future<bool> confirmDeleteTransaction(BuildContext context, AppCubit cubit, Hold
     await showLedgerConflict(context, conflict, deleting: true);
     return false;
   }
+  await money?.removeHoldingCash(transaction.id);
   return true;
 }
 

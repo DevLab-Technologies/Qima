@@ -19,7 +19,25 @@ class MonthAnalysis {
   /// Monthly budget per category id, in [currency].
   final Map<String, double> budgets;
 
-  const MonthAnalysis({required this.month, required this.currency, required this.byCategory, required this.spent, required this.income, required this.budgets});
+  /// Planned payments in budgeted categories still to come this month, in
+  /// [currency]: money the budget has already promised. Zero for any other
+  /// month.
+  final double planned;
+
+  /// Currencies with no exchange rate to [currency]: their amounts are
+  /// left out of every figure here, so the figures are incomplete.
+  final Set<String> missingRates;
+
+  const MonthAnalysis({
+    required this.month,
+    required this.currency,
+    required this.byCategory,
+    required this.spent,
+    required this.income,
+    required this.budgets,
+    this.planned = 0,
+    this.missingRates = const {},
+  });
 
   DateTime get end => DateTime(month.year, month.month + 1);
   // Calendar arithmetic, not a Duration: a month with a DST change isn't a
@@ -28,7 +46,12 @@ class MonthAnalysis {
 
   double get budget => budgets.values.fold(0.0, (a, b) => a + b);
   bool get hasBudget => budgets.isNotEmpty;
-  double get leftToSpend => budget - spent;
+  /// The budget minus what is spent and what planned payments will still
+  /// spend: the one definition every screen shows.
+  double get leftToSpend => budget - spent - planned;
+
+  /// Every figure counts every amount.
+  bool get complete => missingRates.isEmpty;
   double get net => income - spent;
 
   double spentIn(String categoryId) => byCategory.where((c) => c.$1 == categoryId).fold(0.0, (a, c) => a + c.$2);
@@ -76,7 +99,7 @@ class MonthAnalysis {
     return out;
   }
 
-  static double _convert(Amounts amounts, String currency, FXRates rates) {
+  static double _convert(Amounts amounts, String currency, FXRates rates, [Set<String>? missing]) {
     var total = 0.0;
     amounts.forEach((c, v) {
       final major = MinorUnits.toMajor(v, c);
@@ -86,31 +109,53 @@ class MonthAnalysis {
       }
       final from = rates.rate(c), to = rates.rate(currency);
       // A currency with no rate is left out rather than counted at 1:1.
-      if (from != null && to != null) total += major / from * to;
+      if (from != null && to != null) {
+        total += major / from * to;
+      } else if (major != 0) {
+        missing?.add(c);
+      }
     });
     return total;
   }
 
-  static MonthAnalysis of(Book book, DateTime anyDay, {required String currency, required FXRates rates, Map<String, int> budgets = const {}, String? budgetCurrency}) {
+  /// [planned] is each planned payment still to come this month as
+  /// (category id, amount, currency); only those in a budgeted category
+  /// count.
+  static MonthAnalysis of(
+    Book book,
+    DateTime anyDay, {
+    required String currency,
+    required FXRates rates,
+    Map<String, int> budgets = const {},
+    String? budgetCurrency,
+    List<(String categoryId, int amount, String currency)> planned = const [],
+  }) {
     final month = DateTime(anyDay.year, anyDay.month);
+    final missing = <String>{};
     final to = DateTime(month.year, month.month + 1).subtract(const Duration(microseconds: 1));
     final byCategory = <(String, double)>[];
     for (final a in book.accounts.values) {
       if (a.side != AccountSide.spending) continue;
       final amounts = book.spending(from: month, to: to, categories: {a.id});
       if (amounts.isEmpty) continue;
-      final v = _convert(amounts, currency, rates);
+      final v = _convert(amounts, currency, rates, missing);
       if (v != 0) byCategory.add((a.id, v));
     }
     byCategory.sort((a, b) => b.$2.compareTo(a.$2));
     final bc = budgetCurrency ?? currency;
+    final promised = <String, int>{};
+    for (final (id, amount, ccy) in planned) {
+      if (budgets.containsKey(id)) promised[ccy] = (promised[ccy] ?? 0) + amount;
+    }
     return MonthAnalysis(
       month: month,
       currency: currency,
       byCategory: byCategory,
       spent: byCategory.fold(0.0, (a, c) => a + c.$2),
-      income: _convert(book.income(from: month, to: to), currency, rates),
-      budgets: {for (final e in budgets.entries) e.key: _convert({bc: e.value}, currency, rates)},
+      income: _convert(book.income(from: month, to: to), currency, rates, missing),
+      budgets: {for (final e in budgets.entries) e.key: _convert({bc: e.value}, currency, rates, missing)},
+      planned: _convert(promised, currency, rates, missing),
+      missingRates: missing,
     );
   }
 

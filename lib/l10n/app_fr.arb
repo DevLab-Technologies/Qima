@@ -1352,6 +1352,10 @@
   "importDiscard": "Ignorer",
   "importRemoveFile": "Retirer le fichier",
   "importFlagInBook": "Déjà dans Qima",
+  "importFlagMaybeInBook": "Même montant que {merchant} le {date} : vérifiez que ce n’est pas la même",
+  "importBetweenAccounts": "Entre vos comptes",
+  "importTransferWith": "Virement · {name}",
+  "importRowName": "Libellé",
   "importFlagRepeated": "Aussi dans un autre fichier",
   "importFlagCurrency": "En {currency}, pas dans la devise du compte",
   "importDateGuessed": "Pas de date : jour du partage utilisé",
@@ -1361,7 +1365,7 @@
   "importRefAccount": "Compte •••• {last4}",
   "importRefIban": "IBAN •••• {last4}",
   "importBalances": "Initial {opening} → final {closing}",
-  "importAddsUp": "Le compte est bon : rien ne manque",
+  "importAddsUp": "Les lignes cochées correspondent aux soldes d’ouverture et de clôture du relevé",
   "importGap": "{amount} non expliqués : vérifiez s'il manque une opération",
   "importOpeningBalance": "Ajouter le solde initial : {amount}",
   "importMatchBalance": "Ramener le solde à {amount}",
@@ -1442,5 +1446,12 @@
   "splitByEqually": "À parts égales",
   "splitByPercent": "Pourcentage",
   "splitByShares": "Parts",
-  "splitYou": "Vous"
+  "splitYou": "Vous",
+  "tplHoldingTrade": "Opération de placement",
+  "sysHoldings": "Placements",
+  "holdingPaidFrom": "Payé depuis",
+  "holdingPaidInto": "Versé sur",
+  "holdingNoCash": "Aucun mouvement d’argent (déjà détenu)",
+  "holdingCashHelp": "Le montant est retiré de ce compte pour ne pas être compté deux fois.",
+  "entryFromHoldings": "Issue d’une opération de placement. Modifiez-la ou supprimez-la dans Placements."
 }

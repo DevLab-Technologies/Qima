@@ -152,6 +152,16 @@ class EntryBuilder {
         _line(bank, -(principal + profit)),
       ]);
 
+  /// The cash side of a holdings trade: [amount] of [account]'s currency
+  /// leaves it for Holdings (a buy or a fee), or comes back from Holdings
+  /// ([incoming], a sell).
+  BookEntry holdingTrade(BookAccount account, int amount, DateTime date, {required bool incoming, required String id, String merchant = ''}) {
+    final holdings = SystemAccount.holdings.account;
+    final signed = incoming ? amount : -amount;
+    final e = _entry(EntryTemplate.holdingTrade, date, [_line(account, signed), _line(holdings, -signed, currency: account.currency)], merchant: merchant);
+    return BookEntry(id: id, date: e.date, template: e.template, baseCurrency: e.baseCurrency, lines: e.lines, merchant: e.merchant);
+  }
+
   /// Lending: the money leaves [from] and becomes owed to the person.
   BookEntry lent(BookAccount from, BookAccount owedByThem, int amount, DateTime date) =>
       _entry(EntryTemplate.lent, date, [_line(owedByThem, amount), _line(from, -amount)]);

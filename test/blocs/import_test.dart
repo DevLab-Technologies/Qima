@@ -226,6 +226,68 @@ void main() {
       expect(plan.map((c) => c.key), ['f1:0', 'f1:1', 'f1:2', 'f2:0']);
     });
 
+    test('a refund of the same amount is not a duplicate of the purchase', () async {
+      await money.addAccount(bank, opening: sar(1000), openedOn: DateTime(2026, 10, 1));
+      final cats = money.state.book.accounts;
+      await money.saveEntry(money.builder.spend(bank, cats['category.shopping']!, sar(150), DateTime(2026, 11, 2), merchant: 'Jarir'));
+      final refund = StatementRow(date: DateTime(2026, 11, 3), description: 'JARIR BOOKSTORE', amount: 150);
+      expect(ImportPlanner.plan(files: [('f', [refund])], account: bank, book: money.state.book).single.flag, isNull);
+    });
+
+    test('two equal charges with one in the book: only one is a duplicate', () async {
+      await money.addAccount(bank, opening: sar(1000), openedOn: DateTime(2026, 10, 1));
+      final cats = money.state.book.accounts;
+      await money.saveEntry(money.builder.spend(bank, cats['category.dining']!, sar(18), DateTime(2026, 11, 2), merchant: 'Corner Cafe'));
+      final a = StatementRow(date: DateTime(2026, 11, 2), description: 'CORNER CAFE', amount: -18);
+      final b = StatementRow(date: DateTime(2026, 11, 2), description: 'CORNER CAFE', amount: -18);
+      final plan = ImportPlanner.plan(files: [('f', [a, b])], account: bank, book: money.state.book);
+      expect(plan.map((c) => c.flag), [ImportFlag.inBook, null]);
+    });
+
+    test('the same amount from another merchant is for the person to check', () async {
+      await money.addAccount(bank, opening: sar(1000), openedOn: DateTime(2026, 10, 1));
+      final cats = money.state.book.accounts;
+      await money.saveEntry(money.builder.spend(bank, cats['category.dining']!, sar(40), DateTime(2026, 11, 2), merchant: 'Corner Cafe'));
+      final row = StatementRow(date: DateTime(2026, 11, 2), description: 'PETROL STATION 12', amount: -40);
+      final c = ImportPlanner.plan(files: [('f', [row])], account: bank, book: money.state.book).single;
+      expect(c.flag, ImportFlag.maybeInBook);
+      expect(c.suggested, isFalse);
+      expect(c.match?.merchant, 'Corner Cafe');
+    });
+
+    test('a row from another merchant never takes the entry from the row that is really it', () async {
+      await money.addAccount(bank, opening: sar(1000), openedOn: DateTime(2026, 10, 1));
+      final cats = money.state.book.accounts;
+      await money.saveEntry(money.builder.spend(bank, cats['category.dining']!, sar(40), DateTime(2026, 11, 2), merchant: 'Corner Cafe'));
+      final petrol = StatementRow(date: DateTime(2026, 11, 2), description: 'PETROL STATION', amount: -40);
+      final cafe = StatementRow(date: DateTime(2026, 11, 2), description: 'CORNER CAFE', amount: -40);
+      final plan = ImportPlanner.plan(files: [('f', [petrol, cafe])], account: bank, book: money.state.book);
+      expect(plan.map((c) => c.flag), [null, ImportFlag.inBook]);
+    });
+
+    test('equal rows in one file are kept; only an earlier file makes a row a repeat', () async {
+      await money.addAccount(bank, opening: sar(1000), openedOn: DateTime(2026, 10, 1));
+      final r = StatementRow(date: DateTime(2026, 11, 4), description: 'Taxi', amount: -25);
+      final plan = ImportPlanner.plan(files: [('f1', [r, r]), ('f2', [r, r, r])], account: bank, book: money.state.book);
+      expect(plan.map((c) => c.flag), [null, null, ImportFlag.repeated, ImportFlag.repeated, null]);
+    });
+
+    test('a row can be a transfer or a card payment, which the other statement then finds', () async {
+      await money.addAccount(bank, opening: sar(5000), openedOn: DateTime(2026, 10, 1));
+      await money.addAccount(card);
+      final row = StatementRow(date: DateTime(2026, 11, 5), description: 'CARD PAYMENT', amount: -1200);
+      expect(ImportPlanner.counterparts(money.state.book.accounts.values, bank), [card]);
+      final e = ImportPlanner.entryFor(builder: money.builder, account: bank, category: card, row: row, isIn: false);
+      expect(e.template, EntryTemplate.cardPayment);
+      await money.importEntries([e]);
+      expect(money.state.book.balanceOf(bank.id), sar(3800));
+      // Nothing is spending or income.
+      expect(money.state.book.spending(from: DateTime(2026, 11), to: DateTime(2026, 12)), isEmpty);
+      // The card's own statement shows the payment coming in: already there.
+      final onCard = StatementRow(date: DateTime(2026, 11, 6), description: 'PAYMENT RECEIVED', amount: 1200);
+      expect(ImportPlanner.plan(files: [('c', [onCard])], account: card, book: money.state.book).single.flag, ImportFlag.inBook);
+    });
+
     test('categories: the person\'s rule, then their usual choice, then known names, then Uncategorized', () async {
       await money.addAccount(bank, opening: sar(100), openedOn: DateTime(2026, 10, 1));
       final cats = money.state.book.accounts;

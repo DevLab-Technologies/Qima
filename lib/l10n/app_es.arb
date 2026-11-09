@@ -1352,6 +1352,10 @@
   "importDiscard": "Descartar",
   "importRemoveFile": "Quitar archivo",
   "importFlagInBook": "Ya está en Qima",
+  "importFlagMaybeInBook": "Mismo importe que {merchant} el {date}: comprueba que no es la misma",
+  "importBetweenAccounts": "Entre tus cuentas",
+  "importTransferWith": "Transferencia · {name}",
+  "importRowName": "Descripción",
   "importFlagRepeated": "También en otro archivo",
   "importFlagCurrency": "En {currency}, no en la moneda de la cuenta",
   "importDateGuessed": "Sin fecha: se usó el día en que se compartió",
@@ -1361,7 +1365,7 @@
   "importRefAccount": "Cuenta •••• {last4}",
   "importRefIban": "IBAN •••• {last4}",
   "importBalances": "Inicial {opening} → final {closing}",
-  "importAddsUp": "Cuadra: no falta nada",
+  "importAddsUp": "Las filas marcadas cuadran con los saldos inicial y final del extracto",
   "importGap": "{amount} sin explicar: revisa si falta un movimiento",
   "importOpeningBalance": "Añadir el saldo inicial: {amount}",
   "importMatchBalance": "Ajustar el saldo a {amount}",
@@ -1442,5 +1446,12 @@
   "splitByEqually": "A partes iguales",
   "splitByPercent": "Porcentaje",
   "splitByShares": "Partes",
-  "splitYou": "Tú"
+  "splitYou": "Tú",
+  "tplHoldingTrade": "Operación de inversión",
+  "sysHoldings": "Inversiones",
+  "holdingPaidFrom": "Pagado desde",
+  "holdingPaidInto": "Ingresado en",
+  "holdingNoCash": "Sin movimiento de dinero (ya lo tenía)",
+  "holdingCashHelp": "El importe se resta de esta cuenta para no contarlo dos veces.",
+  "entryFromHoldings": "Viene de una operación de inversión. Cámbiala o bórrala en Inversiones."
 }

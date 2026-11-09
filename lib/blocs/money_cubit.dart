@@ -7,8 +7,11 @@ import '../models/book_account.dart';
 import '../models/book_entry.dart';
 import '../models/categorizer.dart';
 import '../models/default_categories.dart';
+import '../models/deterministic_uuid.dart';
 import '../models/entry_builder.dart';
+import '../models/holding_transaction.dart';
 import '../models/money.dart';
+import '../models/money_analysis.dart';
 import '../models/minor_units.dart';
 import '../models/money_settings.dart';
 import '../models/net_worth.dart';
@@ -470,6 +473,87 @@ class MoneyCubit extends Cubit<MoneyState> {
         if (!r.incoming)
           for (final d in r.dueThrough(end)) (r, d),
     ];
+  }
+
+  /// The month of [anyDay] against the budget, in [currency]. For this
+  /// month, planned payments still to come in budgeted categories are
+  /// taken off Left to spend, so Home, Money and Budgets agree.
+  MonthAnalysis monthAnalysis(DateTime anyDay, {required String currency, required FXRates rates}) {
+    final today = _now();
+    final thisMonth = anyDay.year == today.year && anyDay.month == today.month;
+    return MonthAnalysis.of(
+      state.book,
+      anyDay,
+      currency: currency,
+      rates: rates,
+      budgets: state.settings.budgets,
+      budgetCurrency: state.settings.budgetCurrency,
+      planned: [
+        if (thisMonth)
+          for (final (r, _) in plannedOutThisMonth())
+            if (state.book.accounts[r.fromAccountId]?.currency case final ccy?) (r.categoryId, r.amount, ccy),
+      ],
+    );
+  }
+
+  // -------------------------------------------------------------------
+  // Holdings and cash
+  // -------------------------------------------------------------------
+
+  /// The id of the cash entry that belongs to the holdings row [transactionId]:
+  /// derived from it, so every device links the same pair and editing or
+  /// deleting the row finds its cash entry.
+  static String holdingCashId(String transactionId) => deterministicUuid('holding-cash:$transactionId');
+
+  /// The account the holdings row [transactionId] was paid from or into,
+  /// or null when it moved no cash.
+  BookAccount? holdingCashAccount(String transactionId) {
+    final e = state.entries.where((e) => e.id == holdingCashId(transactionId)).firstOrNull;
+    if (e == null) return null;
+    for (final l in e.lines) {
+      final a = state.book.accounts[l.accountId];
+      if (a != null && a.side.onBalanceSheet) return a;
+    }
+    return null;
+  }
+
+  /// Accounts a holdings trade can be paid from or into.
+  List<BookAccount> get holdingCashAccounts => [
+        for (final a in state.balanceAccounts)
+          if (!a.archived && (a.type == AccountType.debit || a.type == AccountType.cash || a.type == AccountType.credit)) a,
+      ];
+
+  /// Keeps the cash side of holdings row [t] in step with it: a buy or fee
+  /// takes what it cost off [accountId], a sell puts what it brought in,
+  /// converted at today's rate when the account keeps another currency.
+  /// No account, or a transfer, removes any cash entry the row had.
+  Future<void> syncHoldingCash(HoldingTransaction t, {String? accountId, String label = ''}) async {
+    final id = holdingCashId(t.id);
+    final account = accountId == null ? null : state.book.accounts[accountId];
+    final total = switch (t.kind) {
+      TransactionKind.buy => t.totalCost,
+      TransactionKind.sell => t.netProceeds,
+      TransactionKind.fee => t.fee,
+      TransactionKind.transferIn || TransactionKind.transferOut => 0.0,
+    };
+    final has = state.entries.any((e) => e.id == id);
+    if (account == null || account.currency == null || total <= 0) {
+      if (has) await deleteEntry(id);
+      return;
+    }
+    final b = builder;
+    final amount = b.convert(MinorUnits.fromMajor(total, t.currency), t.currency, account.currency!);
+    if (amount <= 0) {
+      if (has) await deleteEntry(id);
+      return;
+    }
+    await saveEntry(b.holdingTrade(account, amount, t.date, incoming: t.kind == TransactionKind.sell, id: id, merchant: label));
+  }
+
+  /// Removes the cash entry of a deleted holdings row, if it had one.
+  Future<void> removeHoldingCash(String transactionId) async {
+    final id = holdingCashId(transactionId);
+    if (state.entries.any((e) => e.id == id)) await deleteEntry(id);
   }
 
   // -------------------------------------------------------------------

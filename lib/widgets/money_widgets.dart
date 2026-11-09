@@ -185,6 +185,32 @@ class MoneyEmpty extends StatelessWidget {
 }
 
 /// A money amount input. Figures are typed left to right in every language.
+/// Says which currencies have no exchange rate, so a total that leaves
+/// them out is never read as complete.
+class MissingRatesNote extends StatelessWidget {
+  final Set<String> codes;
+  final EdgeInsetsGeometry padding;
+
+  const MissingRatesNote(this.codes, {super.key, this.padding = const EdgeInsets.symmetric(horizontal: DS.spaceMD, vertical: DS.spaceXS)});
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+    return Padding(
+      key: const ValueKey('missingRates'),
+      padding: padding,
+      child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Icon(Icons.error_outline, size: 14, color: colors.down),
+        const SizedBox(width: DS.spaceXS),
+        Expanded(
+          child: Text(AppLocalizations.of(context)!.sheetMissingRates((codes.toList()..sort()).join(', ')),
+              style: TextStyle(color: colors.down, fontSize: 12)),
+        ),
+      ]),
+    );
+  }
+}
+
 class AmountField extends StatelessWidget {
   final TextEditingController controller;
   final String label;

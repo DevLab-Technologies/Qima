@@ -24,6 +24,10 @@ enum EntryTemplate {
   billSplit('bill_split'),
   valuation('valuation'),
   assetSale('asset_sale'),
+
+  /// The cash side of a holdings buy, sell or fee: money between a cash
+  /// account and Holdings, kept in step with the holdings row it belongs to.
+  holdingTrade('holding_trade'),
   adjustment('adjustment');
 
   /// The stored name, as in design.md section 7.

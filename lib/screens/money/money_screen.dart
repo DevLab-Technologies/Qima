@@ -52,7 +52,7 @@ class _MoneyScreenState extends State<MoneyScreen> {
         final book = state.book;
         final settings = state.settings;
         final now = DateTime.now();
-        final a = MonthAnalysis.of(book, _month, currency: ccy, rates: app.rates, budgets: settings.budgets, budgetCurrency: settings.budgetCurrency);
+        final a = context.read<MoneyCubit>().monthAnalysis(_month, currency: ccy, rates: app.rates);
         final isThisMonth = _month.year == now.year && _month.month == now.month;
         final recent = [for (final e in state.entriesNewestFirst) if (!e.date.isBefore(_month) && e.date.isBefore(a.end)) e];
         String name(String id) {
@@ -81,8 +81,11 @@ class _MoneyScreenState extends State<MoneyScreen> {
                 const SizedBox(height: DS.space2XS),
                 Text(l10n.moneySpentOf(moneyText(a.spent, ccy, hidden: hidden), moneyText(a.budget, ccy, hidden: hidden)), style: TextStyle(color: colors.textSecondary, fontSize: 13)),
               ],
+              if (a.planned > 0)
+                Text(l10n.plannedThisMonth(moneyText(a.planned, ccy, hidden: hidden)), style: TextStyle(color: colors.textSecondary, fontSize: 13)),
               if (isThisMonth && projected != null && a.spent > 0)
                 Text(l10n.moneyPace(moneyText(projected, ccy, hidden: hidden)), style: TextStyle(color: colors.textSecondary, fontSize: 13)),
+              if (!a.complete) MissingRatesNote(a.missingRates, padding: const EdgeInsets.only(top: DS.spaceXS)),
             ],
           ),
         ));

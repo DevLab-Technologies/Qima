@@ -9,7 +9,6 @@ import '../../l10n/app_localizations.dart';
 import '../../models/bill_split.dart';
 import '../../models/people.dart';
 import '../../models/book_account.dart';
-import '../../models/money_analysis.dart';
 import '../../models/money_settings.dart';
 import '../../theme/design_system.dart';
 import '../../theme/money_labels.dart';
@@ -33,7 +32,7 @@ class BudgetScreen extends StatelessWidget {
     final money = context.read<MoneyCubit>();
     final state = context.watch<MoneyCubit>().state;
     final ccy = app.baseCurrency;
-    final a = MonthAnalysis.of(state.book, DateTime.now(), currency: ccy, rates: app.rates, budgets: state.settings.budgets, budgetCurrency: state.settings.budgetCurrency);
+    final a = money.monthAnalysis(DateTime.now(), currency: ccy, rates: app.rates);
     final categories = state.categories(AccountSide.spending);
 
     Future<void> edit(BookAccount c) async {
@@ -67,7 +66,9 @@ class BudgetScreen extends StatelessWidget {
               MoneySection(children: [
                 MoneyRow(title: l10n.budgetTotal, bold: true, trailing: moneyText(a.budget, ccy, hidden: app.hideBalances)),
                 MoneyRow(title: l10n.moneySpent, trailing: moneyText(a.spent, ccy, hidden: app.hideBalances)),
+                if (a.planned > 0) MoneyRow(title: l10n.plannedThisMonth(moneyText(a.planned, ccy, hidden: app.hideBalances))),
                 MoneyRow(title: l10n.cardLeftToSpend, trailing: moneyText(a.leftToSpend, ccy, hidden: app.hideBalances), trailingColor: a.leftToSpend < 0 ? colors.down : colors.up),
+                if (!a.complete) MissingRatesNote(a.missingRates),
               ]),
             MoneySection(
               children: [

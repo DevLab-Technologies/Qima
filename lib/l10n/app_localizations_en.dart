@@ -4681,6 +4681,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get importFlagInBook => 'Already in Qima';
 
   @override
+  String importFlagMaybeInBook(String merchant, String date) {
+    return 'Same amount as $merchant on $date: check it isn\'t the same';
+  }
+
+  @override
+  String get importBetweenAccounts => 'Between your accounts';
+
+  @override
+  String importTransferWith(String name) {
+    return 'Transfer · $name';
+  }
+
+  @override
+  String get importRowName => 'Description';
+
+  @override
   String get importFlagRepeated => 'Also in another file';
 
   @override
@@ -4719,7 +4735,8 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get importAddsUp => 'Adds up: nothing missed';
+  String get importAddsUp =>
+      'The ticked rows match the statement\'s opening and closing balances';
 
   @override
   String importGap(String amount) {
@@ -5038,4 +5055,27 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get splitYou => 'You';
+
+  @override
+  String get tplHoldingTrade => 'Holdings trade';
+
+  @override
+  String get sysHoldings => 'Holdings';
+
+  @override
+  String get holdingPaidFrom => 'Paid from';
+
+  @override
+  String get holdingPaidInto => 'Paid into';
+
+  @override
+  String get holdingNoCash => 'No cash moved (already held)';
+
+  @override
+  String get holdingCashHelp =>
+      'Takes the amount off this account so it isn\'t counted twice.';
+
+  @override
+  String get entryFromHoldings =>
+      'This came from a holdings trade. Change or delete it in Holdings.';
 }

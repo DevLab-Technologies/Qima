@@ -3035,6 +3035,21 @@
   "importDiscard": "Discard",
   "importRemoveFile": "Remove file",
   "importFlagInBook": "Already in Qima",
+  "importFlagMaybeInBook": "Same amount as {merchant} on {date}: check it isn't the same",
+  "@importFlagMaybeInBook": {
+    "placeholders": {
+      "merchant": {"type": "String"},
+      "date": {"type": "String"}
+    }
+  },
+  "importBetweenAccounts": "Between your accounts",
+  "importTransferWith": "Transfer · {name}",
+  "@importTransferWith": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "importRowName": "Description",
   "importFlagRepeated": "Also in another file",
   "importFlagCurrency": "In {currency}, not the account's currency",
   "@importFlagCurrency": {
@@ -3082,7 +3097,7 @@
       }
     }
   },
-  "importAddsUp": "Adds up: nothing missed",
+  "importAddsUp": "The ticked rows match the statement's opening and closing balances",
   "importGap": "{amount} not accounted for: check for a missed row",
   "@importGap": {
     "placeholders": {
@@ -3314,5 +3329,12 @@
   "splitByEqually": "Equally",
   "splitByPercent": "Percent",
   "splitByShares": "Shares",
-  "splitYou": "You"
+  "splitYou": "You",
+  "tplHoldingTrade": "Holdings trade",
+  "sysHoldings": "Holdings",
+  "holdingPaidFrom": "Paid from",
+  "holdingPaidInto": "Paid into",
+  "holdingNoCash": "No cash moved (already held)",
+  "holdingCashHelp": "Takes the amount off this account so it isn't counted twice.",
+  "entryFromHoldings": "This came from a holdings trade. Change or delete it in Holdings."
 }

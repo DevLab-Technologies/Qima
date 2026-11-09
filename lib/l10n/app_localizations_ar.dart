@@ -4696,6 +4696,22 @@ class AppLocalizationsAr extends AppLocalizations {
   String get importFlagInBook => 'موجودة في قيمة';
 
   @override
+  String importFlagMaybeInBook(String merchant, String date) {
+    return 'نفس مبلغ $merchant في $date: تأكد أنها ليست نفسها';
+  }
+
+  @override
+  String get importBetweenAccounts => 'بين حساباتك';
+
+  @override
+  String importTransferWith(String name) {
+    return 'تحويل · $name';
+  }
+
+  @override
+  String get importRowName => 'الوصف';
+
+  @override
   String get importFlagRepeated => 'موجودة في ملف آخر';
 
   @override
@@ -4733,7 +4749,8 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get importAddsUp => 'المجموع مطابق: لم يفُت شيء';
+  String get importAddsUp =>
+      'الصفوف المختارة تطابق الرصيد الافتتاحي والختامي في الكشف';
 
   @override
   String importGap(String amount) {
@@ -5056,4 +5073,27 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get splitYou => 'أنت';
+
+  @override
+  String get tplHoldingTrade => 'عملية استثمار';
+
+  @override
+  String get sysHoldings => 'الاستثمارات';
+
+  @override
+  String get holdingPaidFrom => 'دُفع من';
+
+  @override
+  String get holdingPaidInto => 'أُودع في';
+
+  @override
+  String get holdingNoCash => 'بدون حركة نقدية (مملوكة سابقًا)';
+
+  @override
+  String get holdingCashHelp =>
+      'يُخصم المبلغ من هذا الحساب حتى لا يُحسب مرتين.';
+
+  @override
+  String get entryFromHoldings =>
+      'هذه من عملية في الاستثمارات. عدّلها أو احذفها من الاستثمارات.';
 }

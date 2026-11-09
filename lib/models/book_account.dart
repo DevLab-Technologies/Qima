@@ -77,6 +77,11 @@ enum SystemAccount {
   changeInValue('system.change_in_value', 'Change in value', AccountSide.worth, AccountType.system),
   rounding('system.rounding', 'Rounding', AccountSide.worth, AccountType.system),
 
+  /// Cash that went into holdings (or came out of them). The holdings
+  /// themselves are valued at live prices outside the book, so a buy moves
+  /// money here and net worth stays the same instead of counting it twice.
+  holdings('system.holdings', 'Holdings', AccountSide.worth, AccountType.system),
+
   /// Loan profit always goes here, so the budget shows it as spending and
   /// the principal never does.
   interestAndFees('category.interest_and_fees', 'Interest & fees', AccountSide.spending, AccountType.category),

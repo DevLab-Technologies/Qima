@@ -4712,6 +4712,22 @@ class AppLocalizationsFr extends AppLocalizations {
   String get importFlagInBook => 'Déjà dans Qima';
 
   @override
+  String importFlagMaybeInBook(String merchant, String date) {
+    return 'Même montant que $merchant le $date : vérifiez que ce n’est pas la même';
+  }
+
+  @override
+  String get importBetweenAccounts => 'Entre vos comptes';
+
+  @override
+  String importTransferWith(String name) {
+    return 'Virement · $name';
+  }
+
+  @override
+  String get importRowName => 'Libellé';
+
+  @override
   String get importFlagRepeated => 'Aussi dans un autre fichier';
 
   @override
@@ -4750,7 +4766,8 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
-  String get importAddsUp => 'Le compte est bon : rien ne manque';
+  String get importAddsUp =>
+      'Les lignes cochées correspondent aux soldes d’ouverture et de clôture du relevé';
 
   @override
   String importGap(String amount) {
@@ -5073,4 +5090,27 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get splitYou => 'Vous';
+
+  @override
+  String get tplHoldingTrade => 'Opération de placement';
+
+  @override
+  String get sysHoldings => 'Placements';
+
+  @override
+  String get holdingPaidFrom => 'Payé depuis';
+
+  @override
+  String get holdingPaidInto => 'Versé sur';
+
+  @override
+  String get holdingNoCash => 'Aucun mouvement d’argent (déjà détenu)';
+
+  @override
+  String get holdingCashHelp =>
+      'Le montant est retiré de ce compte pour ne pas être compté deux fois.';
+
+  @override
+  String get entryFromHoldings =>
+      'Issue d’une opération de placement. Modifiez-la ou supprimez-la dans Placements.';
 }

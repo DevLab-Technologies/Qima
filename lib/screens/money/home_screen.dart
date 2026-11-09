@@ -14,7 +14,6 @@ import '../../models/display_point.dart';
 import '../../models/holding.dart';
 import '../../models/net_worth_history.dart';
 import '../../models/portfolio_history.dart';
-import '../../models/money_analysis.dart';
 import '../../models/money_settings.dart';
 import '../../models/net_worth.dart';
 import '../../models/zakat_book.dart';
@@ -165,8 +164,7 @@ class HomeScreen extends StatelessWidget {
             ),
         ]);
       case HomeCard.leftToSpend:
-        final s = money.settings;
-        final a = MonthAnalysis.of(book, DateTime.now(), currency: ccy, rates: app.rates, budgets: s.budgets, budgetCurrency: s.budgetCurrency);
+        final a = cubit.monthAnalysis(DateTime.now(), currency: ccy, rates: app.rates);
         return MoneySection(
           title: l10n.cardLeftToSpend,
           onTitleTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const BudgetScreen())),
@@ -174,25 +172,16 @@ class HomeScreen extends StatelessWidget {
             if (!a.hasBudget)
               MoneyRow(icon: Icons.donut_large, title: l10n.budgetSet, onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const BudgetScreen())))
             else
-              Builder(builder: (context) {
-                // Planned payments in budgeted categories still to come this
-                // month will spend from the budget too.
-                var planned = 0.0;
-                for (final (r, _) in cubit.plannedOutThisMonth()) {
-                  final from = book.accounts[r.fromAccountId];
-                  if (from == null || !s.budgets.containsKey(r.categoryId)) continue;
-                  planned += NetWorthSummary.inCurrency(r.amount, from.currency!, ccy, app.rates) ?? 0;
-                }
-                return MoneyRow(
-                  key: const ValueKey('leftToSpend'),
-                  icon: Icons.donut_large,
-                  title: moneyText(a.leftToSpend - planned, ccy, hidden: hidden),
-                  subtitle: [
-                    l10n.moneySpentOf(moneyText(a.spent, ccy, hidden: hidden), moneyText(a.budget, ccy, hidden: hidden)),
-                    if (planned > 0) l10n.plannedThisMonth(moneyText(planned, ccy, hidden: hidden)),
-                  ].join(' · '),
-                );
-              }),
+              MoneyRow(
+                key: const ValueKey('leftToSpend'),
+                icon: Icons.donut_large,
+                title: moneyText(a.leftToSpend, ccy, hidden: hidden),
+                subtitle: [
+                  l10n.moneySpentOf(moneyText(a.spent, ccy, hidden: hidden), moneyText(a.budget, ccy, hidden: hidden)),
+                  if (a.planned > 0) l10n.plannedThisMonth(moneyText(a.planned, ccy, hidden: hidden)),
+                ].join(' · '),
+              ),
+            if (a.hasBudget && !a.complete) MissingRatesNote(a.missingRates),
           ],
         );
       case HomeCard.holdings:

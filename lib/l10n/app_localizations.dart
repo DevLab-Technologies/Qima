@@ -8027,6 +8027,30 @@ abstract class AppLocalizations {
   /// **'Already in Qima'**
   String get importFlagInBook;
 
+  /// No description provided for @importFlagMaybeInBook.
+  ///
+  /// In en, this message translates to:
+  /// **'Same amount as {merchant} on {date}: check it isn\'t the same'**
+  String importFlagMaybeInBook(String merchant, String date);
+
+  /// No description provided for @importBetweenAccounts.
+  ///
+  /// In en, this message translates to:
+  /// **'Between your accounts'**
+  String get importBetweenAccounts;
+
+  /// No description provided for @importTransferWith.
+  ///
+  /// In en, this message translates to:
+  /// **'Transfer · {name}'**
+  String importTransferWith(String name);
+
+  /// No description provided for @importRowName.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get importRowName;
+
   /// No description provided for @importFlagRepeated.
   ///
   /// In en, this message translates to:
@@ -8084,7 +8108,7 @@ abstract class AppLocalizations {
   /// No description provided for @importAddsUp.
   ///
   /// In en, this message translates to:
-  /// **'Adds up: nothing missed'**
+  /// **'The ticked rows match the statement\'s opening and closing balances'**
   String get importAddsUp;
 
   /// No description provided for @importGap.
@@ -8572,6 +8596,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'You'**
   String get splitYou;
+
+  /// No description provided for @tplHoldingTrade.
+  ///
+  /// In en, this message translates to:
+  /// **'Holdings trade'**
+  String get tplHoldingTrade;
+
+  /// No description provided for @sysHoldings.
+  ///
+  /// In en, this message translates to:
+  /// **'Holdings'**
+  String get sysHoldings;
+
+  /// No description provided for @holdingPaidFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid from'**
+  String get holdingPaidFrom;
+
+  /// No description provided for @holdingPaidInto.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid into'**
+  String get holdingPaidInto;
+
+  /// No description provided for @holdingNoCash.
+  ///
+  /// In en, this message translates to:
+  /// **'No cash moved (already held)'**
+  String get holdingNoCash;
+
+  /// No description provided for @holdingCashHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Takes the amount off this account so it isn\'t counted twice.'**
+  String get holdingCashHelp;
+
+  /// No description provided for @entryFromHoldings.
+  ///
+  /// In en, this message translates to:
+  /// **'This came from a holdings trade. Change or delete it in Holdings.'**
+  String get entryFromHoldings;
 }
 
 class _AppLocalizationsDelegate

@@ -63,6 +63,7 @@ extension MoneyLabels on AppLocalizations {
         EntryTemplate.billSplit => tplBillSplit,
         EntryTemplate.valuation => tplValuation,
         EntryTemplate.assetSale => tplAssetSale,
+        EntryTemplate.holdingTrade => tplHoldingTrade,
         EntryTemplate.adjustment => tplAdjustment,
       };
 
@@ -116,6 +117,7 @@ extension MoneyLabels on AppLocalizations {
       'system.opening_balances' => sysOpening,
       'system.change_in_value' => sysChange,
       'system.rounding' => sysRounding,
+      'system.holdings' => sysHoldings,
       _ => a.name,
     };
   }
@@ -177,6 +179,7 @@ class MoneyIcons {
         EntryTemplate.billSplit => Icons.call_split,
         EntryTemplate.valuation => Icons.trending_up,
         EntryTemplate.assetSale => Icons.sell_outlined,
+        EntryTemplate.holdingTrade => Icons.pie_chart_outline,
         EntryTemplate.opening || EntryTemplate.adjustment => Icons.flag_outlined,
       };
 }

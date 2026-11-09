@@ -1352,6 +1352,10 @@
   "importDiscard": "تجاهل",
   "importRemoveFile": "إزالة الملف",
   "importFlagInBook": "موجودة في قيمة",
+  "importFlagMaybeInBook": "نفس مبلغ {merchant} في {date}: تأكد أنها ليست نفسها",
+  "importBetweenAccounts": "بين حساباتك",
+  "importTransferWith": "تحويل · {name}",
+  "importRowName": "الوصف",
   "importFlagRepeated": "موجودة في ملف آخر",
   "importFlagCurrency": "بعملة {currency} وليست عملة الحساب",
   "importDateGuessed": "لم يُعثر على تاريخ: استُخدم يوم المشاركة",
@@ -1361,7 +1365,7 @@
   "importRefAccount": "حساب •••• {last4}",
   "importRefIban": "آيبان •••• {last4}",
   "importBalances": "الافتتاحي {opening} ← الختامي {closing}",
-  "importAddsUp": "المجموع مطابق: لم يفُت شيء",
+  "importAddsUp": "الصفوف المختارة تطابق الرصيد الافتتاحي والختامي في الكشف",
   "importGap": "{amount} غير محسوب: تحقق من عملية ناقصة",
   "importOpeningBalance": "أضف الرصيد الافتتاحي: {amount}",
   "importMatchBalance": "اجعل الرصيد {amount}",
@@ -1442,5 +1446,12 @@
   "splitByEqually": "بالتساوي",
   "splitByPercent": "نسبة",
   "splitByShares": "حصص",
-  "splitYou": "أنت"
+  "splitYou": "أنت",
+  "tplHoldingTrade": "عملية استثمار",
+  "sysHoldings": "الاستثمارات",
+  "holdingPaidFrom": "دُفع من",
+  "holdingPaidInto": "أُودع في",
+  "holdingNoCash": "بدون حركة نقدية (مملوكة سابقًا)",
+  "holdingCashHelp": "يُخصم المبلغ من هذا الحساب حتى لا يُحسب مرتين.",
+  "entryFromHoldings": "هذه من عملية في الاستثمارات. عدّلها أو احذفها من الاستثمارات."
 }

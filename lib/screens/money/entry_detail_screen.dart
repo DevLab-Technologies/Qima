@@ -40,6 +40,8 @@ class EntryDetailScreen extends StatelessWidget {
     final s = EntrySummary.of(entry, book, l10n);
     final locale = Localizations.localeOf(context).toLanguageTag();
     final editKind = EntryKind.forEntry(entry);
+    // The cash side of a holdings trade follows its holdings row.
+    final fromHoldings = entry.template == EntryTemplate.holdingTrade;
     final amountText = minorText(s.amount.abs(), s.currency, hidden: hidden);
 
     return ScreenBackground(
@@ -56,6 +58,7 @@ class EntryDetailScreen extends StatelessWidget {
                 icon: const Icon(Icons.edit_outlined),
                 onPressed: () => EntryEditorScreen.open(context, editKind, existing: entry),
               ),
+            if (!fromHoldings)
             IconButton(
               tooltip: l10n.commonDelete,
               icon: const Icon(Icons.delete_outline),
@@ -87,6 +90,7 @@ class EntryDetailScreen extends StatelessWidget {
                   const SizedBox(height: DS.spaceXS),
                   Text(DateFormat.yMMMMEEEEd(locale).format(entry.date), style: TextStyle(color: colors.textSecondary)),
                   if (!entry.counts) Text(l10n.entryDeclinedHelp, style: TextStyle(color: colors.textTertiary)),
+                  if (fromHoldings) Text(l10n.entryFromHoldings, key: const ValueKey('entryFromHoldings'), style: TextStyle(color: colors.textTertiary)),
                   if (entry.note.isNotEmpty) ...[
                     const SizedBox(height: DS.spaceXS),
                     Text(entry.note, style: TextStyle(color: colors.textSecondary)),
