@@ -416,6 +416,41 @@ void main() {
       expect(rows[1].amount, 18000);
     });
 
+    test('a card statement notice is no transaction, however many figures it has', () {
+      const notice = 'Dear Customer\nYour Credit Card statement has been issued.\n'
+          'The minimum due payable for the Credit Card ending in XX5521 is:\nSAR 98.10\n'
+          'Total outstanding balance: SAR 2,410.00\nPayment due date: 04-12-2026\nSADAD number: 0160000001234567';
+      expect(messageIntent(StatementReader.normalize(notice)), MessageIntent.notice);
+      expect(reader.readMessages(notice), isEmpty);
+    });
+
+    test('a POS refund is money in, from the merchant, onto the card it names', () {
+      const text = 'POS Refund\nTo: XX5521; Visa Credit\nAmount: SAR 35.50\nFrom: Corner Books\nIn SAUDI ARABIA\n'
+          'Remaining limit SAR: 12,000.00\nOn: 2026-11-09 16:17:44';
+      final row = reader.readMessages(text).single;
+      expect(row.amount, 35.5);
+      expect(row.signGuessed, isFalse);
+      expect(row.currency, 'SAR');
+      expect(row.description, 'Corner Books');
+      expect(row.date, DateTime(2026, 11, 9));
+      expect(reader.messageFacts(text, [row]).refs, contains(const StatementRef(StatementRefKind.card, '5521')));
+    });
+
+    test('what each message is about decides whether and which way money moved', () {
+      for (final (text, intent) in [
+        ('Your OTP for SAR 120.00 at NOON is 448812', MessageIntent.code),
+        ('Purchase of SAR 80.00 at NOON declined: insufficient funds', MessageIntent.declined),
+        ('Installment of SAR 1,500.00 deducted from account XX1234. Next due date 01-12-2026', MessageIntent.debit),
+        ('Incoming transfer SAR 500.00 from Sara Ali', MessageIntent.transferIn),
+        ('ATM withdrawal SAR 300.00', MessageIntent.withdrawal),
+        ('تم إصدار كشف حساب البطاقة. الحد الأدنى 150.00 ريال', MessageIntent.notice),
+      ]) {
+        expect(messageIntent(text), intent, reason: text);
+      }
+      expect(reader.readMessages('Incoming transfer SAR 500.00 from Sara Ali').single.description, 'Sara Ali');
+      expect(reader.readMessages('Purchase of SAR 80.00 at NOON declined: insufficient funds'), isEmpty);
+    });
+
     test('text without an amount gives nothing', () {
       expect(reader.readMessages('Your OTP is 448812. Do not share it.'), isEmpty);
     });

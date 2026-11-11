@@ -5,6 +5,8 @@ import 'package:equatable/equatable.dart';
 import 'minor_units.dart';
 import 'statement_facts.dart';
 
+part 'bank_message.dart';
+
 /// A piece of text on a page and where it sits, in page fractions (0 to 1,
 /// top left origin). PDFs give one per run of text, screenshots one per
 /// recognized line, spreadsheets one per cell.
@@ -1194,71 +1196,6 @@ class StatementReader {
   );
   static final _accountWords = RegExp(r'^(?:your\s)?(?:account|card|a/c|حساب|حسابك|بطاقة|بطاقتك|compte|cuenta)', caseSensitive: false);
 
-  /// One message as its lines: the amount with a currency, the date, and
-  /// who was paid (the merchant, else the person paid or paying).
-  StatementRow? _message(List<String> lines) {
-    if (lines.isEmpty) return null;
-    final flat = lines.join(' ');
-    _decideOrder([flat]);
-    final (dates, dateSpans) = _dates(flat);
-    final times = [for (final m in _time.allMatches(flat)) _Span(m.start, m.end)];
-    final taken = [...dateSpans, ...times];
-    final amounts = _amounts(flat, taken);
-    if (amounts.isEmpty) return null;
-    // The first amount with a currency is the transaction; a later one is
-    // usually the balance or the limit left.
-    bool left(_Found<_Money> a) => _leftBefore.hasMatch(flat.substring(math.max(0, a.span.start - 40), a.span.start));
-    final main = amounts.where((a) => a.value.currency != null && !left(a)).firstOrNull ??
-        amounts.where((a) => a.value.currency != null).firstOrNull ??
-        amounts.first;
-    var sign = main.value.sign;
-    final guessed = sign == 0;
-    if (guessed) sign = _incomeWords.hasMatch(flat) && !_spendWords.hasMatch(flat) ? 1 : -1;
-
-    String name(RegExp re) {
-      for (final m in re.allMatches(flat)) {
-        final n = _clean(m[1]!.replaceAll(_nameEnd, ''));
-        if (n.length >= 2 && !_accountWords.hasMatch(n)) return n;
-      }
-      return '';
-    }
-
-    var description = '';
-    for (final l in lines) {
-      final m = _payeeField.firstMatch(l);
-      final n = m == null ? '' : _clean(m[1]!.replaceAll(_nameEnd, ''));
-      if (n.length >= 2 && !_accountWords.hasMatch(n)) {
-        description = n;
-        break;
-      }
-    }
-    if (description.isEmpty) description = name(_merchantAt);
-    if (description.isEmpty) description = sign < 0 ? name(_paidTo) : name(_paidFrom);
-    if (description.isEmpty) description = sign < 0 ? name(_paidFrom) : name(_paidTo);
-    if (description.isEmpty) {
-      final spans = [...taken, ...amounts.map((a) => a.span)]..sort((a, b) => a.start - b.start);
-      final b = StringBuffer();
-      var i = 0;
-      for (final s in spans) {
-        if (s.start > i) b.write(flat.substring(i, s.start));
-        b.write(' · ');
-        i = math.max(i, s.end);
-      }
-      if (i < flat.length) b.write(flat.substring(i));
-      description = _clean(b.toString().split(' · ').firstWhere((p) => _clean(p).length >= 2, orElse: () => ''));
-    }
-    final date = dates.isEmpty ? null : dates.first.value;
-    return StatementRow(
-      date: date ?? DateTime(received.year, received.month, received.day),
-      dateGuessed: date == null,
-      description: description,
-      detail: flat,
-      amount: main.value.major * sign,
-      signGuessed: guessed && !_spendWords.hasMatch(flat) && !_incomeWords.hasMatch(flat),
-      currency: main.value.currency,
-    );
-  }
-
   // ---------------------------------------------------------- facts
 
   static final _openingLabel = RegExp(
@@ -1293,6 +1230,9 @@ class StatementReader {
     r'account (?:no|number|#)|a/c (?:no|number)|acct|رقم الحساب|الحساب رقم|حساب رقم|numéro de compte|n° de compte|número de cuenta|cuenta n',
     caseSensitive: false,
   );
+  static final _nearAccount = RegExp(r'account|a/c|acct|حساب|compte|cuenta', caseSensitive: false);
+  static final _nearCard =
+      RegExp(r'card|\bvisa\b|master ?card|\bmada\b|\bamex\b|\bcredit\b(?!ed)|بطاقة|مدى|carte|tarjeta', caseSensitive: false);
   static final _cardLabel = RegExp(r'card|بطاقة|بطاقتك|carte|tarjeta', caseSensitive: false);
   static final _iban = RegExp(r'\b([A-Z]{2}\d{2}(?:\s?[A-Z0-9]{4}){3,7}(?:\s?[A-Z0-9]{1,4})?)\b');
   // A masked number: stars or x's then its last digits, or the reverse as
@@ -1324,7 +1264,15 @@ class StatementReader {
     final card = cardContext || _cardLabel.hasMatch(text);
     final account = _accountLabel.hasMatch(text);
     for (final m in _masked.allMatches(text)) {
-      out.add(StatementRef(card && !account ? StatementRefKind.card : StatementRefKind.account, m[1] ?? m[2]!));
+      // The words right around the number say what it is, before the text
+      // as a whole does: "To: XX4010; Visa Credit" is a card.
+      final near = text.substring(math.max(0, m.start - 24), math.min(text.length, m.end + 16));
+      final kind = _nearAccount.hasMatch(near)
+          ? StatementRefKind.account
+          : _nearCard.hasMatch(near) || (card && !account)
+              ? StatementRefKind.card
+              : StatementRefKind.account;
+      out.add(StatementRef(kind, m[1] ?? m[2]!));
     }
     if (card) {
       for (final m in _cardEnding.allMatches(text)) {
