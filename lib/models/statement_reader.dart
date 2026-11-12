@@ -188,6 +188,12 @@ class StatementReader {
 
   StatementReader({required this.received});
 
+  /// Card statements (SNB) print refunds and payments with a trailing
+  /// minus ("3,075.00-"): money in, not out. Decided per document.
+  bool _trailingMinusIsCredit = false;
+  static final _trailingMinusCredit = RegExp(r'\d[.,]\d{2}-(?:\s|$)');
+  static final _creditRowWords = RegExp(r'payment|refund|\bret\b|reversal|credit|cash ?back|سداد|استرداد|مرتجع', caseSensitive: false);
+
   // ---------------------------------------------------------------- text
 
   static const _digitMap = {
@@ -300,7 +306,7 @@ class StatementReader {
 
   static final _skipWords = RegExp(
     r'opening balance|closing balance|balance brought forward|balance carried forward|brought forward|carried forward|'
-    r'previous balance|total|subtotal|statement period|page \d|الرصيد الافتتاحي|الرصيد الختامي|رصيد افتتاحي|رصيد ختامي|الرصيد السابق|'
+    r'previous balance|total|subtotal|statement period|page \d|b/f\b|paid up capital|commercial registration|رأس المال|الرصيد الافتتاحي|الرصيد الختامي|رصيد افتتاحي|رصيد ختامي|الرصيد السابق|'
     r'المجموع|الإجمالي|اجمالي|إجمالي|solde initial|solde final|saldo inicial|saldo final|total',
     caseSensitive: false,
   );
@@ -308,7 +314,8 @@ class StatementReader {
   static final _summaryWords = RegExp(
     r'credit limit|available limit|available credit|minimum payment|minimum due|payment due|due date|outstanding|overdue|'
     r'installment amount|instalment amount|final installment|finance amount|amount paid|tenure|deferment|last payment received|'
-    r'الحد الائتماني|الحد المتاح|الحد الأدنى|تاريخ الاستحقاق|المبلغ المستحق|المبلغ المتبقي|قيمة القسط|'
+    r'installment due|remaining io balance|remaining installment|annual percentage rate|pay off the full amount|profit mark ?up|'
+    r'الحد الائتماني|الحد المتاح|الحد الأدنى|الحد الادنى|الحد الدنى|تاريخ الاستحقاق|المبلغ المستحق|المبلغ المتبقي|قيمة القسط|'
     r'plafond|paiement minimum|límite de crédito|pago mínimo',
     caseSensitive: false,
   );
@@ -514,7 +521,9 @@ class StatementReader {
       if (value == null || value == 0) continue;
       final marker = (m[8] ?? '').toLowerCase();
       var sign = 0;
-      if (m[2] == '-' || m[4] == '-' || marker == '-' || (m[1] != null && m[7] != null) || marker == 'dr' || marker == 'db' || marker == 'مدين') {
+      if (marker == '-' && _trailingMinusIsCredit) {
+        sign = 1;
+      } else if (m[2] == '-' || m[4] == '-' || marker == '-' || (m[1] != null && m[7] != null) || marker == 'dr' || marker == 'db' || marker == 'مدين') {
         sign = -1;
       } else if (m[2] == '+' || m[4] == '+' || marker == 'cr' || marker == 'دائن') {
         sign = 1;
@@ -629,6 +638,10 @@ class StatementReader {
   List<StatementRow> readPages(List<DocPage> pages) {
     final allLines = [for (final p in pages) _lines(p.tokens)];
     _decideOrder([for (final ls in allLines) for (final l in ls) normalize(l.text)]);
+    _trailingMinusIsCredit = allLines.any((ls) => ls.any((l) {
+          final t = normalize(l.text);
+          return _trailingMinusCredit.hasMatch(t) && _creditRowWords.hasMatch(t);
+        }));
 
     final rows = <StatementRow>[];
     final rowLines = <_Line>[];
@@ -645,6 +658,13 @@ class StatementReader {
     // the running balance gives it.
     final fromBalance = <int>{};
     DateTime? sectionDate;
+    // Rows whose day came from a date line above them, and how often a
+    // date line under a row turned out to be that row's (card lists).
+    final datedBySection = <int>{};
+    // Where each row's figure sits across the page, for tables printed
+    // without column names (CIB): by the row's line.
+    final amountX = <int, double>{};
+    var datesUnder = 0;
     String pendingText = '';
     double? pendingBottom;
     // Tables whose cells centre their lines on the dated one: a row's
@@ -754,9 +774,14 @@ class StatementReader {
         if (amounts.isEmpty) {
           if (dates.isNotEmpty && description.length < 3) {
             final prev = rowLines.isEmpty ? null : rowLines.last;
-            if (prev != null && rows.isNotEmpty && rows.last.dateGuessed && line.top - prev.bottom < prev.height * 1.5) {
-              // A date under a row that had none is that row's (card lists).
+            final close = prev != null && rows.isNotEmpty && line.top - prev.bottom < prev.height * 1.5;
+            if (close && (rows.last.dateGuessed || (datesUnder > 0 && datedBySection.contains(rows.length - 1)))) {
+              // A date under a row that had none is that row's (card lists);
+              // once the list is known to date its rows from below, a row
+              // dated from above by an orphan date line takes its own.
               rows.last = rows.last.copyWith(date: dates.first.value, dateGuessed: false);
+              datedBySection.remove(rows.length - 1);
+              datesUnder++;
               rowLines.last = line;
             } else {
               // A date on its own heads a group of rows (banking apps).
@@ -828,6 +853,9 @@ class StatementReader {
           final all = [for (final a in amounts) a.$1.value];
           final list = all.any((m) => !m.bare) ? all.where((m) => !m.bare).toList() : all;
           money = list.first;
+          final chosen = money;
+          final found = amounts.where((a) => identical(a.$1.value, chosen)).firstOrNull;
+          if (found != null) amountX[base + lines.indexOf(line)] = found.$1.x;
           sign = money.sign;
           if (list.length >= 2) {
             final last = list.last;
@@ -906,6 +934,7 @@ class StatementReader {
                 : sectionDate;
         if (flip != null) balanceFirst[rows.length] = flip;
         if (balanceOnly) fromBalance.add(rows.length);
+        if (date != null && paired.length < 2 && ownDates.isEmpty) datedBySection.add(rows.length);
         rows.add(StatementRow(
           date: date ?? DateTime(received.year, received.month, received.day),
           dateGuessed: date == null,
@@ -921,7 +950,7 @@ class StatementReader {
         rowAnchor = line;
       }
     }
-    return _signsFromMarkers(_signsFromBalances(_withDocumentCurrency(_amountsFromBalances(_balanceSide(_localAmounts(rows), balanceFirst), fromBalance))));
+    return _signsFromMarkers(_signsFromColumns(_signsFromBalances(_withDocumentCurrency(_amountsFromBalances(_balanceSide(_localAmounts(rows), balanceFirst), fromBalance))), amountX));
   }
 
   /// The full Gregorian dates in the cells at the start of a line and at
@@ -1170,6 +1199,57 @@ class StatementReader {
     return out;
   }
 
+  /// A table printed without column names puts money out and money in in
+  /// two columns of their own (CIB): the figures fall into two groups
+  /// across the page. Which group is which is decided by the running
+  /// balance, printed only now and then: the reading under which the
+  /// balances move by the rows between them wins. Only rows whose
+  /// direction was a guess change.
+  List<StatementRow> _signsFromColumns(List<StatementRow> rows, Map<int, double> amountX) {
+    final placed = [for (final r in rows) if (r.line != null && amountX[r.line] != null) amountX[r.line]!]..sort();
+    if (placed.length < 8 || rows.where((r) => r.balance != null).length < 3) return rows;
+    var gap = 0.0, split = 0.0;
+    for (var i = 1; i < placed.length; i++) {
+      if (placed[i] - placed[i - 1] > gap) {
+        gap = placed[i] - placed[i - 1];
+        split = (placed[i] + placed[i - 1]) / 2;
+      }
+    }
+    final left = placed.where((x) => x < split).length;
+    if (gap < 0.04 || left < 2 || placed.length - left < 2) return rows;
+    List<StatementRow> reading(int leftSign) => [
+          for (final r in rows)
+            r.signGuessed && r.line != null && amountX[r.line] != null
+                ? r.copyWith(amount: r.amount.abs() * (amountX[r.line]! < split ? leftSign : -leftSign))
+                : r,
+        ];
+    int fits(List<StatementRow> rs) {
+      var best = 0;
+      for (final newestFirst in [false, true]) {
+        var n = 0;
+        int? last;
+        for (var i = 0; i < rs.length; i++) {
+          if (rs[i].balance == null) continue;
+          if (last != null) {
+            final between = newestFirst ? rs.sublist(last, i) : rs.sublist(last + 1, i + 1);
+            final moved = between.fold<double>(0, (t, r) => t + r.amount);
+            final delta = newestFirst ? rs[last].balance! - rs[i].balance! : rs[i].balance! - rs[last].balance!;
+            if (_same(moved, delta)) n++;
+          }
+          last = i;
+        }
+        best = math.max(best, n);
+      }
+      return best;
+    }
+
+    final outLeft = reading(-1), inLeft = reading(1);
+    final a = fits(outLeft), b = fits(inLeft), now = fits(rows);
+    if (a > b && a > now) return [for (final r in outLeft) r.signGuessed && r.line != null && amountX[r.line] != null ? r.copyWith(signGuessed: false) : r];
+    if (b > a && b > now) return [for (final r in inLeft) r.signGuessed && r.line != null && amountX[r.line] != null ? r.copyWith(signGuessed: false) : r];
+    return rows;
+  }
+
   /// One row per message: shared text such as a bank SMS. Messages are
   /// separated by blank lines.
   List<StatementRow> readMessages(String text) => [
@@ -1378,6 +1458,7 @@ class StatementReader {
     // Only when the rows found are that one transaction read in pieces; a
     // short list with a "Total" line under it keeps its rows.
     if (single != null && (rows.isEmpty || rows.any((r) => _same(r.amount.abs(), single.$1.single.amount.abs())))) return single;
+    rows = _beforeOpeningDoubtful(_undatedDoubtful(rows), pages);
     var facts = this.facts(pages, rows);
     final settled = _lastFromClosing(rows, facts);
     if (!identical(settled, rows)) {
@@ -1393,6 +1474,49 @@ class StatementReader {
   }
 
   static String _dayKey(DateTime d) => '${d.year}-${d.month}-${d.day}';
+
+  /// In a statement whose rows carry their dates, a row with none is a
+  /// limit, a carried-forward balance, a tax breakdown or the terms: kept
+  /// for the person to decide, unticked. A row the same document prints
+  /// twice (same day, amount and running balance, a page overlap) is too.
+  /// A card statement's first page lists the amount due, the minimum and
+  /// the fees beside unprinted labels before the table starts with the
+  /// balance brought forward: figures above that line are not transactions.
+  List<StatementRow> _beforeOpeningDoubtful(List<StatementRow> rows, List<DocPage> pages) {
+    final texts = lineTexts(pages);
+    final first = texts.indexWhere((t) => _openingLabel.hasMatch(t) || RegExp(r'\bb/f\b', caseSensitive: false).hasMatch(t));
+    if (first < 0) return rows;
+    final before = rows.where((r) => r.line != null && r.line! < first && !r.doubtful).length;
+    final after = rows.where((r) => r.line != null && r.line! > first && !r.doubtful).length;
+    // A nameless row of figures under the closing balance is the
+    // statement's footer (due date, minimum payment), not a transaction.
+    bool underClosing(StatementRow r) {
+      if (r.line == null || RegExp(r'\p{L}{2,}', unicode: true).hasMatch(r.description)) return false;
+      for (var i = math.min(r.line!, texts.length) - 1; i >= 0; i--) {
+        if (_openingLabel.hasMatch(texts[i])) return false;
+        if (_closingLabel.hasMatch(texts[i])) return true;
+      }
+      return false;
+    }
+
+    final footers = [for (final r in rows) !r.doubtful && underClosing(r) ? r.copyWith(doubtful: true) : r];
+    if (before == 0 || before > 3 || after < 5) return footers;
+    return [for (final r in footers) r.line != null && r.line! < first ? r.copyWith(doubtful: true) : r];
+  }
+
+  static List<StatementRow> _undatedDoubtful(List<StatementRow> rows) {
+    final dated = rows.where((r) => !r.dateGuessed).length;
+    final seen = <String>{};
+    return [
+      for (final r in rows)
+        if (dated >= 5 && r.dateGuessed && dated > rows.length / 2)
+          r.copyWith(doubtful: true)
+        else if (r.balance != null && !seen.add('${_dayKey(r.date)}|${r.amount}|${r.balance}'))
+          r.copyWith(doubtful: true)
+        else
+          r,
+    ];
+  }
 
   // Labels of the figure a receipt or bill comes to, strongest first.
   static final _totalLabels = [

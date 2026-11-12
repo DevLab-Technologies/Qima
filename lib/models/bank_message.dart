@@ -89,7 +89,9 @@ final _intentWords = <(MessageIntent, RegExp)>[
     MessageIntent.transferIn,
     RegExp(
       r'incoming transfer|transfer (?:in|received|from)|received (?:a )?transfer|'
-      r'حوالة واردة|تحويل وارد|حوالة محلية واردة|virement reçu|transferencia recibida',
+      r'to your (?:account|card|wallet)|credited to your|'
+      r'حوالة واردة|تحويل وارد|حوالة محلية واردة|إلى حسابك|الى حسابك|لحسابك|في حسابك|'
+      r'virement reçu|transferencia recibida',
       caseSensitive: false,
     )
   ),
@@ -220,6 +222,9 @@ extension _BankMessages on StatementReader {
     final fromField = labelled == null ? null : _amounts(labelled, _dates(labelled).$2).firstOrNull;
     bool left(_Found<_Money> a) =>
         StatementReader._leftBefore.hasMatch(flat.substring(math.max(0, a.span.start - 40), a.span.start));
+    // A message whose only figures are the limit or balance left (its
+    // amount line cut off in a screenshot) is not a transaction.
+    if (fromField == null && amounts.every(left)) return null;
     final main = fromField ??
         amounts.where((a) => a.value.currency != null && !left(a)).firstOrNull ??
         amounts.where((a) => a.value.currency != null).firstOrNull ??
