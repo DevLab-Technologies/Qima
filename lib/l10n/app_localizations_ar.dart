@@ -3342,6 +3342,10 @@ class AppLocalizationsAr extends AppLocalizations {
       'يساعد في قراءة عمليات الشراء التي لا تستطيع قيمة فهمها وحدها، ويصوغ ملخص الشهر. يعمل على هذا الجهاز فقط، ولا يقدّم نصائح، ولا يضع أي رقم: كل رقم يأتي من سجلاتك أنت.';
 
   @override
+  String get settingsUseModelAndroid =>
+      'على أندرويد يشغّل ML Kit من Google النموذج: تبقى رسائلك وسجلاتك على الهاتف، ويرسل ML Kit إلى Google أرقامًا عن استخدامه هو، مثل طراز الهاتف ورموز الأخطاء.';
+
+  @override
   String get modelReady => 'جاهز على هذا الجهاز';
 
   @override

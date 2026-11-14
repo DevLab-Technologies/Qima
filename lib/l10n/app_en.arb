@@ -2329,6 +2329,7 @@
   "settingsIntelligence": "On-device intelligence",
   "settingsUseModel": "Use the on-device model",
   "settingsUseModelFooter": "Helps read purchases Qima can't place on its own, and words the month summary. It runs only on this device, never gives advice, and never supplies a number: every figure comes from your own records.",
+  "settingsUseModelAndroid": "On Android, Google’s ML Kit runs the model: your messages and records stay on the phone, and ML Kit sends Google figures about its own use, such as the phone model and error codes.",
   "modelReady": "Ready on this device",
   "modelUnsupported": "Not available on this device",
   "modelTurnedOff": "Turn on Apple Intelligence in system Settings to use it",

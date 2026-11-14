@@ -3354,6 +3354,10 @@ class AppLocalizationsFr extends AppLocalizations {
       'Aide à lire les achats que Qima ne comprend pas seule, et rédige le résumé du mois. Il fonctionne uniquement sur cet appareil, ne donne jamais de conseil et n’apporte jamais de chiffre : chaque montant vient de vos propres données.';
 
   @override
+  String get settingsUseModelAndroid =>
+      'Sur Android, le modèle tourne avec ML Kit de Google : vos messages et vos données restent sur le téléphone, et ML Kit envoie à Google des chiffres sur son propre usage, comme le modèle du téléphone et les codes d’erreur.';
+
+  @override
   String get modelReady => 'Prêt sur cet appareil';
 
   @override

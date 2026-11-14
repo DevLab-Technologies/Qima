@@ -160,9 +160,9 @@ These answers follow from the [privacy policy](https://qima.money/privacy): no a
 
 | Section | Answer |
 |---|---|
-| Data safety → collects or shares user data | **No**. The only network traffic is read-only requests for public market prices, with no user data attached. |
+| Data safety → collects or shares user data | **Yes, collects; not shared.** Data types: *App info and performance → Diagnostics* and *Other app performance data*, collected by ML Kit (Google, as service provider) only when the person turns on the on-device model; purpose *Analytics*; processed ephemerally: no; optional: yes (the setting is off by default). No personal info, messages or financial info. Prices are read-only requests with no user data attached. |
 | Data safety → encrypted in transit | Yes (HTTPS) |
-| Data safety → deletion request | Not applicable: no data leaves the device; uninstalling removes it |
+| Data safety → deletion request | Not applicable: none of the person's data leaves the device; uninstalling removes it. ML Kit's usage figures carry no identity |
 | Ads | No ads |
 | Content rating (IARC) | Reference app / utility; no violence, sexual content, gambling or user interaction → *Everyone* / PEGI 3 |
 | Target audience | 18+ (financial tool; not designed for children) |
@@ -184,4 +184,4 @@ Qima asks for `READ_SMS` and `RECEIVE_SMS` (see `BankSms.kt`). Play rejects the 
 | Where the person turns it on | Home shows an offer the first time; *Import → Bank text messages* holds the switch and the 60-day catch-up |
 | Video for review | Record on a test phone: allow the permission from the Home offer, receive a bank-style message, open the notification, see the transaction in review, add it |
 
-The Data safety answers above don't change: messages stay on the device.
+Messages stay on the device, including when Gemini Nano reads them.

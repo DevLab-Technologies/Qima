@@ -5717,6 +5717,12 @@ abstract class AppLocalizations {
   /// **'Helps read purchases Qima can\'t place on its own, and words the month summary. It runs only on this device, never gives advice, and never supplies a number: every figure comes from your own records.'**
   String get settingsUseModelFooter;
 
+  /// No description provided for @settingsUseModelAndroid.
+  ///
+  /// In en, this message translates to:
+  /// **'On Android, Google’s ML Kit runs the model: your messages and records stay on the phone, and ML Kit sends Google figures about its own use, such as the phone model and error codes.'**
+  String get settingsUseModelAndroid;
+
   /// No description provided for @modelReady.
   ///
   /// In en, this message translates to:

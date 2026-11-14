@@ -813,21 +813,26 @@ class _OnDeviceModelSection extends StatefulWidget {
 
 class _OnDeviceModelSectionState extends State<_OnDeviceModelSection> {
   Future<ModelStatus>? _status;
-  String? _tag;
+  String? _asked;
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    final tag = Localizations.localeOf(context).toLanguageTag();
-    if (tag != _tag) {
-      _tag = tag;
-      _status = context.read<AppCubit>().aiAssist.status(tag);
+  /// On Android the model is Google's ML Kit, which reports its use to
+  /// Google, so it isn't touched (not even to ask if it's there) until the
+  /// person turns it on.
+  static bool get _android => !kIsWeb && defaultTargetPlatform == TargetPlatform.android;
+
+  Future<ModelStatus>? _statusFor(AppCubit cubit, String tag) {
+    if (_android && !cubit.state.onDeviceModel) return null;
+    if (tag != _asked) {
+      _asked = tag;
+      _status = cubit.aiAssist.status(tag);
     }
+    return _status;
   }
 
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<AppCubit>();
+    final status = _statusFor(cubit, Localizations.localeOf(context).toLanguageTag());
     final l10n = AppLocalizations.of(context)!;
     final colors = context.colors;
     return DSCard(
@@ -839,7 +844,7 @@ class _OnDeviceModelSectionState extends State<_OnDeviceModelSection> {
             contentPadding: EdgeInsets.zero,
             title: Text(l10n.settingsUseModel, style: TextStyle(color: colors.textPrimary)),
             subtitle: FutureBuilder<ModelStatus>(
-              future: _status,
+              future: status,
               builder: (context, snapshot) {
                 final status = snapshot.data;
                 if (status == null) return const SizedBox.shrink();
@@ -857,12 +862,15 @@ class _OnDeviceModelSectionState extends State<_OnDeviceModelSection> {
               },
             ),
             value: cubit.state.onDeviceModel,
-            onChanged: cubit.setOnDeviceModel,
+            onChanged: (on) async {
+              await cubit.setOnDeviceModel(on);
+              if (mounted) setState(() {});
+            },
           ),
           Padding(
             padding: const EdgeInsets.only(bottom: DS.spaceSM),
             child: Text(
-              l10n.settingsUseModelFooter,
+              _android ? '${l10n.settingsUseModelFooter} ${l10n.settingsUseModelAndroid}' : l10n.settingsUseModelFooter,
               style: TextStyle(color: colors.textTertiary, fontSize: 12, height: 1.35),
             ),
           ),

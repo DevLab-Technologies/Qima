@@ -30,6 +30,7 @@ class MainActivity : FlutterFragmentActivity() {
     private val channelName = "com.devlabtechnologies.qima/privacy"
     private val systemSettingsChannelName = "com.devlabtechnologies.qima/system_settings"
     private var dictation: DictationChannel? = null
+    private var model: OnDeviceModelChannel? = null
     private var bankSms: BankSmsChannel? = null
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
@@ -49,6 +50,7 @@ class MainActivity : FlutterFragmentActivity() {
             }
         }
         dictation = DictationChannel(this, flutterEngine.dartExecutor.binaryMessenger)
+        model = OnDeviceModelChannel(flutterEngine.dartExecutor.binaryMessenger)
         bankSms = BankSmsChannel(this, flutterEngine.dartExecutor.binaryMessenger)
         if (intent?.action == BankSms.OPEN_REVIEW) bankSms?.openReview()
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, systemSettingsChannelName).setMethodCallHandler { call, result ->
@@ -60,6 +62,12 @@ class MainActivity : FlutterFragmentActivity() {
                 else -> result.notImplemented()
             }
         }
+    }
+
+    override fun onDestroy() {
+        model?.dispose()
+        model = null
+        super.onDestroy()
     }
 
     override fun onResume() {

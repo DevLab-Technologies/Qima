@@ -1,4 +1,8 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+    <!-- ML Kit's GenAI libraries ask for Android 8; Qima still runs on older
+         phones and only uses them from Android 8 (OnDeviceModelChannel.kt). -->
+    <uses-sdk tools:overrideLibrary="com.google.mlkit.genai.prompt,com.google.mlkit.genai.common" />
     <!-- Live prices. Flutter only adds INTERNET to debug and profile builds,
          so release builds need it declared here. -->
     <uses-permission android:name="android.permission.INTERNET" />
