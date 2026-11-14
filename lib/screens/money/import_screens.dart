@@ -298,7 +298,7 @@ class _ImportReviewScreenState extends State<ImportReviewScreen> {
       body.add(MoneyEmpty(
         icon: Icons.account_balance_outlined,
         title: l10n.importNoAccountTitle,
-        message: l10n.importNoAccountBody,
+        message: imports.items.every((i) => i.file.message) ? l10n.importNoAccountMessagesBody : l10n.importNoAccountBody,
         action: l10n.accountAdd,
         onAction: () => AccountEditorScreen.open(context, types: const [AccountType.debit, AccountType.credit, AccountType.cash]),
       ));
@@ -311,6 +311,24 @@ class _ImportReviewScreenState extends State<ImportReviewScreen> {
         Expanded(child: Text(l10n.importReadOnDevice, style: TextStyle(color: colors.textTertiary, fontSize: 12))),
       ]),
     ));
+    // A Shortcuts automation made before senders were passed sends every
+    // bank's messages without one, so they can't find their own account.
+    if (imports.items.any((i) => i.file.message && i.file.sender == null)) {
+      body.add(Padding(
+        padding: const EdgeInsets.only(bottom: DS.spaceMD),
+        child: InkWell(
+          key: const ValueKey('importNoSender'),
+          borderRadius: BorderRadius.circular(DS.radiusTile),
+          onTap: () => BankMessagesScreen.open(context),
+          child: Row(children: [
+            Icon(Icons.info_outline, size: 16, color: colors.textSecondary),
+            const SizedBox(width: DS.spaceXS),
+            Expanded(child: Text(l10n.importMessageNoSender, style: TextStyle(color: colors.textSecondary, fontSize: 13))),
+            Icon(Icons.chevron_right, size: 16, color: colors.textTertiary),
+          ]),
+        ),
+      ));
+    }
     if (imports.isEmpty) {
       body.add(MoneyEmpty(icon: Icons.inbox_outlined, title: l10n.importEmpty, message: l10n.importShareTip));
     }
@@ -353,7 +371,7 @@ class _ImportReviewScreenState extends State<ImportReviewScreen> {
           ImportStatus.read => item.rows.isEmpty ? l10n.importStatusNothing : l10n.importRowFound(item.rows.length),
         };
         body.add(MoneySection(
-          title: item.file.message && item.file.sender != null ? l10n.importMessageFrom(item.file.sender!) : item.file.name,
+          title: _title(item, l10n),
           trailing: Row(mainAxisSize: MainAxisSize.min, children: [
             // A message that went to the wrong account moves on its own;
             // the picker above moves the whole group.
@@ -412,7 +430,7 @@ class _ImportReviewScreenState extends State<ImportReviewScreen> {
     if (groups.isEmpty) {
       for (final item in imports.items) {
         body.add(MoneySection(
-          title: item.file.name,
+          title: _title(item, l10n),
           trailing: IconButton(
             tooltip: l10n.importRemoveFile,
             visualDensity: VisualDensity.compact,
@@ -920,6 +938,10 @@ class _CandidateRow extends StatelessWidget {
     );
   }
 }
+
+/// A bank message by who sent it; a file by its name.
+String _title(ImportItem item, AppLocalizations l10n) =>
+    item.file.message && item.file.sender != null ? l10n.importMessageFrom(item.file.sender!) : item.file.name;
 
 /// The files going to one account, and their rows planned against it.
 class _Group {

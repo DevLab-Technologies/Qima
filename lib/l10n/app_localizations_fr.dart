@@ -4720,6 +4720,10 @@ class AppLocalizationsFr extends AppLocalizations {
       'Ajoutez le compte bancaire ou la carte de ce relevé, puis revenez ici.';
 
   @override
+  String get importNoAccountMessagesBody =>
+      'Ajoutez le compte bancaire ou la carte d’où viennent ces messages, puis revenez ici.';
+
+  @override
   String importAddCount(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
@@ -4881,6 +4885,10 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get importReadOnDevice =>
       'Lu sur cet appareil. Les fichiers sont supprimés après l’import.';
+
+  @override
+  String get importMessageNoSender =>
+      'Les messages sans expéditeur vont tous dans un seul compte. Transmettez l’expéditeur à l’action de Qima dans votre automatisation Raccourcis.';
 
   @override
   String get importEmpty => 'Rien en attente';

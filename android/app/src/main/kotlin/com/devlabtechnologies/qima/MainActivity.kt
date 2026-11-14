@@ -62,6 +62,16 @@ class MainActivity : FlutterFragmentActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        BankSms.onScreen = { bankSms?.newMessages() }
+    }
+
+    override fun onPause() {
+        BankSms.onScreen = null
+        super.onPause()
+    }
+
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)

@@ -78,13 +78,20 @@ class BankMessages {
       _quiet('setNotificationText', {'title': title, 'body': body});
 
   /// Calls [onOpen] when the person taps the "Bank messages to check"
-  /// notification, including the tap that launched Qima.
-  static Future<void> listenForOpen(void Function() onOpen) async {
+  /// notification, including the tap that launched Qima, and [onNew] when
+  /// a message arrives while Qima is on screen (no notification then).
+  static Future<void> listenForOpen(void Function() onOpen, {void Function()? onNew}) async {
     if (way != BankMessagesWay.readSms) return;
     sms.setMethodCallHandler((call) async {
-      if (call.method != 'openReview') return null;
-      onOpen();
-      return true;
+      switch (call.method) {
+        case 'openReview':
+          onOpen();
+          return true;
+        case 'newMessages':
+          onNew?.call();
+          return null;
+      }
+      return null;
     });
     try {
       if (await sms.invokeMethod<bool>('takeOpenReview') == true) onOpen();

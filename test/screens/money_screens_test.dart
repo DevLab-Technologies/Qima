@@ -692,6 +692,8 @@ void main() {
       expect(find.byKey(const ValueKey('importAccount-visa')), findsOneWidget);
       expect(find.byKey(const ValueKey('importAccount-rajhi')), findsOneWidget);
       expect(find.text(l10n.importMessageFrom('CardBank')), findsOneWidget);
+      // Both came with their sender: no Shortcuts tip.
+      expect(find.byKey(const ValueKey('importNoSender')), findsNothing);
       expect(find.text(l10n.importAddCount(2)), findsOneWidget);
       await tester.runAsync(() async {
         await tester.tap(find.byKey(const ValueKey('importAdd')));
@@ -719,6 +721,8 @@ void main() {
       await tester.pumpWidget(wrap(const ImportReviewScreen(), const Locale('en')));
       await tester.pump(const Duration(milliseconds: 300));
       expect(find.byKey(const ValueKey('importAccount-rajhi')), findsOneWidget);
+      // Without a sender, the tip says how to pass it.
+      expect(find.byKey(const ValueKey('importNoSender')), findsOneWidget);
       await tester.tap(find.byKey(const ValueKey('importMove-m1')));
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const ValueKey('importMoveTo-wallet')));

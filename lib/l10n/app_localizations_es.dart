@@ -4716,6 +4716,10 @@ class AppLocalizationsEs extends AppLocalizations {
       'Añade la cuenta bancaria o tarjeta de este extracto y vuelve aquí.';
 
   @override
+  String get importNoAccountMessagesBody =>
+      'Añade la cuenta bancaria o tarjeta de la que vienen estos mensajes y vuelve aquí.';
+
+  @override
   String importAddCount(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
@@ -4880,6 +4884,10 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get importReadOnDevice =>
       'Se lee en este dispositivo. Los archivos se borran al importarlos.';
+
+  @override
+  String get importMessageNoSender =>
+      'Los mensajes sin remitente van todos a una sola cuenta. Pasa el remitente a la acción de Qima en tu automatización de Atajos.';
 
   @override
   String get importEmpty => 'Nada pendiente';

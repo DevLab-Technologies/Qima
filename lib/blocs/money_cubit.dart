@@ -312,6 +312,17 @@ class MoneyCubit extends Cubit<MoneyState> {
     await _saveSettings(state.settings.copyWith(importedHashes: kept));
   }
 
+  /// Takes back an import: its entries go, and its files may be imported
+  /// again.
+  Future<void> undoImport(Iterable<String> entryIds, {Iterable<String> fileHashes = const []}) async {
+    for (final id in entryIds) {
+      await deleteEntry(id);
+    }
+    final drop = fileHashes.toSet();
+    if (drop.isEmpty || !state.settings.importedHashes.any(drop.contains)) return;
+    await _saveSettings(state.settings.copyWith(importedHashes: [for (final h in state.settings.importedHashes) if (!drop.contains(h)) h]));
+  }
+
   Future<void> deleteEntry(String id) async {
     final old = state.entries.where((e) => e.id == id).firstOrNull;
     final stated = old == null ? const <(BookEntry, String, int)>[] : _laterValues(_assetsIn(old), old.date, except: id);

@@ -410,6 +410,48 @@ void main() {
       expect(row.description, 'DUNE GYM');
     });
 
+    test('an added message waits in the inbox until Undo is gone, and Undo brings it back to review', () async {
+      await money.addAccount(bank, opening: sar(1000), openedOn: DateTime(2026, 10, 1));
+      await share('Bank message.txt', utf8.encode('Purchase of SAR 18.00 at CORNER CAFE'), kind: 'message');
+      await importer.checkInbox();
+      final item = importer.state.items.single;
+      final entry = money.builder.spend(bank, money.state.book.accounts['category.dining']!, sar(18), DateTime(2026, 11, 7), merchant: 'Corner Cafe');
+      await money.importEntries([entry], fileHashes: [item.hash!]);
+      importer.hold([item.id]);
+      expect(importer.state.items, isEmpty);
+
+      // Read again while held: the file is still there but stays out of sight.
+      await importer.checkInbox();
+      expect(importer.state.items, isEmpty);
+      expect(await inbox.pending(), hasLength(1));
+
+      await money.undoImport([entry.id], fileHashes: [item.hash!]);
+      importer.release([item.id]);
+      expect(money.state.entries.where((e) => e.id == entry.id), isEmpty);
+      expect(money.wasImported(item.hash!), isFalse);
+      expect(importer.state.items.single.rows.single.amount, -18);
+      expect(importer.reviewOnly(item.id), isTrue);
+
+      await importer.remove([item.id]);
+      expect(await inbox.pending(), isEmpty);
+      expect(importer.reviewOnly(item.id), isFalse);
+    });
+
+    test('a held message read again after a restart is dropped as already imported', () async {
+      await money.addAccount(bank, opening: sar(1000), openedOn: DateTime(2026, 10, 1));
+      await share('Bank message.txt', utf8.encode('Purchase of SAR 18.00 at CORNER CAFE'), kind: 'message');
+      await importer.checkInbox();
+      final item = importer.state.items.single;
+      await money.markImported([item.hash!]);
+      importer.hold([item.id]);
+      await importer.close();
+
+      importer = ImportCubit(inbox: inbox, recognition: recognition, wasImported: money.wasImported, languages: () => const ['en-US']);
+      await importer.checkInbox();
+      expect(importer.state.items, isEmpty);
+      expect(await inbox.pending(), isEmpty);
+    });
+
     test('a message keeps who sent it, and settings keep what was learned', () async {
       final folder = Directory('${dir.path}/shared/sms')..createSync();
       File('${folder.path}/Bank message.txt').writeAsStringSync('Purchase of SAR 18.00 at CORNER CAFE');

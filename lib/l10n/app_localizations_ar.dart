@@ -4699,6 +4699,10 @@ class AppLocalizationsAr extends AppLocalizations {
       'أضف الحساب البنكي أو البطاقة التي يخصها هذا الكشف، ثم عد إلى هنا.';
 
   @override
+  String get importNoAccountMessagesBody =>
+      'أضف الحساب البنكي أو البطاقة التي جاءت منها هذه الرسائل، ثم عد إلى هنا.';
+
+  @override
   String importAddCount(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
@@ -4864,6 +4868,10 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get importReadOnDevice =>
       'تُقرأ على هذا الجهاز، وتُحذف الملفات بعد الاستيراد.';
+
+  @override
+  String get importMessageNoSender =>
+      'الرسائل التي لا تذكر مرسلها تذهب كلها إلى حساب واحد. مرّر «المرسل» إلى إجراء قيمة في أتمتة الاختصارات.';
 
   @override
   String get importEmpty => 'لا شيء في الانتظار';

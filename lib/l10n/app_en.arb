@@ -3024,6 +3024,7 @@
   "importIntoAccount": "Statement of",
   "importNoAccountTitle": "Add the account first",
   "importNoAccountBody": "Add the bank account or card this statement is from, then come back here.",
+  "importNoAccountMessagesBody": "Add the bank account or card these messages are from, then come back here.",
   "importAddCount": "{count, plural, =0{Add} =1{Add 1 transaction} other{Add {count} transactions}}",
   "@importAddCount": {
     "placeholders": {
@@ -3165,6 +3166,8 @@
   "importCategory": "Category",
   "importNothingSelected": "Tick the transactions to add.",
   "importReadOnDevice": "Read on this device. Files are deleted once imported.",
+  "importMessageNoSender": "Messages without a sender all go to one account. Pass the Sender to Qima’s action in your Shortcuts automation.",
+  "@importMessageNoSender": {"description": "Tip on the import review when a bank message from an iOS Shortcuts automation came without its sender"},
   "importEmpty": "Nothing waiting",
   "catUncategorized": "Uncategorized",
   "@catUncategorized": {

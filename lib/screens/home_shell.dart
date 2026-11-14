@@ -65,9 +65,14 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
       _onForeground();
       _maybeShowWhatsNew(context.read<MoneyCubit>().state);
       // The "Bank messages to check" notification opens the review.
-      unawaited(BankMessages.listenForOpen(() {
-        if (mounted && !ImportReviewScreen.showing) unawaited(ImportReviewScreen.open(context));
-      }));
+      unawaited(BankMessages.listenForOpen(
+        () {
+          if (mounted && !ImportReviewScreen.showing) unawaited(ImportReviewScreen.open(context));
+        },
+        onNew: () {
+          if (mounted) unawaited(maybeImportCubit(context)?.checkInbox());
+        },
+      ));
     });
   }
 
@@ -87,7 +92,7 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
     if (_autoAdding || importer == null || !money.state.loaded || !money.state.settings.autoAddMessages || ImportReviewScreen.showing) return;
     final ready = [
       for (final i in importer.state.items)
-        if (i.file.message && i.status == ImportStatus.read)
+        if (i.file.message && i.status == ImportStatus.read && !importer.reviewOnly(i.id))
           (id: i.id, message: true, sender: i.file.sender, rows: i.rows, facts: i.facts, hash: i.hash),
     ];
     if (ready.isEmpty) return;
@@ -105,21 +110,37 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
       if (sure.isEmpty) return;
       final ids = {for (final s in sure) s.fileId};
       final entries = [for (final s in sure) s.entry];
-      await money.importEntries(entries, fileHashes: [for (final f in ready) if (ids.contains(f.id)) ?f.hash]);
-      await importer.remove(ids);
-      if (!mounted) return;
+      final hashes = [for (final f in ready) if (ids.contains(f.id)) ?f.hash];
+      await money.importEntries(entries, fileHashes: hashes);
+      // The messages stay in the inbox until Undo can no longer bring them
+      // back; Undo puts them in review instead.
+      importer.hold(ids);
+      if (!mounted) {
+        await importer.remove(ids);
+        return;
+      }
       final l10n = AppLocalizations.of(context)!;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(l10n.bankMessagesAutoAdded(entries.length)),
-        action: SnackBarAction(
-          label: l10n.commonUndo,
-          onPressed: () async {
-            for (final e in entries) {
-              await money.deleteEntry(e.id);
-            }
-          },
-        ),
-      ));
+      final closed = ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(
+            content: Text(l10n.bankMessagesAutoAdded(entries.length)),
+            persist: false,
+            duration: const Duration(seconds: 6),
+            action: SnackBarAction(label: l10n.commonUndo, onPressed: () {}),
+          ))
+          .closed;
+      unawaited(closed.then((reason) async {
+        try {
+          if (reason == SnackBarClosedReason.action) {
+            await money.undoImport([for (final e in entries) e.id], fileHashes: hashes);
+            importer.release(ids);
+          } else {
+            await importer.remove(ids);
+          }
+        } catch (e) {
+          // The files stay in the inbox; the next start sorts them out.
+          debugPrint('Auto-add undo: $e');
+        }
+      }));
     } on BookRejected catch (e) {
       debugPrint('Auto-add: ${e.issues.map((i) => i.detail).join('; ')}');
     } finally {

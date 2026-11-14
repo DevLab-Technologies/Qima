@@ -8051,6 +8051,12 @@ abstract class AppLocalizations {
   /// **'Add the bank account or card this statement is from, then come back here.'**
   String get importNoAccountBody;
 
+  /// No description provided for @importNoAccountMessagesBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Add the bank account or card these messages are from, then come back here.'**
+  String get importNoAccountMessagesBody;
+
   /// No description provided for @importAddCount.
   ///
   /// In en, this message translates to:
@@ -8272,6 +8278,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Read on this device. Files are deleted once imported.'**
   String get importReadOnDevice;
+
+  /// Tip on the import review when a bank message from an iOS Shortcuts automation came without its sender
+  ///
+  /// In en, this message translates to:
+  /// **'Messages without a sender all go to one account. Pass the Sender to Qima’s action in your Shortcuts automation.'**
+  String get importMessageNoSender;
 
   /// No description provided for @importEmpty.
   ///

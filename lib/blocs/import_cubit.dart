@@ -84,6 +84,17 @@ class ImportCubit extends Cubit<ImportState> {
   bool _running = false;
   bool _again = false;
 
+  /// Items added on their own that can still be undone: out of the list,
+  /// their files still in the inbox until [remove] or [release].
+  final Map<String, ImportItem> _held = {};
+
+  /// Items brought back by Undo: they wait for the person, never added on
+  /// their own again.
+  final Set<String> _reviewOnly = {};
+
+  /// Whether [id] was brought back by Undo and must wait for the person.
+  bool reviewOnly(String id) => _reviewOnly.contains(id);
+
   ImportCubit({
     required this.inbox,
     required TextRecognitionService recognition,
@@ -122,7 +133,7 @@ class ImportCubit extends Cubit<ImportState> {
       for (final i in state.items)
         if (stillThere.contains(i.id)) i,
       for (final f in pending)
-        if (!known.contains(f.id)) ImportItem(f),
+        if (!known.contains(f.id) && !_held.containsKey(f.id)) ImportItem(f),
     ];
     if (!listEquals(items, state.items)) emit(ImportState(items: items));
 
@@ -197,9 +208,30 @@ class ImportCubit extends Cubit<ImportState> {
     final set = ids.toSet();
     for (final id in set) {
       await inbox.remove(id);
+      _held.remove(id);
+      _reviewOnly.remove(id);
     }
     if (isClosed) return;
     emit(ImportState(items: [for (final i in state.items) if (!set.contains(i.id)) i]));
+  }
+
+  /// Takes items out of the list while their adding can still be undone,
+  /// keeping their files in the inbox: if the app stops before [remove],
+  /// the files are read again and, already imported, dropped then.
+  void hold(Iterable<String> ids) {
+    final set = ids.toSet();
+    for (final i in state.items) {
+      if (set.contains(i.id)) _held[i.id] = i;
+    }
+    emit(ImportState(items: [for (final i in state.items) if (!set.contains(i.id)) i]));
+  }
+
+  /// Brings held items back to wait for the person (after Undo).
+  void release(Iterable<String> ids) {
+    final back = [for (final id in ids) ?_held.remove(id)];
+    if (back.isEmpty || isClosed) return;
+    _reviewOnly.addAll(back.map((i) => i.id));
+    emit(ImportState(items: [...state.items, ...back]));
   }
 }
 

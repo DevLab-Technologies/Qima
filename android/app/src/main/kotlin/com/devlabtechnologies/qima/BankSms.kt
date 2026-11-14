@@ -55,6 +55,13 @@ object BankSms {
     private const val NOTIFICATION_ID = 4209
     const val OPEN_REVIEW = "com.devlabtechnologies.qima.OPEN_IMPORT_REVIEW"
 
+    /**
+     * Set while Qima is on screen (MainActivity's onResume to onPause): a
+     * new message goes straight to the open app instead of a notification.
+     */
+    @Volatile
+    var onScreen: (() -> Unit)? = null
+
     /** How long the same text from the same sender counts as the same message. */
     private const val SAME_MESSAGE_MS = 10 * 60 * 1000L
 
@@ -179,6 +186,10 @@ object BankSms {
         // The SMS store dates a message when it lands; so does this.
         markSeen(context, System.currentTimeMillis())
         if (!add(context, body, at, sender)) return
+        onScreen?.let {
+            it()
+            return
+        }
         val p = prefs(context)
         p.edit().putInt(WAITING, p.getInt(WAITING, 0) + 1).apply()
         notifyWaiting(context)
@@ -273,6 +284,11 @@ class BankSmsChannel(private val activity: Activity, messenger: BinaryMessenger)
 
             override fun notImplemented() {}
         })
+    }
+
+    /** A message arrived while Qima is on screen: Dart reads the inbox now. */
+    fun newMessages() {
+        channel.invokeMethod("newMessages", null)
     }
 
     override fun onMethodCall(call: io.flutter.plugin.common.MethodCall, result: MethodChannel.Result) {
