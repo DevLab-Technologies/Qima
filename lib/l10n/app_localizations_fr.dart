@@ -5163,4 +5163,35 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get entryFromHoldings =>
       'Issue d’une opération de placement. Modifiez-la ou supprimez-la dans Placements.';
+
+  @override
+  String get settingsAiApps => 'Apps d’IA';
+
+  @override
+  String get aiAppsToggle => 'Autoriser les apps d’IA à lire Qima';
+
+  @override
+  String get aiAppsFooter =>
+      'Claude et les autres apps d’IA de cet ordinateur compatibles MCP peuvent lire vos comptes, opérations, budget et patrimoine net, sans rien modifier. Ce qu’elles lisent est envoyé au service d’IA de l’app. Les numéros de compte, de carte et d’IBAN et les notes des comptes ne sont jamais partagés, et désactiver cette option supprime la copie partagée.';
+
+  @override
+  String get aiAppsSetupTitle => 'Ajouter Qima à votre app d’IA';
+
+  @override
+  String get aiAppsSetupBody =>
+      'Dans Claude Desktop, ouvrez Réglages, puis Developer, puis Edit Config, et ajoutez ceci au fichier. Les autres apps compatibles MCP utilisent la même commande et les mêmes arguments.';
+
+  @override
+  String get aiAppsCopy => 'Copier';
+
+  @override
+  String get aiAppsCopied => 'Copié';
+
+  @override
+  String get aiAppsFreshness =>
+      'La copie se met à jour tant que Qima est ouverte.';
+
+  @override
+  String get aiAppsNoHelper =>
+      'Le connecteur n’est pas inclus dans cette copie de Qima. Installez Qima depuis le store ou le site pour l’utiliser.';
 }

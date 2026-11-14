@@ -17,6 +17,7 @@ import 'screens/instrument_detail_screen.dart';
 import 'screens/onboarding_tour_screen.dart';
 import 'screens/watch_watchlist_screen.dart';
 import 'screens/zakat_screen.dart';
+import 'services/ai_apps.dart';
 import 'services/import/import_inbox.dart';
 import 'services/import/statement_files.dart';
 import 'services/backup/backup_reminder_notifier.dart';
@@ -79,6 +80,7 @@ class _QimaAppState extends State<QimaApp> {
   late final AppCubit _cubit;
   late final MoneyCubit _money;
   late final ImportCubit _import;
+  late final AiApps _aiApps;
   StreamSubscription<String>? _tapSubscription;
 
   @override
@@ -99,12 +101,14 @@ class _QimaAppState extends State<QimaApp> {
       languages: () => StatementFiles.languagesFor(
           _cubit.state.appLanguage.localeIdentifier ?? WidgetsBinding.instance.platformDispatcher.locale.languageCode),
     );
+    _aiApps = AiApps(app: _cubit, money: _money);
     _cubit.onBookChanged = (key) => key == null ? _money.load() : _money.adoptCloudChanges(key);
     _tapSubscription = notificationTapPayloads.stream.listen(_handleNotificationTap);
     // The money ledger loads after init, once the cloud backend is settled
     // (see AppCubit.init), so a fresh device never seeds over synced data.
     _cubit.init().then((_) async {
       await _money.load();
+      _aiApps.start();
       // Files shared to Qima while it was closed.
       unawaited(_import.checkInbox());
       await _consumeColdLaunchPayload();
@@ -117,6 +121,7 @@ class _QimaAppState extends State<QimaApp> {
     unawaited(_cubit.disposeCloudSync());
     unawaited(_money.close());
     unawaited(_import.close());
+    unawaited(_aiApps.dispose());
     super.dispose();
   }
 
@@ -170,6 +175,7 @@ class _QimaAppState extends State<QimaApp> {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
+        RepositoryProvider<AiApps>.value(value: _aiApps),
         BlocProvider<AppCubit>.value(value: _cubit),
         BlocProvider<MoneyCubit>.value(value: _money),
         BlocProvider<ImportCubit>.value(value: _import),

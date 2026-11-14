@@ -1465,5 +1465,14 @@
   "holdingPaidInto": "Ingresado en",
   "holdingNoCash": "Sin movimiento de dinero (ya lo tenía)",
   "holdingCashHelp": "El importe se resta de esta cuenta para no contarlo dos veces.",
-  "entryFromHoldings": "Viene de una operación de inversión. Cámbiala o bórrala en Inversiones."
+  "entryFromHoldings": "Viene de una operación de inversión. Cámbiala o bórrala en Inversiones.",
+  "settingsAiApps": "Apps de IA",
+  "aiAppsToggle": "Permitir que las apps de IA lean Qima",
+  "aiAppsFooter": "Claude y otras apps de IA de este ordenador compatibles con MCP pueden leer tus cuentas, movimientos, presupuesto y patrimonio neto, sin cambiar nada. Lo que leen se envía al servicio de IA de esa app. Los números de cuenta, tarjeta e IBAN y las notas de las cuentas nunca se comparten, y al desactivarlo se borra la copia compartida.",
+  "aiAppsSetupTitle": "Añadir Qima a tu app de IA",
+  "aiAppsSetupBody": "En Claude Desktop, abre Ajustes, luego Developer y luego Edit Config, y añade esto al archivo. Las demás apps compatibles con MCP usan el mismo comando y argumentos.",
+  "aiAppsCopy": "Copiar",
+  "aiAppsCopied": "Copiado",
+  "aiAppsFreshness": "La copia se actualiza mientras Qima está abierta.",
+  "aiAppsNoHelper": "El conector no está en esta copia de Qima. Instala Qima desde la tienda o la web para usarlo."
 }

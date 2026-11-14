@@ -5144,4 +5144,34 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get entryFromHoldings =>
       'هذه من عملية في الاستثمارات. عدّلها أو احذفها من الاستثمارات.';
+
+  @override
+  String get settingsAiApps => 'تطبيقات الذكاء الاصطناعي';
+
+  @override
+  String get aiAppsToggle => 'السماح لتطبيقات الذكاء الاصطناعي بقراءة قيمة';
+
+  @override
+  String get aiAppsFooter =>
+      'يمكن لـ Claude وتطبيقات الذكاء الاصطناعي الأخرى على هذا الجهاز التي تدعم MCP قراءة حساباتك ومعاملاتك وميزانيتك وصافي ثروتك، دون أن تغيّر أي شيء. ما تقرؤه يذهب إلى خدمة الذكاء الاصطناعي لذلك التطبيق. أرقام الحسابات والبطاقات والآيبان وملاحظات الحسابات لا تُشارك أبدًا، وإيقاف هذا الخيار يحذف النسخة المشتركة.';
+
+  @override
+  String get aiAppsSetupTitle => 'أضف قيمة إلى تطبيق الذكاء الاصطناعي';
+
+  @override
+  String get aiAppsSetupBody =>
+      'في Claude Desktop افتح الإعدادات، ثم Developer، ثم Edit Config، وأضف هذا إلى الملف. التطبيقات الأخرى التي تدعم MCP تستخدم الأمر والوسائط نفسها.';
+
+  @override
+  String get aiAppsCopy => 'نسخ';
+
+  @override
+  String get aiAppsCopied => 'تم النسخ';
+
+  @override
+  String get aiAppsFreshness => 'تتحدّث النسخة ما دامت قيمة مفتوحة.';
+
+  @override
+  String get aiAppsNoHelper =>
+      'الموصّل غير موجود في هذه النسخة من قيمة. ثبّت قيمة من المتجر أو من الموقع لاستخدامه.';
 }

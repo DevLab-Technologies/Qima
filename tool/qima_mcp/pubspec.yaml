@@ -1,0 +1,12 @@
+name: qima_mcp
+description: Qima's read-only MCP server for AI apps on the desktop. Shares the app's models by path.
+publish_to: none
+version: 1.0.0
+
+environment:
+  sdk: ^3.11.4
+
+# Only what lib/models and lib/mcp import. Keep these on the app's versions.
+dependencies:
+  equatable: ^2.1.0
+  intl: ^0.20.2

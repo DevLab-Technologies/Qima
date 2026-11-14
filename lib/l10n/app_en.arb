@@ -3350,5 +3350,14 @@
   "holdingPaidInto": "Paid into",
   "holdingNoCash": "No cash moved (already held)",
   "holdingCashHelp": "Takes the amount off this account so it isn't counted twice.",
-  "entryFromHoldings": "This came from a holdings trade. Change or delete it in Holdings."
+  "entryFromHoldings": "This came from a holdings trade. Change or delete it in Holdings.",
+  "settingsAiApps": "AI apps",
+  "aiAppsToggle": "Let AI apps read Qima",
+  "aiAppsFooter": "Claude and other AI apps on this computer that support MCP can read your accounts, transactions, budget and net worth. They can't change anything. What they read goes to that app's AI service. Account, card and IBAN numbers and account notes are never shared, and turning this off removes the shared copy.",
+  "aiAppsSetupTitle": "Add Qima to your AI app",
+  "aiAppsSetupBody": "In Claude Desktop, open Settings, then Developer, then Edit Config, and add this to the file. Other apps that support MCP use the same command and arguments.",
+  "aiAppsCopy": "Copy",
+  "aiAppsCopied": "Copied",
+  "aiAppsFreshness": "The copy updates while Qima is open.",
+  "aiAppsNoHelper": "The connector isn't in this copy of Qima. Install Qima from the store or the website to use it."
 }

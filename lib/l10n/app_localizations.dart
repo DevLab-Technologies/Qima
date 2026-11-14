@@ -8710,6 +8710,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'This came from a holdings trade. Change or delete it in Holdings.'**
   String get entryFromHoldings;
+
+  /// No description provided for @settingsAiApps.
+  ///
+  /// In en, this message translates to:
+  /// **'AI apps'**
+  String get settingsAiApps;
+
+  /// No description provided for @aiAppsToggle.
+  ///
+  /// In en, this message translates to:
+  /// **'Let AI apps read Qima'**
+  String get aiAppsToggle;
+
+  /// No description provided for @aiAppsFooter.
+  ///
+  /// In en, this message translates to:
+  /// **'Claude and other AI apps on this computer that support MCP can read your accounts, transactions, budget and net worth. They can\'t change anything. What they read goes to that app\'s AI service. Account, card and IBAN numbers and account notes are never shared, and turning this off removes the shared copy.'**
+  String get aiAppsFooter;
+
+  /// No description provided for @aiAppsSetupTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Qima to your AI app'**
+  String get aiAppsSetupTitle;
+
+  /// No description provided for @aiAppsSetupBody.
+  ///
+  /// In en, this message translates to:
+  /// **'In Claude Desktop, open Settings, then Developer, then Edit Config, and add this to the file. Other apps that support MCP use the same command and arguments.'**
+  String get aiAppsSetupBody;
+
+  /// No description provided for @aiAppsCopy.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy'**
+  String get aiAppsCopy;
+
+  /// No description provided for @aiAppsCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Copied'**
+  String get aiAppsCopied;
+
+  /// No description provided for @aiAppsFreshness.
+  ///
+  /// In en, this message translates to:
+  /// **'The copy updates while Qima is open.'**
+  String get aiAppsFreshness;
+
+  /// No description provided for @aiAppsNoHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'The connector isn\'t in this copy of Qima. Install Qima from the store or the website to use it.'**
+  String get aiAppsNoHelper;
 }
 
 class _AppLocalizationsDelegate

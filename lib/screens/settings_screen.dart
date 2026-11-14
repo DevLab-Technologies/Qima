@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart' show kIsWeb, TargetPlatform, defaultTargetPlatform;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
+import 'package:intl/intl.dart' hide TextDirection;
 import 'package:package_info_plus/package_info_plus.dart';
 
 import '../blocs/app_cubit.dart';
@@ -12,6 +15,7 @@ import '../models/chart_range.dart';
 import '../services/app_lock_service.dart';
 import '../services/cloud_kv_store.dart';
 import '../services/preferences.dart';
+import '../services/ai_apps.dart';
 import '../services/ai_assist_provider.dart';
 import '../theme/design_system.dart';
 import '../theme/help_topics.dart';
@@ -109,6 +113,11 @@ class SettingsScreen extends StatelessWidget {
                 SectionHeader(l10n.settingsIntelligence),
                 const _OnDeviceModelSection(),
                 const SizedBox(height: DS.spaceLG),
+                if (AiApps.supported) ...[
+                  SectionHeader(l10n.settingsAiApps),
+                  const _AiAppsSection(),
+                  const SizedBox(height: DS.spaceLG),
+                ],
                 SectionHeader(l10n.settingsBackup),
                 const _BackupSection(),
                 const SizedBox(height: DS.spaceLG),
@@ -682,6 +691,119 @@ class _HelpSection extends StatelessWidget {
 /// Settings · On-device intelligence (v4 phase 6): the switch, and whether
 /// the OS's model is ready for the app's language. The switch works either
 /// way; with no model, nothing changes.
+/// "Let AI apps read Qima" (desktop only): the switch, what it shares, and
+/// once it is on, the config to paste into an AI app. See [AiApps].
+class _AiAppsSection extends StatefulWidget {
+  const _AiAppsSection();
+
+  @override
+  State<_AiAppsSection> createState() => _AiAppsSectionState();
+}
+
+class _AiAppsSectionState extends State<_AiAppsSection> {
+  bool _copied = false;
+  Timer? _copiedReset;
+
+  @override
+  void dispose() {
+    _copiedReset?.cancel();
+    super.dispose();
+  }
+
+  Future<void> _copy(String text) async {
+    await Clipboard.setData(ClipboardData(text: text));
+    if (!mounted) return;
+    setState(() => _copied = true);
+    _copiedReset?.cancel();
+    _copiedReset = Timer(const Duration(seconds: 2), () {
+      if (mounted) setState(() => _copied = false);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final ai = context.read<AiApps>();
+    final l10n = AppLocalizations.of(context)!;
+    final colors = context.colors;
+    final footnote = TextStyle(color: colors.textTertiary, fontSize: 12, height: 1.35);
+    return DSCard(
+      padding: const EdgeInsets.symmetric(horizontal: DS.spaceMD, vertical: DS.spaceXS),
+      child: ValueListenableBuilder<bool>(
+        valueListenable: ai.enabled,
+        builder: (context, on, _) => Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SwitchListTile.adaptive(
+              key: const Key('aiAppsToggle'),
+              contentPadding: EdgeInsets.zero,
+              title: Text(l10n.aiAppsToggle, style: TextStyle(color: colors.textPrimary)),
+              value: on,
+              onChanged: ai.setEnabled,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(bottom: DS.spaceSM),
+              child: Text(l10n.aiAppsFooter, style: footnote),
+            ),
+            if (on) ..._setup(ai, l10n, colors, footnote),
+          ],
+        ),
+      ),
+    );
+  }
+
+  List<Widget> _setup(AiApps ai, AppLocalizations l10n, QimaColors colors, TextStyle footnote) {
+    final helper = AiApps.helperPath();
+    if (helper == null) {
+      return [Padding(padding: const EdgeInsets.only(bottom: DS.spaceSM), child: Text(l10n.aiAppsNoHelper, style: footnote))];
+    }
+    return [
+      const Divider(height: DS.spaceLG),
+      Text(l10n.aiAppsSetupTitle, style: TextStyle(color: colors.textPrimary, fontWeight: FontWeight.w600)),
+      const SizedBox(height: DS.spaceXS),
+      Text(l10n.aiAppsSetupBody, style: footnote),
+      const SizedBox(height: DS.spaceSM),
+      FutureBuilder<String?>(
+        future: ai.snapshotPath(),
+        builder: (context, snap) {
+          final path = snap.data;
+          if (path == null) return const SizedBox.shrink();
+          final config = AiApps.config(helper: helper, snapshot: path);
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Commands and paths read left to right in every language.
+              Directionality(
+                textDirection: TextDirection.ltr,
+                child: Container(
+                  padding: const EdgeInsets.all(DS.spaceSM),
+                  decoration: BoxDecoration(
+                    color: colors.textPrimary.withValues(alpha: 0.05),
+                    borderRadius: BorderRadius.circular(DS.radiusTile),
+                  ),
+                  child: SelectableText(
+                    config,
+                    key: const Key('aiAppsConfig'),
+                    style: TextStyle(fontFamily: 'Menlo', fontFamilyFallback: const ['Consolas', 'monospace'], fontSize: 12, color: colors.textSecondary),
+                  ),
+                ),
+              ),
+              Align(
+                alignment: AlignmentDirectional.centerEnd,
+                child: TextButton.icon(
+                  onPressed: () => _copy(config),
+                  icon: Icon(_copied ? Icons.check : Icons.copy_rounded, size: 16),
+                  label: Text(_copied ? l10n.aiAppsCopied : l10n.aiAppsCopy),
+                ),
+              ),
+            ],
+          );
+        },
+      ),
+      Padding(padding: const EdgeInsets.only(bottom: DS.spaceSM), child: Text(l10n.aiAppsFreshness, style: footnote)),
+    ];
+  }
+}
+
 class _OnDeviceModelSection extends StatefulWidget {
   const _OnDeviceModelSection();
 
