@@ -214,4 +214,61 @@ void main() {
       );
     },
   );
+
+  test('a purchase charged to your card, or a balance in your account, is money out', () {
+    expect(
+      reader.readMessages('Purchase of SAR 50.00 at Jarir charged to your card ending 1234').single.amount,
+      -50.0,
+    );
+    expect(
+      reader.readMessages('تم خصم 100.00 ريال من حسابك. الرصيد المتاح في حسابك 900.00 ريال').single.amount,
+      -100.0,
+    );
+  });
+
+  test('a figure after "balance transfer" or "remaining amount" is still the transaction', () {
+    expect(reader.readMessages('Balance transfer of SAR 2,000.00 to your card ending 1234').length, 1);
+  });
+
+  test('a statement that marks its spending with a trailing minus keeps it as money out', () {
+    final page = DocPage([
+      for (final (i, (name, amount)) in [
+        ('CARD PAYMENT SHOP ONE', '12.50-'),
+        ('BILL PAYMENT POWER', '300.00-'),
+        ('POS PURCHASE CAFE', '45.00-'),
+        ('ATM WITHDRAWAL', '200.00-'),
+      ].indexed)
+        ...line(0.10 + i * 0.03, [
+          ('${10 + i}/10/2026', 0.05, 0.1),
+          (name, 0.3, 0.3),
+          (amount, 0.8, 0.08),
+        ]),
+    ]);
+    expect(reader.readPages([page]).every((r) => r.amount < 0), isTrue);
+  });
+
+  test('a card statement\'s trailing-minus credits do not carry to the next input', () {
+    final own = StatementReader(received: DateTime(2026, 11, 12));
+    final card = DocPage([
+      for (final (i, (name, amount)) in [
+        ('LOCAL PURCH CAFE', '61.58'),
+        ('LOCAL E-COMM STORE', '102.29'),
+        ('LOCAL PURCH FOOD', '6.00'),
+        ('INT. ECOMM. RET STORE', '30.00-'),
+      ].indexed)
+        ...line(0.10 + i * 0.03, [
+          ('${10 + i}/10/2026', 0.05, 0.1),
+          (name, 0.3, 0.3),
+          (amount, 0.8, 0.08),
+        ]),
+    ]);
+    expect(own.readPages([card]).last.amount, 30.0);
+    // A message with no direction word takes its figure's own sign.
+    expect(own.readMessages('Jarir SAR 50.00-').single.amount, -50.0);
+  });
+
+  test('money transferred to your card is money in; an abbreviated balance alone is no transaction', () {
+    expect(reader.readMessages('SAR 500.00 has been transferred to your card ending 1234').single.amount, 500.0);
+    expect(reader.readMessages('Merchant: Jarir\nAvail. Bal: SAR 32,829.34').isEmpty, isTrue);
+  });
 }

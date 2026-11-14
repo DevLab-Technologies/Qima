@@ -189,10 +189,33 @@ class StatementReader {
   StatementReader({required this.received});
 
   /// Card statements (SNB) print refunds and payments with a trailing
-  /// minus ("3,075.00-"): money in, not out. Decided per document.
+  /// minus ("3,075.00-"): money in, not out. Decided per document by
+  /// [_decideTrailingMinus], which every entry point calls.
   bool _trailingMinusIsCredit = false;
-  static final _trailingMinusCredit = RegExp(r'\d[.,]\d{2}-(?:\s|$)');
-  static final _creditRowWords = RegExp(r'payment|refund|\bret\b|reversal|credit|cash ?back|سداد|استرداد|مرتجع', caseSensitive: false);
+  static final _trailingMinusFigure = RegExp(r'\d[.,]\d{2}-(?:\s|$)');
+  static final _plainFigure = RegExp(r'\d[.,]\d{2}(?![\d-])');
+  static final _creditRowWords = RegExp(
+    r'payment|refund|\bret\b|reversal|\bcredit\b|cash ?back|thank you|سداد|استرداد|مرتجع',
+    caseSensitive: false,
+  );
+
+  /// A trailing minus means money in when it marks the few rows that are
+  /// refunds or payments among a card's unmarked spending: the marked lines
+  /// are fewer than the unmarked ones, and most of them name a refund or a
+  /// payment. A statement that marks its spending that way ("CARD PAYMENT
+  /// 12.50-" on most rows) keeps the minus as money out.
+  void _decideTrailingMinus(Iterable<String> texts) {
+    var marked = 0, credits = 0, plain = 0;
+    for (final t in texts) {
+      if (_trailingMinusFigure.hasMatch(t)) {
+        marked++;
+        if (_creditRowWords.hasMatch(t)) credits++;
+      } else if (_plainFigure.hasMatch(t)) {
+        plain++;
+      }
+    }
+    _trailingMinusIsCredit = credits > 0 && credits * 2 >= marked && marked < plain;
+  }
 
   // ---------------------------------------------------------------- text
 
@@ -635,13 +658,15 @@ class StatementReader {
   // ---------------------------------------------------------- reading
 
   /// Rows from positioned pages: statement PDFs, screenshots, tables.
-  List<StatementRow> readPages(List<DocPage> pages) {
-    final allLines = [for (final p in pages) _lines(p.tokens)];
-    _decideOrder([for (final ls in allLines) for (final l in ls) normalize(l.text)]);
-    _trailingMinusIsCredit = allLines.any((ls) => ls.any((l) {
-          final t = normalize(l.text);
-          return _trailingMinusCredit.hasMatch(t) && _creditRowWords.hasMatch(t);
-        }));
+  List<StatementRow> readPages(List<DocPage> pages) => _readPages([for (final p in pages) _lines(p.tokens)]).$1;
+
+  /// [readPages] from the pages' lines, with the lines that start a
+  /// message bubble.
+  (List<StatementRow>, Set<int>) _readPages(List<List<_Line>> allLines) {
+    final bubbleLines = <int>{};
+    final texts = [for (final ls in allLines) for (final l in ls) normalize(l.text)];
+    _decideOrder(texts);
+    _decideTrailingMinus(texts);
 
     final rows = <StatementRow>[];
     final rowLines = <_Line>[];
@@ -664,6 +689,9 @@ class StatementReader {
     // Where each row's figure sits across the page, for tables printed
     // without column names (CIB): by the row's line.
     final amountX = <int, double>{};
+    // The same for the second figure, which is the amount when the
+    // balance turns out to be printed first.
+    final flipX = <int, double>{};
     var datesUnder = 0;
     String pendingText = '';
     double? pendingBottom;
@@ -697,6 +725,7 @@ class StatementReader {
         if (bubble != null) {
           skip.addAll(bubble);
           final row = _message([for (final l in bubble) normalize(l.text)]);
+          bubbleLines.add(base + lines.indexOf(line));
           if (row != null) rows.add(row.copyWithLine(base + lines.indexOf(line)));
           pendingText = '';
           continue;
@@ -775,7 +804,15 @@ class StatementReader {
           if (dates.isNotEmpty && description.length < 3) {
             final prev = rowLines.isEmpty ? null : rowLines.last;
             final close = prev != null && rows.isNotEmpty && line.top - prev.bottom < prev.height * 1.5;
-            if (close && (rows.last.dateGuessed || (datesUnder > 0 && datedBySection.contains(rows.length - 1)))) {
+            // Nearer the row above than the line below: not a group heading.
+            final i = lines.indexOf(line);
+            final next = i + 1 < lines.length ? lines[i + 1] : null;
+            final belongsAbove = close && (next == null || line.top - prev.bottom <= next.top - line.bottom);
+            // A list that has dated more rows from below than from above
+            // is a card list: an orphan date line there is its row's
+            // whatever the spacing. Otherwise the spacing decides.
+            final cardList = datesUnder >= datedBySection.length;
+            if (close && (rows.last.dateGuessed || (datesUnder > 0 && (cardList || belongsAbove) && datedBySection.contains(rows.length - 1)))) {
               // A date under a row that had none is that row's (card lists);
               // once the list is known to date its rows from below, a row
               // dated from above by an orphan date line takes its own.
@@ -853,15 +890,16 @@ class StatementReader {
           final all = [for (final a in amounts) a.$1.value];
           final list = all.any((m) => !m.bare) ? all.where((m) => !m.bare).toList() : all;
           money = list.first;
-          final chosen = money;
-          final found = amounts.where((a) => identical(a.$1.value, chosen)).firstOrNull;
-          if (found != null) amountX[base + lines.indexOf(line)] = found.$1.x;
+          double? xOf(_Money m) => amounts.where((a) => identical(a.$1.value, m)).firstOrNull?.$1.x;
+          final at = base + lines.indexOf(line);
+          if (xOf(money) case final x?) amountX[at] = x;
           sign = money.sign;
           if (list.length >= 2) {
             final last = list.last;
             balance = last.major * (last.sign == 0 ? 1 : last.sign);
             final first = list.first;
             flip = (list[1], first.major * (first.sign == 0 ? 1 : first.sign));
+            if (xOf(list[1]) case final x?) flipX[at] = x;
           }
         }
         final balanceOnly = money == null && balance != null && byColumn;
@@ -950,7 +988,11 @@ class StatementReader {
         rowAnchor = line;
       }
     }
-    return _signsFromMarkers(_signsFromColumns(_signsFromBalances(_withDocumentCurrency(_amountsFromBalances(_balanceSide(_localAmounts(rows), balanceFirst), fromBalance))), amountX));
+    final local = _localAmounts(rows);
+    final sided = _balanceSide(local, balanceFirst);
+    // Balance printed first: each row's amount is its second figure.
+    if (!identical(sided, local)) amountX.addAll(flipX);
+    return (_signsFromMarkers(_signsFromColumns(_signsFromBalances(_withDocumentCurrency(_amountsFromBalances(sided, fromBalance))), amountX)), bubbleLines);
   }
 
   /// The full Gregorian dates in the cells at the start of a line and at
@@ -1220,7 +1262,7 @@ class StatementReader {
     List<StatementRow> reading(int leftSign) => [
           for (final r in rows)
             r.signGuessed && r.line != null && amountX[r.line] != null
-                ? r.copyWith(amount: r.amount.abs() * (amountX[r.line]! < split ? leftSign : -leftSign))
+                ? r.copyWith(amount: r.amount.abs() * (amountX[r.line]! < split ? leftSign : -leftSign), signGuessed: false)
                 : r,
         ];
     int fits(List<StatementRow> rs) {
@@ -1245,17 +1287,21 @@ class StatementReader {
 
     final outLeft = reading(-1), inLeft = reading(1);
     final a = fits(outLeft), b = fits(inLeft), now = fits(rows);
-    if (a > b && a > now) return [for (final r in outLeft) r.signGuessed && r.line != null && amountX[r.line] != null ? r.copyWith(signGuessed: false) : r];
-    if (b > a && b > now) return [for (final r in inLeft) r.signGuessed && r.line != null && amountX[r.line] != null ? r.copyWith(signGuessed: false) : r];
+    if (a > b && a > now) return outLeft;
+    if (b > a && b > now) return inLeft;
     return rows;
   }
 
   /// One row per message: shared text such as a bank SMS. Messages are
   /// separated by blank lines.
-  List<StatementRow> readMessages(String text) => [
-        for (final block in normalize(text).split(RegExp(r'\n\s*\n')))
-          ?_message(block.split('\n').map((l) => l.trim()).where((l) => l.isNotEmpty).toList()),
-      ];
+  List<StatementRow> readMessages(String text) {
+    // A message's minus is never a card statement's refund marker.
+    _trailingMinusIsCredit = false;
+    return [
+      for (final block in normalize(text).split(RegExp(r'\n\s*\n')))
+        ?_message(block.split('\n').map((l) => l.trim()).where((l) => l.isNotEmpty).toList()),
+    ];
+  }
 
   static final _merchantAt = RegExp(r'(?:\bat\b|لدى|\bchez\b|\ben\b)\s*:?\s*([^\d\s*][^·]{1,40})', caseSensitive: false);
   static final _paidTo = RegExp(r'(?:\bto\b|(?:^|\s)(?:إلى|الى|لصالح)(?=\s))\s*:?\s*([^\d\s*][^·]{1,40})', caseSensitive: false);
@@ -1445,11 +1491,14 @@ class StatementReader {
   /// each checked against the other. Use this rather than [readPages] and
   /// [facts] apart.
   (List<StatementRow>, StatementFacts) read(List<DocPage> pages) {
-    var rows = readPages(pages);
+    final pageLines = [for (final p in pages) _lines(p.tokens)];
+    // Message bubbles carry their day in the chat's separator, not in
+    // themselves: an undated one is still a transaction.
+    var (rows, bubbles) = _readPages(pageLines);
     // A banking app's account screen shows the balance large at its top;
     // that figure is the balance its labels give, not a transaction, and
     // the screen is no receipt.
-    final hasTable = pages.any((p) => _lines(p.tokens).any((l) => _header(l) != null));
+    final hasTable = pageLines.any((ls) => ls.any((l) => _header(l) != null));
     final shown = hasTable ? null : this.facts(pages, const []).closing;
     final headline = shown == null ? const <StatementRow>[] : rows.where((r) => r.dateGuessed && _same(r.amount.abs(), shown.abs())).toList();
     if (headline.isNotEmpty) rows = [for (final r in rows) if (!headline.contains(r)) r];
@@ -1458,7 +1507,7 @@ class StatementReader {
     // Only when the rows found are that one transaction read in pieces; a
     // short list with a "Total" line under it keeps its rows.
     if (single != null && (rows.isEmpty || rows.any((r) => _same(r.amount.abs(), single.$1.single.amount.abs())))) return single;
-    rows = _beforeOpeningDoubtful(_undatedDoubtful(rows), pages);
+    rows = _beforeOpeningDoubtful(_undatedDoubtful(rows, bubbles), pageLines);
     var facts = this.facts(pages, rows);
     final settled = _lastFromClosing(rows, facts);
     if (!identical(settled, rows)) {
@@ -1482,34 +1531,56 @@ class StatementReader {
   /// A card statement's first page lists the amount due, the minimum and
   /// the fees beside unprinted labels before the table starts with the
   /// balance brought forward: figures above that line are not transactions.
-  List<StatementRow> _beforeOpeningDoubtful(List<StatementRow> rows, List<DocPage> pages) {
-    final texts = lineTexts(pages);
-    final first = texts.indexWhere((t) => _openingLabel.hasMatch(t) || RegExp(r'\bb/f\b', caseSensitive: false).hasMatch(t));
+  List<StatementRow> _beforeOpeningDoubtful(List<StatementRow> rows, List<List<_Line>> pageLines) {
+    final texts = [for (final ls in pageLines) for (final l in ls) normalize(l.text)];
+    final first = texts.indexWhere((t) => _openingLabel.hasMatch(t) || _broughtForward.hasMatch(t));
     if (first < 0) return rows;
     final before = rows.where((r) => r.line != null && r.line! < first && !r.doubtful).length;
     final after = rows.where((r) => r.line != null && r.line! > first && !r.doubtful).length;
+    // Lines that come after a closing balance with no opening balance
+    // between: the statement's footer. A closing label counts only under a
+    // row of its page (a balance in the page's header box is not the end
+    // of the table), and the footer runs on to the next page unless the
+    // label only carried the balance forward to it.
+    final rowAt = {for (final r in rows) ?r.line};
+    final afterClosing = List<bool>.filled(texts.length, false);
+    var i = 0;
+    var closed = false, carry = false;
+    for (final ls in pageLines) {
+      if (!carry) closed = false;
+      var rowsSeen = false;
+      for (var k = 0; k < ls.length; k++, i++) {
+        afterClosing[i] = closed;
+        if (rowAt.contains(i)) rowsSeen = true;
+        if (_openingLabel.hasMatch(texts[i])) {
+          closed = false;
+        } else if (rowsSeen && _closingLabel.hasMatch(texts[i])) {
+          closed = true;
+          carry = !_carriedForward.hasMatch(texts[i]);
+        }
+      }
+    }
     // A nameless row of figures under the closing balance is the
     // statement's footer (due date, minimum payment), not a transaction.
-    bool underClosing(StatementRow r) {
-      if (r.line == null || RegExp(r'\p{L}{2,}', unicode: true).hasMatch(r.description)) return false;
-      for (var i = math.min(r.line!, texts.length) - 1; i >= 0; i--) {
-        if (_openingLabel.hasMatch(texts[i])) return false;
-        if (_closingLabel.hasMatch(texts[i])) return true;
-      }
-      return false;
-    }
+    bool underClosing(StatementRow r) =>
+        r.line != null && r.line! < texts.length && afterClosing[r.line!] && !_hasWord.hasMatch(r.description);
 
     final footers = [for (final r in rows) !r.doubtful && underClosing(r) ? r.copyWith(doubtful: true) : r];
     if (before == 0 || before > 3 || after < 5) return footers;
     return [for (final r in footers) r.line != null && r.line! < first ? r.copyWith(doubtful: true) : r];
   }
 
-  static List<StatementRow> _undatedDoubtful(List<StatementRow> rows) {
+  static final _broughtForward = RegExp(r'\bb/f\b', caseSensitive: false);
+  static final _carriedForward = RegExp(r'carried forward|\bc/f\b', caseSensitive: false);
+  static final _hasWord = RegExp(r'\p{L}{2,}', unicode: true);
+
+  static List<StatementRow> _undatedDoubtful(List<StatementRow> rows, Set<int> bubbles) {
     final dated = rows.where((r) => !r.dateGuessed).length;
+    final undatedDoubtful = dated >= 5 && dated > rows.length / 2;
     final seen = <String>{};
     return [
       for (final r in rows)
-        if (dated >= 5 && r.dateGuessed && dated > rows.length / 2)
+        if (undatedDoubtful && r.dateGuessed && !bubbles.contains(r.line))
           r.copyWith(doubtful: true)
         else if (r.balance != null && !seen.add('${_dayKey(r.date)}|${r.amount}|${r.balance}'))
           r.copyWith(doubtful: true)
@@ -1844,6 +1915,9 @@ class StatementReader {
   /// - Otherwise the rules' rows stay, taking the model's name for a row
   ///   whose own name came out unreadable, when both readings have the same
   ///   rows with the same amounts.
+  ///
+  /// Call it after [read] on the same [pages]: the document's own reading
+  /// of a trailing minus is decided there.
   (List<StatementRow>, StatementFacts) withStructure(
       List<DocPage> pages, List<StatementRow> rows, StatementFacts facts, List<PageStructure> structures) {
     final read = _fromStructure(pages, structures);
