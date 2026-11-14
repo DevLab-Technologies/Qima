@@ -95,6 +95,7 @@ class _QimaAppState extends State<QimaApp> {
       recognition: _cubit.textRecognition,
       wasImported: _money.wasImported,
       assist: () => _cubit.assist,
+      shapes: () => _money.state.settings.messageShapes,
       languages: () => StatementFiles.languagesFor(
           _cubit.state.appLanguage.localeIdentifier ?? WidgetsBinding.instance.platformDispatcher.locale.languageCode),
     );

@@ -50,6 +50,7 @@ class MainActivity : FlutterFragmentActivity() {
         }
         dictation = DictationChannel(this, flutterEngine.dartExecutor.binaryMessenger)
         bankSms = BankSmsChannel(this, flutterEngine.dartExecutor.binaryMessenger)
+        if (intent?.action == BankSms.OPEN_REVIEW) bankSms?.openReview()
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, systemSettingsChannelName).setMethodCallHandler { call, result ->
             when (call.method) {
                 "openNotificationSettings" -> {
@@ -59,6 +60,12 @@ class MainActivity : FlutterFragmentActivity() {
                 else -> result.notImplemented()
             }
         }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        if (intent.action == BankSms.OPEN_REVIEW) bankSms?.openReview()
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {

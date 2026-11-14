@@ -6,6 +6,7 @@ import 'book_entry.dart';
 import 'categorizer.dart';
 import 'default_categories.dart';
 import 'entry_builder.dart';
+import 'message_shape.dart';
 import 'minor_units.dart';
 import 'statement_facts.dart';
 import 'statement_reader.dart';
@@ -45,6 +46,9 @@ class StatementBalance extends Equatable {
   List<Object?> get props => [closing, date];
 }
 
+/// One file of an import, as [ImportPlanner.accountsFor] needs it.
+typedef ImportSource = ({String id, bool message, String? sender, List<StatementRow> rows, StatementFacts facts});
+
 /// One row on the review screen, with what Qima suggests for it.
 class ImportCandidate extends Equatable {
   /// `fileId:index`, stable while the batch is reviewed.
@@ -81,7 +85,17 @@ class ImportPlanner {
   /// statement with the same account or card number went to, else one whose
   /// currency the rows are written in, a bank account before a card, the
   /// most used.
-  static BookAccount? guessAccount(List<BookAccount> accounts, List<StatementRow> rows, List<BookEntry> entries, {Iterable<StatementRef> refs = const []}) {
+  static BookAccount? guessAccount(List<BookAccount> accounts, List<StatementRow> rows, List<BookEntry> entries,
+          {Iterable<StatementRef> refs = const [], String? senderAccountId}) =>
+      accountGuess(accounts, rows, entries, refs: refs, senderAccountId: senderAccountId)?.account;
+
+  /// [guessAccount], and whether the rows themselves name the account: a
+  /// remembered account or card number, a number in its name, the card's
+  /// name, or the sender whose messages went there before
+  /// ([senderAccountId]). Only a named account is sure enough to add a
+  /// message to without review.
+  static ({BookAccount account, bool named})? accountGuess(List<BookAccount> accounts, List<StatementRow> rows, List<BookEntry> entries,
+      {Iterable<StatementRef> refs = const [], String? senderAccountId}) {
     final named = refs.toList();
     final options = accounts.where(canHoldStatement).toList();
     if (options.isEmpty) return null;
@@ -116,11 +130,75 @@ class ImportPlanner {
         (a.statementRefs.any((k) => named.any((r) => r.matches(k))) ? 1 << 40 : 0) +
         (namesNumber(a) ? 1 << 39 : 0) +
         (nameFit(a) > 0 ? (1 << 38) + (nameFit(a) << 20) : 0) +
+        (a.id == senderAccountId ? 1 << 37 : 0) +
         (currencies[a.currency] ?? 0) * 1000 +
         (a.type == preferred ? 500 : 0) +
         (use[a.id] ?? 0).clamp(0, 499);
     options.sort((a, b) => score(b) - score(a));
-    return options.first;
+    return (account: options.first, named: score(options.first) >= 1 << 37);
+  }
+
+  /// The account each of [files] goes to, by file id, and whether the file
+  /// names it ([accountGuess]). Statements and screenshots are guessed
+  /// together, as one batch is usually one account; each bank message is
+  /// guessed on its own, by its account or card number and its sender
+  /// ([senders], by `senderKey`), since messages from different banks wait
+  /// together. [chosen] holds the person's own picks, by file id.
+  static Map<String, ({BookAccount account, bool named})> accountsFor({
+    required List<ImportSource> files,
+    required List<BookAccount> accounts,
+    required List<BookEntry> entries,
+    Map<String, String> senders = const {},
+    Map<String, String> chosen = const {},
+  }) {
+    final options = accounts.where(canHoldStatement).toList();
+    final out = <String, ({BookAccount account, bool named})>{};
+    if (options.isEmpty) return out;
+    final statements = files.where((f) => !f.message).toList();
+    final batch = statements.isEmpty
+        ? null
+        : accountGuess(options, [for (final f in statements) ...f.rows], entries, refs: [for (final f in statements) ...f.facts.refs]);
+    for (final f in files) {
+      final picked = options.where((a) => a.id == chosen[f.id]).firstOrNull;
+      if (picked != null) {
+        out[f.id] = (account: picked, named: true);
+        continue;
+      }
+      final guess = f.message
+          ? accountGuess(options, f.rows, entries, refs: f.facts.refs, senderAccountId: senders[senderKey(f.sender)])
+          : batch;
+      if (guess != null) out[f.id] = guess;
+    }
+    return out;
+  }
+
+  /// The bank messages among [files] Qima is sure enough of to add without
+  /// review, each with its entry: the message names its account (by number
+  /// or by a sender that went there before), it holds one transaction read
+  /// with its direction, in the account's currency, and the book doesn't
+  /// have anything like it already.
+  static List<({String fileId, BookEntry entry})> sureMessages({
+    required List<ImportSource> files,
+    required List<BookAccount> accounts,
+    required Book book,
+    required EntryBuilder builder,
+    Map<String, String> senders = const {},
+    Map<String, String> rules = const {},
+  }) {
+    final out = <({String fileId, BookEntry entry})>[];
+    final placed = accountsFor(files: files, accounts: accounts, entries: book.entries, senders: senders);
+    for (final f in files) {
+      final guess = placed[f.id];
+      if (!f.message || guess == null || !guess.named || f.rows.length != 1) continue;
+      final row = f.rows.single;
+      if (row.signGuessed || row.doubtful || (row.currency != null && row.currency != guess.account.currency)) continue;
+      final plan = ImportPlanner.plan(files: [(f.id, f.rows)], account: guess.account, book: book, rules: rules);
+      if (plan.length != 1 || !plan.single.suggested) continue;
+      final category = book.accounts[plan.single.categoryId];
+      if (category == null) continue;
+      out.add((fileId: f.id, entry: entryFor(builder: builder, account: guess.account, category: category, row: row, isIn: row.isIn)));
+    }
+    return out;
   }
 
   static final _cardField = RegExp(r'(?:^|\s)(?:card|بطاقة|carte|tarjeta)\s*:\s*(.+?)(?=\s+\p{L}+\s*:|$)', caseSensitive: false, unicode: true);

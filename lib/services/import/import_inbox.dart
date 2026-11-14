@@ -18,7 +18,11 @@ class ImportFile extends Equatable {
   /// with no transaction in it, such as a one-time code, is dropped unseen.
   final bool message;
 
-  const ImportFile({required this.id, required this.name, required this.receivedAt, required this.path, this.message = false});
+  /// Who sent [message]: the SMS sender's name or number, or what a
+  /// Shortcuts automation passed. Null when not known.
+  final String? sender;
+
+  const ImportFile({required this.id, required this.name, required this.receivedAt, required this.path, this.message = false, this.sender});
 
   String get extension {
     final dot = name.lastIndexOf('.');
@@ -26,7 +30,7 @@ class ImportFile extends Equatable {
   }
 
   @override
-  List<Object?> get props => [id, name, receivedAt, path, message];
+  List<Object?> get props => [id, name, receivedAt, path, message, sender];
 }
 
 abstract class ImportInbox {

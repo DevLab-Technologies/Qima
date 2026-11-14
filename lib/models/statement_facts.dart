@@ -232,3 +232,35 @@ class PageStructure extends Equatable {
   @override
   List<Object?> get props => [rows, opening, closing, account];
 }
+
+/// What the on-device model says one bank message is: what happened, and
+/// the exact words of its amount, the balance it leaves and who it was
+/// with. Never a figure of its own: the reader finds each of these words in
+/// the message and reads the figure from them
+/// (`StatementReader.withMessageLabels`).
+class MessageLabels extends Equatable {
+  /// Null when the model named no intent the reader knows.
+  final MessageIntent? intent;
+  final String amount;
+  final String balance;
+
+  /// Who the money went to or came from; digits are dropped.
+  final String name;
+
+  const MessageLabels({this.intent, this.amount = '', this.balance = '', this.name = ''});
+
+  static MessageLabels? fromMap(Map<Object?, Object?> m) {
+    String text(String key) => m[key] is String ? (m[key] as String).trim() : '';
+    final intent = MessageIntent.values.asNameMap()[text('intent')];
+    final out = MessageLabels(
+      intent: intent,
+      amount: text('amount'),
+      balance: text('balance'),
+      name: text('name').replaceAll(RegExp(r'[0-9٠-٩۰-۹]'), '').trim(),
+    );
+    return out.intent == null && out.amount.isEmpty ? null : out;
+  }
+
+  @override
+  List<Object?> get props => [intent, amount, balance, name];
+}

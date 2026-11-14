@@ -12,6 +12,7 @@ import '../models/entry_builder.dart';
 import '../models/holding_transaction.dart';
 import '../models/money.dart';
 import '../models/money_analysis.dart';
+import '../models/message_shape.dart';
 import '../models/minor_units.dart';
 import '../models/money_settings.dart';
 import '../models/net_worth.dart';
@@ -634,6 +635,22 @@ class MoneyCubit extends Cubit<MoneyState> {
     if (rules.isEmpty) return;
     await _saveSettings(state.settings.copyWith(categoryRules: {...state.settings.categoryRules, ...rules}));
   }
+
+  /// Remembers, from the review screen, which account each bank message
+  /// sender's messages went to ([senders], by `senderKey`) and how senders
+  /// write the messages the person corrected ([shapes]).
+  Future<void> learnMessages({Map<String, String> senders = const {}, List<MessageShape> shapes = const []}) async {
+    if (senders.isEmpty && shapes.isEmpty) return;
+    final s = state.settings;
+    await _saveSettings(s.copyWith(
+      messageSenders: {...s.messageSenders, ...senders},
+      messageShapes: MessageShape.merge(s.messageShapes, shapes),
+    ));
+  }
+
+  Future<void> setAutoAddMessages(bool on) => _saveSettings(state.settings.copyWith(autoAddMessages: on));
+
+  Future<void> markBankMessagesAsked() => _saveSettings(state.settings.copyWith(askedBankMessages: true));
 
   Future<void> forgetCategory(String ruleKey) =>
       _saveSettings(state.settings.copyWith(categoryRules: {...state.settings.categoryRules}..remove(ruleKey)));

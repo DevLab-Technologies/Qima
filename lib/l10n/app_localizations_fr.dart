@@ -1501,7 +1501,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get helpBankMessagesStep3Body =>
-      'Les messages attendent dans la revue d’import. Les codes, offres et doublons sont ignorés.';
+      'Les messages attendent dans la revue d’import, chacun sous le compte qu’il indique ; déplacez-en un s’il est mal placé et Qima retient l’expéditeur. Corrigez un message une fois et le suivant du même type sera lu comme vous l’avez montré. Les codes, offres et doublons sont ignorés.';
 
   @override
   String get helpBankMessagesStep4Title => 'Privé';
@@ -4628,7 +4628,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get bankMessagesStep4 =>
-      'Ajoutez l’action « Add a bank message » de Qima et passez-lui le message.';
+      'Ajoutez l’action « Add a bank message » de Qima et passez-lui le message et son expéditeur.';
 
   @override
   String get bankMessagesOpenShortcuts => 'Ouvrir Raccourcis';
@@ -4640,6 +4640,56 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get bankMessagesPrivacy =>
       'Les messages sont lus sur cet appareil et ne le quittent jamais.';
+
+  @override
+  String get importMessagesInto => 'Messages vers';
+
+  @override
+  String importMessageFrom(String sender) {
+    return 'Message de $sender';
+  }
+
+  @override
+  String get importMoveMessage => 'Déplacer vers un autre compte';
+
+  @override
+  String get bankMessagesNotifyTitle => 'Messages bancaires à vérifier';
+
+  @override
+  String get bankMessagesNotifyBody =>
+      'Ouvrez Qima pour les vérifier avant leur ajout.';
+
+  @override
+  String bankMessagesAutoAdded(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count transactions ajoutées depuis des messages bancaires',
+      one: '1 transaction ajoutée depuis un message bancaire',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get bankMessagesAutoAdd => 'Ajouter ceux dont Qima est sûr';
+
+  @override
+  String get bankMessagesAutoAddHint =>
+      'Quand un message indique son compte et que rien n’est à vérifier, il est ajouté tout de suite, avec Annuler. Les autres vous attendent.';
+
+  @override
+  String get bankMessagesOfferTitle =>
+      'Ajoutez vos achats depuis les SMS de votre banque';
+
+  @override
+  String get bankMessagesOfferBody =>
+      'Qima peut lire les nouveaux messages bancaires sur ce téléphone et proposer chacun comme transaction dans son propre compte. Les messages sont lus sur cet appareil uniquement.';
+
+  @override
+  String get bankMessagesOfferAllow => 'Autoriser';
+
+  @override
+  String get bankMessagesOfferLater => 'Plus tard';
 
   @override
   String bankMessagesFound(int count) {

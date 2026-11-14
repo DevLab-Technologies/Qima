@@ -337,3 +337,126 @@ extension _BankMessages on StatementReader {
         b.toString().split(' · ').firstWhere((p) => StatementReader._clean(p).length >= 2, orElse: () => ''));
   }
 }
+
+/// A figure written in a message, and where: offsets into the message as
+/// `StatementReader.normalize` gives it.
+class MessageFigure extends Equatable {
+  final int start, end;
+
+  /// As written, always positive.
+  final double major;
+  final String? currency;
+
+  /// -1 written as out, 1 as in, 0 not said.
+  final int sign;
+
+  /// Words just before it name a balance or limit left.
+  final bool left;
+
+  const MessageFigure(this.start, this.end, this.major, this.currency, {this.sign = 0, this.left = false});
+
+  @override
+  List<Object?> get props => [start, end, major, currency, sign, left];
+}
+
+/// What learned shapes and the on-device model use to take a message's
+/// figures from its own text.
+extension MessageReading on StatementReader {
+  /// Every amount [text] holds (dates, times and long reference numbers
+  /// left out), in order. [text] must already be normalized.
+  List<MessageFigure> figuresIn(String text) {
+    _decideOrder([text]);
+    final (_, dateSpans) = _dates(text);
+    final times = [for (final m in StatementReader._time.allMatches(text)) _Span(m.start, m.end)];
+    return [
+      for (final a in _amounts(text, [...dateSpans, ...times]))
+        MessageFigure(a.span.start, a.span.end, a.value.major.abs(), a.value.currency,
+            sign: a.value.sign,
+            left: StatementReader._leftBefore.hasMatch(text.substring(math.max(0, a.span.start - 40), a.span.start))),
+    ];
+  }
+
+  /// The rules' reading of one message ([rows]) with what the on-device
+  /// model says it is ([labels]):
+  ///
+  /// - A message the model reads as no money moving (a notice, a code, a
+  ///   declined payment) keeps its row, marked doubtful (unticked); one the
+  ///   rules read as no money moving but the model does gets a row, also
+  ///   doubtful.
+  /// - Every figure comes from the words the model copied; words that are
+  ///   not in the message, or hold no figure, drop the model's reading.
+  /// - The model's amount replaces the rules' only when the rules took the
+  ///   balance left, or gave no amount; its direction replaces a guessed
+  ///   one (a direction it disagrees on is left for the person to check);
+  ///   its name, when the message holds it, replaces the rules'.
+  List<StatementRow> withMessageLabels(String text, List<StatementRow> rows, MessageLabels labels) {
+    if (rows.length > 1) return rows;
+    final t = StatementReader.normalize(text).replaceAll(RegExp(r'\s+'), ' ').trim();
+    final figures = figuresIn(t);
+
+    // The figure inside the words the model copied: null when none was
+    // copied, false when the words aren't in the message or hold no figure.
+    Object? figureAt(String words) {
+      final w = StatementReader.normalize(words).replaceAll(RegExp(r'\s+'), ' ').trim();
+      if (w.isEmpty) return null;
+      final at = t.toLowerCase().indexOf(w.toLowerCase());
+      if (at < 0) return false;
+      return figures.where((f) => f.start < at + w.length && f.end > at).firstOrNull ?? false;
+    }
+
+    final amount = figureAt(labels.amount);
+    final balance = figureAt(labels.balance);
+    if (amount == false || balance == false) return rows;
+    final amountFigure = amount as MessageFigure?;
+    final balanceFigure = balance as MessageFigure?;
+    if (amountFigure != null && amountFigure == balanceFigure) return rows;
+
+    final intent = labels.intent;
+    if (intent != null && !intent.transaction) {
+      return [for (final r in rows) r.copyWith(doubtful: true)];
+    }
+
+    final name = labels.name.isNotEmpty && t.toLowerCase().contains(labels.name.toLowerCase())
+        ? StatementReader._clean(labels.name)
+        : '';
+    final direction = intent?.direction ?? 0;
+
+    if (rows.isEmpty) {
+      if (amountFigure == null || intent == null) return rows;
+      final sign = direction != 0 ? direction : (amountFigure.sign != 0 ? amountFigure.sign : -1);
+      final date = _dates(t).$1.firstOrNull?.value;
+      return [
+        StatementRow(
+          date: date ?? DateTime(received.year, received.month, received.day),
+          dateGuessed: date == null,
+          description: name,
+          detail: t,
+          amount: amountFigure.major * sign,
+          signGuessed: direction == 0 && amountFigure.sign == 0,
+          currency: amountFigure.currency ?? figures.map((f) => f.currency).nonNulls.firstOrNull,
+          // The words say nothing moved (a code, a decline): the person decides.
+          doubtful: !messageIntent(t).transaction,
+        ),
+      ];
+    }
+
+    var r = rows.single;
+    if (amountFigure != null && !StatementReader._same(amountFigure.major, r.amount.abs())) {
+      final rulesTookLeft = figures.any((f) => f.left && StatementReader._same(f.major, r.amount.abs())) ||
+          (balanceFigure != null && StatementReader._same(balanceFigure.major, r.amount.abs()));
+      if (rulesTookLeft && !amountFigure.left) {
+        r = r.copyWith(amount: amountFigure.major * (r.amount < 0 ? -1 : 1), currency: amountFigure.currency ?? r.currency);
+      }
+    }
+    if (direction != 0 && r.signGuessed) {
+      r = r.copyWith(amount: r.amount.abs() * direction, signGuessed: false);
+    } else if (direction != 0 && (r.amount > 0) != (direction > 0)) {
+      // The words and the model disagree: the person decides.
+      r = r.copyWith(signGuessed: true);
+    }
+    // Who it was with is language: the model's reading, found in the
+    // message, beats the rules' fallback of the first words.
+    if (name.length >= 2) r = r.copyWith(description: name);
+    return [r];
+  }
+}

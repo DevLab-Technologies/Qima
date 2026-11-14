@@ -1501,7 +1501,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get helpBankMessagesStep3Body =>
-      'Los mensajes esperan en la revisión de importación. Se omiten códigos, ofertas y repetidos.';
+      'Los mensajes esperan en la revisión de importación, cada uno en la cuenta que indica; mueve uno si está mal y Qima recuerda el remitente. Corrige un mensaje una vez y el siguiente igual se leerá como indicaste. Se omiten códigos, ofertas y repetidos.';
 
   @override
   String get helpBankMessagesStep4Title => 'Privado';
@@ -4624,7 +4624,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get bankMessagesStep4 =>
-      'Añade la acción «Add a bank message» de Qima y pásale el mensaje.';
+      'Añade la acción «Add a bank message» de Qima y pásale el mensaje y su remitente.';
 
   @override
   String get bankMessagesOpenShortcuts => 'Abrir Atajos';
@@ -4636,6 +4636,56 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get bankMessagesPrivacy =>
       'Los mensajes se leen en este dispositivo y nunca salen de él.';
+
+  @override
+  String get importMessagesInto => 'Mensajes a';
+
+  @override
+  String importMessageFrom(String sender) {
+    return 'Mensaje de $sender';
+  }
+
+  @override
+  String get importMoveMessage => 'Mover a otra cuenta';
+
+  @override
+  String get bankMessagesNotifyTitle => 'Mensajes del banco por revisar';
+
+  @override
+  String get bankMessagesNotifyBody =>
+      'Abre Qima para revisarlos antes de añadirlos.';
+
+  @override
+  String bankMessagesAutoAdded(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Se añadieron $count transacciones de mensajes del banco',
+      one: 'Se añadió 1 transacción de un mensaje del banco',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get bankMessagesAutoAdd => 'Añadir los que Qima tiene claros';
+
+  @override
+  String get bankMessagesAutoAddHint =>
+      'Cuando un mensaje indica su cuenta y no hay nada que revisar, se añade al momento, con Deshacer. El resto te espera.';
+
+  @override
+  String get bankMessagesOfferTitle =>
+      'Añade compras desde los SMS de tu banco';
+
+  @override
+  String get bankMessagesOfferBody =>
+      'Qima puede leer los mensajes nuevos del banco en este teléfono y proponer cada uno como transacción en su propia cuenta. Los mensajes se leen solo en este dispositivo.';
+
+  @override
+  String get bankMessagesOfferAllow => 'Permitir';
+
+  @override
+  String get bankMessagesOfferLater => 'Ahora no';
 
   @override
   String bankMessagesFound(int count) {

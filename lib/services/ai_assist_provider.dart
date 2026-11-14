@@ -63,6 +63,13 @@ abstract class AiAssistProvider {
   /// when the model can't help. It points at words and never writes a
   /// figure; see `StatementReader.withStructure`.
   Future<List<PageStructure>?> structurePages(String path, List<DocPage> pages, String localeTag);
+
+  /// Says what one bank message ([text]) is about: what happened, and the
+  /// exact words of its amount, the balance it leaves and who it was with.
+  /// Returns null when the model can't help. The reader finds each copied
+  /// word in the message and takes figures only from there; see
+  /// `StatementReader.withMessageLabels`.
+  Future<MessageLabels?> readMessage(String text, String localeTag);
 }
 
 /// Whether a model's [candidate] rewording of [original] can be shown: it
@@ -131,6 +138,9 @@ class NullAiAssistProvider implements AiAssistProvider {
 
   @override
   Future<List<PageStructure>?> structurePages(String path, List<DocPage> pages, String localeTag) async => null;
+
+  @override
+  Future<MessageLabels?> readMessage(String text, String localeTag) async => null;
 }
 
 /// The OS's own on-device model (v4 phase 6): Apple's Foundation Models on
@@ -228,6 +238,20 @@ class PlatformAiAssistProvider implements AiAssistProvider {
       return null;
     } on PlatformException catch (e) {
       debugPrint('AiAssist: structurePages failed: $e');
+      return null;
+    }
+  }
+
+  @override
+  Future<MessageLabels?> readMessage(String text, String localeTag) async {
+    if (text.trim().isEmpty) return null;
+    try {
+      final raw = await _channel.invokeMapMethod<Object?, Object?>('readMessage', {'text': text, 'locale': localeTag});
+      return raw == null ? null : MessageLabels.fromMap(raw);
+    } on MissingPluginException {
+      return null;
+    } on PlatformException catch (e) {
+      debugPrint('AiAssist: readMessage failed: $e');
       return null;
     }
   }

@@ -18,7 +18,8 @@ enum BankMessagesWay {
 typedef BankMessagesStatus = ({bool granted, bool enabled});
 
 /// Bank text messages into the import inbox, where the person checks each
-/// one in review like a shared file. Messages without a figure and a
+/// one in review like a shared file. On Android Qima reads them on its own
+/// once allowed: as they arrive, and on each open for any it missed. Messages without a figure and a
 /// currency or banking word, and one-time codes, are never kept
 /// (`BankSms.kt`); one with no transaction is dropped after reading.
 class BankMessages {
@@ -52,6 +53,56 @@ class BankMessages {
     } on PlatformException catch (e) {
       debugPrint('BankMessages: $e');
       return 0;
+    }
+  }
+
+  /// Messages that came since Qima last looked and weren't kept as they
+  /// arrived (Android); how many. Called each time Qima opens.
+  static Future<int> catchUp() async {
+    if (way != BankMessagesWay.readSms) return 0;
+    try {
+      return await sms.invokeMethod<int>('catchUp') ?? 0;
+    } on MissingPluginException {
+      return 0;
+    } on PlatformException catch (e) {
+      debugPrint('BankMessages: $e');
+      return 0;
+    }
+  }
+
+  /// Takes down the "Bank messages to check" notification (Android).
+  static Future<void> clearNotification() => _quiet('clearNotification');
+
+  /// The notification's words in the app's language (Android).
+  static Future<void> setNotificationText({required String title, required String body}) =>
+      _quiet('setNotificationText', {'title': title, 'body': body});
+
+  /// Calls [onOpen] when the person taps the "Bank messages to check"
+  /// notification, including the tap that launched Qima.
+  static Future<void> listenForOpen(void Function() onOpen) async {
+    if (way != BankMessagesWay.readSms) return;
+    sms.setMethodCallHandler((call) async {
+      if (call.method != 'openReview') return null;
+      onOpen();
+      return true;
+    });
+    try {
+      if (await sms.invokeMethod<bool>('takeOpenReview') == true) onOpen();
+    } on MissingPluginException {
+      // Not on this platform.
+    } on PlatformException catch (e) {
+      debugPrint('BankMessages: $e');
+    }
+  }
+
+  static Future<void> _quiet(String method, [Object? arguments]) async {
+    if (way != BankMessagesWay.readSms) return;
+    try {
+      await sms.invokeMethod<void>(method, arguments);
+    } on MissingPluginException {
+      // Not on this platform.
+    } on PlatformException catch (e) {
+      debugPrint('BankMessages: $e');
     }
   }
 

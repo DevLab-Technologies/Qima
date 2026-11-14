@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import '../../models/message_shape.dart';
 import '../../models/statement_facts.dart';
 import '../../models/statement_reader.dart';
 import '../ai_assist_provider.dart';
@@ -39,7 +40,9 @@ class StatementFiles {
 
   static AiAssistProvider _noModel() => const NullAiAssistProvider();
 
-  Future<StatementRead> read(ImportFile file, {required List<String> languages}) async {
+  /// [shapes] are how senders write their messages, learned from messages
+  /// the person corrected.
+  Future<StatementRead> read(ImportFile file, {required List<String> languages, List<MessageShape> shapes = const []}) async {
     final reader = StatementReader(received: file.receivedAt);
     final ext = file.extension;
     if (!supported.contains(ext)) return const StatementRead(ReadOutcome.unsupported);
@@ -60,8 +63,7 @@ class StatementFiles {
       final asTable = table == null ? null : _table(reader, table);
       if (ext == 'txt' && (asTable == null || asTable.rows.isEmpty)) {
         // A shared message, unless it is really a table.
-        final rows = reader.readMessages(text);
-        return StatementRead(ReadOutcome.read, rows, reader.messageFacts(text, rows));
+        return _message(reader, file, text, languages.first, shapes);
       }
       return asTable ?? const StatementRead(ReadOutcome.read);
     } catch (_) {
@@ -90,6 +92,29 @@ class StatementFiles {
       if (labels != null && labels.isNotEmpty) (rows, facts) = reader.withLabels(rows, facts, lines, labels);
     }
     return StatementRead(ReadOutcome.read, rows, facts);
+  }
+
+  /// Bank messages. One message on its own is read, after the rules, the
+  /// way its sender's learned shape says; else, when the model is on, with
+  /// what the model says it is about. Several pasted together are read by
+  /// the rules alone.
+  Future<StatementRead> _message(StatementReader reader, ImportFile file, String text, String localeTag, List<MessageShape> shapes) async {
+    var rows = reader.readMessages(text);
+    final one = StatementReader.normalize(text).trim().split(RegExp(r'\n\s*\n')).length == 1;
+    if (one && rows.length <= 1) {
+      // A shape only reads a message that says money moved.
+      final learned = rows.isNotEmpty || messageIntent(StatementReader.normalize(text)).transaction ? MessageShape.read(shapes, file.sender, text, rows, reader) : null;
+      if (learned != null) {
+        rows = [learned];
+      } else {
+        final model = assist();
+        if (await model.isAvailable()) {
+          final labels = await model.readMessage(text, localeTag);
+          if (labels != null) rows = reader.withMessageLabels(text, rows, labels);
+        }
+      }
+    }
+    return StatementRead(ReadOutcome.read, rows, reader.messageFacts(text, rows));
   }
 
   List<DocPage>? _tablePages(String text) {

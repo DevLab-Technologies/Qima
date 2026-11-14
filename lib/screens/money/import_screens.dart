@@ -15,6 +15,7 @@ import '../../models/book_entry.dart';
 import '../../models/categorizer.dart';
 import '../../models/entry_builder.dart';
 import '../../models/import_plan.dart';
+import '../../models/message_shape.dart';
 import '../../models/minor_units.dart';
 import '../../models/statement_facts.dart';
 import '../../models/statement_reader.dart';
@@ -201,21 +202,74 @@ class ImportReviewScreen extends StatefulWidget {
   static Future<void> open(BuildContext context) =>
       Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ImportReviewScreen()));
 
+  /// Whether the review is on screen: nothing is added behind the person's
+  /// back while they check it.
+  static bool get showing => _showing > 0;
+  static int _showing = 0;
+
   @override
   State<ImportReviewScreen> createState() => _ImportReviewScreenState();
 }
 
 class _ImportReviewScreenState extends State<ImportReviewScreen> {
-  String? _accountId;
+  /// The person's own account for a file, by file id.
+  final Map<String, String> _accountOf = {};
   final Map<String, bool> _ticked = {};
   final Map<String, bool> _isIn = {};
   final Map<String, String> _category = {};
 
   /// Rows the person corrected (name, amount, date), by candidate key.
   final Map<String, StatementRow> _edited = {};
-  bool? _fixBalance;
-  BalanceWay _balanceWay = BalanceWay.opening;
+
+  /// Per account id: whether to bring it to the balance read, and how.
+  final Map<String, bool> _fixBalance = {};
+  final Map<String, BalanceWay> _balanceWay = {};
   bool _saving = false;
+
+  @override
+  void initState() {
+    super.initState();
+    ImportReviewScreen._showing++;
+    // The review is open: the "messages to check" notification has done its job.
+    unawaited(BankMessages.clearNotification());
+  }
+
+  @override
+  void dispose() {
+    ImportReviewScreen._showing--;
+    super.dispose();
+  }
+
+  bool _tickedOf(ImportCandidate c) => _ticked[c.key] ?? c.suggested;
+
+  /// The inbox's files by the account each goes to, in the order the
+  /// accounts first come up, each with its rows planned against it.
+  List<_Group> _groups(MoneyState money, ImportState imports) {
+    final accounts = money.balanceAccounts.where(ImportPlanner.canHoldStatement).toList();
+    final placed = ImportPlanner.accountsFor(
+      files: [for (final i in imports.items) (id: i.id, message: i.file.message, sender: i.file.sender, rows: _rowsOf(i), facts: i.facts)],
+      accounts: accounts,
+      entries: money.entries,
+      senders: money.settings.messageSenders,
+      chosen: _accountOf,
+    );
+    final byAccount = <String, List<ImportItem>>{};
+    final account = <String, BookAccount>{};
+    for (final i in imports.items) {
+      final a = placed[i.id]?.account;
+      if (a == null) continue;
+      account[a.id] = a;
+      (byAccount[a.id] ??= []).add(i);
+    }
+    return [
+      for (final MapEntry(key: id, value: items) in byAccount.entries)
+        _Group(
+          account[id]!,
+          items,
+          ImportPlanner.plan(files: [for (final i in items) (i.id, _rowsOf(i))], account: account[id]!, book: money.book, rules: money.settings.categoryRules),
+        ),
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -223,27 +277,24 @@ class _ImportReviewScreenState extends State<ImportReviewScreen> {
     final colors = context.colors;
     final money = context.watch<MoneyCubit>().state;
     final imports = context.watch<ImportCubit>().state;
+    final builder = context.read<MoneyCubit>().builder;
     final accounts = money.balanceAccounts.where(ImportPlanner.canHoldStatement).toList();
-    final allRows = [for (final i in imports.items) ...i.rows];
-    final refs = [for (final i in imports.items) ...i.facts.refs];
-    final account =
-        accounts.where((a) => a.id == _accountId).firstOrNull ?? ImportPlanner.guessAccount(accounts, allRows, money.entries, refs: refs);
-
-    final candidates = account == null
-        ? const <ImportCandidate>[]
-        : ImportPlanner.plan(files: [for (final i in imports.items) (i.id, _rowsOf(i))], account: account, book: money.book, rules: money.settings.categoryRules);
-    final byFile = <String, List<ImportCandidate>>{};
-    for (final c in candidates) {
-      (byFile[c.fileId] ??= []).add(c);
-    }
-    bool ticked(ImportCandidate c) => _ticked[c.key] ?? c.suggested;
-    final chosen = [for (final c in candidates) if (ticked(c)) c];
-    final balance = account == null || imports.reading ? null : _balance(account, chosen, imports, money.book, context.read<MoneyCubit>().builder);
+    final groups = _groups(money, imports);
+    final chosenCount = groups.fold(0, (n, g) => n + g.candidates.where(_tickedOf).length);
+    final balances = {
+      for (final g in groups)
+        if (!imports.reading) g.account.id: _balance(g, money.book, builder),
+    };
     // A statement or loan screen with no new rows can still set the balance.
-    final applyBalance = balance != null && (_fixBalance ?? balance.suggested);
+    bool applies(_Group g) {
+      final b = balances[g.account.id];
+      return b != null && (_fixBalance[g.account.id] ?? b.suggested);
+    }
+
+    final applyBalance = groups.any(applies);
 
     final body = <Widget>[];
-    if (account == null) {
+    if (accounts.isEmpty) {
       body.add(MoneyEmpty(
         icon: Icons.account_balance_outlined,
         title: l10n.importNoAccountTitle,
@@ -251,22 +302,6 @@ class _ImportReviewScreenState extends State<ImportReviewScreen> {
         action: l10n.accountAdd,
         onAction: () => AccountEditorScreen.open(context, types: const [AccountType.debit, AccountType.credit, AccountType.cash]),
       ));
-    } else {
-      body.add(Padding(
-        padding: const EdgeInsets.only(bottom: DS.spaceSM),
-        child: AccountPicker(
-          key: ValueKey('importAccount-${account.id}'),
-          label: l10n.importIntoAccount,
-          accounts: accounts,
-          value: account,
-          onChanged: (a) => setState(() {
-            _accountId = a?.id;
-            _fixBalance = null;
-            _balanceWay = BalanceWay.opening;
-          }),
-        ),
-      ));
-      if (balance != null) body.add(_balanceTile(account, balance));
     }
     body.add(Padding(
       padding: const EdgeInsets.only(bottom: DS.spaceMD),
@@ -280,59 +315,113 @@ class _ImportReviewScreenState extends State<ImportReviewScreen> {
       body.add(MoneyEmpty(icon: Icons.inbox_outlined, title: l10n.importEmpty, message: l10n.importShareTip));
     }
 
-    for (final item in imports.items) {
-      final rows = byFile[item.id] ?? const <ImportCandidate>[];
-      final status = switch (item.status) {
-        ImportStatus.waiting => l10n.importStatusWaiting,
-        ImportStatus.reading => l10n.importStatusReading,
-        ImportStatus.alreadyImported => l10n.importStatusAlready,
-        ImportStatus.unsupported => l10n.importStatusUnsupported,
-        ImportStatus.unreadable => l10n.importStatusUnreadable,
-        ImportStatus.read => item.rows.isEmpty ? l10n.importStatusNothing : l10n.importRowFound(item.rows.length),
-      };
-      body.add(MoneySection(
-        title: item.file.name,
-        trailing: IconButton(
-          tooltip: l10n.importRemoveFile,
-          visualDensity: VisualDensity.compact,
-          icon: const Icon(Icons.close, size: 18),
-          onPressed: _saving ? null : () => context.read<ImportCubit>().remove([item.id]),
+    for (final g in groups) {
+      final account = g.account;
+      final byFile = <String, List<ImportCandidate>>{};
+      for (final c in g.candidates) {
+        (byFile[c.fileId] ??= []).add(c);
+      }
+      final messagesOnly = g.items.every((i) => i.file.message);
+      body.add(Padding(
+        padding: const EdgeInsets.only(bottom: DS.spaceSM),
+        child: AccountPicker(
+          key: ValueKey('importAccount-${account.id}'),
+          label: messagesOnly ? l10n.importMessagesInto : l10n.importIntoAccount,
+          accounts: accounts,
+          value: account,
+          onChanged: (a) => setState(() {
+            if (a == null) return;
+            for (final i in g.items) {
+              _accountOf[i.id] = a.id;
+            }
+            _fixBalance.remove(a.id);
+            _balanceWay.remove(a.id);
+          }),
         ),
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(DS.spaceMD, 0, DS.spaceMD, DS.spaceXS),
-            child: Row(children: [
-              if (!item.done) ...[
-                const SizedBox(width: 12, height: 12, child: CircularProgressIndicator(strokeWidth: 1.5)),
-                const SizedBox(width: DS.spaceXS),
-              ],
-              Expanded(child: Text(status, style: TextStyle(color: colors.textTertiary, fontSize: 12))),
-            ]),
-          ),
-          if (item.status == ImportStatus.read && !item.facts.isEmpty)
-            _FactsLine(
-              facts: item.facts,
-              // The check runs on what will be added: the ticked rows, as
-              // corrected, each the way it was set to go.
-              rows: [
-                for (final c in rows)
-                  if (ticked(c)) c.row.copyWith(amount: (_isIn[c.key] ?? c.row.isIn) ? c.row.amount.abs() : -c.row.amount.abs()),
-              ],
-              currency: item.facts.currency ?? account?.currency ?? '',
+      ));
+      final balance = balances[account.id];
+      if (balance != null) body.add(_balanceTile(account, balance));
+
+      for (final item in g.items) {
+        final rows = byFile[item.id] ?? const <ImportCandidate>[];
+        final status = switch (item.status) {
+          ImportStatus.waiting => l10n.importStatusWaiting,
+          ImportStatus.reading => l10n.importStatusReading,
+          ImportStatus.alreadyImported => l10n.importStatusAlready,
+          ImportStatus.unsupported => l10n.importStatusUnsupported,
+          ImportStatus.unreadable => l10n.importStatusUnreadable,
+          ImportStatus.read => item.rows.isEmpty ? l10n.importStatusNothing : l10n.importRowFound(item.rows.length),
+        };
+        body.add(MoneySection(
+          title: item.file.message && item.file.sender != null ? l10n.importMessageFrom(item.file.sender!) : item.file.name,
+          trailing: Row(mainAxisSize: MainAxisSize.min, children: [
+            // A message that went to the wrong account moves on its own;
+            // the picker above moves the whole group.
+            if (item.file.message && g.items.length > 1 && accounts.length > 1)
+              IconButton(
+                key: ValueKey('importMove-${item.id}'),
+                tooltip: l10n.importMoveMessage,
+                visualDensity: VisualDensity.compact,
+                icon: const Icon(Icons.drive_file_move_outline, size: 18),
+                onPressed: _saving ? null : () => _move(item, account, accounts),
+              ),
+            IconButton(
+              tooltip: l10n.importRemoveFile,
+              visualDensity: VisualDensity.compact,
+              icon: const Icon(Icons.close, size: 18),
+              onPressed: _saving ? null : () => context.read<ImportCubit>().remove([item.id]),
             ),
-          if (account != null)
+          ]),
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(DS.spaceMD, 0, DS.spaceMD, DS.spaceXS),
+              child: Row(children: [
+                if (!item.done) ...[
+                  const SizedBox(width: 12, height: 12, child: CircularProgressIndicator(strokeWidth: 1.5)),
+                  const SizedBox(width: DS.spaceXS),
+                ],
+                Expanded(child: Text(status, style: TextStyle(color: colors.textTertiary, fontSize: 12))),
+              ]),
+            ),
+            if (item.status == ImportStatus.read && !item.facts.isEmpty)
+              _FactsLine(
+                facts: item.facts,
+                // The check runs on what will be added: the ticked rows, as
+                // corrected, each the way it was set to go.
+                rows: [
+                  for (final c in rows)
+                    if (_tickedOf(c)) c.row.copyWith(amount: (_isIn[c.key] ?? c.row.isIn) ? c.row.amount.abs() : -c.row.amount.abs()),
+                ],
+                currency: item.facts.currency ?? account.currency ?? '',
+              ),
             for (final c in rows)
               _CandidateRow(
                 candidate: c,
                 currency: c.row.currency ?? account.currency ?? '',
-                ticked: ticked(c),
+                ticked: _tickedOf(c),
                 isIn: _isIn[c.key] ?? c.row.isIn,
                 categoryName: _categoryName(l10n, money.book.accounts[_category[c.key] ?? c.categoryId] ?? money.book.accounts.values.first),
                 onTicked: (v) => setState(() => _ticked[c.key] = v),
                 onTap: () => _edit(c, money, account),
               ),
-        ],
-      ));
+          ],
+        ));
+      }
+    }
+    // Without an account to put them in, files are listed without rows.
+    if (groups.isEmpty) {
+      for (final item in imports.items) {
+        body.add(MoneySection(
+          title: item.file.name,
+          trailing: IconButton(
+            tooltip: l10n.importRemoveFile,
+            visualDensity: VisualDensity.compact,
+            icon: const Icon(Icons.close, size: 18),
+            onPressed: _saving ? null : () => context.read<ImportCubit>().remove([item.id]),
+          ),
+          children: const [],
+        ));
+      }
     }
 
     return Scaffold(
@@ -345,20 +434,20 @@ class _ImportReviewScreenState extends State<ImportReviewScreen> {
         ],
       ),
       body: ListView(padding: const EdgeInsets.fromLTRB(DS.spaceMD, DS.spaceSM, DS.spaceMD, DS.spaceLG), children: body),
-      bottomNavigationBar: account == null || imports.isEmpty
+      bottomNavigationBar: groups.isEmpty || imports.isEmpty
           ? null
           : SafeArea(
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(DS.spaceMD, DS.spaceXS, DS.spaceMD, DS.spaceSM),
                 child: FilledButton(
                   key: const ValueKey('importAdd'),
-                  onPressed: _saving || (chosen.isEmpty && imports.reading)
+                  onPressed: _saving || (chosenCount == 0 && imports.reading)
                       ? null
-                      : chosen.isEmpty && !applyBalance
+                      : chosenCount == 0 && !applyBalance
                           ? () => _discardAll(imports)
-                          : () => _add(account, chosen, imports),
-                  child: Text(chosen.isNotEmpty
-                      ? l10n.importAddCount(chosen.length)
+                          : () => _add(imports),
+                  child: Text(chosenCount > 0
+                      ? l10n.importAddCount(chosenCount)
                       : applyBalance
                           ? l10n.importApplyBalance
                           : l10n.importDiscardAll),
@@ -366,6 +455,34 @@ class _ImportReviewScreenState extends State<ImportReviewScreen> {
               ),
             ),
     );
+  }
+
+  /// Puts one message in another account.
+  Future<void> _move(ImportItem item, BookAccount current, List<BookAccount> accounts) async {
+    final l10n = AppLocalizations.of(context)!;
+    final picked = await showModalBottomSheet<String>(
+      context: context,
+      showDragHandle: true,
+      useSafeArea: true,
+      builder: (sheet) => SafeArea(
+        child: ListView(shrinkWrap: true, children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(DS.spaceMD, 0, DS.spaceMD, DS.spaceXS),
+            child: Text(l10n.importMoveMessage, style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700)),
+          ),
+          for (final a in accounts)
+            ListTile(
+              key: ValueKey('importMoveTo-${a.id}'),
+              leading: Icon(MoneyIcons.account(a)),
+              title: Text(l10n.accountName(a)),
+              trailing: a.id == current.id ? Icon(Icons.check, color: sheet.colors.brandText) : null,
+              onTap: () => Navigator.of(sheet).pop(a.id),
+            ),
+        ]),
+      ),
+    );
+    if (picked == null || picked == current.id || !mounted) return;
+    setState(() => _accountOf[item.id] = picked);
   }
 
   /// A file's rows with the person's corrections in.
@@ -498,7 +615,7 @@ class _ImportReviewScreenState extends State<ImportReviewScreen> {
     });
   }
 
-  Future<void> _add(BookAccount account, List<ImportCandidate> chosen, ImportState imports) async {
+  Future<void> _add(ImportState imports) async {
     final l10n = AppLocalizations.of(context)!;
     final money = context.read<MoneyCubit>();
     final importer = context.read<ImportCubit>();
@@ -508,13 +625,26 @@ class _ImportReviewScreenState extends State<ImportReviewScreen> {
     try {
       final book = money.state.book;
       final builder = money.builder;
-      final entries = _entries(account, chosen, book, builder);
-      final balance = _balance(account, chosen, imports, book, builder, entries: entries);
-      final fix = balance != null && (_fixBalance ?? balance.suggested) ? balance.entry : null;
+      final groups = _groups(money.state, imports);
+      final entries = <BookEntry>[], fixes = <BookEntry>[];
+      final chosen = <ImportCandidate>[];
+      for (final g in groups) {
+        final ticked = g.candidates.where(_tickedOf).toList();
+        chosen.addAll(ticked);
+        final added = _entries(g.account, ticked, book, builder);
+        entries.addAll(added);
+        final fix = _balance(g, book, builder, entries: added);
+        if (fix != null && (_fixBalance[g.account.id] ?? fix.suggested)) fixes.add(fix.entry);
+      }
       final finished = [for (final i in imports.items) if (i.done) i];
-      await money.importEntries([...entries, ?fix], fileHashes: [for (final i in finished) if (i.status == ImportStatus.read) ?i.hash]);
-      await _keepRefs(money, account, [for (final i in finished) if (i.status == ImportStatus.read) i.facts]);
+      // Learned before the files leave the inbox: shapes need their text.
+      final shapes = await _shapes(groups, importer);
+      await money.importEntries([...entries, ...fixes], fileHashes: [for (final i in finished) if (i.status == ImportStatus.read) ?i.hash]);
+      for (final g in groups) {
+        await _keepRefs(money, g);
+      }
       await money.learnCategories(_picked(chosen, book));
+      await money.learnMessages(senders: _senders(groups), shapes: shapes);
       await importer.remove(finished.map((i) => i.id));
       if (entries.isNotEmpty) messenger.showSnackBar(SnackBar(content: Text(l10n.importAdded(entries.length))));
       if (importer.state.isEmpty) navigator.pop();
@@ -523,6 +653,48 @@ class _ImportReviewScreenState extends State<ImportReviewScreen> {
     } finally {
       if (mounted) setState(() => _saving = false);
     }
+  }
+
+  /// The account each sender's messages went to, from messages that added
+  /// something.
+  Map<String, String> _senders(List<_Group> groups) => {
+        for (final g in groups)
+          for (final i in g.items)
+            if (i.file.message && senderKey(i.file.sender).isNotEmpty && g.candidates.any((c) => c.fileId == i.id && _tickedOf(c)))
+              senderKey(i.file.sender): g.account.id,
+      };
+
+  /// How senders write the messages the person corrected (amount, name or
+  /// direction), so the next one like it is read right.
+  Future<List<MessageShape>> _shapes(List<_Group> groups, ImportCubit importer) async {
+    final out = <MessageShape>[];
+    for (final g in groups) {
+      for (final item in g.items) {
+        if (!item.file.message || item.status != ImportStatus.read) continue;
+        String? text;
+        for (var i = 0; i < item.rows.length; i++) {
+          final key = '${item.id}:$i';
+          if (!g.candidates.any((c) => c.key == key && _tickedOf(c))) continue;
+          // Only what the person set themselves teaches a shape; a guess
+          // they let through does not.
+          if (!_edited.containsKey(key) && !_isIn.containsKey(key)) continue;
+          final read = item.rows[i];
+          final row = _edited[key] ?? read;
+          final isIn = _isIn[key] ?? row.isIn;
+          final corrected = row.copyWith(amount: isIn ? row.amount.abs() : -row.amount.abs());
+          final changed = (corrected.amount.abs() - read.amount.abs()).abs() > 0.0005 ||
+              corrected.description != read.description ||
+              corrected.isIn != read.isIn ||
+              read.signGuessed;
+          if (!changed) continue;
+          text ??= await importer.text(item.file);
+          if (text == null) break;
+          final shape = MessageShape.learn(text: text, sender: item.file.sender ?? '', corrected: corrected, reader: StatementReader(received: item.file.receivedAt));
+          if (shape != null) out.add(shape);
+        }
+      }
+    }
+    return out;
   }
 
   /// The categories the person picked over the guess, to use for those
@@ -551,16 +723,17 @@ class _ImportReviewScreenState extends State<ImportReviewScreen> {
           ),
       ];
 
-  /// The entry that brings [account] to the statement's closing balance
-  /// with the ticked rows in, and the figures to explain it. Null when the
-  /// statements give no balance or the book already agrees.
-  _BalanceFix? _balance(BookAccount account, List<ImportCandidate> chosen, ImportState imports, Book book, EntryBuilder builder,
-      {List<BookEntry>? entries}) {
-    final readFiles = [for (final i in imports.items) if (i.status == ImportStatus.read) i];
+  /// The entry that brings [g]'s account to the closing balance its files
+  /// give, with the ticked rows in, and the figures to explain it. Null
+  /// when they give no balance or the book already agrees.
+  _BalanceFix? _balance(_Group g, Book book, EntryBuilder builder, {List<BookEntry>? entries}) {
+    final account = g.account;
+    final readFiles = [for (final i in g.items) if (i.status == ImportStatus.read) i];
     final balance = ImportPlanner.statementBalance([for (final i in readFiles) (i.facts, i.rows)], account);
     if (balance == null) return null;
-    final added = entries ?? _entries(account, chosen, book, builder);
-    final fix = ImportPlanner.balanceEntry(builder: builder, book: book, account: account, added: added, balance: balance, way: _balanceWay);
+    final added = entries ?? _entries(account, g.candidates.where(_tickedOf).toList(), book, builder);
+    final fix = ImportPlanner.balanceEntry(
+        builder: builder, book: book, account: account, added: added, balance: balance, way: _balanceWay[account.id] ?? BalanceWay.opening);
     if (fix == null) return null;
     return _BalanceFix(fix.entry, balance, account.currency ?? '',
         delta: fix.statement - fix.tracked, tracked: fix.tracked, opening: fix.fresh, balanceOnly: readFiles.every((i) => i.rows.isEmpty));
@@ -571,16 +744,16 @@ class _ImportReviewScreenState extends State<ImportReviewScreen> {
     final colors = context.colors;
     final locale = Localizations.localeOf(context).toLanguageTag();
     String amount(int minor) => moneyText(MinorUnits.toMajor(minor, fix.currency), fix.currency, hidden: false);
-    final on = _fixBalance ?? fix.suggested;
+    final on = _fixBalance[account.id] ?? fix.suggested;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         CheckboxListTile(
-          key: const ValueKey('importBalance'),
+          key: ValueKey('importBalance-${account.id}'),
           contentPadding: EdgeInsets.zero,
           controlAffinity: ListTileControlAffinity.leading,
           value: on,
-          onChanged: _saving ? null : (v) => setState(() => _fixBalance = v ?? false),
+          onChanged: _saving ? null : (v) => setState(() => _fixBalance[account.id] = v ?? false),
           title: Text(
             fix.opening ? l10n.importOpeningBalance(amount(fix.delta)) : l10n.importMatchBalance(amount(fix.delta + fix.tracked)),
             style: TextStyle(color: colors.textPrimary, fontSize: 15, fontWeight: FontWeight.w500),
@@ -594,19 +767,28 @@ class _ImportReviewScreenState extends State<ImportReviewScreen> {
         if (on && !fix.opening)
           Padding(
             padding: const EdgeInsetsDirectional.only(start: 40),
-            child: BalanceWayPicker(value: _balanceWay, onChanged: _saving ? null : (w) => setState(() => _balanceWay = w)),
+            child: BalanceWayPicker(
+                value: _balanceWay[account.id] ?? BalanceWay.opening,
+                onChanged: _saving ? null : (w) => setState(() => _balanceWay[account.id] = w)),
           ),
       ],
     );
   }
 
-  /// Remembers the statement's account or card number on [account], and
-  /// takes it off any other account, so the next statement from it is
-  /// matched straight away.
-  Future<void> _keepRefs(MoneyCubit money, BookAccount account, List<StatementFacts> files) async {
-    final keep = ImportPlanner.refsToKeep(files);
+  /// Remembers on [g]'s account the account or card numbers its files name,
+  /// and takes them off any other account, so the next statement or message
+  /// from it is matched straight away: one set shared by all its
+  /// statements, and each message's own (from messages that added
+  /// something).
+  Future<void> _keepRefs(MoneyCubit money, _Group g) async {
+    final read = [for (final i in g.items) if (i.status == ImportStatus.read) i];
+    final keep = {
+      ...ImportPlanner.refsToKeep([for (final i in read) if (!i.file.message) i.facts]),
+      for (final i in read)
+        if (i.file.message && g.candidates.any((c) => c.fileId == i.id && _tickedOf(c))) ...ImportPlanner.refsToKeep([i.facts]),
+    };
     if (keep.isEmpty) return;
-    final current = money.state.book.accounts[account.id] ?? account;
+    final current = money.state.book.accounts[g.account.id] ?? g.account;
     if (keep.every(current.statementRefs.contains)) return;
     await money.giveStatementRefs(current, {...current.statementRefs, ...keep}.toList());
   }
@@ -737,6 +919,15 @@ class _CandidateRow extends StatelessWidget {
       ),
     );
   }
+}
+
+/// The files going to one account, and their rows planned against it.
+class _Group {
+  final BookAccount account;
+  final List<ImportItem> items;
+  final List<ImportCandidate> candidates;
+
+  const _Group(this.account, this.items, this.candidates);
 }
 
 /// A balance entry offered on the review screen, with what it explains.

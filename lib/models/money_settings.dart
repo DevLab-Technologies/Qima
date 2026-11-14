@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 
 import 'book_account.dart' show dayFromJson, dayToJson;
+import 'message_shape.dart';
 import 'syncable.dart';
 
 /// The parts of Money a person can switch on and off in Settings › Features.
@@ -87,6 +88,21 @@ class MoneySettings extends Equatable implements Syncable {
   /// to a category id). Imports use them first; Categories lists them.
   final Map<String, String> categoryRules;
 
+  /// The account each bank message sender's messages went to, by
+  /// `senderKey`, learned on the review screen.
+  final Map<String, String> messageSenders;
+
+  /// How senders write their messages, learned from messages the person
+  /// corrected; see [MessageShape].
+  final List<MessageShape> messageShapes;
+
+  /// Bank messages Qima is sure of (account known, nothing to check) are
+  /// added without waiting for review.
+  final bool autoAddMessages;
+
+  /// The person answered (or closed) the offer to read bank messages.
+  final bool askedBankMessages;
+
   const MoneySettings({
     this.features = const {},
     this.homeOrder = const [],
@@ -97,6 +113,10 @@ class MoneySettings extends Equatable implements Syncable {
     this.valueReviewMonths = 6,
     this.importedHashes = const [],
     this.categoryRules = const {},
+    this.messageSenders = const {},
+    this.messageShapes = const [],
+    this.autoAddMessages = false,
+    this.askedBankMessages = false,
   });
 
   @override
@@ -141,6 +161,10 @@ class MoneySettings extends Equatable implements Syncable {
     int? valueReviewMonths,
     List<String>? importedHashes,
     Map<String, String>? categoryRules,
+    Map<String, String>? messageSenders,
+    List<MessageShape>? messageShapes,
+    bool? autoAddMessages,
+    bool? askedBankMessages,
   }) =>
       MoneySettings(
         features: features ?? this.features,
@@ -152,6 +176,10 @@ class MoneySettings extends Equatable implements Syncable {
         valueReviewMonths: valueReviewMonths ?? this.valueReviewMonths,
         importedHashes: importedHashes ?? this.importedHashes,
         categoryRules: categoryRules ?? this.categoryRules,
+        messageSenders: messageSenders ?? this.messageSenders,
+        messageShapes: messageShapes ?? this.messageShapes,
+        autoAddMessages: autoAddMessages ?? this.autoAddMessages,
+        askedBankMessages: askedBankMessages ?? this.askedBankMessages,
       );
 
   @override
@@ -166,6 +194,10 @@ class MoneySettings extends Equatable implements Syncable {
         'valueReviewMonths': valueReviewMonths,
         if (importedHashes.isNotEmpty) 'imported': importedHashes,
         if (categoryRules.isNotEmpty) 'categoryRules': categoryRules,
+        if (messageSenders.isNotEmpty) 'messageSenders': messageSenders,
+        if (messageShapes.isNotEmpty) 'messageShapes': [for (final s in messageShapes) s.toJson()],
+        if (autoAddMessages) 'autoAddMessages': true,
+        if (askedBankMessages) 'askedBankMessages': true,
       };
 
   factory MoneySettings.fromJson(Map<String, dynamic> json) {
@@ -180,11 +212,16 @@ class MoneySettings extends Equatable implements Syncable {
       valueReviewMonths: (json['valueReviewMonths'] as num?)?.toInt() ?? 6,
       importedHashes: names('imported'),
       categoryRules: {for (final e in ((json['categoryRules'] as Map?) ?? const {}).entries) e.key as String: e.value as String},
+      messageSenders: {for (final e in ((json['messageSenders'] as Map?) ?? const {}).entries) e.key as String: e.value as String},
+      messageShapes: [for (final s in (json['messageShapes'] as List? ?? const [])) ?MessageShape.fromJson(s)],
+      autoAddMessages: json['autoAddMessages'] as bool? ?? false,
+      askedBankMessages: json['askedBankMessages'] as bool? ?? false,
     );
   }
 
   @override
-  List<Object?> get props => [features, homeOrder, hiddenCards, budgets, budgetCurrency, seenWhatsNew, valueReviewMonths, importedHashes, categoryRules];
+  List<Object?> get props => [features, homeOrder, hiddenCards, budgets, budgetCurrency, seenWhatsNew, valueReviewMonths, importedHashes, categoryRules,
+        messageSenders, messageShapes, autoAddMessages, askedBankMessages];
 }
 
 /// How often a planned payment comes back.

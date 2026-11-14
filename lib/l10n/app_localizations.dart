@@ -2657,7 +2657,7 @@ abstract class AppLocalizations {
   /// No description provided for @helpBankMessagesStep3Body.
   ///
   /// In en, this message translates to:
-  /// **'Messages wait in the import review. Codes, offers and repeats are skipped.'**
+  /// **'Messages wait in the import review, each under the account it names; move one if it’s wrong and Qima remembers the sender. Fix a message once and the next like it is read your way. Codes, offers and repeats are skipped.'**
   String get helpBankMessagesStep3Body;
 
   /// No description provided for @helpBankMessagesStep4Title.
@@ -7922,7 +7922,7 @@ abstract class AppLocalizations {
   /// No description provided for @bankMessagesStep4.
   ///
   /// In en, this message translates to:
-  /// **'Add Qima’s “Add a bank message” action and pass it the message.'**
+  /// **'Add Qima’s “Add a bank message” action and pass it the message and its sender.'**
   String get bankMessagesStep4;
 
   /// No description provided for @bankMessagesOpenShortcuts.
@@ -7942,6 +7942,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Messages are read on this device and never leave it.'**
   String get bankMessagesPrivacy;
+
+  /// No description provided for @importMessagesInto.
+  ///
+  /// In en, this message translates to:
+  /// **'Messages into'**
+  String get importMessagesInto;
+
+  /// No description provided for @importMessageFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'Message from {sender}'**
+  String importMessageFrom(String sender);
+
+  /// No description provided for @importMoveMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Move to another account'**
+  String get importMoveMessage;
+
+  /// No description provided for @bankMessagesNotifyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Bank messages to check'**
+  String get bankMessagesNotifyTitle;
+
+  /// No description provided for @bankMessagesNotifyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Qima to check them before they’re added.'**
+  String get bankMessagesNotifyBody;
+
+  /// No description provided for @bankMessagesAutoAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Added 1 transaction from a bank message} other{Added {count} transactions from bank messages}}'**
+  String bankMessagesAutoAdded(int count);
+
+  /// No description provided for @bankMessagesAutoAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'Add the ones Qima is sure of'**
+  String get bankMessagesAutoAdd;
+
+  /// No description provided for @bankMessagesAutoAddHint.
+  ///
+  /// In en, this message translates to:
+  /// **'When a message names its account and nothing needs checking, it’s added right away, with Undo. The rest wait for you.'**
+  String get bankMessagesAutoAddHint;
+
+  /// No description provided for @bankMessagesOfferTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add purchases from your bank’s texts'**
+  String get bankMessagesOfferTitle;
+
+  /// No description provided for @bankMessagesOfferBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Qima can read new bank messages on this phone and suggest each one as a transaction in its own account. Messages are read on this device only.'**
+  String get bankMessagesOfferBody;
+
+  /// No description provided for @bankMessagesOfferAllow.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow'**
+  String get bankMessagesOfferAllow;
+
+  /// No description provided for @bankMessagesOfferLater.
+  ///
+  /// In en, this message translates to:
+  /// **'Not now'**
+  String get bankMessagesOfferLater;
 
   /// No description provided for @bankMessagesFound.
   ///

@@ -40,6 +40,9 @@ final class OnDeviceModelPlugin: NSObject, FlutterPlugin {
       case "labelStatementLines":
         let lines = args["lines"] as? [String] ?? []
         Task { result(await Model.labelLines(lines, locale: locale)) }
+      case "readMessage":
+        let text = args["text"] as? String ?? ""
+        Task { result(await Model.readMessage(text)) }
       default:
         result(FlutterMethodNotImplemented)
       }
@@ -162,6 +165,45 @@ private enum Model {
       start = end
     }
     return out
+  }
+
+  /// What one bank message is about, with the exact words of its figures.
+  @Generable
+  struct MessageReading {
+    @Guide(
+      description: "What happened",
+      .anyOf(["purchase", "refund", "withdrawal", "transferOut", "transferIn", "deposit", "fee", "debit", "unknown", "notice", "code", "declined"])
+    )
+    var intent: String
+    @Guide(description: "The exact words of the amount that moved, with its currency if written, copied from the message. Empty if none moved.")
+    var amount: String
+    @Guide(description: "The exact words of the balance or limit left after it, copied from the message, or empty")
+    var balance: String
+    @Guide(description: "The exact words naming the merchant or person on the other side, copied from the message, never the person's own card or account. Empty if not said.")
+    var name: String
+  }
+
+  /// Reads a bank message's intent and points at its words. Any language;
+  /// Dart checks every copied word against the message.
+  static func readMessage(_ text: String) async -> [String: String]? {
+    guard ready, !text.isEmpty else { return nil }
+    let session = LanguageModelSession(
+      model: model,
+      instructions: """
+        You read one text message from a bank, in any language. Say what happened: \
+        a purchase, a refund, cash taken out (withdrawal), a transfer sent (transferOut) or received (transferIn), \
+        a deposit or salary, a bank fee, another debit, money that moved in an unclear direction (unknown), \
+        or nothing moved: a statement or due-date notice, a one-time code, or a declined payment. \
+        Copy the words of the amount, the balance left and the other side exactly as written. \
+        Never change, convert, compute or invent a number.
+        """
+    )
+    do {
+      let r = try await session.respond(to: String(text.prefix(1200)), generating: MessageReading.self).content
+      return ["intent": r.intent, "amount": r.amount, "balance": r.balance, "name": r.name]
+    } catch {
+      return nil
+    }
   }
 
   static func phrase(_ sentence: String, locale: Locale) async -> String? {

@@ -1,9 +1,12 @@
+import 'dart:convert';
+
 import 'package:crypto/crypto.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart' show BuildContext;
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../models/message_shape.dart';
 import '../models/statement_facts.dart';
 import '../models/statement_reader.dart';
 import '../services/ai_assist_provider.dart';
@@ -73,6 +76,11 @@ class ImportCubit extends Cubit<ImportState> {
   /// The languages to read images in.
   final List<String> Function() languages;
 
+  /// How senders write their messages, learned on the review screen.
+  final List<MessageShape> Function() shapes;
+
+  static List<MessageShape> _noShapes() => const [];
+
   bool _running = false;
   bool _again = false;
 
@@ -81,8 +89,10 @@ class ImportCubit extends Cubit<ImportState> {
     required TextRecognitionService recognition,
     required this.wasImported,
     required this.languages,
+    List<MessageShape> Function()? shapes,
     AiAssistProvider Function()? assist,
-  })  : files = StatementFiles(recognition: recognition, inbox: inbox, assist: assist ?? (() => const NullAiAssistProvider())),
+  })  : shapes = shapes ?? _noShapes,
+        files = StatementFiles(recognition: recognition, inbox: inbox, assist: assist ?? (() => const NullAiAssistProvider())),
         super(const ImportState());
 
   /// Picks up anything new in the inbox and reads it. Safe to call often
@@ -127,7 +137,7 @@ class ImportCubit extends Cubit<ImportState> {
         if (wasImported(hash) || duplicate) {
           result = item.copyWith(status: ImportStatus.alreadyImported, hash: hash);
         } else {
-          final read = await files.read(item.file, languages: languages());
+          final read = await files.read(item.file, languages: languages(), shapes: shapes());
           result = item.copyWith(
             hash: hash,
             rows: read.rows,
@@ -161,6 +171,16 @@ class ImportCubit extends Cubit<ImportState> {
   void _update(ImportItem item) {
     if (!state.items.any((i) => i.id == item.id)) return;
     emit(ImportState(items: [for (final i in state.items) i.id == item.id ? item : i]));
+  }
+
+  /// A text file's words (a bank message), or null when it can't be read.
+  Future<String?> text(ImportFile file) async {
+    try {
+      return utf8.decode(await inbox.bytes(file), allowMalformed: true);
+    } catch (e) {
+      debugPrint('Import: ${file.name}: $e');
+      return null;
+    }
   }
 
   /// Files picked in the app go through the same inbox.

@@ -8,10 +8,13 @@ import '../blocs/app_cubit.dart';
 import '../blocs/import_cubit.dart';
 import '../blocs/money_cubit.dart';
 import '../l10n/app_localizations.dart';
+import '../models/import_plan.dart';
+import '../services/import/bank_messages.dart';
 import '../theme/design_system.dart';
 import '../theme/qima_colors.dart';
 import '../widgets/add_sheet.dart';
 import 'money/home_screen.dart';
+import 'money/import_screens.dart';
 import 'money/money_screen.dart';
 import 'settings_screen.dart';
 import 'watchlist_screen.dart';
@@ -50,18 +53,83 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
   final _moneyScroll = ScrollController();
   final _pricesScroll = ScrollController();
 
+  StreamSubscription<ImportState>? _imports;
+  bool _autoAdding = false;
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    _imports = maybeImportCubit(context)?.stream.listen((_) => _autoAddMessages());
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _onForeground();
       _maybeShowWhatsNew(context.read<MoneyCubit>().state);
+      // The "Bank messages to check" notification opens the review.
+      unawaited(BankMessages.listenForOpen(() {
+        if (mounted && !ImportReviewScreen.showing) unawaited(ImportReviewScreen.open(context));
+      }));
     });
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final l10n = AppLocalizations.of(context)!;
+    unawaited(BankMessages.setNotificationText(title: l10n.bankMessagesNotifyTitle, body: l10n.bankMessagesNotifyBody));
+  }
+
+  /// With "Add the ones Qima is sure of" on, bank messages that name their
+  /// account and need no checking are added as soon as they're read, with
+  /// Undo; the rest wait in review.
+  Future<void> _autoAddMessages() async {
+    final money = context.read<MoneyCubit>();
+    final importer = maybeImportCubit(context);
+    if (_autoAdding || importer == null || !money.state.loaded || !money.state.settings.autoAddMessages || ImportReviewScreen.showing) return;
+    final ready = [
+      for (final i in importer.state.items)
+        if (i.file.message && i.status == ImportStatus.read)
+          (id: i.id, message: true, sender: i.file.sender, rows: i.rows, facts: i.facts, hash: i.hash),
+    ];
+    if (ready.isEmpty) return;
+    _autoAdding = true;
+    try {
+      final settings = money.state.settings;
+      final sure = ImportPlanner.sureMessages(
+        files: [for (final f in ready) (id: f.id, message: f.message, sender: f.sender, rows: f.rows, facts: f.facts)],
+        accounts: money.state.balanceAccounts,
+        book: money.state.book,
+        builder: money.builder,
+        senders: settings.messageSenders,
+        rules: settings.categoryRules,
+      );
+      if (sure.isEmpty) return;
+      final ids = {for (final s in sure) s.fileId};
+      final entries = [for (final s in sure) s.entry];
+      await money.importEntries(entries, fileHashes: [for (final f in ready) if (ids.contains(f.id)) ?f.hash]);
+      await importer.remove(ids);
+      if (!mounted) return;
+      final l10n = AppLocalizations.of(context)!;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(l10n.bankMessagesAutoAdded(entries.length)),
+        action: SnackBarAction(
+          label: l10n.commonUndo,
+          onPressed: () async {
+            for (final e in entries) {
+              await money.deleteEntry(e.id);
+            }
+          },
+        ),
+      ));
+    } on BookRejected catch (e) {
+      debugPrint('Auto-add: ${e.issues.map((i) => i.detail).join('; ')}');
+    } finally {
+      _autoAdding = false;
+    }
+  }
+
+  @override
   void dispose() {
+    unawaited(_imports?.cancel());
     WidgetsBinding.instance.removeObserver(this);
     _timer?.cancel();
     _homeScroll.dispose();
@@ -83,8 +151,13 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
   void _onForeground() {
     final cubit = context.read<AppCubit>();
     cubit.refreshIfStale();
-    // Anything shared to Qima while it was in the background.
-    unawaited(maybeImportCubit(context)?.checkInbox());
+    // Anything shared to Qima while it was in the background, and on
+    // Android any bank message the receiver missed.
+    final importer = maybeImportCubit(context);
+    unawaited(() async {
+      await BankMessages.catchUp();
+      await importer?.checkInbox();
+    }());
     _timer?.cancel();
     _timer = Timer.periodic(const Duration(seconds: 60), (_) => cubit.refreshAll(silent: true));
   }

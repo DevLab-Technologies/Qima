@@ -1489,7 +1489,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get helpBankMessagesStep3Body =>
-      'تنتظر الرسائل في مراجعة الاستيراد، وتُتجاهل الرموز والعروض والمكرر.';
+      'تنتظر الرسائل في مراجعة الاستيراد، كلٌّ تحت الحساب الذي تذكره؛ انقل الرسالة إن كانت في غير مكانها وستتذكر قيمة المُرسِل. صحّح رسالة مرة واحدة وستُقرأ التالية مثلها كما صحّحتها. وتُتجاهل الرموز والعروض والمكرر.';
 
   @override
   String get helpBankMessagesStep4Title => 'خاص';
@@ -4607,7 +4607,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get bankMessagesStep4 =>
-      'أضف إجراء «Add a bank message» من قيمة ومرّر له الرسالة.';
+      'أضف إجراء «Add a bank message» من قيمة ومرّر له الرسالة ومُرسِلها.';
 
   @override
   String get bankMessagesOpenShortcuts => 'افتح الاختصارات';
@@ -4618,6 +4618,54 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get bankMessagesPrivacy => 'تُقرأ الرسائل على هذا الجهاز ولا تغادره.';
+
+  @override
+  String get importMessagesInto => 'رسائل إلى';
+
+  @override
+  String importMessageFrom(String sender) {
+    return 'رسالة من $sender';
+  }
+
+  @override
+  String get importMoveMessage => 'نقل إلى حساب آخر';
+
+  @override
+  String get bankMessagesNotifyTitle => 'رسائل بنكية للمراجعة';
+
+  @override
+  String get bankMessagesNotifyBody => 'افتح قيمة لمراجعتها قبل إضافتها.';
+
+  @override
+  String bankMessagesAutoAdded(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'أُضيفت $count معاملات من رسائل بنكية',
+      one: 'أُضيفت معاملة واحدة من رسالة بنكية',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get bankMessagesAutoAdd => 'أضف ما تتأكد منه قيمة';
+
+  @override
+  String get bankMessagesAutoAddHint =>
+      'عندما تذكر الرسالة حسابها ولا شيء فيها يحتاج إلى مراجعة، تُضاف مباشرة مع إمكانية التراجع. والباقي ينتظرك.';
+
+  @override
+  String get bankMessagesOfferTitle => 'أضف مشترياتك من رسائل البنك';
+
+  @override
+  String get bankMessagesOfferBody =>
+      'تستطيع قيمة قراءة رسائل البنك الجديدة على هذا الهاتف واقتراح كل واحدة كمعاملة في حسابها. تُقرأ الرسائل على هذا الجهاز فقط.';
+
+  @override
+  String get bankMessagesOfferAllow => 'سماح';
+
+  @override
+  String get bankMessagesOfferLater => 'ليس الآن';
 
   @override
   String bankMessagesFound(int count) {

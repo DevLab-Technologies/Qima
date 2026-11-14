@@ -116,8 +116,13 @@ struct AddBankMessageIntent: AppIntent {
     @Parameter(title: "Message")
     var message: String
 
+    /// The Message automation's Sender, so Qima can tell which bank (and
+    /// account) the message is from.
+    @Parameter(title: "Sender")
+    var sender: String?
+
     func perform() async throws -> some IntentResult {
-        try MessageInbox.add(message)
+        try MessageInbox.add(message, sender: sender)
         return .result()
     }
 }
@@ -164,7 +169,7 @@ struct AddApplePayIntent: AppIntent {
 enum MessageInbox {
     struct Unavailable: Error {}
 
-    static func add(_ text: String, at date: Date = Date()) throws {
+    static func add(_ text: String, sender: String? = nil, at date: Date = Date()) throws {
         let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return }
         guard let container = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: "group.com.devlabtechnologies.qima") else {
@@ -176,7 +181,8 @@ enum MessageInbox {
         try FileManager.default.createDirectory(at: staging, withIntermediateDirectories: true)
         let name = "Bank message.txt"
         try Data(trimmed.utf8).write(to: staging.appendingPathComponent(name))
-        let meta: [String: Any] = ["name": name, "receivedAt": ISO8601DateFormatter().string(from: date), "kind": "message"]
+        var meta: [String: Any] = ["name": name, "receivedAt": ISO8601DateFormatter().string(from: date), "kind": "message"]
+        if let from = sender?.trimmingCharacters(in: .whitespacesAndNewlines), !from.isEmpty { meta["sender"] = from }
         try JSONSerialization.data(withJSONObject: meta).write(to: staging.appendingPathComponent("meta.json"))
         try FileManager.default.moveItem(at: staging, to: inbox.appendingPathComponent(id, isDirectory: true))
     }

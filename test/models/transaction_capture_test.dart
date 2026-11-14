@@ -56,6 +56,9 @@ class _FakeProvider implements AiAssistProvider {
 
   @override
   Future<List<PageStructure>?> structurePages(String path, List<DocPage> pages, String localeTag) async => null;
+
+  @override
+  Future<MessageLabels?> readMessage(String text, String localeTag) async => null;
 }
 
 void main() {

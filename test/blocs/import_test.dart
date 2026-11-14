@@ -9,10 +9,14 @@ import 'package:qima/models/book_account.dart';
 import 'package:qima/models/book_entry.dart';
 import 'package:qima/models/categorizer.dart';
 import 'package:qima/models/import_plan.dart';
+import 'package:qima/models/message_shape.dart';
 import 'package:qima/models/minor_units.dart';
 import 'package:qima/models/money.dart';
 import 'package:qima/models/money_settings.dart';
+import 'package:qima/models/statement_facts.dart';
 import 'package:qima/models/statement_reader.dart';
+import 'package:qima/models/transaction_capture.dart';
+import 'package:qima/services/ai_assist_provider.dart';
 import 'package:qima/services/book_store.dart';
 import 'package:qima/services/csv/xlsx_reader.dart';
 import 'package:qima/services/import/import_inbox_io.dart';
@@ -329,6 +333,98 @@ void main() {
     });
   });
 
+  group('bank messages', () {
+    ImportSource msg(String id, StatementRow row, {String? sender, List<StatementRef> refs = const []}) =>
+        (id: id, message: true, sender: sender, rows: [row], facts: StatementFacts(refs: refs));
+    final buy = StatementRow(date: DateTime(2026, 11, 6), description: 'CORNER CAFE', amount: -18, currency: 'SAR');
+
+    test('each message finds its own account; statements stay together', () {
+      final named = card.copyWith(statementRefs: ['card:7712']);
+      final placed = ImportPlanner.accountsFor(
+        files: [
+          msg('a', buy, refs: const [StatementRef(StatementRefKind.card, '7712')]),
+          msg('b', buy, sender: 'Home Bank'),
+          msg('c', buy),
+          (id: 's1', message: false, sender: null, rows: [buy], facts: const StatementFacts(refs: [StatementRef(StatementRefKind.card, '7712')])),
+          (id: 's2', message: false, sender: null, rows: [buy], facts: StatementFacts.none),
+        ],
+        accounts: [bank, named, egp],
+        entries: const [],
+        senders: {'homebank': 'cib'},
+      );
+      expect(placed['a'], (account: named, named: true));
+      expect(placed['b'], (account: egp, named: true));
+      // Nothing names it: the usual guess, not sure.
+      expect(placed['c'], (account: bank, named: false));
+      expect(placed['s1']!.account, named);
+      expect(placed['s2']!.account, named);
+    });
+
+    test('the person\'s own pick wins', () {
+      final placed = ImportPlanner.accountsFor(files: [msg('a', buy)], accounts: [bank, egp], entries: const [], chosen: {'a': 'cib'});
+      expect(placed['a']!.account, egp);
+    });
+
+    test('only messages that name their account and need no checking are added on their own', () async {
+      await money.addAccount(bank, opening: sar(1000), openedOn: DateTime(2026, 10, 1));
+      await money.addAccount(card, opening: 0, openedOn: DateTime(2026, 10, 1));
+      final book = money.state.book;
+      final sure = ImportPlanner.sureMessages(
+        files: [
+          msg('sure', buy, sender: 'Home Bank'),
+          msg('noSender', buy),
+          msg('guessed', buy.copyWith(signGuessed: true), sender: 'Home Bank'),
+          msg('usd', buy.copyWith(currency: 'USD'), sender: 'Home Bank'),
+        ],
+        accounts: money.state.balanceAccounts,
+        book: book,
+        builder: money.builder,
+        senders: {'homebank': 'rajhi'},
+      );
+      expect(sure.map((s) => s.fileId), ['sure']);
+      expect(sure.single.entry.lines.any((l) => l.accountId == 'rajhi' && l.amount == -sar(18)), isTrue);
+    });
+
+    test('a message already in the book is not added again', () async {
+      await money.addAccount(bank, opening: sar(1000), openedOn: DateTime(2026, 10, 1));
+      final cats = money.state.book.accounts;
+      await money.saveEntry(money.builder.spend(bank, cats['category.dining']!, sar(18), DateTime(2026, 11, 6), merchant: 'Corner Cafe'));
+      final sure = ImportPlanner.sureMessages(
+        files: [msg('m', buy, sender: 'Home Bank')],
+        accounts: money.state.balanceAccounts,
+        book: money.state.book,
+        builder: money.builder,
+        senders: {'homebank': 'rajhi'},
+      );
+      expect(sure, isEmpty);
+    });
+
+    test('a message on its own is read with what the model says it is about', () async {
+      await importer.close();
+      importer = ImportCubit(
+          inbox: inbox, recognition: recognition, wasImported: money.wasImported, languages: () => const ['en-US'], assist: () => _MessageModel());
+      await share('Bank message.txt', utf8.encode('ACME: 120.00 SAR left your account for DUNE GYM'), kind: 'message');
+      await importer.checkInbox();
+      final row = importer.state.items.single.rows.single;
+      expect(row.amount, -120);
+      expect(row.description, 'DUNE GYM');
+    });
+
+    test('a message keeps who sent it, and settings keep what was learned', () async {
+      final folder = Directory('${dir.path}/shared/sms')..createSync();
+      File('${folder.path}/Bank message.txt').writeAsStringSync('Purchase of SAR 18.00 at CORNER CAFE');
+      File('${folder.path}/meta.json').writeAsStringSync(jsonEncode({
+        'name': 'Bank message.txt', 'receivedAt': DateTime.utc(2026, 11, 7).toIso8601String(), 'kind': 'message', 'sender': ' Home Bank ',
+      }));
+      expect((await inbox.pending()).single.sender, 'Home Bank');
+
+      await money.learnMessages(senders: {'homebank': 'rajhi'}, shapes: const [MessageShape(sender: 'homebank', amountBefore: ['of'], direction: -1)]);
+      final again = MoneySettings.fromJson(money.state.settings.toJson());
+      expect(again.messageSenders, {'homebank': 'rajhi'});
+      expect(again.messageShapes.single.amountBefore, ['of']);
+    });
+  });
+
   group('to categorize', () {
     test('uncategorized entries group by merchant, one choice sorts the group and is remembered', () async {
       await money.addAccount(bank, opening: sar(1000), openedOn: DateTime(2026, 10, 1));
@@ -397,4 +493,23 @@ void main() {
       expect(money.wasImported('h'), isFalse);
     });
   });
+}
+
+/// An on-device model that reads one made-up message.
+class _MessageModel implements AiAssistProvider {
+  @override
+  Future<bool> isAvailable() async => true;
+  @override
+  Future<ModelStatus> status(String localeTag) async => ModelStatus.ready;
+  @override
+  Future<CaptureSpans?> labelTransaction(String text, String localeTag) async => null;
+  @override
+  Future<String?> phrase(String sentence, String localeTag) async => null;
+  @override
+  Future<List<LineLabel>?> labelStatementLines(List<String> lines, String localeTag) async => null;
+  @override
+  Future<List<PageStructure>?> structurePages(String path, List<DocPage> pages, String localeTag) async => null;
+  @override
+  Future<MessageLabels?> readMessage(String text, String localeTag) async =>
+      const MessageLabels(intent: MessageIntent.debit, amount: '120.00 SAR', name: 'DUNE GYM');
 }

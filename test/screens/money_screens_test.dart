@@ -406,7 +406,7 @@ void main() {
     // The four rows, and above them the offer to bring the account to the
     // statement's running balance: unticked, as the account has history.
     expect(find.byType(Checkbox), findsNWidgets(5));
-    final offer = tester.widget<CheckboxListTile>(find.byKey(const ValueKey('importBalance')));
+    final offer = tester.widget<CheckboxListTile>(_balanceOffer);
     expect(offer.value, isFalse);
 
     // With no row ticked, the balance alone can still be applied.
@@ -475,7 +475,7 @@ void main() {
     size(tester, const Size(320, 2400));
     await tester.pumpWidget(wrap(const ImportReviewScreen(), const Locale('ar')));
     await tester.pump(const Duration(milliseconds: 300));
-    expect(find.byKey(const ValueKey('importBalance')), findsOneWidget);
+    expect(_balanceOffer, findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
@@ -506,7 +506,7 @@ void main() {
     // No account number on the screen: the account with the most
     // statements is offered.
     expect(find.byKey(const ValueKey('importAccount-rajhi')), findsOneWidget);
-    final offer = tester.widget<CheckboxListTile>(find.byKey(const ValueKey('importBalance')));
+    final offer = tester.widget<CheckboxListTile>(_balanceOffer);
     expect(offer.value, isTrue);
     expect(find.text(l10n.importApplyBalance), findsOneWidget);
     // The account has history, so the difference can go either way; the
@@ -651,6 +651,156 @@ void main() {
       }
       expect(calls.last, 'importRecent');
       expect(find.text(l10n.bankMessagesFound(0)), findsOneWidget);
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    /// A bank message in the inbox, as the SMS receiver or the Shortcuts
+    /// action writes it.
+    Future<void> message(String id, String text, {String? sender}) async {
+      final folder = Directory('${dir.path}/inbox/$id')..createSync(recursive: true);
+      File('${folder.path}/Bank message.txt').writeAsStringSync(text);
+      File('${folder.path}/meta.json').writeAsStringSync(jsonEncode({
+        'name': 'Bank message.txt',
+        'receivedAt': DateTime.now().toUtc().toIso8601String(),
+        'kind': 'message',
+        'sender': ?sender,
+      }));
+    }
+
+    Future<void> readInbox() async {
+      await importer.checkInbox();
+      for (var i = 0; i < 40 && importer.state.reading; i++) {
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+      }
+    }
+
+    testWidgets('messages from two banks wait in two accounts, and each sender is remembered', (tester) async {
+      await tester.runAsync(() async {
+        await seed();
+        await importer.remove(importer.state.items.map((i) => i.id));
+        await money.giveStatementRefs(money.state.book.accounts['visa']!, ['card:7712']);
+        await message('m1', 'POS Purchase\nCard: XX7712\nAmount: SAR 88.00\nAt: Jarir Bookstore', sender: 'CardBank');
+        await message('m2', 'Purchase of SAR 30.00 at KUDU OLAYA', sender: 'HomeBank');
+        await readInbox();
+      });
+      size(tester, const Size(390, 2000));
+      final l10n = await AppLocalizations.delegate.load(const Locale('en'));
+      final rajhi = money.state.book.balanceOf('rajhi'), visa = money.state.book.balanceOf('visa');
+      await tester.pumpWidget(wrap(const ImportReviewScreen(), const Locale('en')));
+      await tester.pump(const Duration(milliseconds: 300));
+      // The card's message goes to the card; the other to the bank account.
+      expect(find.byKey(const ValueKey('importAccount-visa')), findsOneWidget);
+      expect(find.byKey(const ValueKey('importAccount-rajhi')), findsOneWidget);
+      expect(find.text(l10n.importMessageFrom('CardBank')), findsOneWidget);
+      expect(find.text(l10n.importAddCount(2)), findsOneWidget);
+      await tester.runAsync(() async {
+        await tester.tap(find.byKey(const ValueKey('importAdd')));
+        for (var i = 0; i < 40 && importer.state.items.isNotEmpty; i++) {
+          await Future<void>.delayed(const Duration(milliseconds: 50));
+        }
+      });
+      await tester.pump();
+      expect(money.state.book.balanceOf('visa'), visa + sar(88));
+      expect(money.state.book.balanceOf('rajhi'), rajhi - sar(30));
+      expect(money.state.settings.messageSenders, {'cardbank': 'visa', 'homebank': 'rajhi'});
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('one message moves to another account on its own', (tester) async {
+      await tester.runAsync(() async {
+        await seed();
+        await importer.remove(importer.state.items.map((i) => i.id));
+        await message('m1', 'Purchase of SAR 12.00 at CORNER CAFE');
+        await message('m2', 'Purchase of SAR 30.00 at KUDU OLAYA');
+        await readInbox();
+      });
+      size(tester, const Size(390, 2000));
+      final wallet = money.state.book.balanceOf('wallet');
+      await tester.pumpWidget(wrap(const ImportReviewScreen(), const Locale('en')));
+      await tester.pump(const Duration(milliseconds: 300));
+      expect(find.byKey(const ValueKey('importAccount-rajhi')), findsOneWidget);
+      await tester.tap(find.byKey(const ValueKey('importMove-m1')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('importMoveTo-wallet')));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey('importAccount-wallet')), findsOneWidget);
+      await tester.runAsync(() async {
+        await tester.tap(find.byKey(const ValueKey('importAdd')));
+        for (var i = 0; i < 40 && importer.state.items.isNotEmpty; i++) {
+          await Future<void>.delayed(const Duration(milliseconds: 50));
+        }
+      });
+      await tester.pump();
+      expect(money.state.book.balanceOf('wallet'), wallet - sar(12));
+      // No sender, nothing to remember.
+      expect(money.state.settings.messageSenders, isEmpty);
+    });
+
+    testWidgets('a corrected message teaches its sender\'s shape', (tester) async {
+      await tester.runAsync(() async {
+        await seed();
+        await importer.remove(importer.state.items.map((i) => i.id));
+        await message('m1', 'Card 9921 used\nSAR 75.00\nMAX SPORTS JEDDAH\nBal SAR 1,200.00', sender: 'ACME');
+        await readInbox();
+      });
+      size(tester, const Size(390, 2000));
+      await tester.pumpWidget(wrap(const ImportReviewScreen(), const Locale('en')));
+      await tester.pump(const Duration(milliseconds: 300));
+      final row = importer.state.items.single.rows.single;
+      await tester.tap(find.text(row.description.isEmpty ? row.detail : row.description));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byKey(const ValueKey('importRowName')), 'MAX SPORTS JEDDAH');
+      await tester.enterText(find.byKey(const ValueKey('importRowAmount')), '75');
+      await tester.tap(find.byKey(const ValueKey('importRowDone')));
+      await tester.pumpAndSettle();
+      await tester.runAsync(() async {
+        await tester.tap(find.byKey(const ValueKey('importAdd')));
+        for (var i = 0; i < 40 && importer.state.items.isNotEmpty; i++) {
+          await Future<void>.delayed(const Duration(milliseconds: 50));
+        }
+      });
+      await tester.pump();
+      expect(money.state.settings.messageShapes, hasLength(1));
+
+      // The next message from ACME is read the way the person showed.
+      await tester.runAsync(() async {
+        await importer.close();
+        importer = ImportCubit(
+          inbox: FolderInbox(folders: [Directory('${dir.path}/inbox')]),
+          recognition: _PdfRecognition(),
+          wasImported: money.wasImported,
+          languages: () => const ['en-US'],
+          shapes: () => money.state.settings.messageShapes,
+        );
+        await message('m2', 'Card 9921 used\nSAR 12.50\nBLUE CAFE\nBal SAR 1,187.50', sender: 'ACME');
+        await readInbox();
+      });
+      final next = importer.state.items.single.rows.single;
+      expect(next.amount, -12.5);
+      expect(next.description, 'BLUE CAFE');
+      expect(next.signGuessed, isFalse);
+    });
+
+    testWidgets('Android: the offer on Home asks once', (tester) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.android;
+      await tester.runAsync(seed);
+      size(tester, const Size(390, 900));
+      final calls = <String>[];
+      messenger.setMockMethodCallHandler(BankMessages.sms, (call) async {
+        calls.add(call.method);
+        return {'granted': call.method == 'enable', 'enabled': call.method == 'enable'};
+      });
+      await tester.pumpWidget(wrap(const Scaffold(body: BankMessagesOffer()), const Locale('en')));
+      await tester.pump(const Duration(milliseconds: 300));
+      expect(find.byKey(const ValueKey('bankMessagesOffer')), findsOneWidget);
+      await tester.runAsync(() async {
+        await tester.tap(find.byKey(const ValueKey('bankMessagesOfferAllow')));
+        await Future<void>.delayed(const Duration(milliseconds: 200));
+      });
+      await tester.pump();
+      expect(calls, ['status', 'enable']);
+      expect(money.state.settings.askedBankMessages, isTrue);
+      expect(find.byKey(const ValueKey('bankMessagesOffer')), findsNothing);
       debugDefaultTargetPlatformOverride = null;
     });
 
@@ -1177,3 +1327,6 @@ void main() {
     });
   });
 }
+
+/// The review's balance offer, one per account (`importBalance-<id>`).
+final _balanceOffer = find.byWidgetPredicate((w) => w.key is ValueKey<String> && (w.key! as ValueKey<String>).value.startsWith('importBalance-'));

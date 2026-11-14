@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../blocs/import_cubit.dart';
+import '../../blocs/money_cubit.dart';
 import '../../l10n/app_localizations.dart';
 import '../../services/import/bank_messages.dart';
 import '../../theme/design_system.dart';
@@ -127,6 +128,21 @@ class _BankMessagesScreenState extends State<BankMessagesScreen> {
       case BankMessagesWay.none:
         children.add(Text(l10n.bankMessagesUnavailable, style: note));
     }
+    if (BankMessages.way != BankMessagesWay.none) {
+      final auto = context.watch<MoneyCubit>().state.settings.autoAddMessages;
+      children.add(Padding(
+        padding: const EdgeInsets.only(top: DS.spaceMD),
+        child: MoneySection(children: [
+          SwitchListTile(
+            key: const ValueKey('bankMessagesAutoAdd'),
+            value: auto,
+            onChanged: (v) => context.read<MoneyCubit>().setAutoAddMessages(v),
+            title: Text(l10n.bankMessagesAutoAdd),
+            subtitle: Text(l10n.bankMessagesAutoAddHint),
+          ),
+        ]),
+      ));
+    }
     children.add(Padding(
       padding: const EdgeInsets.only(top: DS.spaceMD),
       child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -138,6 +154,79 @@ class _BankMessagesScreenState extends State<BankMessagesScreen> {
     return Scaffold(
       appBar: AppBar(title: Text(l10n.bankMessagesTitle), actions: const [HelpButton(topic: HelpTopicId.bankMessages)]),
       body: ListView(padding: const EdgeInsets.fromLTRB(DS.spaceMD, DS.spaceSM, DS.spaceMD, DS.spaceLG), children: children),
+    );
+  }
+}
+
+/// On Home, on Android, once the person has an account: the offer to read
+/// bank messages on their own, until they allow it or say not now.
+class BankMessagesOffer extends StatefulWidget {
+  const BankMessagesOffer({super.key});
+
+  @override
+  State<BankMessagesOffer> createState() => _BankMessagesOfferState();
+}
+
+class _BankMessagesOfferState extends State<BankMessagesOffer> {
+  BankMessagesStatus? _status;
+
+  @override
+  void initState() {
+    super.initState();
+    if (BankMessages.way == BankMessagesWay.readSms) {
+      BankMessages.status().then((s) {
+        if (mounted) setState(() => _status = s);
+      });
+    }
+  }
+
+  Future<void> _allow() async {
+    final money = context.read<MoneyCubit>();
+    final importer = context.read<ImportCubit>();
+    final s = await BankMessages.enable();
+    await money.markBankMessagesAsked();
+    if (!mounted) return;
+    setState(() => _status = s);
+    if (!s.granted) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.bankMessagesDenied)));
+      return;
+    }
+    await importer.checkInbox();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final status = _status;
+    final money = context.watch<MoneyCubit>().state;
+    if (status == null || status.granted || !money.hasBook || money.settings.askedBankMessages) return const SizedBox.shrink();
+    final l10n = AppLocalizations.of(context)!;
+    final colors = context.colors;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: DS.spaceMD),
+      child: DSCard(
+        key: const ValueKey('bankMessagesOffer'),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Row(children: [
+            Icon(Icons.sms_outlined, color: colors.brandText),
+            const SizedBox(width: DS.spaceSM),
+            Expanded(
+              child: Text(l10n.bankMessagesOfferTitle, style: TextStyle(color: colors.textPrimary, fontSize: 15, fontWeight: FontWeight.w700)),
+            ),
+          ]),
+          const SizedBox(height: DS.spaceXS),
+          Text(l10n.bankMessagesOfferBody, style: TextStyle(color: colors.textSecondary, fontSize: 13)),
+          const SizedBox(height: DS.spaceSM),
+          Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+            TextButton(
+              key: const ValueKey('bankMessagesOfferLater'),
+              onPressed: () => context.read<MoneyCubit>().markBankMessagesAsked(),
+              child: Text(l10n.bankMessagesOfferLater),
+            ),
+            const SizedBox(width: DS.spaceXS),
+            FilledButton(key: const ValueKey('bankMessagesOfferAllow'), onPressed: _allow, child: Text(l10n.bankMessagesOfferAllow)),
+          ]),
+        ]),
+      ),
     );
   }
 }
