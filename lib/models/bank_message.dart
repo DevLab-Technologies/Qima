@@ -89,7 +89,11 @@ final _intentWords = <(MessageIntent, RegExp)>[
     MessageIntent.transferIn,
     RegExp(
       r'incoming transfer|transfer (?:in|received|from)|received (?:a )?transfer|'
-      r'حوالة واردة|تحويل وارد|حوالة محلية واردة|virement reçu|transferencia recibida',
+      // Only a transfer sent to the person's account: a purchase "charged
+      // to your card" or a balance "in your account" is not money in.
+      r'(?:transfer(?:red)?|sent|deposited)\b.{0,40}\bto your (?:account|card|wallet)|credited to your|'
+      r'حوالة واردة|تحويل وارد|حوالة محلية واردة|(?:تحويل|حوالة|إيداع|ايداع).{0,40}(?:(?:إلى|الى) حسابك|لحسابك)|'
+      r'virement reçu|transferencia recibida',
       caseSensitive: false,
     )
   ),
@@ -127,6 +131,16 @@ final _intentWords = <(MessageIntent, RegExp)>[
     )
   ),
 ];
+
+/// The label of a figure that is only what is left after a transaction.
+final _leftLabel = RegExp(
+  r'(?:(?:remaining|avail(?:able)?\.?|left)\s*(?:credit\s*)?(?:limit|bal(?:ance)?\.?)|(?:limit|bal(?:ance)?\.?)\s*(?:left|remaining|avail(?:able)?\.?)|'
+  r'available credit|\bbal(?:ance)?\.?\s*:|'
+  r'(?:الحد|الرصيد)\s*(?:الائتماني\s*)?(?:المتبقي|المتاح|المتوفر)|(?:الرصيد|المتبقي)\s*:|'
+  r'solde disponible|plafond restant|saldo disponible|límite disponible)'
+  r'[^\d]{0,20}$',
+  caseSensitive: false,
+);
 
 final _noticeWords = RegExp(
   r'statement (?:has been |is |was )?(?:issued|generated|ready|available)|minimum (?:due|payment|amount)|'
@@ -218,8 +232,16 @@ extension _BankMessages on StatementReader {
     // a currency that isn't the balance or limit left.
     final labelled = fields[_Field.amount];
     final fromField = labelled == null ? null : _amounts(labelled, _dates(labelled).$2).firstOrNull;
-    bool left(_Found<_Money> a) =>
-        StatementReader._leftBefore.hasMatch(flat.substring(math.max(0, a.span.start - 40), a.span.start));
+    // What a figure follows says whether it is what is left: a loose word
+    // ("balance", "remaining") only steers the choice of amount; a plain
+    // label ("remaining limit", "Avail. Bal:") rules the figure out.
+    String before(_Found<_Money> a) => flat.substring(math.max(0, a.span.start - 40), a.span.start);
+    bool left(_Found<_Money> a) => StatementReader._leftBefore.hasMatch(before(a));
+    bool onlyLeft(_Found<_Money> a) => _leftLabel.hasMatch(before(a));
+    // A message whose only figures are the limit or balance left (its
+    // amount line cut off in a screenshot) is not a transaction, but
+    // "balance transfer of SAR 2,000" is.
+    if (fromField == null && amounts.every(onlyLeft)) return null;
     final main = fromField ??
         amounts.where((a) => a.value.currency != null && !left(a)).firstOrNull ??
         amounts.where((a) => a.value.currency != null).firstOrNull ??
