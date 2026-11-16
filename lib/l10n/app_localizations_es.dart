@@ -3353,6 +3353,10 @@ class AppLocalizationsEs extends AppLocalizations {
       'En Android, el modelo funciona con ML Kit de Google: tus mensajes y registros se quedan en el teléfono, y ML Kit envía a Google datos sobre su propio uso, como el modelo del teléfono y los códigos de error.';
 
   @override
+  String get settingsUseModelDownload =>
+      'En Windows y Linux, al activarlo se descarga una vez un modelo abierto (Qwen2.5, unos 1,1 GB) desde Hugging Face. Después funciona solo en este ordenador.';
+
+  @override
   String get modelReady => 'Listo en este dispositivo';
 
   @override

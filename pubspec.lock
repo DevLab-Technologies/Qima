@@ -772,6 +772,13 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.2.0"
+  qima_llm:
+    dependency: "direct main"
+    description:
+      path: "packages/qima_llm"
+      relative: true
+    source: path
+    version: "1.0.0"
   record_use:
     dependency: transitive
     description:

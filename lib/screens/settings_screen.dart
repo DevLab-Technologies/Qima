@@ -17,6 +17,7 @@ import '../services/cloud_kv_store.dart';
 import '../services/preferences.dart';
 import '../services/ai_apps.dart';
 import '../services/ai_assist_provider.dart';
+import '../services/platform_ai.dart';
 import '../theme/design_system.dart';
 import '../theme/help_topics.dart';
 import '../theme/qima_colors.dart';
@@ -820,8 +821,12 @@ class _OnDeviceModelSectionState extends State<_OnDeviceModelSection> {
   /// person turns it on.
   static bool get _android => !kIsWeb && defaultTargetPlatform == TargetPlatform.android;
 
+  /// On Windows and Linux asking starts the model's download, so it waits
+  /// for the switch too.
+  static bool get _waitsForSwitch => _android || usesDownloadedModel;
+
   Future<ModelStatus>? _statusFor(AppCubit cubit, String tag) {
-    if (_android && !cubit.state.onDeviceModel) return null;
+    if (_waitsForSwitch && !cubit.state.onDeviceModel) return null;
     if (tag != _asked) {
       _asked = tag;
       _status = cubit.aiAssist.status(tag);
@@ -870,7 +875,11 @@ class _OnDeviceModelSectionState extends State<_OnDeviceModelSection> {
           Padding(
             padding: const EdgeInsets.only(bottom: DS.spaceSM),
             child: Text(
-              _android ? '${l10n.settingsUseModelFooter} ${l10n.settingsUseModelAndroid}' : l10n.settingsUseModelFooter,
+              _android
+                  ? '${l10n.settingsUseModelFooter} ${l10n.settingsUseModelAndroid}'
+                  : usesDownloadedModel
+                      ? '${l10n.settingsUseModelFooter} ${l10n.settingsUseModelDownload}'
+                      : l10n.settingsUseModelFooter,
               style: TextStyle(color: colors.textTertiary, fontSize: 12, height: 1.35),
             ),
           ),

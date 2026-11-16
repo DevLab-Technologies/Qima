@@ -58,6 +58,8 @@ dependencies:
   package_info_plus: ^10.2.1
   hijri: ^3.0.1
   image_picker: ^1.2.4
+  qima_llm:
+    path: packages/qima_llm
 
 dev_dependencies:
   flutter_test:

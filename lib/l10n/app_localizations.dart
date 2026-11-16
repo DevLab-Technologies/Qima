@@ -5723,6 +5723,12 @@ abstract class AppLocalizations {
   /// **'On Android, Google’s ML Kit runs the model: your messages and records stay on the phone, and ML Kit sends Google figures about its own use, such as the phone model and error codes.'**
   String get settingsUseModelAndroid;
 
+  /// No description provided for @settingsUseModelDownload.
+  ///
+  /// In en, this message translates to:
+  /// **'On Windows and Linux, turning this on downloads an open model (Qwen2.5, about 1.1 GB) once from Hugging Face. After that it runs only on this computer.'**
+  String get settingsUseModelDownload;
+
   /// No description provided for @modelReady.
   ///
   /// In en, this message translates to:

@@ -3346,6 +3346,10 @@ class AppLocalizationsAr extends AppLocalizations {
       'على أندرويد يشغّل ML Kit من Google النموذج: تبقى رسائلك وسجلاتك على الهاتف، ويرسل ML Kit إلى Google أرقامًا عن استخدامه هو، مثل طراز الهاتف ورموز الأخطاء.';
 
   @override
+  String get settingsUseModelDownload =>
+      'على ويندوز ولينكس، يؤدي تشغيل هذا الخيار إلى تنزيل نموذج مفتوح (Qwen2.5، نحو 1.1 غيغابايت) مرة واحدة من Hugging Face، ثم يعمل على هذا الحاسوب فقط.';
+
+  @override
   String get modelReady => 'جاهز على هذا الجهاز';
 
   @override

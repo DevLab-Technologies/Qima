@@ -33,7 +33,7 @@
 <main class="wrap narrow legal" id="main">
 
 <h1>Privacy Policy</h1>
-<p class="updated">Last updated 15 November 2026 · Applies to the Qima mobile app and this website</p>
+<p class="updated">Last updated 16 November 2026 · Applies to the Qima mobile app and this website</p>
 
 <p>
   Qima is a precious-metals-first portfolio and price tracker published by
@@ -92,8 +92,17 @@
   you do), Qima asks the model built into your device to help read bank
   messages and statements and to word the month summary. On Apple devices that
   is Apple's Foundation Models; on Android it is Gemini Nano, run through
-  Google's ML Kit. Either way the model runs on your device: your messages,
-  statements and records are never sent anywhere.
+  Google's ML Kit. Windows and Linux have no model of their own, so there Qima
+  uses an open model, Qwen2.5 1.5B Instruct (about 1.1 GB). Whichever it is,
+  the model runs on your device: your messages, statements and records are
+  never sent anywhere.
+</p>
+<p>
+  On Windows and Linux, turning the setting on downloads that model once from
+  Hugging Face, where its makers publish it. Like any website, Hugging Face
+  sees your IP address when the file is downloaded; nothing about you or your
+  records is sent. Qima checks the file against its published fingerprint
+  before using it, and never contacts Hugging Face again once it has it.
 </p>
 <p>
   On Android, ML Kit sends Google figures about its own use, such as the phone

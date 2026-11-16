@@ -27,6 +27,7 @@ import '../models/watchlist_sort.dart';
 import '../models/zakat.dart';
 import '../models/chart_range.dart';
 import '../services/ai_assist_provider.dart';
+import '../services/platform_ai.dart';
 import '../services/book_store.dart';
 import '../services/dictation_service.dart';
 import '../services/alert_runtime_store.dart';
@@ -148,7 +149,7 @@ class AppCubit extends Cubit<AppState> {
       notificationService: notificationService ?? NotificationService(),
       cloudStore: resolvedCloudStore,
       bookStore: bookStore ?? BookStore(cloud: resolvedCloudStore),
-      aiAssist: aiAssist ?? const PlatformAiAssistProvider(),
+      aiAssist: aiAssist ?? platformAiAssist(),
       dictation: dictation ?? const PlatformDictation(),
       textRecognition: textRecognition ?? const PlatformTextRecognition(),
       deviceLocale: deviceLocale,
