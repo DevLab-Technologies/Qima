@@ -50,32 +50,56 @@ class DesktopModel {
   final Future<Directory> Function() _directory;
   final http.Client Function() _client;
   final ModelOpener _open;
+  final bool Function() _cpu;
+
+  /// How long the model stays loaded with no question.
   final Duration idle;
+
+  /// How long the download may go without a byte before it's given up and
+  /// tried again on the next ask.
+  final Duration stall;
+
+  /// How long after a failed load the model is tried again.
+  final Duration retry;
 
   DesktopModel({
     DesktopModelFile? file,
     Future<Directory> Function()? directory,
     http.Client Function()? client,
     ModelOpener? open,
+    bool Function()? cpu,
     this.idle = const Duration(minutes: 3),
+    this.stall = const Duration(seconds: 60),
+    this.retry = const Duration(minutes: 5),
   })  : file = file ?? DesktopModelFile.qwen,
         _directory = directory ?? getApplicationSupportDirectory,
         _client = client ?? http.Client.new,
-        _open = open ?? QimaLlm.open;
+        _open = open ?? QimaLlm.open,
+        _cpu = cpu ?? QimaLlm.cpuSupported;
 
   /// Windows and Linux; macOS uses Apple's model instead.
   static bool get supported =>
       !kIsWeb && (defaultTargetPlatform == TargetPlatform.windows || defaultTargetPlatform == TargetPlatform.linux);
+
+  /// Whether this CPU can run the model, asked once. When it can't, nothing
+  /// is downloaded.
+  late final bool _runsHere = _cpu();
 
   Future<void>? _download;
   Future<QimaLlm?>? _loading;
   QimaLlm? _llm;
   Timer? _unload;
   int _asking = 0;
+  bool _ready = false;
 
-  /// Whether the model failed to load from a file that checked out, which
-  /// means this computer can't run it.
-  bool _broken = false;
+  /// When the model last failed to load; it isn't tried again until
+  /// [retry] has passed.
+  DateTime? _failedAt;
+
+  /// Set by [stop]: the running download's client and how to end its read.
+  http.Client? _active;
+  void Function()? _endRead;
+  bool _stopping = false;
 
   Future<File> _path(String suffix) async {
     final dir = Directory('${(await _directory()).path}${Platform.pathSeparator}models');
@@ -86,14 +110,15 @@ class DesktopModel {
   /// Whether the checked file is on disk. A file only gets its final name
   /// after its hash matched.
   Future<bool> get downloaded async {
+    if (_ready) return true;
     final f = await _path('');
-    return await f.exists() && await f.length() == file.size;
+    return _ready = await f.exists() && await f.length() == file.size;
   }
 
   /// ready once the file is here, notReady while it downloads (started
-  /// here when it isn't), unsupported when it can't run on this computer.
+  /// here when it isn't), unsupported when this CPU can't run it.
   Future<ModelStatus> status() async {
-    if (_broken) return ModelStatus.unsupported;
+    if (!_runsHere) return ModelStatus.unsupported;
     if (await downloaded) return ModelStatus.ready;
     unawaited(download());
     return ModelStatus.notReady;
@@ -103,44 +128,54 @@ class DesktopModel {
   /// One download at a time; a failed one is tried again on the next ask.
   Future<void> download() => _download ??= _fetch().whenComplete(() => _download = null);
 
+  /// Stops a running download, keeping what came for next time, and frees
+  /// the model: the person turned it off.
+  void stop() {
+    _stopping = true;
+    _endRead?.call();
+    _active?.close();
+    close();
+  }
+
   Future<void> _fetch() async {
+    _stopping = false;
     final part = await _path('.part');
-    final client = _client();
+    final client = _active = _client();
     try {
       var have = await part.exists() ? await part.length() : 0;
       if (have > file.size) {
         await part.delete();
         have = 0;
       }
-      final request = http.Request('GET', file.url);
-      if (have > 0) request.headers['Range'] = 'bytes=$have-';
-      final response = await client.send(request);
-      final resumed = response.statusCode == 206 && have > 0;
-      if (response.statusCode != 200 && !resumed) {
-        throw HttpException('model download: ${response.statusCode}', uri: file.url);
-      }
-
       final hash = _Sha256Sink();
       final digest = sha256.startChunkedConversion(hash);
-      if (resumed) {
-        await part.openRead().forEach(digest.add);
-      } else {
-        have = 0;
-      }
-      final sink = part.openWrite(mode: resumed ? FileMode.append : FileMode.write);
-      try {
-        await for (final chunk in response.stream) {
-          have += chunk.length;
-          if (have > file.size) throw const FormatException('model download is longer than expected');
-          digest.add(chunk);
-          sink.add(chunk);
+
+      // A part that's all here (the app closed before the rename) is only
+      // checked; asking for more would get a 416.
+      if (have < file.size) {
+        final request = http.Request('GET', file.url);
+        if (have > 0) request.headers['Range'] = 'bytes=$have-';
+        final response = await client.send(request).timeout(stall);
+        if (_stopping) return;
+        final resumed = response.statusCode == 206 && have > 0;
+        if (response.statusCode != 200 && !resumed) {
+          throw HttpException('model download: ${response.statusCode}', uri: file.url);
         }
-      } finally {
-        await sink.close();
+        if (!resumed) have = 0;
+        if (have > 0) await part.openRead().forEach(digest.add);
+        if (_stopping) return;
+        final sink = part.openWrite(mode: resumed ? FileMode.append : FileMode.write);
+        try {
+          have = await _receive(response.stream, sink, digest, have);
+        } finally {
+          await sink.close();
+        }
+        if (have != file.size) return; // Cut short; carried on next time.
+      } else {
+        await part.openRead().forEach(digest.add);
       }
       digest.close();
 
-      if (have != file.size) return; // Cut short; carried on next time.
       if (hash.value.toString() != file.sha256) {
         await part.delete();
         throw const FormatException('model download does not match its hash');
@@ -149,12 +184,41 @@ class DesktopModel {
     } catch (e) {
       debugPrint('DesktopModel: $e');
     } finally {
+      _active = null;
+      _endRead = null;
       client.close();
     }
   }
 
+  /// Writes [body] to [sink] and [digest] after the [have] bytes already
+  /// there, and returns the new count. Ends with an error when no byte
+  /// comes for [stall], when the file grows past its size, or on [stop].
+  Future<int> _receive(Stream<List<int>> body, IOSink sink, Sink<List<int>> digest, int have) {
+    final done = Completer<int>();
+    late final StreamSubscription<List<int>> read;
+    void fail(Object error) {
+      read.cancel();
+      if (!done.isCompleted) done.completeError(error);
+    }
+
+    read = body.timeout(stall).listen(
+      (chunk) {
+        have += chunk.length;
+        if (have > file.size) return fail(const FormatException('model download is longer than expected'));
+        digest.add(chunk);
+        sink.add(chunk);
+      },
+      onError: fail,
+      onDone: () {
+        if (!done.isCompleted) done.complete(have);
+      },
+    );
+    _endRead = () => fail(const HttpException('model download stopped'));
+    return done.future;
+  }
+
   /// [system] then [user] to the model, or null when it isn't downloaded,
-  /// can't load, fails, or takes longer than [timeout].
+  /// can't load, fails, or takes longer than [timeout] to load or to answer.
   Future<String?> ask({
     required String system,
     required String user,
@@ -165,11 +229,9 @@ class DesktopModel {
     _asking++;
     _unload?.cancel();
     try {
-      final llm = await _loaded();
+      final llm = await _loaded().timeout(timeout, onTimeout: () => null);
       if (llm == null) return null;
-      return await llm
-          .ask(system: system, user: user, grammar: grammar, maxTokens: maxTokens)
-          .timeout(timeout, onTimeout: () => null);
+      return await llm.ask(system: system, user: user, grammar: grammar, maxTokens: maxTokens, timeout: timeout);
     } finally {
       // Freed only once no question is waiting.
       if (--_asking == 0) _unload = Timer(idle, close);
@@ -178,7 +240,9 @@ class DesktopModel {
 
   Future<QimaLlm?> _loaded() async {
     if (_llm != null) return _llm;
-    if (_broken || !await downloaded) return null;
+    if (!_runsHere || !await downloaded) return null;
+    final failed = _failedAt;
+    if (failed != null && DateTime.now().difference(failed) < retry) return null;
     return _loading ??= () async {
       QimaLlm? llm;
       try {
@@ -188,7 +252,7 @@ class DesktopModel {
       }
       _loading = null;
       _llm = llm;
-      _broken = llm == null;
+      _failedAt = llm == null ? DateTime.now() : null;
       return llm;
     }();
   }
@@ -213,7 +277,7 @@ class _Sha256Sink implements Sink<Digest> {
 
 /// The on-device model on Windows and Linux: [DesktopModel]. It reads bank
 /// messages, as Gemini Nano does on Android; the rest is left to the rules.
-class DesktopAiAssistProvider implements AiAssistProvider {
+class DesktopAiAssistProvider implements AiAssistProvider, StoppableModel {
   final DesktopModel model;
 
   DesktopAiAssistProvider({DesktopModel? model}) : model = model ?? DesktopModel();
@@ -223,6 +287,9 @@ class DesktopAiAssistProvider implements AiAssistProvider {
 
   @override
   Future<bool> isAvailable() async => await model.status() == ModelStatus.ready;
+
+  @override
+  void stop() => model.stop();
 
   @override
   Future<MessageLabels?> readMessage(String text, String localeTag) async {

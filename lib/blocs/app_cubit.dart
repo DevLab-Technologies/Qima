@@ -1026,6 +1026,9 @@ class AppCubit extends Cubit<AppState> {
     if (value == state.onDeviceModel) return;
     await preferences.setOnDeviceModel(value);
     emit(state.copyWith(onDeviceModel: value));
+    if (!value) {
+      if (aiAssist case final StoppableModel model) model.stop();
+    }
   }
 
   /// The model features may consult: [aiAssist] when the user turned it on,

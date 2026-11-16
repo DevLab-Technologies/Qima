@@ -6,8 +6,9 @@ import 'package:qima/services/desktop_model.dart';
 import 'package:qima_llm/qima_llm.dart';
 
 // Runs the real model on made-up bank messages (no real bank's wording, card
-// or amount). Skipped unless QIMA_LLM_LIB names a built qima_llm library and
-// QIMA_LLM_MODEL the downloaded model file (DesktopModelFile.qwen).
+// or amount). Skipped unless QIMA_LLM_LIB names a built qima_llm library
+// (with qima_cpu beside it) and QIMA_LLM_MODEL the downloaded model file
+// (DesktopModelFile.qwen).
 void main() {
   final lib = Platform.environment['QIMA_LLM_LIB'];
   final modelPath = Platform.environment['QIMA_LLM_MODEL'];
@@ -32,7 +33,9 @@ void main() {
     final dir = Directory.systemTemp.createTempSync('qima_live_model');
     addTearDown(() => dir.deleteSync(recursive: true));
     Link('${dir.path}/models/${DesktopModelFile.qwen.name}').createSync(File(modelPath!).absolute.path, recursive: true);
-    final model = DesktopModel(directory: () async => dir, open: (path) => QimaLlm.open(path, library: lib));
+    final cpu = '${File(lib!).parent.path}${Platform.pathSeparator}${QimaLlm.cpuLibraryName}';
+    final model = DesktopModel(
+        directory: () async => dir, cpu: () => QimaLlm.cpuSupported(library: cpu), open: (path) => QimaLlm.open(path, library: lib));
     addTearDown(model.close);
     final provider = DesktopAiAssistProvider(model: model);
     expect(await provider.isAvailable(), isTrue, reason: 'QIMA_LLM_MODEL must be the pinned model file');

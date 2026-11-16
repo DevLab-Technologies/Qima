@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -9,6 +10,7 @@ import 'package:qima/models/statement_facts.dart';
 import 'package:qima/models/statement_reader.dart';
 import 'package:qima/services/ai_assist_provider.dart';
 import 'package:qima/services/desktop_model.dart';
+import 'package:qima_llm/qima_llm.dart';
 
 void main() {
   final bytes = utf8.encode('not a real model, only bytes to download. ' * 50);
@@ -39,8 +41,16 @@ void main() {
     return (client, asked);
   }
 
-  DesktopModel model(http.Client Function() client, {DesktopModelFile? file}) =>
-      DesktopModel(file: file ?? good, directory: () async => dir, client: client, open: (_) async => null);
+  DesktopModel model(http.Client Function() client, {DesktopModelFile? file, Duration stall = const Duration(seconds: 60)}) =>
+      DesktopModel(
+          file: file ?? good, directory: () async => dir, client: client, open: (_) async => null, cpu: () => true, stall: stall);
+
+  /// A server that sends the first [sent] bytes and then nothing more,
+  /// without closing.
+  http.Client Function() stalling(int sent) => () => MockClient.streaming((request, _) async {
+        final body = StreamController<List<int>>()..add(bytes.sublist(0, sent));
+        return http.StreamedResponse(body.stream, 200);
+      });
 
   test('asking for the status starts the download, and the checked file makes it ready', () async {
     final (client, asked) = server(bytes);
@@ -95,17 +105,75 @@ void main() {
     expect(calls, 2);
   });
 
-  test('a model that will not load on this computer says so, and is not asked', () async {
-    final (client, _) = server(bytes);
+  test('a part that is all here (closed before the rename) is checked and used, not asked for again', () async {
+    at('test.gguf.part')
+      ..createSync(recursive: true)
+      ..writeAsBytesSync(bytes);
+    final (client, asked) = server(bytes);
     final m = model(client);
     await m.download();
-    expect(await m.ask(system: 's', user: 'u'), isNull);
+    expect(asked, isEmpty);
+    expect(at('test.gguf').readAsBytesSync(), bytes);
+    expect(await m.status(), ModelStatus.ready);
+  });
+
+  test('a download that stops sending is given up, and carries on from there next time', () async {
+    final m = model(stalling(700), stall: const Duration(milliseconds: 50));
+    await m.download();
+    expect(at('test.gguf.part').lengthSync(), 700);
+    expect(await m.downloaded, isFalse);
+  });
+
+  test('stopping ends the download and keeps what came for next time', () async {
+    final m = model(stalling(700));
+    final running = m.download();
+    await Future<void>.delayed(const Duration(milliseconds: 20));
+    m.stop();
+    await running.timeout(const Duration(seconds: 2));
+    expect(at('test.gguf.part').lengthSync(), 700);
+  });
+
+  test('on a CPU that cannot run the model nothing is downloaded and it says so', () async {
+    final (client, asked) = server(bytes);
+    final m = DesktopModel(file: good, directory: () async => dir, client: client, open: (_) async => null, cpu: () => false);
     expect(await m.status(), ModelStatus.unsupported);
+    await Future<void>.delayed(Duration.zero);
+    expect(asked, isEmpty);
+    expect(await m.ask(system: 's', user: 'u'), isNull);
+  });
+
+  test('a model that failed to load is tried again only after a while', () async {
+    final (client, _) = server(bytes);
+    var opened = 0;
+    DesktopModel failing(Duration retry) => DesktopModel(
+        file: good, directory: () async => dir, client: client, cpu: () => true, retry: retry, open: (_) async {
+          opened++;
+          return null;
+        });
+    final m = failing(const Duration(minutes: 5));
+    await m.download();
+    expect(await m.ask(system: 's', user: 'u'), isNull);
+    expect(await m.ask(system: 's', user: 'u'), isNull);
+    expect(opened, 1);
+    expect(await m.status(), ModelStatus.ready);
+
+    final soon = failing(Duration.zero);
+    expect(await soon.ask(system: 's', user: 'u'), isNull);
+    expect(await soon.ask(system: 's', user: 'u'), isNull);
+    expect(opened, 3);
+  });
+
+  test('a load that never finishes does not hold the question past its time', () async {
+    final (client, _) = server(bytes);
+    final m = DesktopModel(
+        file: good, directory: () async => dir, client: client, cpu: () => true, open: (_) => Completer<QimaLlm?>().future);
+    await m.download();
+    expect(await m.ask(system: 's', user: 'u', timeout: const Duration(milliseconds: 50)), isNull);
   });
 
   test('nothing is asked before the file is here', () async {
     var opened = 0;
-    final m = DesktopModel(file: good, directory: () async => dir, open: (_) async {
+    final m = DesktopModel(file: good, directory: () async => dir, cpu: () => true, open: (_) async {
       opened++;
       return null;
     });

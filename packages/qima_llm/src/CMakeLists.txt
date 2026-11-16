@@ -48,3 +48,11 @@ set_target_properties(qima_llm PROPERTIES
   CXX_VISIBILITY_PRESET hidden
   OUTPUT_NAME "qima_llm"
 )
+
+# The CPU check, built without llama.cpp's instruction set so it is safe to
+# load and call on a CPU that can't run qima_llm.
+add_library(qima_cpu SHARED qima_cpu.c)
+set_target_properties(qima_cpu PROPERTIES
+  C_VISIBILITY_PRESET hidden
+  OUTPUT_NAME "qima_cpu"
+)

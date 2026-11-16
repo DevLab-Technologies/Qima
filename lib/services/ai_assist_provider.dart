@@ -29,6 +29,12 @@ enum ModelStatus {
   unsupportedLanguage,
 }
 
+/// A provider that holds something while the model is on (a download, a
+/// loaded model) and lets it go when the person turns the model off.
+abstract interface class StoppableModel {
+  void stop();
+}
+
 abstract class AiAssistProvider {
   /// Whether a model is ready on this device right now. Models are
   /// hardware-gated and may still be downloading, so this can change between

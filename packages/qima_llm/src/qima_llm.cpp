@@ -1,5 +1,6 @@
 #include "qima_llm.h"
 
+#include <atomic>
 #include <cstdlib>
 #include <cstring>
 #include <mutex>
@@ -15,7 +16,16 @@ struct Model {
     llama_context* ctx = nullptr;
     const llama_vocab* vocab = nullptr;
     std::string chat_template;
+    // The question being answered, and the last one cancelled.
+    std::atomic<int> current{0};
+    std::atomic<int> cancelled{-1};
+
+    bool stopped() const { return current.load() <= cancelled.load(); }
 };
+
+// llama.cpp asks this between steps of a decode, so a cancel also stops
+// reading a long prompt.
+bool abort_asked(void* data) { return static_cast<const Model*>(data)->stopped(); }
 
 constexpr int kContext = 2048;
 
@@ -55,6 +65,7 @@ void* qima_llm_open(const char* path, int threads) {
     llama_model* model = llama_model_load_from_file(path, mp);
     if (model == nullptr) return nullptr;
 
+    auto* m = new Model();
     llama_context_params cp = llama_context_default_params();
     cp.n_ctx = kContext;
     cp.n_batch = kContext;
@@ -62,13 +73,15 @@ void* qima_llm_open(const char* path, int threads) {
         cp.n_threads = threads;
         cp.n_threads_batch = threads;
     }
+    cp.abort_callback = abort_asked;
+    cp.abort_callback_data = m;
     llama_context* ctx = llama_init_from_model(model, cp);
     if (ctx == nullptr) {
         llama_model_free(model);
+        delete m;
         return nullptr;
     }
 
-    auto* m = new Model();
     m->model = model;
     m->ctx = ctx;
     m->vocab = llama_model_get_vocab(model);
@@ -76,9 +89,11 @@ void* qima_llm_open(const char* path, int threads) {
     return m;
 }
 
-char* qima_llm_ask(void* handle, const char* system, const char* user, const char* grammar, int max_tokens) {
+char* qima_llm_ask(void* handle, int id, const char* system, const char* user, const char* grammar, int max_tokens) {
     auto* m = static_cast<Model*>(handle);
     if (m == nullptr || system == nullptr || user == nullptr || max_tokens <= 0) return nullptr;
+    m->current.store(id);
+    if (m->stopped()) return nullptr;
 
     std::string prompt;
     if (!format(*m, system, user, prompt)) return nullptr;
@@ -106,6 +121,10 @@ char* qima_llm_ask(void* handle, const char* system, const char* user, const cha
     std::string answer;
     bool ok = llama_decode(m->ctx, llama_batch_get_one(tokens.data(), (int32_t)tokens.size())) == 0;
     for (int i = 0; ok && i < max_tokens; i++) {
+        if (m->stopped()) {
+            ok = false;
+            break;
+        }
         llama_token token = llama_sampler_sample(sampler, m->ctx, -1);
         if (llama_vocab_is_eog(m->vocab, token)) break;
         char piece[256];
@@ -125,6 +144,14 @@ char* qima_llm_ask(void* handle, const char* system, const char* user, const cha
     std::memcpy(out, answer.data(), answer.size());
     out[answer.size()] = '\0';
     return out;
+}
+
+void qima_llm_cancel(void* handle, int id) {
+    auto* m = static_cast<Model*>(handle);
+    if (m == nullptr) return;
+    int was = m->cancelled.load();
+    while (was < id && !m->cancelled.compare_exchange_weak(was, id)) {
+    }
 }
 
 void qima_llm_free_text(char* text) { std::free(text); }

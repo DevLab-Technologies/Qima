@@ -816,6 +816,11 @@ class _OnDeviceModelSectionState extends State<_OnDeviceModelSection> {
   Future<ModelStatus>? _status;
   String? _asked;
 
+  /// While the model is getting ready (downloading), it's asked again
+  /// every few seconds so the screen shows when it's done.
+  Timer? _recheck;
+  static const _recheckEvery = Duration(seconds: 5);
+
   /// On Android the model is Google's ML Kit, which reports its use to
   /// Google, so it isn't touched (not even to ask if it's there) until the
   /// person turns it on.
@@ -829,9 +834,22 @@ class _OnDeviceModelSectionState extends State<_OnDeviceModelSection> {
     if (_waitsForSwitch && !cubit.state.onDeviceModel) return null;
     if (tag != _asked) {
       _asked = tag;
-      _status = cubit.aiAssist.status(tag);
+      _recheck?.cancel();
+      final status = _status = cubit.aiAssist.status(tag);
+      status.then((value) {
+        if (value != ModelStatus.notReady || !mounted || !identical(status, _status)) return;
+        _recheck = Timer(_recheckEvery, () {
+          if (mounted) setState(() => _asked = null);
+        });
+      }, onError: (Object _) {});
     }
     return _status;
+  }
+
+  @override
+  void dispose() {
+    _recheck?.cancel();
+    super.dispose();
   }
 
   @override
@@ -869,7 +887,8 @@ class _OnDeviceModelSectionState extends State<_OnDeviceModelSection> {
             value: cubit.state.onDeviceModel,
             onChanged: (on) async {
               await cubit.setOnDeviceModel(on);
-              if (mounted) setState(() {});
+              // Asked afresh, not the answer from before it was turned off.
+              if (mounted) setState(() => _asked = null);
             },
           ),
           Padding(

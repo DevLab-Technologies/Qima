@@ -105,18 +105,35 @@ void main() {
       expect(app.state.onDeviceModel, isTrue);
       expect(model.asked, 1);
       expect(find.text(l10n.modelNotReady), findsOneWidget);
+
+      // Asked again while it gets ready, so the screen shows when it's done.
+      model.answer = ModelStatus.ready;
+      await tester.pump(const Duration(seconds: 5));
+      await tester.pumpAndSettle();
+      expect(model.asked, 2);
+      expect(find.text(l10n.modelReady), findsOneWidget);
+
+      // Turning it off stops the download.
+      await tester.tap(toggle);
+      await tester.pumpAndSettle();
+      expect(model.stopped, 1);
     } finally {
       debugDefaultTargetPlatformOverride = null;
     }
   });
 }
 
-class _CountingModel extends NullAiAssistProvider {
+class _CountingModel extends NullAiAssistProvider implements StoppableModel {
   int asked = 0;
+  int stopped = 0;
+  ModelStatus answer = ModelStatus.notReady;
 
   @override
   Future<ModelStatus> status(String localeTag) async {
     asked++;
-    return ModelStatus.notReady;
+    return answer;
   }
+
+  @override
+  void stop() => stopped++;
 }
