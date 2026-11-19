@@ -24,6 +24,7 @@ import '../../theme/price_chart.dart';
 import '../../theme/money_labels.dart';
 import '../../theme/qima_colors.dart';
 import '../../theme/strings.dart';
+import '../../widgets/get_started_card.dart';
 import '../../widgets/help_button.dart';
 import '../../widgets/money_widgets.dart';
 import '../../widgets/portfolio_hero.dart';
@@ -58,12 +59,14 @@ class HomeScreen extends StatelessWidget {
         final valuation = cubit.portfolioValuation;
         final summary = netWorthOf(cubit, money);
         final hasHoldings = valuation != null;
+        final started = showsGetStarted(app, money);
 
         final children = <Widget>[const ImportBanner(), const BankMessagesOffer()];
         // The total. Until the first account or asset, it is the Portfolio,
         // with its chart and ranges, as current users know it.
+        final Widget? total;
         if (!money.hasBook && hasHoldings) {
-          children.add(PortfolioHero(
+          total = PortfolioHero(
             valuation: valuation,
             history: cubit.portfolioHistory(app.preferredPortfolioRange),
             change: cubit.portfolioChange(app.preferredPortfolioRange),
@@ -72,20 +75,24 @@ class HomeScreen extends StatelessWidget {
             onTap: () => BalanceSheetScreen.open(context),
             hideBalances: hidden,
             onToggleHideBalances: cubit.toggleHideBalances,
-          ));
+          );
         } else if (money.hasBook) {
-          children.add(_NetWorthCard(
+          total = _NetWorthCard(
             summary: summary,
             hidden: hidden,
             book: money.book,
             holdings: cubit.portfolioHistory(app.preferredPortfolioRange),
             app: app,
             onSelectRange: cubit.setPreferredPortfolioRange,
-          ));
+          );
         } else {
-          children.add(const _StartCard());
+          // With nothing added yet: after setup, the first steps for what
+          // the person came for; otherwise three ways to start.
+          total = started ? null : const _StartCard();
         }
-        children.add(const SizedBox(height: DS.spaceMD));
+        if (total != null) children..add(total)..add(const SizedBox(height: DS.spaceMD));
+        // The Get started card stays until its steps are done or it is closed.
+        if (started) children..add(const GetStartedCard())..add(const SizedBox(height: DS.spaceMD));
 
         for (final card in money.settings.visibleCards) {
           final w = _card(context, card, app, money, summary, hidden);

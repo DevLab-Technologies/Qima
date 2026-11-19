@@ -1087,101 +1087,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commonContinue => 'Continue';
 
   @override
-  String get onboardingNext => 'Next';
-
-  @override
   String get onboardingSkip => 'Skip';
 
   @override
   String get onboardingGetStarted => 'Get started';
-
-  @override
-  String get onboardingStep1Title => 'Everything you own, in one number';
-
-  @override
-  String get onboardingStep1Body =>
-      'Gold, silver, crypto, stocks, indices and currencies, added up in your currency, with a plain summary of each month.';
-
-  @override
-  String get onboardingStep2Title => 'Prices the way you buy';
-
-  @override
-  String get onboardingStep2Body =>
-      'Live prices by gram, ounce or kilogram, 24K to 18K, in any currency. Tap + to add to your watchlist, tap a card for its chart.';
-
-  @override
-  String get onboardingStep3Title => 'Know what you hold';
-
-  @override
-  String get onboardingStep3Body =>
-      'Tap +, then Add holding, and type what you bought, or say it or scan a receipt. It is read on this device and saved only when you confirm. See what you hold, your average cost, value and gain.';
-
-  @override
-  String get onboardingStep4Title => 'Never miss a move';
-
-  @override
-  String get onboardingStep4Body =>
-      'Get notified when a price crosses a level or moves by a percent. Put prices on your Home and Lock Screen.';
-
-  @override
-  String get onboardingStep4BodyApple =>
-      'Get notified when a price crosses a level or moves by a percent. Put prices on your Home and Lock Screen, or ask Siri what your portfolio is worth.';
-
-  @override
-  String get onboardingStep5Title => 'Private by design';
-
-  @override
-  String get onboardingStep5Body =>
-      'No account. Your data stays on this device, with optional iCloud sync, Face ID lock and file backups.';
-
-  @override
-  String get onboardingStep5BodyAndroid =>
-      'No account. Your data stays on this device, with fingerprint or face unlock and file backups.';
-
-  @override
-  String get onboardingStep5BodyMac =>
-      'No account. Your data stays on this Mac, with optional iCloud sync, Touch ID lock and file backups.';
-
-  @override
-  String get onboardingStep5PillNoAccount => 'No account';
-
-  @override
-  String get onboardingStep5PillOnDevice => 'On this device';
-
-  @override
-  String get onboardingStep5ICloudTitle => 'iCloud sync';
-
-  @override
-  String get onboardingStep5ICloudSubtitle =>
-      'Optional · keeps devices in step';
-
-  @override
-  String get onboardingStep5AppLockTitle => 'App lock';
-
-  @override
-  String get onboardingStep5AppLockSubtitleApple => 'Face ID or fingerprint';
-
-  @override
-  String get onboardingStep5AppLockSubtitleGeneric =>
-      'Fingerprint or face unlock';
-
-  @override
-  String get onboardingStep5AppLockSubtitleMac =>
-      'Touch ID or your Mac password';
-
-  @override
-  String get onboardingStep5HideBalancesTitle => 'Hide balances';
-
-  @override
-  String get onboardingStep5HideBalancesSubtitle =>
-      'Show •••• instead of amounts';
-
-  @override
-  String get onboardingBaseCurrencyTitle => 'Base currency';
-
-  @override
-  String get onboardingBaseCurrencySubtitle =>
-      'From your region · change in Settings';
 
   @override
   String onboardingSemanticStepOf(int step, int total) {
@@ -2207,7 +2116,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsHelpReplayTourSubtitle =>
-      'See the five-step introduction again';
+      'A short tour of Home, Money and Prices';
 
   @override
   String get settingsHelpHowQimaWorks => 'How Qima works';
@@ -5173,4 +5082,343 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get aiAppsNoHelper =>
       'The connector isn\'t in this copy of Qima. Install Qima from the store or the website to use it.';
+
+  @override
+  String get setupWelcomeTitle => 'Let’s set Qima up for you';
+
+  @override
+  String get setupWelcomeBody =>
+      'Answer a few questions and Qima shows only what you need. It takes about a minute.';
+
+  @override
+  String get setupWelcomeNoAccount => 'No account needed';
+
+  @override
+  String get setupWelcomeOnDevice => 'Your answers stay on this device';
+
+  @override
+  String get setupWelcomeChangeLater => 'Change anything later in Settings';
+
+  @override
+  String get setupWelcomeSkip => 'Skip, I’ll set it up myself';
+
+  @override
+  String setupChosen(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count chosen',
+      zero: 'Nothing chosen',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get setupListSeparator => ', ';
+
+  @override
+  String get setupCurrencyTitle => 'What is your main currency?';
+
+  @override
+  String get setupCurrencyBody => 'Totals, budgets and prices are shown in it.';
+
+  @override
+  String get setupCurrencyFromRegion => 'From your region';
+
+  @override
+  String get setupCurrencyMore => 'More currencies';
+
+  @override
+  String get setupUsesTitle => 'How do you want to use Qima?';
+
+  @override
+  String get setupChooseAll => 'Choose all that apply.';
+
+  @override
+  String get setupUseMoney => 'Manage my money';
+
+  @override
+  String get setupUseMoneyBody => 'Spending, accounts, budgets and bills';
+
+  @override
+  String get setupUsePortfolio => 'Manage my portfolio';
+
+  @override
+  String get setupUsePortfolioBody =>
+      'What I hold, what it cost and what it is worth';
+
+  @override
+  String get setupUsePrices => 'Watch prices';
+
+  @override
+  String get setupUsePricesBody => 'Gold, stocks, currencies and alerts';
+
+  @override
+  String get setupUseNetWorth => 'Know my net worth';
+
+  @override
+  String get setupUseNetWorthBody => 'Everything I own and owe, in one number';
+
+  @override
+  String get setupUseZakat => 'Work out my zakat';
+
+  @override
+  String get setupUseZakatBody => 'Over my holdings, cash and debts';
+
+  @override
+  String get setupProductsTitle => 'What do you invest in or follow?';
+
+  @override
+  String get setupProductsBody =>
+      'Qima suggests prices to watch from your choices.';
+
+  @override
+  String get setupProductMetals => 'Gold and silver';
+
+  @override
+  String get setupProductMetalsBody => 'Bars, coins and jewellery, by karat';
+
+  @override
+  String get setupProductStocks => 'Stocks';
+
+  @override
+  String get setupProductStocksBody => 'Shares you own or follow';
+
+  @override
+  String get setupProductCurrencies => 'Currencies';
+
+  @override
+  String get setupProductCurrenciesBody => 'Dollar, euro and riyal rates';
+
+  @override
+  String get setupProductCrypto => 'Crypto';
+
+  @override
+  String get setupProductCryptoBody => 'Bitcoin, Ethereum and others';
+
+  @override
+  String get setupProductIndices => 'Indices';
+
+  @override
+  String get setupProductIndicesBody => 'S&P 500, Nasdaq and others';
+
+  @override
+  String get setupProductProperty => 'Property and other';
+
+  @override
+  String get setupProductPropertyBody => 'A home, land, a car or a business';
+
+  @override
+  String get setupPricesTitle => 'Start with these prices';
+
+  @override
+  String setupPricesBody(String currency) {
+    return 'Picked from your choices and shown in $currency. Untick any you do not want.';
+  }
+
+  @override
+  String setupPricesAdd(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Add $count to my watchlist',
+      one: 'Add 1 to my watchlist',
+      zero: 'Add to my watchlist',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get setupPricesNotNow => 'Not now';
+
+  @override
+  String get setupGoalsTitle => 'What do you want from your money?';
+
+  @override
+  String get setupGoalWhere => 'Know where my money goes';
+
+  @override
+  String get setupGoalWhereBody => 'Spending by category, every month';
+
+  @override
+  String get setupGoalSave => 'Save more each month';
+
+  @override
+  String get setupGoalSaveBody => 'Money in, money out and what is left over';
+
+  @override
+  String get setupGoalBudget => 'Stick to a budget';
+
+  @override
+  String get setupGoalBudgetBody => 'A monthly amount for each category';
+
+  @override
+  String get setupGoalBills => 'Never miss a bill';
+
+  @override
+  String get setupGoalBillsBody => 'Bills and installments before they are due';
+
+  @override
+  String get setupGoalPeople => 'Track who owes me';
+
+  @override
+  String get setupGoalPeopleBody => 'Money lent and borrowed, by person';
+
+  @override
+  String get setupCaptureTitle => 'How will you add your spending?';
+
+  @override
+  String get setupCaptureBody => 'You can use more than one.';
+
+  @override
+  String get setupCaptureType => 'Type or say it';
+
+  @override
+  String get setupCaptureTypeBody =>
+      '“Coffee 85 from cash” becomes a transaction';
+
+  @override
+  String get setupCaptureMessages => 'Read my bank messages';
+
+  @override
+  String get setupCaptureMessagesBody =>
+      'Each bank message becomes a transaction to review';
+
+  @override
+  String get setupCaptureStatement => 'Import a statement';
+
+  @override
+  String get setupCaptureStatementBody =>
+      'A PDF, Excel or CSV file, or a screenshot';
+
+  @override
+  String get setupCapturePrivacy =>
+      'Messages and files are read on this device. Nothing is uploaded.';
+
+  @override
+  String get setupSummaryTitle => 'Qima is ready';
+
+  @override
+  String get setupSummaryBody =>
+      'This is what your answers set up. Tap a row to change it.';
+
+  @override
+  String get setupSummaryCurrency => 'Main currency';
+
+  @override
+  String get setupSummaryHome => 'On your Home';
+
+  @override
+  String get setupSummaryFeatures => 'Turned on';
+
+  @override
+  String get setupSummaryNothingNew => 'Nothing extra';
+
+  @override
+  String get setupSummaryWatchlist => 'Watchlist';
+
+  @override
+  String get setupSummaryWatchlistKept => 'Left as it is';
+
+  @override
+  String setupSummaryPrices(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count prices',
+      one: '1 price',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get setupSummaryCapture => 'Adding spending';
+
+  @override
+  String get setupSummaryLater =>
+      'You can change any of this later in Settings.';
+
+  @override
+  String get setupSummaryTour => 'Show me around';
+
+  @override
+  String get setupSummaryGoHome => 'Go to Home';
+
+  @override
+  String get tourTabsTitle => 'Three places';
+
+  @override
+  String get tourTabsBody =>
+      'Home is where you stand. Money is where it goes. Prices is the market.';
+
+  @override
+  String get tourAddTitle => 'Add anything from here';
+
+  @override
+  String get tourAddBody =>
+      'A transaction, an account, a holding or a price. You can type it or say it.';
+
+  @override
+  String get tourMoneyTitle => 'Your month at a glance';
+
+  @override
+  String get tourMoneyBody =>
+      'Money in, money out and what is left over, month by month.';
+
+  @override
+  String get tourPricesTitle => 'Tap a price for its chart';
+
+  @override
+  String get tourPricesBody =>
+      'Set an alert there and Qima tells you when it crosses a level.';
+
+  @override
+  String tourStepOf(int step, int total) {
+    return '$step of $total';
+  }
+
+  @override
+  String get tourSkip => 'Skip tour';
+
+  @override
+  String get tourNext => 'Next';
+
+  @override
+  String get startCardTitle => 'Get started';
+
+  @override
+  String startCardProgress(int done, int total) {
+    return '$done of $total';
+  }
+
+  @override
+  String get startCardSetUp => 'Set up Qima';
+
+  @override
+  String get startCardDismiss => 'Hide Get started';
+
+  @override
+  String get startTaskAccount => 'Add your first account';
+
+  @override
+  String get startTaskTransaction => 'Record a transaction';
+
+  @override
+  String get startTaskHolding => 'Add what you hold';
+
+  @override
+  String get startTaskAsset => 'Add a property, a car or another asset';
+
+  @override
+  String get startTaskAlert => 'Set a price alert';
+
+  @override
+  String get startTaskBankMessages => 'Set up bank messages';
+
+  @override
+  String get settingsHelpRunSetup => 'Run setup again';
+
+  @override
+  String get settingsHelpRunSetupSubtitle =>
+      'Answer the setup questions again. Nothing you use is turned off.';
 }

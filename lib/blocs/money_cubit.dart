@@ -668,6 +668,12 @@ class MoneyCubit extends Cubit<MoneyState> {
 
   Future<void> markWhatsNewSeen() => _saveSettings(state.settings.copyWith(seenWhatsNew: true));
 
+  /// Setup's answers, in one write: the features they call for are switched
+  /// on (never off: a feature already in use stays), and the What's new
+  /// sheet counts as seen, since setup asked what it would have asked.
+  Future<void> applySetup(Set<MoneyFeature> features) =>
+      _saveSettings(state.settings.copyWith(features: {...state.settings.features, ...features}, seenWhatsNew: true));
+
   Future<void> setValueReviewMonths(int months) => _saveSettings(state.settings.copyWith(valueReviewMonths: months));
 
   /// Whether [id] is a default category that was never renamed, so screens

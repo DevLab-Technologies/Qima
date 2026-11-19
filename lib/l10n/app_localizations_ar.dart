@@ -1094,99 +1094,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get commonContinue => 'متابعة';
 
   @override
-  String get onboardingNext => 'التالي';
-
-  @override
   String get onboardingSkip => 'تخطي';
 
   @override
   String get onboardingGetStarted => 'ابدأ الآن';
-
-  @override
-  String get onboardingStep1Title => 'كل ما تملكه في رقم واحد';
-
-  @override
-  String get onboardingStep1Body =>
-      'الذهب والفضة والعملات الرقمية والأسهم والمؤشرات والعملات، مجموعة بعملتك، مع ملخص واضح لكل شهر.';
-
-  @override
-  String get onboardingStep2Title => 'الأسعار بالطريقة التي تشتري بها';
-
-  @override
-  String get onboardingStep2Body =>
-      'أسعار مباشرة بالجرام أو الأونصة أو الكيلوجرام، من عيار 24 إلى 18، بأي عملة. اضغط + لتضيف إلى قائمة المتابعة، واضغط أي بطاقة لترى رسمها البياني.';
-
-  @override
-  String get onboardingStep3Title => 'اعرف ما تملكه';
-
-  @override
-  String get onboardingStep3Body =>
-      'اضغط +، ثم «أضف حيازة»، واكتب ما اشتريته، أو قُله أو امسح إيصالًا. يُقرأ على هذا الجهاز ولا يُحفظ إلا حين تؤكد. اعرف ما تملكه ومتوسط تكلفتك وقيمته وربحك.';
-
-  @override
-  String get onboardingStep4Title => 'لا تفوّت أي تحرك';
-
-  @override
-  String get onboardingStep4Body =>
-      'احصل على إشعار عند تجاوز السعر لمستوى معيّن أو تحرّكه بنسبة مئوية. أضف الأسعار إلى الشاشة الرئيسية وشاشة القفل.';
-
-  @override
-  String get onboardingStep4BodyApple =>
-      'تلقَّ تنبيهًا حين يتجاوز السعر مستوى معينًا أو يتحرك بنسبة ما. ضع الأسعار على الشاشة الرئيسية وشاشة القفل، أو اسأل Siri عن قيمة محفظتك.';
-
-  @override
-  String get onboardingStep5Title => 'خاص بتصميمه';
-
-  @override
-  String get onboardingStep5Body =>
-      'بلا حساب. تبقى بياناتك على هذا الجهاز، مع مزامنة اختيارية عبر iCloud، وقفل بمعرّف الوجه، ونسخ احتياطية كملفات.';
-
-  @override
-  String get onboardingStep5BodyAndroid =>
-      'بلا حساب. تبقى بياناتك على هذا الجهاز، مع فتح ببصمة الإصبع أو الوجه، ونسخ احتياطية كملفات.';
-
-  @override
-  String get onboardingStep5BodyMac =>
-      'بلا حساب. تبقى بياناتك على هذا الـMac، مع مزامنة اختيارية عبر iCloud، وقفل بـTouch ID، ونسخ احتياطية كملفات.';
-
-  @override
-  String get onboardingStep5PillNoAccount => 'بلا حساب';
-
-  @override
-  String get onboardingStep5PillOnDevice => 'على هذا الجهاز';
-
-  @override
-  String get onboardingStep5ICloudTitle => 'مزامنة iCloud';
-
-  @override
-  String get onboardingStep5ICloudSubtitle => 'اختياري · يبقي أجهزتك متزامنة';
-
-  @override
-  String get onboardingStep5AppLockTitle => 'قفل التطبيق';
-
-  @override
-  String get onboardingStep5AppLockSubtitleApple =>
-      'معرّف الوجه أو بصمة الإصبع';
-
-  @override
-  String get onboardingStep5AppLockSubtitleGeneric =>
-      'بصمة الإصبع أو فتح بالوجه';
-
-  @override
-  String get onboardingStep5AppLockSubtitleMac => 'Touch ID أو كلمة سر الـMac';
-
-  @override
-  String get onboardingStep5HideBalancesTitle => 'إخفاء الأرصدة';
-
-  @override
-  String get onboardingStep5HideBalancesSubtitle => 'عرض •••• بدلاً من المبالغ';
-
-  @override
-  String get onboardingBaseCurrencyTitle => 'العملة الأساسية';
-
-  @override
-  String get onboardingBaseCurrencySubtitle =>
-      'حسب منطقتك · غيّرها من الإعدادات';
 
   @override
   String onboardingSemanticStepOf(int step, int total) {
@@ -2202,7 +2113,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get settingsHelpReplayTourSubtitle =>
-      'شاهد المقدمة المكونة من خمس خطوات مرة أخرى';
+      'جولة قصيرة في الرئيسية والمال والأسعار';
 
   @override
   String get settingsHelpHowQimaWorks => 'كيف يعمل Qima';
@@ -5190,4 +5101,346 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get aiAppsNoHelper =>
       'الموصّل غير موجود في هذه النسخة من قيمة. ثبّت قيمة من المتجر أو من الموقع لاستخدامه.';
+
+  @override
+  String get setupWelcomeTitle => 'لنجهّز قيمة لك';
+
+  @override
+  String get setupWelcomeBody =>
+      'أجب عن بضعة أسئلة وستعرض قيمة ما تحتاجه فقط. يستغرق ذلك نحو دقيقة.';
+
+  @override
+  String get setupWelcomeNoAccount => 'لا حاجة إلى حساب';
+
+  @override
+  String get setupWelcomeOnDevice => 'إجاباتك تبقى على هذا الجهاز';
+
+  @override
+  String get setupWelcomeChangeLater => 'غيّر أي شيء لاحقًا من الإعدادات';
+
+  @override
+  String get setupWelcomeSkip => 'تخطي، سأجهّزه بنفسي';
+
+  @override
+  String setupChosen(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count اختيار',
+      many: '$count اختيارًا',
+      few: '$count اختيارات',
+      two: 'اختياران',
+      one: 'اختيار واحد',
+      zero: 'لم تختر شيئًا',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get setupListSeparator => '، ';
+
+  @override
+  String get setupCurrencyTitle => 'ما عملتك الأساسية؟';
+
+  @override
+  String get setupCurrencyBody => 'تُعرض بها الإجماليات والميزانيات والأسعار.';
+
+  @override
+  String get setupCurrencyFromRegion => 'حسب منطقتك';
+
+  @override
+  String get setupCurrencyMore => 'عملات أخرى';
+
+  @override
+  String get setupUsesTitle => 'كيف تريد استخدام قيمة؟';
+
+  @override
+  String get setupChooseAll => 'اختر كل ما ينطبق.';
+
+  @override
+  String get setupUseMoney => 'إدارة مالي';
+
+  @override
+  String get setupUseMoneyBody => 'المصروفات والحسابات والميزانيات والفواتير';
+
+  @override
+  String get setupUsePortfolio => 'إدارة محفظتي';
+
+  @override
+  String get setupUsePortfolioBody => 'ما أملكه، وتكلفته، وقيمته اليوم';
+
+  @override
+  String get setupUsePrices => 'متابعة الأسعار';
+
+  @override
+  String get setupUsePricesBody => 'الذهب والأسهم والعملات والتنبيهات';
+
+  @override
+  String get setupUseNetWorth => 'معرفة صافي ثروتي';
+
+  @override
+  String get setupUseNetWorthBody => 'كل ما أملكه وما عليّ، في رقم واحد';
+
+  @override
+  String get setupUseZakat => 'حساب زكاتي';
+
+  @override
+  String get setupUseZakatBody => 'على ممتلكاتي ونقدي وديوني';
+
+  @override
+  String get setupProductsTitle => 'فيمَ تستثمر أو ماذا تتابع؟';
+
+  @override
+  String get setupProductsBody =>
+      'تقترح قيمة أسعارًا للمتابعة بناءً على اختياراتك.';
+
+  @override
+  String get setupProductMetals => 'الذهب والفضة';
+
+  @override
+  String get setupProductMetalsBody => 'سبائك وعملات ومشغولات، حسب العيار';
+
+  @override
+  String get setupProductStocks => 'الأسهم';
+
+  @override
+  String get setupProductStocksBody => 'أسهم تملكها أو تتابعها';
+
+  @override
+  String get setupProductCurrencies => 'العملات';
+
+  @override
+  String get setupProductCurrenciesBody => 'أسعار الدولار واليورو والريال';
+
+  @override
+  String get setupProductCrypto => 'العملات الرقمية';
+
+  @override
+  String get setupProductCryptoBody => 'بيتكوين وإيثريوم وغيرهما';
+
+  @override
+  String get setupProductIndices => 'المؤشرات';
+
+  @override
+  String get setupProductIndicesBody => 'S&P 500 وناسداك وغيرهما';
+
+  @override
+  String get setupProductProperty => 'عقارات وأصول أخرى';
+
+  @override
+  String get setupProductPropertyBody => 'منزل أو أرض أو سيارة أو نشاط تجاري';
+
+  @override
+  String get setupPricesTitle => 'ابدأ بهذه الأسعار';
+
+  @override
+  String setupPricesBody(String currency) {
+    return 'مختارة من إجاباتك ومعروضة بعملة $currency. ألغِ تحديد ما لا تريده.';
+  }
+
+  @override
+  String setupPricesAdd(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'أضف $count سعر إلى قائمة المتابعة',
+      many: 'أضف $count سعرًا إلى قائمة المتابعة',
+      few: 'أضف $count أسعار إلى قائمة المتابعة',
+      two: 'أضف سعرين إلى قائمة المتابعة',
+      one: 'أضف سعرًا واحدًا إلى قائمة المتابعة',
+      zero: 'أضف إلى قائمة المتابعة',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get setupPricesNotNow => 'ليس الآن';
+
+  @override
+  String get setupGoalsTitle => 'ماذا تريد من مالك؟';
+
+  @override
+  String get setupGoalWhere => 'معرفة أين يذهب مالي';
+
+  @override
+  String get setupGoalWhereBody => 'المصروفات حسب الفئة، كل شهر';
+
+  @override
+  String get setupGoalSave => 'ادخار أكثر كل شهر';
+
+  @override
+  String get setupGoalSaveBody => 'الداخل والخارج وما يتبقى';
+
+  @override
+  String get setupGoalBudget => 'الالتزام بميزانية';
+
+  @override
+  String get setupGoalBudgetBody => 'مبلغ شهري لكل فئة';
+
+  @override
+  String get setupGoalBills => 'عدم تفويت أي فاتورة';
+
+  @override
+  String get setupGoalBillsBody => 'الفواتير والأقساط قبل موعدها';
+
+  @override
+  String get setupGoalPeople => 'متابعة من يدين لي';
+
+  @override
+  String get setupGoalPeopleBody => 'ما أقرضته وما اقترضته، حسب الشخص';
+
+  @override
+  String get setupCaptureTitle => 'كيف ستضيف مصروفاتك؟';
+
+  @override
+  String get setupCaptureBody => 'يمكنك استخدام أكثر من طريقة.';
+
+  @override
+  String get setupCaptureType => 'اكتبها أو قلها';
+
+  @override
+  String get setupCaptureTypeBody => '«قهوة 85 من النقد» تصبح معاملة';
+
+  @override
+  String get setupCaptureMessages => 'قراءة رسائل البنك';
+
+  @override
+  String get setupCaptureMessagesBody => 'كل رسالة بنكية تصبح معاملة للمراجعة';
+
+  @override
+  String get setupCaptureStatement => 'استيراد كشف حساب';
+
+  @override
+  String get setupCaptureStatementBody =>
+      'ملف PDF أو Excel أو CSV، أو لقطة شاشة';
+
+  @override
+  String get setupCapturePrivacy =>
+      'تُقرأ الرسائل والملفات على هذا الجهاز. لا يُرفع أي شيء.';
+
+  @override
+  String get setupSummaryTitle => 'قيمة جاهزة';
+
+  @override
+  String get setupSummaryBody => 'هذا ما جهّزته إجاباتك. اضغط أي سطر لتغييره.';
+
+  @override
+  String get setupSummaryCurrency => 'العملة الأساسية';
+
+  @override
+  String get setupSummaryHome => 'في الرئيسية';
+
+  @override
+  String get setupSummaryFeatures => 'تم تفعيله';
+
+  @override
+  String get setupSummaryNothingNew => 'لا شيء إضافي';
+
+  @override
+  String get setupSummaryWatchlist => 'قائمة المتابعة';
+
+  @override
+  String get setupSummaryWatchlistKept => 'تبقى كما هي';
+
+  @override
+  String setupSummaryPrices(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count سعر',
+      many: '$count سعرًا',
+      few: '$count أسعار',
+      two: 'سعران',
+      one: 'سعر واحد',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get setupSummaryCapture => 'إضافة المصروفات';
+
+  @override
+  String get setupSummaryLater => 'يمكنك تغيير أي من هذا لاحقًا من الإعدادات.';
+
+  @override
+  String get setupSummaryTour => 'خذني في جولة';
+
+  @override
+  String get setupSummaryGoHome => 'اذهب إلى الرئيسية';
+
+  @override
+  String get tourTabsTitle => 'ثلاثة أماكن';
+
+  @override
+  String get tourTabsBody => 'الرئيسية لوضعك، والمال لمصروفك، والأسعار للسوق.';
+
+  @override
+  String get tourAddTitle => 'أضف أي شيء من هنا';
+
+  @override
+  String get tourAddBody =>
+      'معاملة أو حساب أو حيازة أو سعر. يمكنك كتابتها أو قولها.';
+
+  @override
+  String get tourMoneyTitle => 'شهرك في لمحة';
+
+  @override
+  String get tourMoneyBody => 'الداخل والخارج وما يتبقى، شهرًا بشهر.';
+
+  @override
+  String get tourPricesTitle => 'اضغط أي سعر لترى رسمه البياني';
+
+  @override
+  String get tourPricesBody =>
+      'اضبط تنبيهًا هناك وستخبرك قيمة عند تجاوز مستوى معيّن.';
+
+  @override
+  String tourStepOf(int step, int total) {
+    return '$step من $total';
+  }
+
+  @override
+  String get tourSkip => 'تخطي الجولة';
+
+  @override
+  String get tourNext => 'التالي';
+
+  @override
+  String get startCardTitle => 'ابدأ';
+
+  @override
+  String startCardProgress(int done, int total) {
+    return '$done من $total';
+  }
+
+  @override
+  String get startCardSetUp => 'تجهيز قيمة';
+
+  @override
+  String get startCardDismiss => 'إخفاء بطاقة البدء';
+
+  @override
+  String get startTaskAccount => 'أضف أول حساب';
+
+  @override
+  String get startTaskTransaction => 'سجّل معاملة';
+
+  @override
+  String get startTaskHolding => 'أضف ما تملكه';
+
+  @override
+  String get startTaskAsset => 'أضف عقارًا أو سيارة أو أصلًا آخر';
+
+  @override
+  String get startTaskAlert => 'اضبط تنبيه سعر';
+
+  @override
+  String get startTaskBankMessages => 'جهّز رسائل البنك';
+
+  @override
+  String get settingsHelpRunSetup => 'إعادة التجهيز';
+
+  @override
+  String get settingsHelpRunSetupSubtitle =>
+      'أجب عن أسئلة التجهيز مرة أخرى. لا يُعطَّل شيء تستخدمه.';
 }

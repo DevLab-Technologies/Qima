@@ -1976,12 +1976,6 @@ abstract class AppLocalizations {
   /// **'Continue'**
   String get commonContinue;
 
-  /// Onboarding tour primary button, steps 1-4.
-  ///
-  /// In en, this message translates to:
-  /// **'Next'**
-  String get onboardingNext;
-
   /// Onboarding tour text button under Next, steps 1-4.
   ///
   /// In en, this message translates to:
@@ -1993,156 +1987,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Get started'**
   String get onboardingGetStarted;
-
-  /// Onboarding step 1 (Welcome) title.
-  ///
-  /// In en, this message translates to:
-  /// **'Everything you own, in one number'**
-  String get onboardingStep1Title;
-
-  /// Onboarding step 1 (Welcome) body.
-  ///
-  /// In en, this message translates to:
-  /// **'Gold, silver, crypto, stocks, indices and currencies, added up in your currency, with a plain summary of each month.'**
-  String get onboardingStep1Body;
-
-  /// Onboarding step 2 (Watchlist) title.
-  ///
-  /// In en, this message translates to:
-  /// **'Prices the way you buy'**
-  String get onboardingStep2Title;
-
-  /// Onboarding step 2 (Watchlist) body.
-  ///
-  /// In en, this message translates to:
-  /// **'Live prices by gram, ounce or kilogram, 24K to 18K, in any currency. Tap + to add to your watchlist, tap a card for its chart.'**
-  String get onboardingStep2Body;
-
-  /// Onboarding step 3 (Holdings) title.
-  ///
-  /// In en, this message translates to:
-  /// **'Know what you hold'**
-  String get onboardingStep3Title;
-
-  /// Onboarding step 3 (Holdings) body.
-  ///
-  /// In en, this message translates to:
-  /// **'Tap +, then Add holding, and type what you bought, or say it or scan a receipt. It is read on this device and saved only when you confirm. See what you hold, your average cost, value and gain.'**
-  String get onboardingStep3Body;
-
-  /// Onboarding step 4 (Alerts & widgets) title.
-  ///
-  /// In en, this message translates to:
-  /// **'Never miss a move'**
-  String get onboardingStep4Title;
-
-  /// Onboarding step 4 (Alerts & widgets) title.
-  ///
-  /// In en, this message translates to:
-  /// **'Get notified when a price crosses a level or moves by a percent. Put prices on your Home and Lock Screen.'**
-  String get onboardingStep4Body;
-
-  /// No description provided for @onboardingStep4BodyApple.
-  ///
-  /// In en, this message translates to:
-  /// **'Get notified when a price crosses a level or moves by a percent. Put prices on your Home and Lock Screen, or ask Siri what your portfolio is worth.'**
-  String get onboardingStep4BodyApple;
-
-  /// Onboarding step 5 (Private by design) title.
-  ///
-  /// In en, this message translates to:
-  /// **'Private by design'**
-  String get onboardingStep5Title;
-
-  /// Onboarding step 5 (Private by design) title.
-  ///
-  /// In en, this message translates to:
-  /// **'No account. Your data stays on this device, with optional iCloud sync, Face ID lock and file backups.'**
-  String get onboardingStep5Body;
-
-  /// Onboarding step 5 body, Android wording (no iCloud, fingerprint/face unlock instead of Face ID).
-  ///
-  /// In en, this message translates to:
-  /// **'No account. Your data stays on this device, with fingerprint or face unlock and file backups.'**
-  String get onboardingStep5BodyAndroid;
-
-  /// Onboarding step 5 body on macOS (Touch ID instead of Face ID).
-  ///
-  /// In en, this message translates to:
-  /// **'No account. Your data stays on this Mac, with optional iCloud sync, Touch ID lock and file backups.'**
-  String get onboardingStep5BodyMac;
-
-  /// Onboarding step 5 pill.
-  ///
-  /// In en, this message translates to:
-  /// **'No account'**
-  String get onboardingStep5PillNoAccount;
-
-  /// Onboarding step 5 pill.
-  ///
-  /// In en, this message translates to:
-  /// **'On this device'**
-  String get onboardingStep5PillOnDevice;
-
-  /// Onboarding step 5 illustration row title (iOS only).
-  ///
-  /// In en, this message translates to:
-  /// **'iCloud sync'**
-  String get onboardingStep5ICloudTitle;
-
-  /// Onboarding step 5 illustration row subtitle (iOS only).
-  ///
-  /// In en, this message translates to:
-  /// **'Optional · keeps devices in step'**
-  String get onboardingStep5ICloudSubtitle;
-
-  /// Onboarding step 5 illustration row title.
-  ///
-  /// In en, this message translates to:
-  /// **'App lock'**
-  String get onboardingStep5AppLockTitle;
-
-  /// Onboarding step 5 App lock row subtitle, Apple platforms.
-  ///
-  /// In en, this message translates to:
-  /// **'Face ID or fingerprint'**
-  String get onboardingStep5AppLockSubtitleApple;
-
-  /// Onboarding step 5 App lock row subtitle, non-Apple platforms.
-  ///
-  /// In en, this message translates to:
-  /// **'Fingerprint or face unlock'**
-  String get onboardingStep5AppLockSubtitleGeneric;
-
-  /// Onboarding step 5 app lock row subtitle on macOS.
-  ///
-  /// In en, this message translates to:
-  /// **'Touch ID or your Mac password'**
-  String get onboardingStep5AppLockSubtitleMac;
-
-  /// Onboarding step 5 illustration row title.
-  ///
-  /// In en, this message translates to:
-  /// **'Hide balances'**
-  String get onboardingStep5HideBalancesTitle;
-
-  /// Onboarding step 5 illustration row subtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Show •••• instead of amounts'**
-  String get onboardingStep5HideBalancesSubtitle;
-
-  /// Onboarding step 5 base-currency row title.
-  ///
-  /// In en, this message translates to:
-  /// **'Base currency'**
-  String get onboardingBaseCurrencyTitle;
-
-  /// Onboarding step 5 base-currency row subtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'From your region · change in Settings'**
-  String get onboardingBaseCurrencySubtitle;
 
   /// Accessibility label for the onboarding page dots / progress.
   ///
@@ -3899,7 +3743,7 @@ abstract class AppLocalizations {
   /// Settings Help group row subtitle.
   ///
   /// In en, this message translates to:
-  /// **'See the five-step introduction again'**
+  /// **'A short tour of Home, Money and Prices'**
   String get settingsHelpReplayTourSubtitle;
 
   /// Settings Help group row title.
@@ -8788,6 +8632,594 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The connector isn\'t in this copy of Qima. Install Qima from the store or the website to use it.'**
   String get aiAppsNoHelper;
+
+  /// No description provided for @setupWelcomeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Let’s set Qima up for you'**
+  String get setupWelcomeTitle;
+
+  /// No description provided for @setupWelcomeBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Answer a few questions and Qima shows only what you need. It takes about a minute.'**
+  String get setupWelcomeBody;
+
+  /// No description provided for @setupWelcomeNoAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'No account needed'**
+  String get setupWelcomeNoAccount;
+
+  /// No description provided for @setupWelcomeOnDevice.
+  ///
+  /// In en, this message translates to:
+  /// **'Your answers stay on this device'**
+  String get setupWelcomeOnDevice;
+
+  /// No description provided for @setupWelcomeChangeLater.
+  ///
+  /// In en, this message translates to:
+  /// **'Change anything later in Settings'**
+  String get setupWelcomeChangeLater;
+
+  /// No description provided for @setupWelcomeSkip.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip, I’ll set it up myself'**
+  String get setupWelcomeSkip;
+
+  /// No description provided for @setupChosen.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{Nothing chosen} other{{count} chosen}}'**
+  String setupChosen(int count);
+
+  /// No description provided for @setupListSeparator.
+  ///
+  /// In en, this message translates to:
+  /// **', '**
+  String get setupListSeparator;
+
+  /// No description provided for @setupCurrencyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What is your main currency?'**
+  String get setupCurrencyTitle;
+
+  /// No description provided for @setupCurrencyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Totals, budgets and prices are shown in it.'**
+  String get setupCurrencyBody;
+
+  /// No description provided for @setupCurrencyFromRegion.
+  ///
+  /// In en, this message translates to:
+  /// **'From your region'**
+  String get setupCurrencyFromRegion;
+
+  /// No description provided for @setupCurrencyMore.
+  ///
+  /// In en, this message translates to:
+  /// **'More currencies'**
+  String get setupCurrencyMore;
+
+  /// No description provided for @setupUsesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'How do you want to use Qima?'**
+  String get setupUsesTitle;
+
+  /// No description provided for @setupChooseAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose all that apply.'**
+  String get setupChooseAll;
+
+  /// No description provided for @setupUseMoney.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage my money'**
+  String get setupUseMoney;
+
+  /// No description provided for @setupUseMoneyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Spending, accounts, budgets and bills'**
+  String get setupUseMoneyBody;
+
+  /// No description provided for @setupUsePortfolio.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage my portfolio'**
+  String get setupUsePortfolio;
+
+  /// No description provided for @setupUsePortfolioBody.
+  ///
+  /// In en, this message translates to:
+  /// **'What I hold, what it cost and what it is worth'**
+  String get setupUsePortfolioBody;
+
+  /// No description provided for @setupUsePrices.
+  ///
+  /// In en, this message translates to:
+  /// **'Watch prices'**
+  String get setupUsePrices;
+
+  /// No description provided for @setupUsePricesBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Gold, stocks, currencies and alerts'**
+  String get setupUsePricesBody;
+
+  /// No description provided for @setupUseNetWorth.
+  ///
+  /// In en, this message translates to:
+  /// **'Know my net worth'**
+  String get setupUseNetWorth;
+
+  /// No description provided for @setupUseNetWorthBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Everything I own and owe, in one number'**
+  String get setupUseNetWorthBody;
+
+  /// No description provided for @setupUseZakat.
+  ///
+  /// In en, this message translates to:
+  /// **'Work out my zakat'**
+  String get setupUseZakat;
+
+  /// No description provided for @setupUseZakatBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Over my holdings, cash and debts'**
+  String get setupUseZakatBody;
+
+  /// No description provided for @setupProductsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What do you invest in or follow?'**
+  String get setupProductsTitle;
+
+  /// No description provided for @setupProductsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Qima suggests prices to watch from your choices.'**
+  String get setupProductsBody;
+
+  /// No description provided for @setupProductMetals.
+  ///
+  /// In en, this message translates to:
+  /// **'Gold and silver'**
+  String get setupProductMetals;
+
+  /// No description provided for @setupProductMetalsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Bars, coins and jewellery, by karat'**
+  String get setupProductMetalsBody;
+
+  /// No description provided for @setupProductStocks.
+  ///
+  /// In en, this message translates to:
+  /// **'Stocks'**
+  String get setupProductStocks;
+
+  /// No description provided for @setupProductStocksBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Shares you own or follow'**
+  String get setupProductStocksBody;
+
+  /// No description provided for @setupProductCurrencies.
+  ///
+  /// In en, this message translates to:
+  /// **'Currencies'**
+  String get setupProductCurrencies;
+
+  /// No description provided for @setupProductCurrenciesBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Dollar, euro and riyal rates'**
+  String get setupProductCurrenciesBody;
+
+  /// No description provided for @setupProductCrypto.
+  ///
+  /// In en, this message translates to:
+  /// **'Crypto'**
+  String get setupProductCrypto;
+
+  /// No description provided for @setupProductCryptoBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Bitcoin, Ethereum and others'**
+  String get setupProductCryptoBody;
+
+  /// No description provided for @setupProductIndices.
+  ///
+  /// In en, this message translates to:
+  /// **'Indices'**
+  String get setupProductIndices;
+
+  /// No description provided for @setupProductIndicesBody.
+  ///
+  /// In en, this message translates to:
+  /// **'S&P 500, Nasdaq and others'**
+  String get setupProductIndicesBody;
+
+  /// No description provided for @setupProductProperty.
+  ///
+  /// In en, this message translates to:
+  /// **'Property and other'**
+  String get setupProductProperty;
+
+  /// No description provided for @setupProductPropertyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'A home, land, a car or a business'**
+  String get setupProductPropertyBody;
+
+  /// No description provided for @setupPricesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Start with these prices'**
+  String get setupPricesTitle;
+
+  /// No description provided for @setupPricesBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Picked from your choices and shown in {currency}. Untick any you do not want.'**
+  String setupPricesBody(String currency);
+
+  /// No description provided for @setupPricesAdd.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{Add to my watchlist} =1{Add 1 to my watchlist} other{Add {count} to my watchlist}}'**
+  String setupPricesAdd(int count);
+
+  /// No description provided for @setupPricesNotNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Not now'**
+  String get setupPricesNotNow;
+
+  /// No description provided for @setupGoalsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What do you want from your money?'**
+  String get setupGoalsTitle;
+
+  /// No description provided for @setupGoalWhere.
+  ///
+  /// In en, this message translates to:
+  /// **'Know where my money goes'**
+  String get setupGoalWhere;
+
+  /// No description provided for @setupGoalWhereBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Spending by category, every month'**
+  String get setupGoalWhereBody;
+
+  /// No description provided for @setupGoalSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save more each month'**
+  String get setupGoalSave;
+
+  /// No description provided for @setupGoalSaveBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Money in, money out and what is left over'**
+  String get setupGoalSaveBody;
+
+  /// No description provided for @setupGoalBudget.
+  ///
+  /// In en, this message translates to:
+  /// **'Stick to a budget'**
+  String get setupGoalBudget;
+
+  /// No description provided for @setupGoalBudgetBody.
+  ///
+  /// In en, this message translates to:
+  /// **'A monthly amount for each category'**
+  String get setupGoalBudgetBody;
+
+  /// No description provided for @setupGoalBills.
+  ///
+  /// In en, this message translates to:
+  /// **'Never miss a bill'**
+  String get setupGoalBills;
+
+  /// No description provided for @setupGoalBillsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Bills and installments before they are due'**
+  String get setupGoalBillsBody;
+
+  /// No description provided for @setupGoalPeople.
+  ///
+  /// In en, this message translates to:
+  /// **'Track who owes me'**
+  String get setupGoalPeople;
+
+  /// No description provided for @setupGoalPeopleBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Money lent and borrowed, by person'**
+  String get setupGoalPeopleBody;
+
+  /// No description provided for @setupCaptureTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'How will you add your spending?'**
+  String get setupCaptureTitle;
+
+  /// No description provided for @setupCaptureBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You can use more than one.'**
+  String get setupCaptureBody;
+
+  /// No description provided for @setupCaptureType.
+  ///
+  /// In en, this message translates to:
+  /// **'Type or say it'**
+  String get setupCaptureType;
+
+  /// No description provided for @setupCaptureTypeBody.
+  ///
+  /// In en, this message translates to:
+  /// **'“Coffee 85 from cash” becomes a transaction'**
+  String get setupCaptureTypeBody;
+
+  /// No description provided for @setupCaptureMessages.
+  ///
+  /// In en, this message translates to:
+  /// **'Read my bank messages'**
+  String get setupCaptureMessages;
+
+  /// No description provided for @setupCaptureMessagesBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Each bank message becomes a transaction to review'**
+  String get setupCaptureMessagesBody;
+
+  /// No description provided for @setupCaptureStatement.
+  ///
+  /// In en, this message translates to:
+  /// **'Import a statement'**
+  String get setupCaptureStatement;
+
+  /// No description provided for @setupCaptureStatementBody.
+  ///
+  /// In en, this message translates to:
+  /// **'A PDF, Excel or CSV file, or a screenshot'**
+  String get setupCaptureStatementBody;
+
+  /// No description provided for @setupCapturePrivacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Messages and files are read on this device. Nothing is uploaded.'**
+  String get setupCapturePrivacy;
+
+  /// No description provided for @setupSummaryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Qima is ready'**
+  String get setupSummaryTitle;
+
+  /// No description provided for @setupSummaryBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This is what your answers set up. Tap a row to change it.'**
+  String get setupSummaryBody;
+
+  /// No description provided for @setupSummaryCurrency.
+  ///
+  /// In en, this message translates to:
+  /// **'Main currency'**
+  String get setupSummaryCurrency;
+
+  /// No description provided for @setupSummaryHome.
+  ///
+  /// In en, this message translates to:
+  /// **'On your Home'**
+  String get setupSummaryHome;
+
+  /// No description provided for @setupSummaryFeatures.
+  ///
+  /// In en, this message translates to:
+  /// **'Turned on'**
+  String get setupSummaryFeatures;
+
+  /// No description provided for @setupSummaryNothingNew.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing extra'**
+  String get setupSummaryNothingNew;
+
+  /// No description provided for @setupSummaryWatchlist.
+  ///
+  /// In en, this message translates to:
+  /// **'Watchlist'**
+  String get setupSummaryWatchlist;
+
+  /// No description provided for @setupSummaryWatchlistKept.
+  ///
+  /// In en, this message translates to:
+  /// **'Left as it is'**
+  String get setupSummaryWatchlistKept;
+
+  /// No description provided for @setupSummaryPrices.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 price} other{{count} prices}}'**
+  String setupSummaryPrices(int count);
+
+  /// No description provided for @setupSummaryCapture.
+  ///
+  /// In en, this message translates to:
+  /// **'Adding spending'**
+  String get setupSummaryCapture;
+
+  /// No description provided for @setupSummaryLater.
+  ///
+  /// In en, this message translates to:
+  /// **'You can change any of this later in Settings.'**
+  String get setupSummaryLater;
+
+  /// No description provided for @setupSummaryTour.
+  ///
+  /// In en, this message translates to:
+  /// **'Show me around'**
+  String get setupSummaryTour;
+
+  /// No description provided for @setupSummaryGoHome.
+  ///
+  /// In en, this message translates to:
+  /// **'Go to Home'**
+  String get setupSummaryGoHome;
+
+  /// No description provided for @tourTabsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Three places'**
+  String get tourTabsTitle;
+
+  /// No description provided for @tourTabsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Home is where you stand. Money is where it goes. Prices is the market.'**
+  String get tourTabsBody;
+
+  /// No description provided for @tourAddTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add anything from here'**
+  String get tourAddTitle;
+
+  /// No description provided for @tourAddBody.
+  ///
+  /// In en, this message translates to:
+  /// **'A transaction, an account, a holding or a price. You can type it or say it.'**
+  String get tourAddBody;
+
+  /// No description provided for @tourMoneyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your month at a glance'**
+  String get tourMoneyTitle;
+
+  /// No description provided for @tourMoneyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Money in, money out and what is left over, month by month.'**
+  String get tourMoneyBody;
+
+  /// No description provided for @tourPricesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap a price for its chart'**
+  String get tourPricesTitle;
+
+  /// No description provided for @tourPricesBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Set an alert there and Qima tells you when it crosses a level.'**
+  String get tourPricesBody;
+
+  /// No description provided for @tourStepOf.
+  ///
+  /// In en, this message translates to:
+  /// **'{step} of {total}'**
+  String tourStepOf(int step, int total);
+
+  /// No description provided for @tourSkip.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip tour'**
+  String get tourSkip;
+
+  /// No description provided for @tourNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get tourNext;
+
+  /// No description provided for @startCardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Get started'**
+  String get startCardTitle;
+
+  /// No description provided for @startCardProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'{done} of {total}'**
+  String startCardProgress(int done, int total);
+
+  /// No description provided for @startCardSetUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Set up Qima'**
+  String get startCardSetUp;
+
+  /// No description provided for @startCardDismiss.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide Get started'**
+  String get startCardDismiss;
+
+  /// No description provided for @startTaskAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Add your first account'**
+  String get startTaskAccount;
+
+  /// No description provided for @startTaskTransaction.
+  ///
+  /// In en, this message translates to:
+  /// **'Record a transaction'**
+  String get startTaskTransaction;
+
+  /// No description provided for @startTaskHolding.
+  ///
+  /// In en, this message translates to:
+  /// **'Add what you hold'**
+  String get startTaskHolding;
+
+  /// No description provided for @startTaskAsset.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a property, a car or another asset'**
+  String get startTaskAsset;
+
+  /// No description provided for @startTaskAlert.
+  ///
+  /// In en, this message translates to:
+  /// **'Set a price alert'**
+  String get startTaskAlert;
+
+  /// No description provided for @startTaskBankMessages.
+  ///
+  /// In en, this message translates to:
+  /// **'Set up bank messages'**
+  String get startTaskBankMessages;
+
+  /// No description provided for @settingsHelpRunSetup.
+  ///
+  /// In en, this message translates to:
+  /// **'Run setup again'**
+  String get settingsHelpRunSetup;
+
+  /// No description provided for @settingsHelpRunSetupSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Answer the setup questions again. Nothing you use is turned off.'**
+  String get settingsHelpRunSetupSubtitle;
 }
 
 class _AppLocalizationsDelegate

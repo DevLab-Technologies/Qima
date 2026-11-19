@@ -15,6 +15,7 @@ import '../theme/qima_colors.dart';
 import '../theme/strings.dart';
 import '../widgets/asset_class_filter.dart';
 import '../widgets/confirm_delete_dialog.dart';
+import '../widgets/guided_tour.dart';
 import '../widgets/help_button.dart';
 import '../widgets/instrument_row.dart';
 import '../widgets/portfolio_hero.dart';
@@ -315,15 +316,15 @@ class _WatchlistScreenState extends State<WatchlistScreen> with WidgetsBindingOb
                               itemBuilder: (context, index) => ReorderableDelayedDragStartListener(
                                 key: ValueKey(filteredCards[index].id),
                                 index: index,
-                                child: _row(context, cubit, l10n, colors, filteredCards[index]),
+                                child: _row(context, cubit, l10n, colors, filteredCards[index], first: index == 0),
                               ),
                             )
                           : Column(
                               children: [
-                                for (final card in filteredCards)
+                                for (final (i, card) in filteredCards.indexed)
                                   KeyedSubtree(
                                     key: ValueKey(card.id),
-                                    child: _row(context, cubit, l10n, colors, card),
+                                    child: _row(context, cubit, l10n, colors, card, first: i == 0),
                                   ),
                               ],
                             ),
@@ -412,9 +413,11 @@ class _WatchlistScreenState extends State<WatchlistScreen> with WidgetsBindingOb
     );
   }
 
-  Widget _row(BuildContext context, AppCubit cubit, AppLocalizations l10n, QimaColors colors, WatchCard card) {
+  /// [first]: the top row of the Prices tab, which the guided tour's Prices
+  /// stop points at.
+  Widget _row(BuildContext context, AppCubit cubit, AppLocalizations l10n, QimaColors colors, WatchCard card, {bool first = false}) {
     final presentation = cubit.presentation(card);
-    return Dismissible(
+    final row = Dismissible(
       key: ValueKey('dismissible-${card.id}'),
       direction: DismissDirection.endToStart,
       confirmDismiss: (_) => confirmDelete(
@@ -436,5 +439,6 @@ class _WatchlistScreenState extends State<WatchlistScreen> with WidgetsBindingOb
         ),
       ),
     );
+    return first && widget.asPrices ? KeyedSubtree(key: TourTargets.prices, child: row) : row;
   }
 }

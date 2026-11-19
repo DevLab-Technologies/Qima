@@ -32,7 +32,7 @@ import 'backup_screen.dart';
 import 'currency_picker.dart';
 import 'help_index_sheet.dart';
 import 'help_sheet.dart';
-import 'onboarding_tour_screen.dart';
+import 'setup_flow_screen.dart';
 import 'zakat_settings_screen.dart';
 
 /// Single settings sheet: base currency, default chart range, widget refresh
@@ -657,7 +657,23 @@ class _HelpSection extends StatelessWidget {
               style: TextStyle(color: colors.textTertiary, fontSize: 12),
             ),
             trailing: Icon(Icons.chevron_right, color: colors.textTertiary),
-            onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const OnboardingTourScreen())),
+            onTap: () {
+              // The tour runs over the home shell, so Settings closes first.
+              final app = context.read<AppCubit>();
+              Navigator.of(context).popUntil((route) => route.isFirst);
+              app.requestTour();
+            },
+          ),
+          Divider(color: colors.hairline, height: DS.spaceLG),
+          ListTile(
+            contentPadding: EdgeInsets.zero,
+            title: Text(l10n.settingsHelpRunSetup, style: TextStyle(color: colors.textPrimary)),
+            subtitle: Text(
+              l10n.settingsHelpRunSetupSubtitle,
+              style: TextStyle(color: colors.textTertiary, fontSize: 12),
+            ),
+            trailing: Icon(Icons.chevron_right, color: colors.textTertiary),
+            onTap: () => Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => const SetupFlowScreen(rerun: true))),
           ),
           Divider(color: colors.hairline, height: DS.spaceLG),
           ListTile(

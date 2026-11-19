@@ -11,6 +11,7 @@ import 'package:qima/models/holding.dart';
 import 'package:qima/models/instrument_catalog.dart';
 import 'package:qima/models/money.dart';
 import 'package:qima/models/quote.dart';
+import 'package:qima/models/setup_answers.dart';
 import 'package:qima/models/watch_card.dart';
 import 'package:qima/screens/add_instrument_screen.dart';
 import 'package:qima/screens/card_config_screen.dart';
@@ -24,6 +25,7 @@ import 'package:qima/screens/watchlist_screen.dart';
 import 'package:qima/services/local_file_store.dart';
 import 'package:qima/services/price_repository.dart';
 import 'package:qima/theme/app_theme.dart';
+import 'package:qima/widgets/guided_tour.dart';
 import 'package:qima/widgets/portfolio_hero.dart';
 
 import '../helpers/money_provider.dart';
@@ -366,5 +368,131 @@ void main() {
     );
     await settle(tester);
     expect(tester.takeException(), isNull);
+  });
+
+  group('guided tour', () {
+    testWidgets('walks the stops over the shell, changing tab, and Done returns to Home', (tester) async {
+      setSurfaceSize(tester, const Size(400, 800));
+      final l10n = await AppLocalizations.delegate.load(const Locale('en'));
+      await tester.pumpWidget(app(cubit));
+      await settle(tester);
+      expect(find.byType(GuidedTourOverlay), findsNothing);
+
+      cubit.requestTour();
+      await settle(tester);
+
+      // The shell took the request; with no setup answers every stop shows.
+      expect(cubit.state.tourRequested, isFalse);
+      expect(find.text(l10n.tourTabsTitle), findsOneWidget);
+      expect(find.text(l10n.tourStepOf(1, 4)), findsOneWidget);
+
+      await tester.tap(find.text(l10n.tourNext));
+      await settle(tester);
+      expect(find.text(l10n.tourAddTitle), findsOneWidget);
+      expectTabSelected(tester, l10n.navHome);
+
+      await tester.tap(find.text(l10n.tourNext));
+      await settle(tester);
+      expect(find.text(l10n.tourMoneyTitle), findsOneWidget);
+      expectTabSelected(tester, l10n.navMoney);
+
+      await tester.tap(find.text(l10n.tourNext));
+      await settle(tester);
+      expect(find.text(l10n.tourPricesTitle), findsOneWidget);
+      expectTabSelected(tester, l10n.navPrices);
+      // The last stop has no Skip, and its button says Done.
+      expect(find.text(l10n.tourSkip), findsNothing);
+
+      await tester.tap(find.text(l10n.commonDone));
+      await settle(tester);
+      expect(find.byType(GuidedTourOverlay), findsNothing);
+      expectTabSelected(tester, l10n.navHome);
+    });
+
+    testWidgets('Skip tour ends it at any stop, and nothing under it reacts while it runs', (tester) async {
+      setSurfaceSize(tester, const Size(400, 800));
+      final l10n = await AppLocalizations.delegate.load(const Locale('en'));
+      await tester.pumpWidget(app(cubit));
+      await settle(tester);
+      cubit.requestTour();
+      await settle(tester);
+
+      // A tap on the dimmed Money tab moves the tour on instead of
+      // switching tab.
+      await tester.tapAt(tester.getCenter(tabButton(l10n.navMoney)));
+      await settle(tester);
+      expect(find.text(l10n.tourAddTitle), findsOneWidget);
+      expectTabSelected(tester, l10n.navHome);
+
+      await tester.tap(find.text(l10n.tourSkip));
+      await settle(tester);
+      expect(find.byType(GuidedTourOverlay), findsNothing);
+    });
+
+    testWidgets('leaves out the stops for what setup did not choose', (tester) async {
+      setSurfaceSize(tester, const Size(400, 800));
+      final l10n = await AppLocalizations.delegate.load(const Locale('en'));
+      cubit.emit(cubit.state.copyWith(setup: const SetupAnswers(uses: {SetupUse.netWorth})));
+      await tester.pumpWidget(app(cubit));
+      await settle(tester);
+      cubit.requestTour();
+      await settle(tester);
+
+      expect(find.text(l10n.tourStepOf(1, 2)), findsOneWidget);
+      await tester.tap(find.text(l10n.tourNext));
+      await settle(tester);
+      expect(find.text(l10n.commonDone), findsOneWidget);
+    });
+
+    testWidgets('a tour asked for before the shell is on screen starts with it', (tester) async {
+      setSurfaceSize(tester, const Size(400, 800));
+      final l10n = await AppLocalizations.delegate.load(const Locale('en'));
+      cubit.requestTour();
+      await tester.pumpWidget(app(cubit));
+      await settle(tester);
+
+      expect(find.text(l10n.tourTabsTitle), findsOneWidget);
+    });
+
+    testWidgets('Android back ends the tour instead of leaving the app', (tester) async {
+      setSurfaceSize(tester, const Size(400, 800));
+      await tester.pumpWidget(app(cubit));
+      await settle(tester);
+      cubit.requestTour();
+      await settle(tester);
+
+      await tester.binding.handlePopRoute();
+      await settle(tester);
+
+      expect(find.byType(GuidedTourOverlay), findsNothing);
+      expect(find.byType(HomeShell), findsOneWidget);
+    });
+
+    testWidgets('runs over the rail on a wide screen and in Arabic', (tester) async {
+      setSurfaceSize(tester, const Size(900, 700));
+      final l10n = await AppLocalizations.delegate.load(const Locale('ar'));
+      await tester.pumpWidget(app(cubit, locale: const Locale('ar')));
+      await settle(tester);
+      cubit.requestTour();
+      await settle(tester);
+
+      for (final title in [l10n.tourTabsTitle, l10n.tourAddTitle, l10n.tourMoneyTitle, l10n.tourPricesTitle]) {
+        expect(find.text(title), findsOneWidget);
+        expect(tester.takeException(), isNull);
+        await tester.tap(find.byType(FilledButton).last);
+        await settle(tester);
+      }
+      expect(find.byType(GuidedTourOverlay), findsNothing);
+    });
+  });
+
+  testWidgets('opens on the tab setup chose when Qima is for one thing only', (tester) async {
+    setSurfaceSize(tester, const Size(400, 800));
+    final l10n = await AppLocalizations.delegate.load(const Locale('en'));
+    cubit.emit(cubit.state.copyWith(setup: const SetupAnswers(uses: {SetupUse.prices}, products: {SetupProduct.metals})));
+    await tester.pumpWidget(app(cubit));
+    await settle(tester);
+
+    expectTabSelected(tester, l10n.navPrices);
   });
 }

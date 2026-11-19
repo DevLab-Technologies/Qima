@@ -12,6 +12,7 @@ import '../../models/money_settings.dart';
 import '../../theme/design_system.dart';
 import '../../theme/money_labels.dart';
 import '../../theme/qima_colors.dart';
+import '../../widgets/guided_tour.dart';
 import '../../widgets/money_widgets.dart';
 import '../../theme/help_topics.dart';
 import '../../widgets/help_button.dart';
@@ -148,8 +149,9 @@ class _MoneyScreenState extends State<MoneyScreen> {
                 ],
         ));
 
-        // Cash flow.
+        // Cash flow. The guided tour's Money stop points here.
         sections.add(MoneySection(
+          key: TourTargets.money,
           title: l10n.cashFlow,
           children: [
             MoneyRow(icon: Icons.south_west, title: l10n.moneyIn, trailing: moneyText(a.income, ccy, hidden: hidden), trailingColor: colors.up),

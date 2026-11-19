@@ -9,6 +9,7 @@ import '../models/alert_runtime_state.dart';
 import '../models/asset.dart';
 import '../models/backup.dart';
 import '../models/custom_instrument.dart';
+import '../models/deterministic_uuid.dart';
 import '../models/fx_history.dart';
 import '../models/holding.dart';
 import '../models/holding_transaction.dart';
@@ -22,6 +23,7 @@ import '../models/period_summary.dart';
 import '../models/portfolio_history.dart';
 import '../models/price_alert.dart';
 import '../models/quote.dart';
+import '../models/setup_answers.dart';
 import '../models/watch_card.dart';
 import '../models/watchlist_sort.dart';
 import '../models/zakat.dart';
@@ -317,6 +319,8 @@ class AppCubit extends Cubit<AppState> {
       ),
       lastCloudSyncAt: cloudEnabledAtStartup ? DateTime.now() : null,
       shouldShowOnboarding: shouldShowOnboarding,
+      setup: preferences.setupAnswers,
+      getStartedDismissed: preferences.getStartedDismissed,
       zakatSettings: zakatSettings,
     ));
 
@@ -328,6 +332,10 @@ class AppCubit extends Cubit<AppState> {
   /// `PlatformDispatcher.instance.locale` mirrors how the rest of the app
   /// resolves the device's own locale for background/system work (see
   /// `RefreshPipeline`/`BackupReminderNotifier`).
+  /// [_deviceRegionCurrency] against the currencies loaded now, for setup's
+  /// "From your region" label.
+  String? get deviceRegionCurrency => _deviceRegionCurrency(state.rates.availableCurrencies);
+
   String? _deviceRegionCurrency(List<String> available) {
     final locale = _deviceLocale ?? PlatformDispatcher.instance.locale;
     final code = NumberFormat.simpleCurrency(locale: locale.toString()).currencyName;
@@ -347,14 +355,56 @@ class AppCubit extends Cubit<AppState> {
     return cards.any((card) => !defaultIDs.contains(card.instrumentID));
   }
 
-  /// Marks the first-launch tour as finished (either completed or skipped)
-  /// so it never shows automatically again on this device (spec "Onboarding
-  /// tour"). Replaying it from Settings/a help sheet pushes
-  /// `OnboardingTourScreen` directly instead of going through this flag.
+  /// Marks first-launch setup as finished (either completed or skipped) so
+  /// it never shows automatically again on this device. "Run setup again"
+  /// in Settings pushes `SetupFlowScreen` directly instead of going through
+  /// this flag.
   Future<void> completeOnboarding() async {
     await preferences.setOnboardingCompleted(true);
     if (!state.shouldShowOnboarding) return;
     emit(state.copyWith(shouldShowOnboarding: false));
+  }
+
+  /// Keeps the setup answers on this device and brings Home's Get started
+  /// card back for them (running setup again is asking for it again).
+  Future<void> saveSetup(SetupAnswers answers) async {
+    await preferences.setSetupAnswers(answers);
+    await preferences.setGetStartedDismissed(false);
+    emit(state.copyWith(setup: answers, getStartedDismissed: false));
+  }
+
+  /// Asks the home shell to run the guided tour; it starts once the shell is
+  /// on screen and clears the request with [tourStarted].
+  void requestTour() {
+    if (!state.tourRequested) emit(state.copyWith(tourRequested: true));
+  }
+
+  void tourStarted() {
+    if (state.tourRequested) emit(state.copyWith(tourRequested: false));
+  }
+
+  Future<void> dismissGetStarted() async {
+    if (state.getStartedDismissed) return;
+    await preferences.setGetStartedDismissed(true);
+    emit(state.copyWith(getStartedDismissed: true));
+  }
+
+  /// Puts the prices picked in setup on the watchlist. The three seeded
+  /// cards (see `Preferences.seedWatchcards`) were never the person's
+  /// choice, so they make way for the picks, but only while the watchlist is
+  /// still exactly the seed: once the person has added or removed anything,
+  /// the picks are added next to what is there.
+  Future<void> adoptSetupWatchlist(List<WatchCard> picks) async {
+    if (picks.isEmpty) return;
+    final seedIDs = {for (final id in InstrumentCatalog.defaultWatchlist) deterministicUuid('watchcard.$id')};
+    final untouched = state.cards.length == seedIDs.length && state.cards.every((c) => seedIDs.contains(c.id));
+    final replaced = untouched ? [for (final c in state.cards) if (!picks.any(c.isSameCombo)) c.id] : const <String>[];
+    for (final card in picks) {
+      await addCard(card);
+    }
+    for (final id in replaced) {
+      await removeCard(id);
+    }
   }
 
   CloudSyncStatus _statusFor({

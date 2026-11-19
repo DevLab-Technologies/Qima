@@ -7,6 +7,7 @@ import '../models/ledger.dart';
 import '../models/money.dart';
 import '../models/price_alert.dart';
 import '../models/quote.dart';
+import '../models/setup_answers.dart';
 import '../models/watch_card.dart';
 import '../models/zakat.dart';
 import '../models/chart_range.dart';
@@ -128,6 +129,17 @@ class AppState extends Equatable {
   /// flashing the tour on for a frame before init resolves.
   final bool shouldShowOnboarding;
 
+  /// What the person answered in setup on this device, or null when they
+  /// skipped it; see `Preferences.setupAnswers`.
+  final SetupAnswers? setup;
+
+  /// The person closed Home's Get started card.
+  final bool getStartedDismissed;
+
+  /// The guided tour was asked for and the home shell has not started it
+  /// yet. Never stored.
+  final bool tourRequested;
+
   /// Zakat choices (v3) — synced like [baseCurrency], see
   /// `Preferences.zakatSettings`.
   final ZakatSettings zakatSettings;
@@ -168,6 +180,9 @@ class AppState extends Equatable {
     this.cloudSyncStatus = CloudSyncStatus.disabled,
     this.lastCloudSyncAt,
     this.shouldShowOnboarding = false,
+    this.setup,
+    this.getStartedDismissed = false,
+    this.tourRequested = false,
     this.zakatSettings = const ZakatSettings(),
   })  : seriesByID = seriesByID ?? const {},
         rates = rates ?? FXRates.usdIdentity,
@@ -219,6 +234,9 @@ class AppState extends Equatable {
     DateTime? lastCloudSyncAt,
     bool clearLastCloudSyncAt = false,
     bool? shouldShowOnboarding,
+    SetupAnswers? setup,
+    bool? getStartedDismissed,
+    bool? tourRequested,
     ZakatSettings? zakatSettings,
   }) {
     final nextTransactions = transactions ?? (lots == null ? null : _buys(lots));
@@ -256,6 +274,9 @@ class AppState extends Equatable {
       cloudSyncStatus: cloudSyncStatus ?? this.cloudSyncStatus,
       lastCloudSyncAt: clearLastCloudSyncAt ? null : (lastCloudSyncAt ?? this.lastCloudSyncAt),
       shouldShowOnboarding: shouldShowOnboarding ?? this.shouldShowOnboarding,
+      setup: setup ?? this.setup,
+      getStartedDismissed: getStartedDismissed ?? this.getStartedDismissed,
+      tourRequested: tourRequested ?? this.tourRequested,
       zakatSettings: zakatSettings ?? this.zakatSettings,
     );
   }
@@ -294,6 +315,9 @@ class AppState extends Equatable {
         cloudSyncStatus,
         lastCloudSyncAt,
         shouldShowOnboarding,
+        setup,
+        getStartedDismissed,
+        tourRequested,
         zakatSettings,
       ];
 }

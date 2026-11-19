@@ -583,10 +583,6 @@
   "backupCsvHeaderTotalCost": "Total",
   "backupCsvHeaderDate": "Date",
   "commonContinue": "Continue",
-  "onboardingNext": "Next",
-  "@onboardingNext": {
-    "description": "Onboarding tour primary button, steps 1-4."
-  },
   "onboardingSkip": "Skip",
   "@onboardingSkip": {
     "description": "Onboarding tour text button under Next, steps 1-4."
@@ -594,103 +590,6 @@
   "onboardingGetStarted": "Get started",
   "@onboardingGetStarted": {
     "description": "Onboarding tour primary button, step 5 (final step)."
-  },
-  "onboardingStep1Title": "Everything you own, in one number",
-  "@onboardingStep1Title": {
-    "description": "Onboarding step 1 (Welcome) title."
-  },
-  "onboardingStep1Body": "Gold, silver, crypto, stocks, indices and currencies, added up in your currency, with a plain summary of each month.",
-  "@onboardingStep1Body": {
-    "description": "Onboarding step 1 (Welcome) body."
-  },
-  "onboardingStep2Title": "Prices the way you buy",
-  "@onboardingStep2Title": {
-    "description": "Onboarding step 2 (Watchlist) title."
-  },
-  "onboardingStep2Body": "Live prices by gram, ounce or kilogram, 24K to 18K, in any currency. Tap + to add to your watchlist, tap a card for its chart.",
-  "@onboardingStep2Body": {
-    "description": "Onboarding step 2 (Watchlist) body."
-  },
-  "onboardingStep3Title": "Know what you hold",
-  "@onboardingStep3Title": {
-    "description": "Onboarding step 3 (Holdings) title."
-  },
-  "onboardingStep3Body": "Tap +, then Add holding, and type what you bought, or say it or scan a receipt. It is read on this device and saved only when you confirm. See what you hold, your average cost, value and gain.",
-  "@onboardingStep3Body": {
-    "description": "Onboarding step 3 (Holdings) body."
-  },
-  "onboardingStep4Title": "Never miss a move",
-  "@onboardingStep4Title": {
-    "description": "Onboarding step 4 (Alerts & widgets) title."
-  },
-  "onboardingStep4Body": "Get notified when a price crosses a level or moves by a percent. Put prices on your Home and Lock Screen.",
-  "@onboardingStep4Body": {
-    "description": "Onboarding step 4 (Alerts & widgets) title."
-  },
-  "onboardingStep4BodyApple": "Get notified when a price crosses a level or moves by a percent. Put prices on your Home and Lock Screen, or ask Siri what your portfolio is worth.",
-  "onboardingStep5Title": "Private by design",
-  "@onboardingStep5Title": {
-    "description": "Onboarding step 5 (Private by design) title."
-  },
-  "onboardingStep5Body": "No account. Your data stays on this device, with optional iCloud sync, Face ID lock and file backups.",
-  "@onboardingStep5Body": {
-    "description": "Onboarding step 5 (Private by design) title."
-  },
-  "onboardingStep5BodyAndroid": "No account. Your data stays on this device, with fingerprint or face unlock and file backups.",
-  "@onboardingStep5BodyAndroid": {
-    "description": "Onboarding step 5 body, Android wording (no iCloud, fingerprint/face unlock instead of Face ID)."
-  },
-  "onboardingStep5BodyMac": "No account. Your data stays on this Mac, with optional iCloud sync, Touch ID lock and file backups.",
-  "@onboardingStep5BodyMac": {
-    "description": "Onboarding step 5 body on macOS (Touch ID instead of Face ID)."
-  },
-  "onboardingStep5PillNoAccount": "No account",
-  "@onboardingStep5PillNoAccount": {
-    "description": "Onboarding step 5 pill."
-  },
-  "onboardingStep5PillOnDevice": "On this device",
-  "@onboardingStep5PillOnDevice": {
-    "description": "Onboarding step 5 pill."
-  },
-  "onboardingStep5ICloudTitle": "iCloud sync",
-  "@onboardingStep5ICloudTitle": {
-    "description": "Onboarding step 5 illustration row title (iOS only)."
-  },
-  "onboardingStep5ICloudSubtitle": "Optional · keeps devices in step",
-  "@onboardingStep5ICloudSubtitle": {
-    "description": "Onboarding step 5 illustration row subtitle (iOS only)."
-  },
-  "onboardingStep5AppLockTitle": "App lock",
-  "@onboardingStep5AppLockTitle": {
-    "description": "Onboarding step 5 illustration row title."
-  },
-  "onboardingStep5AppLockSubtitleApple": "Face ID or fingerprint",
-  "@onboardingStep5AppLockSubtitleApple": {
-    "description": "Onboarding step 5 App lock row subtitle, Apple platforms."
-  },
-  "onboardingStep5AppLockSubtitleGeneric": "Fingerprint or face unlock",
-  "@onboardingStep5AppLockSubtitleGeneric": {
-    "description": "Onboarding step 5 App lock row subtitle, non-Apple platforms."
-  },
-  "onboardingStep5AppLockSubtitleMac": "Touch ID or your Mac password",
-  "@onboardingStep5AppLockSubtitleMac": {
-    "description": "Onboarding step 5 app lock row subtitle on macOS."
-  },
-  "onboardingStep5HideBalancesTitle": "Hide balances",
-  "@onboardingStep5HideBalancesTitle": {
-    "description": "Onboarding step 5 illustration row title."
-  },
-  "onboardingStep5HideBalancesSubtitle": "Show •••• instead of amounts",
-  "@onboardingStep5HideBalancesSubtitle": {
-    "description": "Onboarding step 5 illustration row subtitle."
-  },
-  "onboardingBaseCurrencyTitle": "Base currency",
-  "@onboardingBaseCurrencyTitle": {
-    "description": "Onboarding step 5 base-currency row title."
-  },
-  "onboardingBaseCurrencySubtitle": "From your region · change in Settings",
-  "@onboardingBaseCurrencySubtitle": {
-    "description": "Onboarding step 5 base-currency row subtitle."
   },
   "onboardingSemanticStepOf": "Step {step} of {total}",
   "@onboardingSemanticStepOf": {
@@ -1490,7 +1389,7 @@
   "@settingsHelpReplayTour": {
     "description": "Settings Help group row title."
   },
-  "settingsHelpReplayTourSubtitle": "See the five-step introduction again",
+  "settingsHelpReplayTourSubtitle": "A short tour of Home, Money and Prices",
   "@settingsHelpReplayTourSubtitle": {
     "description": "Settings Help group row subtitle."
   },
@@ -3364,5 +3263,109 @@
   "aiAppsCopy": "Copy",
   "aiAppsCopied": "Copied",
   "aiAppsFreshness": "The copy updates while Qima is open.",
-  "aiAppsNoHelper": "The connector isn't in this copy of Qima. Install Qima from the store or the website to use it."
+  "aiAppsNoHelper": "The connector isn't in this copy of Qima. Install Qima from the store or the website to use it.",
+  "setupWelcomeTitle": "Let’s set Qima up for you",
+  "setupWelcomeBody": "Answer a few questions and Qima shows only what you need. It takes about a minute.",
+  "setupWelcomeNoAccount": "No account needed",
+  "setupWelcomeOnDevice": "Your answers stay on this device",
+  "setupWelcomeChangeLater": "Change anything later in Settings",
+  "setupWelcomeSkip": "Skip, I’ll set it up myself",
+  "setupChosen": "{count, plural, =0{Nothing chosen} other{{count} chosen}}",
+  "@setupChosen": {"placeholders": {"count": {"type": "int"}}},
+  "setupListSeparator": ", ",
+  "setupCurrencyTitle": "What is your main currency?",
+  "setupCurrencyBody": "Totals, budgets and prices are shown in it.",
+  "setupCurrencyFromRegion": "From your region",
+  "setupCurrencyMore": "More currencies",
+  "setupUsesTitle": "How do you want to use Qima?",
+  "setupChooseAll": "Choose all that apply.",
+  "setupUseMoney": "Manage my money",
+  "setupUseMoneyBody": "Spending, accounts, budgets and bills",
+  "setupUsePortfolio": "Manage my portfolio",
+  "setupUsePortfolioBody": "What I hold, what it cost and what it is worth",
+  "setupUsePrices": "Watch prices",
+  "setupUsePricesBody": "Gold, stocks, currencies and alerts",
+  "setupUseNetWorth": "Know my net worth",
+  "setupUseNetWorthBody": "Everything I own and owe, in one number",
+  "setupUseZakat": "Work out my zakat",
+  "setupUseZakatBody": "Over my holdings, cash and debts",
+  "setupProductsTitle": "What do you invest in or follow?",
+  "setupProductsBody": "Qima suggests prices to watch from your choices.",
+  "setupProductMetals": "Gold and silver",
+  "setupProductMetalsBody": "Bars, coins and jewellery, by karat",
+  "setupProductStocks": "Stocks",
+  "setupProductStocksBody": "Shares you own or follow",
+  "setupProductCurrencies": "Currencies",
+  "setupProductCurrenciesBody": "Dollar, euro and riyal rates",
+  "setupProductCrypto": "Crypto",
+  "setupProductCryptoBody": "Bitcoin, Ethereum and others",
+  "setupProductIndices": "Indices",
+  "setupProductIndicesBody": "S&P 500, Nasdaq and others",
+  "setupProductProperty": "Property and other",
+  "setupProductPropertyBody": "A home, land, a car or a business",
+  "setupPricesTitle": "Start with these prices",
+  "setupPricesBody": "Picked from your choices and shown in {currency}. Untick any you do not want.",
+  "@setupPricesBody": {"placeholders": {"currency": {"type": "String"}}},
+  "setupPricesAdd": "{count, plural, =0{Add to my watchlist} =1{Add 1 to my watchlist} other{Add {count} to my watchlist}}",
+  "@setupPricesAdd": {"placeholders": {"count": {"type": "int"}}},
+  "setupPricesNotNow": "Not now",
+  "setupGoalsTitle": "What do you want from your money?",
+  "setupGoalWhere": "Know where my money goes",
+  "setupGoalWhereBody": "Spending by category, every month",
+  "setupGoalSave": "Save more each month",
+  "setupGoalSaveBody": "Money in, money out and what is left over",
+  "setupGoalBudget": "Stick to a budget",
+  "setupGoalBudgetBody": "A monthly amount for each category",
+  "setupGoalBills": "Never miss a bill",
+  "setupGoalBillsBody": "Bills and installments before they are due",
+  "setupGoalPeople": "Track who owes me",
+  "setupGoalPeopleBody": "Money lent and borrowed, by person",
+  "setupCaptureTitle": "How will you add your spending?",
+  "setupCaptureBody": "You can use more than one.",
+  "setupCaptureType": "Type or say it",
+  "setupCaptureTypeBody": "“Coffee 85 from cash” becomes a transaction",
+  "setupCaptureMessages": "Read my bank messages",
+  "setupCaptureMessagesBody": "Each bank message becomes a transaction to review",
+  "setupCaptureStatement": "Import a statement",
+  "setupCaptureStatementBody": "A PDF, Excel or CSV file, or a screenshot",
+  "setupCapturePrivacy": "Messages and files are read on this device. Nothing is uploaded.",
+  "setupSummaryTitle": "Qima is ready",
+  "setupSummaryBody": "This is what your answers set up. Tap a row to change it.",
+  "setupSummaryCurrency": "Main currency",
+  "setupSummaryHome": "On your Home",
+  "setupSummaryFeatures": "Turned on",
+  "setupSummaryNothingNew": "Nothing extra",
+  "setupSummaryWatchlist": "Watchlist",
+  "setupSummaryWatchlistKept": "Left as it is",
+  "setupSummaryPrices": "{count, plural, =1{1 price} other{{count} prices}}",
+  "@setupSummaryPrices": {"placeholders": {"count": {"type": "int"}}},
+  "setupSummaryCapture": "Adding spending",
+  "setupSummaryLater": "You can change any of this later in Settings.",
+  "setupSummaryTour": "Show me around",
+  "setupSummaryGoHome": "Go to Home",
+  "tourTabsTitle": "Three places",
+  "tourTabsBody": "Home is where you stand. Money is where it goes. Prices is the market.",
+  "tourAddTitle": "Add anything from here",
+  "tourAddBody": "A transaction, an account, a holding or a price. You can type it or say it.",
+  "tourMoneyTitle": "Your month at a glance",
+  "tourMoneyBody": "Money in, money out and what is left over, month by month.",
+  "tourPricesTitle": "Tap a price for its chart",
+  "tourPricesBody": "Set an alert there and Qima tells you when it crosses a level.",
+  "tourStepOf": "{step} of {total}",
+  "@tourStepOf": {"placeholders": {"step": {"type": "int"}, "total": {"type": "int"}}},
+  "tourSkip": "Skip tour",
+  "tourNext": "Next",
+  "startCardTitle": "Get started",
+  "startCardProgress": "{done} of {total}",
+  "@startCardProgress": {"placeholders": {"done": {"type": "int"}, "total": {"type": "int"}}},
+  "startCardSetUp": "Set up Qima",
+  "startCardDismiss": "Hide Get started",
+  "startTaskAccount": "Add your first account",
+  "startTaskTransaction": "Record a transaction",
+  "startTaskHolding": "Add what you hold",
+  "startTaskAsset": "Add a property, a car or another asset",
+  "startTaskAlert": "Set a price alert",
+  "startTaskBankMessages": "Set up bank messages",
+  "settingsHelpRunSetup": "Run setup again",
+  "settingsHelpRunSetupSubtitle": "Answer the setup questions again. Nothing you use is turned off."
 }

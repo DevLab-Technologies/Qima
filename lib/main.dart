@@ -14,9 +14,9 @@ import 'models/watch_card.dart';
 import 'screens/backup_screen.dart';
 import 'screens/home_shell.dart';
 import 'screens/instrument_detail_screen.dart';
-import 'screens/onboarding_tour_screen.dart';
 import 'screens/watch_watchlist_screen.dart';
 import 'screens/zakat_screen.dart';
+import 'screens/setup_flow_screen.dart';
 import 'services/ai_apps.dart';
 import 'services/import/import_inbox.dart';
 import 'services/import/statement_files.dart';
@@ -233,10 +233,9 @@ class _QimaAppState extends State<QimaApp> {
   }
 }
 
-/// Decides what the app's first screen is once [AppCubit.init] resolves
-/// (spec "Onboarding tour": "Shown once, on first launch, before the home
-/// shell"): the onboarding tour when [AppState.shouldShowOnboarding] is
-/// true, the home shell otherwise. Stays on a blank loading surface (same
+/// Decides what the app's first screen is once [AppCubit.init] resolves:
+/// setup (shown once, on first launch, before the home shell) when
+/// [AppState.shouldShowOnboarding] is true, the home shell otherwise. Stays on a blank loading surface (same
 /// as every screen's own `!state.initialized` guard) until init resolves,
 /// so this never flashes the shell before deciding.
 class _AppHome extends StatelessWidget {
@@ -252,11 +251,9 @@ class _AppHome extends StatelessWidget {
           return const Scaffold(body: Center(child: CircularProgressIndicator()));
         }
         if (state.shouldShowOnboarding) {
-          return OnboardingTourScreen(
-            onFinished: () {
-              Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => const _Home()));
-            },
-          );
+          // Finishing or skipping clears the flag, which brings this
+          // builder back round to the home shell.
+          return const SetupFlowScreen();
         }
         return const _Home();
       },

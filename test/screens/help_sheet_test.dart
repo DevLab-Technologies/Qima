@@ -15,7 +15,6 @@ import 'package:qima/models/watch_card.dart';
 import 'package:qima/screens/help_index_sheet.dart';
 import 'package:qima/screens/help_sheet.dart';
 import 'package:qima/screens/home_shell.dart';
-import 'package:qima/screens/onboarding_tour_screen.dart';
 import 'package:qima/screens/settings_screen.dart';
 import 'package:qima/screens/watchlist_screen.dart';
 import 'package:qima/services/local_file_store.dart';
@@ -116,7 +115,7 @@ void main() {
     expect(find.text(l10n.helpWatchlistStep1Title), findsOneWidget);
   });
 
-  testWidgets('"Replay the tour" from a help sheet opens the tour', (tester) async {
+  testWidgets('"Replay the tour" from a help sheet closes it and asks the shell for the tour', (tester) async {
     setSurfaceSize(tester, const Size(400, 800));
     await tester.pumpWidget(harness(const WatchlistScreen(manageRefreshLifecycle: false)));
     await settle(tester);
@@ -131,7 +130,8 @@ void main() {
     await tester.tap(find.text(l10n.onboardingReplayTour));
     await settle(tester);
 
-    expect(find.byType(OnboardingTourScreen), findsOneWidget);
+    expect(find.byType(HelpSheet), findsNothing);
+    expect(cubit.state.tourRequested, isTrue);
   });
 
   testWidgets('the "How Qima works" index sheet lists every topic', (tester) async {

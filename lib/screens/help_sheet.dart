@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../blocs/app_cubit.dart';
 import '../l10n/app_localizations.dart';
 import '../models/help_topic.dart';
 import '../theme/design_system.dart';
 import '../theme/help_topics.dart';
 import '../theme/qima_colors.dart';
-import 'onboarding_tour_screen.dart';
 
 /// The help bottom sheet opened by every [HelpButton] (spec "Help on every
 /// page"): a drag handle, a small-caps "ABOUT THIS PAGE" header above the
@@ -117,9 +118,12 @@ class HelpSheet extends StatelessWidget {
     );
   }
 
+  /// The tour runs over the home shell, so this closes the sheet and
+  /// whatever screen it was opened from, and asks the shell to start it.
   void _replayTour(BuildContext context) {
-    Navigator.of(context).pop();
-    Navigator.of(context).push(MaterialPageRoute(builder: (_) => const OnboardingTourScreen()));
+    final app = context.read<AppCubit>();
+    Navigator.of(context).popUntil((route) => route.isFirst);
+    app.requestTour();
   }
 }
 

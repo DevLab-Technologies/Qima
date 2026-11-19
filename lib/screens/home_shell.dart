@@ -5,14 +5,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../blocs/app_cubit.dart';
+import '../blocs/app_state.dart';
 import '../blocs/import_cubit.dart';
 import '../blocs/money_cubit.dart';
 import '../l10n/app_localizations.dart';
 import '../models/import_plan.dart';
+import '../models/setup_answers.dart';
 import '../services/import/bank_messages.dart';
 import '../theme/design_system.dart';
 import '../theme/qima_colors.dart';
 import '../widgets/add_sheet.dart';
+import '../widgets/guided_tour.dart';
 import 'money/home_screen.dart';
 import 'money/import_screens.dart';
 import 'money/money_screen.dart';
@@ -49,6 +52,9 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
   Timer? _timer;
   bool _whatsNewShown = false;
 
+  /// The guided tour's stops while it is running.
+  List<TourStop>? _tour;
+
   final _homeScroll = ScrollController();
   final _moneyScroll = ScrollController();
   final _pricesScroll = ScrollController();
@@ -60,10 +66,13 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    // Opens on Money or Prices when setup said that is all Qima is for.
+    _index = context.read<AppCubit>().state.setup?.startTab ?? 0;
     _imports = maybeImportCubit(context)?.stream.listen((_) => _autoAddMessages());
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _onForeground();
       _maybeShowWhatsNew(context.read<MoneyCubit>().state);
+      _maybeStartTour(context.read<AppCubit>().state);
       // The "Bank messages to check" notification opens the review.
       unawaited(BankMessages.listenForOpen(
         () {
@@ -191,6 +200,19 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
     showWhatsNew(context);
   }
 
+  /// Starts the guided tour when one was asked for (from setup, Help or
+  /// Settings). It always starts on Home, over the shell itself.
+  void _maybeStartTour(AppState app) {
+    if (!app.tourRequested || !mounted) return;
+    context.read<AppCubit>().tourStarted();
+    setState(() => _tour = (app.setup ?? const SetupAnswers()).tourStops);
+  }
+
+  void _endTour() => setState(() {
+        _tour = null;
+        _index = 0;
+      });
+
   ScrollController _controllerFor(int index) => switch (index) {
         0 => _homeScroll,
         1 => _moneyScroll,
@@ -237,24 +259,41 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
           ],
         );
 
-    return BlocListener<MoneyCubit, MoneyState>(
-      listenWhen: (a, b) => a.loaded != b.loaded,
-      listener: (context, money) => _maybeShowWhatsNew(money),
+    final tour = _tour;
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<MoneyCubit, MoneyState>(
+          listenWhen: (a, b) => a.loaded != b.loaded,
+          listener: (context, money) => _maybeShowWhatsNew(money),
+        ),
+        BlocListener<AppCubit, AppState>(
+          listenWhen: (a, b) => !a.tourRequested && b.tourRequested,
+          listener: (context, app) => _maybeStartTour(app),
+        ),
+      ],
       child: PopScope(
-        canPop: _index == 0,
+        canPop: _index == 0 && tour == null,
         onPopInvokedWithResult: (didPop, _) {
-          // Android back from Money or Prices goes to Home first; in Edit
-          // order it only closes Edit order (the Prices tab handles that).
-          if (!didPop && !_reordering) setState(() => _index = 0);
+          if (didPop) return;
+          // Android back ends the tour first. From Money or Prices it goes
+          // to Home; in Edit order it only closes Edit order (the Prices
+          // tab handles that).
+          if (tour != null) {
+            _endTour();
+          } else if (!_reordering) {
+            setState(() => _index = 0);
+          }
         },
-        child: LayoutBuilder(
+        child: Stack(
+          children: [
+            LayoutBuilder(
           builder: (context, constraints) {
             final useRail = constraints.maxWidth >= _kRailBreakpoint;
             if (!useRail) {
               return Scaffold(
                 extendBody: true,
                 body: tabs(phone: true),
-                floatingActionButton: _reordering ? null : const AddButton(),
+                floatingActionButton: _reordering ? null : KeyedSubtree(key: TourTargets.add, child: const AddButton()),
                 floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
                 bottomNavigationBar: _reordering ? null : _FloatingTabBar(destinations: destinations, selectedIndex: _index, onSelected: _selectTab),
               );
@@ -266,10 +305,11 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
               body: Row(
                 children: [
                   NavigationRail(
+                    key: TourTargets.tabs,
                     selectedIndex: _index,
                     onDestinationSelected: _selectTab,
                     labelType: NavigationRailLabelType.all,
-                    leading: const Padding(padding: EdgeInsets.only(bottom: 8), child: AddButton()),
+                    leading: Padding(padding: const EdgeInsets.only(bottom: 8), child: KeyedSubtree(key: TourTargets.add, child: const AddButton())),
                     trailing: Expanded(
                       child: Align(
                         alignment: Alignment.bottomCenter,
@@ -289,6 +329,12 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
               ),
             );
           },
+            ),
+            if (tour != null)
+              Positioned.fill(
+                child: GuidedTourOverlay(stops: tour, onSelectTab: (i) => setState(() => _index = i), onDone: _endTour),
+              ),
+          ],
         ),
       ),
     );
@@ -316,6 +362,8 @@ class _FloatingTabBar extends StatelessWidget {
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
           child: Container(
+            // What the guided tour lights: the bar itself, not its margins.
+            key: TourTargets.tabs,
             height: 64,
             decoration: BoxDecoration(
               color: (theme.backgroundColor ?? colors.surfaceTop).withValues(alpha: 0.82),
