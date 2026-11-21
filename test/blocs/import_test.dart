@@ -230,6 +230,18 @@ void main() {
       expect(plan.map((c) => c.key), ['f1:0', 'f1:1', 'f1:2', 'f2:0']);
     });
 
+    test('a row already added from the batch keeps its entry, so its twin still waits ticked', () async {
+      await money.addAccount(bank, opening: sar(1000), openedOn: DateTime(2026, 10, 1));
+      final cats = money.state.book.accounts;
+      await money.saveEntry(money.builder.spend(bank, cats['category.dining']!, sar(23), DateTime(2026, 11, 4), merchant: 'Starbucks'));
+      final coffee = StatementRow(date: DateTime(2026, 11, 4), description: 'Starbucks', amount: -23);
+      List<ImportFlag?> flags({Set<String> added = const {}}) =>
+          [for (final c in ImportPlanner.plan(files: [('f', [coffee, coffee])], account: bank, book: money.state.book, added: added)) c.flag];
+      expect(flags(), [ImportFlag.inBook, null]);
+      expect(flags(added: {'f:1'}), [null, ImportFlag.inBook]);
+      expect(ImportPlanner.plan(files: [('f', [coffee, coffee])], account: bank, book: money.state.book).last.index, 1);
+    });
+
     test('a refund of the same amount is not a duplicate of the purchase', () async {
       await money.addAccount(bank, opening: sar(1000), openedOn: DateTime(2026, 10, 1));
       final cats = money.state.book.accounts;
@@ -435,6 +447,28 @@ void main() {
       await importer.remove([item.id]);
       expect(await inbox.pending(), isEmpty);
       expect(importer.reviewOnly(item.id), isFalse);
+    });
+
+    test('a row settled on its own leaves the count, and its file stays until removed', () async {
+      await money.addAccount(bank, opening: sar(1000), openedOn: DateTime(2026, 10, 1));
+      await share('Bank message.txt', utf8.encode('Purchase of SAR 18.00 at CORNER CAFE'), kind: 'message');
+      await importer.checkInbox();
+      final item = importer.state.items.single;
+      expect(importer.state.rowCount, 1);
+
+      // A row that isn't there changes nothing.
+      importer.settle(item.id, 3, added: true);
+      expect(importer.state.items.single.settled, isEmpty);
+
+      importer.settle(item.id, 0, added: true);
+      expect(importer.state.items.single.settled, {0: true});
+      expect(importer.state.items.single.openRows, 0);
+      expect(importer.state.rowCount, 0);
+
+      // Reading the inbox again keeps what was settled.
+      await importer.checkInbox();
+      expect(importer.state.items.single.settled, {0: true});
+      expect(await inbox.pending(), hasLength(1));
     });
 
     test('a held message read again after a restart is dropped as already imported', () async {

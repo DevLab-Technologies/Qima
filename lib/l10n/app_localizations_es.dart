@@ -4676,6 +4676,12 @@ class AppLocalizationsEs extends AppLocalizations {
   String get importRemoveFile => 'Quitar archivo';
 
   @override
+  String get importAddRow => 'Añadir este movimiento';
+
+  @override
+  String get importSkipRow => 'Descartar este movimiento';
+
+  @override
   String get importFlagInBook => 'Ya está en Qima';
 
   @override

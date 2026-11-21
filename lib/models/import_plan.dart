@@ -64,6 +64,9 @@ class ImportCandidate extends Equatable {
 
   const ImportCandidate({required this.key, required this.fileId, required this.row, required this.categoryId, this.flag, this.match});
 
+  /// The row's place in its file.
+  int get index => int.parse(key.substring(fileId.length + 1));
+
   bool get suggested => flag == null;
 
   @override
@@ -213,12 +216,15 @@ class ImportPlanner {
   /// only shares the amount never takes the entry from the row that is
   /// really it. A row is "repeated" only when an earlier file (an
   /// overlapping screenshot) has it as many times; equal rows in one file
-  /// are all kept.
+  /// are all kept. Rows the person already added from this batch ([added],
+  /// by candidate key) are matched to their entries first, so an equal row
+  /// still waiting never takes one of them.
   static List<ImportCandidate> plan({
     required List<(String fileId, List<StatementRow> rows)> files,
     required BookAccount account,
     required Book book,
     Map<String, String> rules = const {},
+    Set<String> added = const {},
   }) {
     final categorizer = Categorizer(book, rules: rules);
     final earlier = <String, int>{};
@@ -246,8 +252,9 @@ class ImportPlanner {
     }
     final claimed = <String>{};
     final matches = <String, BookEntry>{};
+    final inOrder = added.isEmpty ? rows : [...rows.where((r) => added.contains(r.$1)), ...rows.where((r) => !added.contains(r.$1))];
     for (final sameOnly in [true, false]) {
-      for (final (key, _, r) in rows) {
+      for (final (key, _, r) in inOrder) {
         if (flags.containsKey(key)) continue;
         final found = _inBook(book, account, r, claimed, sameMerchantOnly: sameOnly);
         if (found == null) continue;

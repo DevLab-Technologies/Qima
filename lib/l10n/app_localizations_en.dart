@@ -4648,6 +4648,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get importRemoveFile => 'Remove file';
 
   @override
+  String get importAddRow => 'Add this transaction';
+
+  @override
+  String get importSkipRow => 'Skip this transaction';
+
+  @override
   String get importFlagInBook => 'Already in Qima';
 
   @override

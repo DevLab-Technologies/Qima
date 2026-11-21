@@ -1340,6 +1340,8 @@
   "importDiscardConfirm": "تجاهل هذه الملفات؟ لن يُضاف منها شيء.",
   "importDiscard": "تجاهل",
   "importRemoveFile": "إزالة الملف",
+  "importAddRow": "إضافة هذه العملية",
+  "importSkipRow": "تجاهل هذه العملية",
   "importFlagInBook": "موجودة في قيمة",
   "importFlagMaybeInBook": "نفس مبلغ {merchant} في {date}: تأكد أنها ليست نفسها",
   "importBetweenAccounts": "بين حساباتك",

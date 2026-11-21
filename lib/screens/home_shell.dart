@@ -101,7 +101,7 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
     if (_autoAdding || importer == null || !money.state.loaded || !money.state.settings.autoAddMessages || ImportReviewScreen.showing) return;
     final ready = [
       for (final i in importer.state.items)
-        if (i.file.message && i.status == ImportStatus.read && !importer.reviewOnly(i.id))
+        if (i.file.message && i.status == ImportStatus.read && i.settled.isEmpty && !importer.reviewOnly(i.id))
           (id: i.id, message: true, sender: i.file.sender, rows: i.rows, facts: i.facts, hash: i.hash),
     ];
     if (ready.isEmpty) return;

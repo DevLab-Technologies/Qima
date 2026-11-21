@@ -2950,6 +2950,8 @@
   "importDiscardConfirm": "Discard these files? Nothing from them is added.",
   "importDiscard": "Discard",
   "importRemoveFile": "Remove file",
+  "importAddRow": "Add this transaction",
+  "importSkipRow": "Skip this transaction",
   "importFlagInBook": "Already in Qima",
   "importFlagMaybeInBook": "Same amount as {merchant} on {date}: check it isn't the same",
   "@importFlagMaybeInBook": {

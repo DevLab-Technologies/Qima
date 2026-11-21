@@ -7955,6 +7955,18 @@ abstract class AppLocalizations {
   /// **'Remove file'**
   String get importRemoveFile;
 
+  /// No description provided for @importAddRow.
+  ///
+  /// In en, this message translates to:
+  /// **'Add this transaction'**
+  String get importAddRow;
+
+  /// No description provided for @importSkipRow.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip this transaction'**
+  String get importSkipRow;
+
   /// No description provided for @importFlagInBook.
   ///
   /// In en, this message translates to:

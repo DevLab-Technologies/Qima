@@ -38,16 +38,26 @@ class ImportItem extends Equatable {
   final StatementFacts facts;
   final String? hash;
 
-  const ImportItem(this.file, {this.status = ImportStatus.waiting, this.rows = const [], this.facts = StatementFacts.none, this.hash});
+  /// Rows the person dealt with one at a time on the review screen, by
+  /// their place in [rows]: true when the row was added, false when it was
+  /// skipped. They are out of the review; the file stays until every row
+  /// is dealt with.
+  final Map<int, bool> settled;
+
+  const ImportItem(this.file,
+      {this.status = ImportStatus.waiting, this.rows = const [], this.facts = StatementFacts.none, this.hash, this.settled = const {}});
 
   String get id => file.id;
   bool get done => status != ImportStatus.waiting && status != ImportStatus.reading;
 
-  ImportItem copyWith({ImportStatus? status, List<StatementRow>? rows, StatementFacts? facts, String? hash}) =>
-      ImportItem(file, status: status ?? this.status, rows: rows ?? this.rows, facts: facts ?? this.facts, hash: hash ?? this.hash);
+  /// How many rows still wait for the person.
+  int get openRows => rows.length - settled.length;
+
+  ImportItem copyWith({ImportStatus? status, List<StatementRow>? rows, StatementFacts? facts, String? hash, Map<int, bool>? settled}) => ImportItem(file,
+      status: status ?? this.status, rows: rows ?? this.rows, facts: facts ?? this.facts, hash: hash ?? this.hash, settled: settled ?? this.settled);
 
   @override
-  List<Object?> get props => [file, status, rows, facts, hash];
+  List<Object?> get props => [file, status, rows, facts, hash, settled];
 }
 
 class ImportState extends Equatable {
@@ -57,7 +67,7 @@ class ImportState extends Equatable {
 
   bool get isEmpty => items.isEmpty;
   bool get reading => items.any((i) => !i.done);
-  int get rowCount => items.fold(0, (n, i) => n + i.rows.length);
+  int get rowCount => items.fold(0, (n, i) => n + i.openRows);
 
   @override
   List<Object?> get props => [items];
@@ -213,6 +223,14 @@ class ImportCubit extends Cubit<ImportState> {
     }
     if (isClosed) return;
     emit(ImportState(items: [for (final i in state.items) if (!set.contains(i.id)) i]));
+  }
+
+  /// Takes one row out of the review, [added] to the book or skipped. Its
+  /// file stays in the inbox until [remove].
+  void settle(String id, int row, {required bool added}) {
+    final item = state.items.where((i) => i.id == id).firstOrNull;
+    if (item == null || row < 0 || row >= item.rows.length) return;
+    _update(item.copyWith(settled: {...item.settled, row: added}));
   }
 
   /// Takes items out of the list while their adding can still be undone,

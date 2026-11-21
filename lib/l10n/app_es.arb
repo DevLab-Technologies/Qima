@@ -1340,6 +1340,8 @@
   "importDiscardConfirm": "¿Descartar estos archivos? No se añadirá nada.",
   "importDiscard": "Descartar",
   "importRemoveFile": "Quitar archivo",
+  "importAddRow": "Añadir este movimiento",
+  "importSkipRow": "Descartar este movimiento",
   "importFlagInBook": "Ya está en Qima",
   "importFlagMaybeInBook": "Mismo importe que {merchant} el {date}: comprueba que no es la misma",
   "importBetweenAccounts": "Entre tus cuentas",

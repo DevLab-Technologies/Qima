@@ -435,6 +435,51 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('the import review: one row is added or skipped on its own, and the rest wait', (tester) async {
+    await tester.runAsync(seed);
+    size(tester, const Size(390, 2400));
+    final l10n = await AppLocalizations.delegate.load(const Locale('en'));
+    final before = money.state.book.balanceOf('rajhi');
+    final files = importer.state.items.length;
+    await tester.pumpWidget(wrap(const ImportReviewScreen(), const Locale('en')));
+    await tester.pump(const Duration(milliseconds: 300));
+    Finder action(String row, String tooltip) =>
+        find.descendant(of: find.ancestor(of: find.text(row), matching: find.byType(InkWell)).first, matching: find.byTooltip(tooltip));
+    Future<void> tapAndSettle(Finder button, int open) async {
+      await tester.tap(button);
+      await _untilSaved(tester, l10n, () => importer.state.rowCount == open);
+    }
+
+    // Panda alone goes into the book; its file and the other rows stay.
+    await tapAndSettle(action('PANDA RIYADH', l10n.importAddRow), 3);
+    expect(money.state.book.balanceOf('rajhi'), before - sar(512.40));
+    expect(find.text('PANDA RIYADH'), findsNothing);
+    expect(find.text('SALARY NOVEMBER'), findsOneWidget);
+    expect(importer.state.items, hasLength(files));
+    expect(money.state.settings.importedHashes, isEmpty);
+    expect(find.text(l10n.importAddCount(2)), findsOneWidget);
+
+    // The salary is skipped: gone from the review, nothing added.
+    await tapAndSettle(action('SALARY NOVEMBER', l10n.importSkipRow), 2);
+    expect(money.state.book.balanceOf('rajhi'), before - sar(512.40));
+    expect(find.text('SALARY NOVEMBER'), findsNothing);
+    expect(find.text(l10n.importAddCount(1)), findsOneWidget);
+
+    // Add takes what is left ticked (the coffee) and finishes the files.
+    final coffee = money.state.entries.length;
+    await tester.runAsync(() async {
+      await tester.tap(find.byKey(const ValueKey('importAdd')));
+      for (var i = 0; i < 40 && importer.state.items.isNotEmpty; i++) {
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+      }
+    });
+    await tester.pump();
+    expect(money.state.entries, hasLength(coffee + 1));
+    expect(importer.state.isEmpty, isTrue);
+    expect(money.state.settings.importedHashes, hasLength(2));
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('an imported row can be corrected and made a transfer before it is added', (tester) async {
     await tester.runAsync(seed);
     size(tester, const Size(390, 2400));
@@ -705,6 +750,42 @@ void main() {
       expect(money.state.book.balanceOf('visa'), visa + sar(88));
       expect(money.state.book.balanceOf('rajhi'), rajhi - sar(30));
       expect(money.state.settings.messageSenders, {'cardbank': 'visa', 'homebank': 'rajhi'});
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('one message is added and another skipped, each on its own', (tester) async {
+      await tester.runAsync(() async {
+        await seed();
+        await importer.remove(importer.state.items.map((i) => i.id));
+        await money.giveStatementRefs(money.state.book.accounts['visa']!, ['card:7712']);
+        await message('m1', 'POS Purchase\nCard: XX7712\nAmount: SAR 88.00\nAt: Jarir Bookstore', sender: 'CardBank');
+        await message('m2', 'Purchase of SAR 30.00 at KUDU OLAYA', sender: 'HomeBank');
+        await readInbox();
+      });
+      size(tester, const Size(390, 2000));
+      final l10n = await AppLocalizations.delegate.load(const Locale('en'));
+      final rajhi = money.state.book.balanceOf('rajhi'), visa = money.state.book.balanceOf('visa');
+      await tester.pumpWidget(wrap(const ImportReviewScreen(), const Locale('en')));
+      await tester.pump(const Duration(milliseconds: 300));
+      Future<void> tapUntil(Finder button, int left) async {
+        await tester.tap(button);
+        await _untilSaved(tester, l10n, () => importer.state.items.length == left);
+      }
+
+      // The card's message is added: it leaves the inbox, remembered, and
+      // its sender is learned. The other still waits.
+      await tapUntil(find.byTooltip(l10n.importAddRow).first, 1);
+      expect(money.state.book.balanceOf('visa'), visa + sar(88));
+      expect(money.state.settings.importedHashes, hasLength(1));
+      expect(money.state.settings.messageSenders, {'cardbank': 'visa'});
+      expect(find.text(l10n.importMessageFrom('HomeBank')), findsOneWidget);
+      expect(find.text(l10n.importAddCount(1)), findsOneWidget);
+
+      // The other is skipped: gone, with nothing added or remembered.
+      await tapUntil(find.byTooltip(l10n.importSkipRow).first, 0);
+      expect(money.state.book.balanceOf('rajhi'), rajhi);
+      expect(money.state.settings.importedHashes, hasLength(1));
+      expect(importer.state.isEmpty, isTrue);
       expect(tester.takeException(), isNull);
     });
 
@@ -1334,3 +1415,15 @@ void main() {
 
 /// The review's balance offer, one per account (`importBalance-<id>`).
 final _balanceOffer = find.byWidgetPredicate((w) => w.key is ValueKey<String> && (w.key! as ValueKey<String>).value.startsWith('importBalance-'));
+
+/// Waits for a row's own Add or Skip on the import review to finish: until
+/// [done] holds and the rows that are left can be acted on again.
+Future<void> _untilSaved(WidgetTester tester, AppLocalizations l10n, bool Function() done) async {
+  for (var i = 0; i < 60; i++) {
+    await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 50)));
+    await tester.pump();
+    final left = find.byTooltip(l10n.importAddRow);
+    final saving = left.evaluate().isNotEmpty && tester.widget<IconButton>(find.ancestor(of: left.first, matching: find.byType(IconButton)).first).onPressed == null;
+    if (done() && !saving) return;
+  }
+}

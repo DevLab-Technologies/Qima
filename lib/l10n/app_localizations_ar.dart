@@ -4664,6 +4664,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get importRemoveFile => 'إزالة الملف';
 
   @override
+  String get importAddRow => 'إضافة هذه العملية';
+
+  @override
+  String get importSkipRow => 'تجاهل هذه العملية';
+
+  @override
   String get importFlagInBook => 'موجودة في قيمة';
 
   @override

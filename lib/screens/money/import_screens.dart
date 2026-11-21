@@ -261,15 +261,29 @@ class _ImportReviewScreenState extends State<ImportReviewScreen> {
       account[a.id] = a;
       (byAccount[a.id] ??= []).add(i);
     }
+    // Rows added or skipped one at a time are out of the review.
+    String key(ImportItem i, int row) => '${i.id}:$row';
+    final settled = {
+      for (final i in imports.items)
+        for (final row in i.settled.keys) key(i, row),
+    };
+    final added = {
+      for (final i in imports.items)
+        for (final MapEntry(key: row, value: wasAdded) in i.settled.entries)
+          if (wasAdded) key(i, row),
+    };
     return [
       for (final MapEntry(key: id, value: items) in byAccount.entries)
-        _Group(
-          account[id]!,
-          items,
-          ImportPlanner.plan(files: [for (final i in items) (i.id, _rowsOf(i))], account: account[id]!, book: money.book, rules: money.settings.categoryRules),
-        ),
+        _Group(account[id]!, items, [
+          for (final c in ImportPlanner.plan(
+              files: [for (final i in items) (i.id, _rowsOf(i))], account: account[id]!, book: money.book, rules: money.settings.categoryRules, added: added))
+            if (!settled.contains(c.key)) c,
+        ]),
     ];
   }
+
+  /// A row as it goes into the book: corrected, and the way it was set to go.
+  StatementRow _asAdded(String key, StatementRow row) => row.copyWith(amount: (_isIn[key] ?? row.isIn) ? row.amount.abs() : -row.amount.abs());
 
   @override
   Widget build(BuildContext context) {
@@ -404,11 +418,14 @@ class _ImportReviewScreenState extends State<ImportReviewScreen> {
             if (item.status == ImportStatus.read && !item.facts.isEmpty)
               _FactsLine(
                 facts: item.facts,
-                // The check runs on what will be added: the ticked rows, as
-                // corrected, each the way it was set to go.
+                // The check runs on what was added one at a time and what
+                // will be added: the ticked rows, as corrected, each the
+                // way it was set to go.
                 rows: [
+                  for (final MapEntry(key: row, value: wasAdded) in item.settled.entries)
+                    if (wasAdded) _asAdded('${item.id}:$row', _rowsOf(item)[row]),
                   for (final c in rows)
-                    if (_tickedOf(c)) c.row.copyWith(amount: (_isIn[c.key] ?? c.row.isIn) ? c.row.amount.abs() : -c.row.amount.abs()),
+                    if (_tickedOf(c)) _asAdded(c.key, c.row),
                 ],
                 currency: item.facts.currency ?? account.currency ?? '',
               ),
@@ -421,6 +438,8 @@ class _ImportReviewScreenState extends State<ImportReviewScreen> {
                 categoryName: _categoryName(l10n, money.book.accounts[_category[c.key] ?? c.categoryId] ?? money.book.accounts.values.first),
                 onTicked: (v) => setState(() => _ticked[c.key] = v),
                 onTap: () => _edit(c, money, account),
+                onAdd: _saving ? null : () => _addOne(c),
+                onSkip: _saving ? null : () => _skipOne(c),
               ),
           ],
         ));
@@ -673,6 +692,70 @@ class _ImportReviewScreenState extends State<ImportReviewScreen> {
     }
   }
 
+  /// Adds one row now, as it stands on the screen, and takes it out of the
+  /// review. The rest of its file waits.
+  Future<void> _addOne(ImportCandidate c) async {
+    final l10n = AppLocalizations.of(context)!;
+    final money = context.read<MoneyCubit>();
+    final importer = context.read<ImportCubit>();
+    final messenger = ScaffoldMessenger.of(context);
+    final navigator = Navigator.of(context);
+    final group = _groups(money.state, importer.state).where((g) => g.candidates.any((x) => x.key == c.key)).firstOrNull;
+    final item = group?.items.where((i) => i.id == c.fileId).firstOrNull;
+    if (group == null || item == null) return;
+    setState(() {
+      _saving = true;
+      _ticked[c.key] = true;
+    });
+    try {
+      // What the bulk add learns from a batch, from this row alone.
+      final alone = _Group(group.account, [item], [c]);
+      final book = money.state.book;
+      final shapes = await _shapes([alone], importer);
+      await money.importEntries(_entries(group.account, [c], book, money.builder));
+      importer.settle(item.id, c.index, added: true);
+      await _keepRefs(money, alone);
+      await money.learnCategories(_picked([c], book));
+      await money.learnMessages(senders: _senders([alone]), shapes: shapes);
+      messenger.showSnackBar(SnackBar(content: Text(l10n.importAdded(1))));
+      await _clearSettled(money, importer, navigator);
+    } on BookRejected catch (e) {
+      messenger.showSnackBar(SnackBar(content: Text(e.issues.map((i) => i.detail).join('\n'))));
+    } finally {
+      if (mounted) setState(() => _saving = false);
+    }
+  }
+
+  /// Leaves one row out and takes it out of the review.
+  Future<void> _skipOne(ImportCandidate c) async {
+    final importer = context.read<ImportCubit>();
+    final money = context.read<MoneyCubit>();
+    final navigator = Navigator.of(context);
+    setState(() => _saving = true);
+    try {
+      importer.settle(c.fileId, c.index, added: false);
+      await _clearSettled(money, importer, navigator);
+    } finally {
+      if (mounted) setState(() => _saving = false);
+    }
+  }
+
+  /// Takes out of the inbox the files whose rows were all dealt with one at
+  /// a time, remembering the ones that added something. A statement whose
+  /// balance the book doesn't agree with yet stays, for the offer to bring
+  /// the account to it.
+  Future<void> _clearSettled(MoneyCubit money, ImportCubit importer, NavigatorState navigator) async {
+    final finished = <ImportItem>[];
+    for (final g in _groups(money.state, importer.state)) {
+      final offer = _balance(g, money.state.book, money.builder);
+      finished.addAll(g.items.where((i) => i.rows.isNotEmpty && i.openRows == 0 && (i.file.message || offer == null)));
+    }
+    if (finished.isEmpty) return;
+    await money.markImported([for (final i in finished) if (i.settled.containsValue(true)) ?i.hash]);
+    await importer.remove(finished.map((i) => i.id));
+    if (importer.state.isEmpty && mounted) navigator.pop();
+  }
+
   /// The account each sender's messages went to, from messages that added
   /// something.
   Map<String, String> _senders(List<_Group> groups) => {
@@ -877,6 +960,10 @@ class _CandidateRow extends StatelessWidget {
   final ValueChanged<bool> onTicked;
   final VoidCallback onTap;
 
+  /// Adds or skips this row alone; null while something is being saved.
+  final VoidCallback? onAdd;
+  final VoidCallback? onSkip;
+
   const _CandidateRow({
     required this.candidate,
     required this.currency,
@@ -885,6 +972,8 @@ class _CandidateRow extends StatelessWidget {
     required this.categoryName,
     required this.onTicked,
     required this.onTap,
+    required this.onAdd,
+    required this.onSkip,
   });
 
   @override
@@ -907,7 +996,7 @@ class _CandidateRow extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Padding(
-        padding: const EdgeInsetsDirectional.fromSTEB(DS.spaceXS, DS.space2XS, DS.spaceMD, DS.space2XS),
+        padding: const EdgeInsetsDirectional.fromSTEB(DS.spaceXS, DS.space2XS, DS.spaceXS, DS.space2XS),
         child: LayoutBuilder(builder: (context, constraints) => Row(children: [
           Checkbox(value: ticked, onChanged: (v) => onTicked(v ?? false)),
           Expanded(
@@ -922,7 +1011,7 @@ class _CandidateRow extends StatelessWidget {
           ),
           const SizedBox(width: DS.spaceSM),
           ConstrainedBox(
-            constraints: BoxConstraints(maxWidth: constraints.maxWidth * 0.4),
+            constraints: BoxConstraints(maxWidth: constraints.maxWidth * 0.3),
             child: FittedBox(
               fit: BoxFit.scaleDown,
               alignment: AlignmentDirectional.centerEnd,
@@ -932,6 +1021,20 @@ class _CandidateRow extends StatelessWidget {
                     maxLines: 1, style: TextStyle(color: isIn ? colors.up : colors.textPrimary, fontSize: 15, fontWeight: FontWeight.w600)),
               ),
             ),
+          ),
+          IconButton(
+            key: ValueKey('importAddRow-${candidate.key}'),
+            tooltip: l10n.importAddRow,
+            visualDensity: VisualDensity.compact,
+            icon: Icon(Icons.check, size: 20, color: onAdd == null ? null : colors.up),
+            onPressed: onAdd,
+          ),
+          IconButton(
+            key: ValueKey('importSkipRow-${candidate.key}'),
+            tooltip: l10n.importSkipRow,
+            visualDensity: VisualDensity.compact,
+            icon: const Icon(Icons.close, size: 20),
+            onPressed: onSkip,
           ),
         ])),
       ),
