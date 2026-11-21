@@ -1,4 +1,8 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+    <!-- ML Kit's GenAI libraries ask for Android 8; Qima still runs on older
+         phones and only uses them from Android 8 (OnDeviceModelChannel.kt). -->
+    <uses-sdk tools:overrideLibrary="com.google.mlkit.genai.prompt,com.google.mlkit.genai.common" />
     <!-- Live prices. Flutter only adds INTERNET to debug and profile builds,
          so release builds need it declared here. -->
     <uses-permission android:name="android.permission.INTERNET" />
@@ -13,6 +17,11 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <!-- Dictation in Add (v4): on-device speech recognition only. -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <!-- Bank text messages (v5): read only after the person turns them on
+         in Qima; see BankSms.kt. Google Play needs the SMS permissions
+         declaration (SMS-based money management) before release. -->
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
+    <uses-permission android:name="android.permission.READ_SMS" />
     <application
         android:label="Qima"
         android:name="${applicationName}"
@@ -39,6 +48,13 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <receiver android:name=".BankSmsReceiver"
+            android:exported="true"
+            android:permission="android.permission.BROADCAST_SMS">
+            <intent-filter>
+                <action android:name="android.provider.Telephony.SMS_RECEIVED" />
+            </intent-filter>
+        </receiver>
         <!-- Home-screen widgets (Jetpack Glance). Data is written by
              lib/services/home_widget_service.dart via the `home_widget`
              plugin; these receivers only render it. Each widget is

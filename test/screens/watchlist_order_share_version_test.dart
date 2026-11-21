@@ -19,6 +19,8 @@ import 'package:qima/screens/watchlist_screen.dart';
 import 'package:qima/theme/app_theme.dart';
 import 'package:qima/widgets/asset_share_card.dart';
 
+import '../helpers/money_provider.dart';
+
 void main() {
   final gold = InstrumentCatalog.instrument('metal.XAU')!;
   final btc = InstrumentCatalog.instrument('crypto.BTC')!;
@@ -48,8 +50,9 @@ void main() {
   }
 
   Widget harness(Widget home, {AppCubit? cubit, Locale locale = const Locale('en')}) {
-    return BlocProvider<AppCubit>(
-      create: (_) => cubit ?? populatedCubit(),
+    final app = cubit ?? populatedCubit();
+    return MultiBlocProvider(
+      providers: [BlocProvider<AppCubit>.value(value: app), testMoneyProvider(app)],
       child: MaterialApp(
         locale: locale,
         localizationsDelegates: AppLocalizations.localizationsDelegates,

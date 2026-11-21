@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
-
 import '../l10n/app_localizations.dart';
 import '../models/help_topic.dart';
 import '../theme/design_system.dart';
 import '../theme/help_topics.dart';
 import '../theme/qima_colors.dart';
-import 'onboarding_tour_screen.dart';
+import '../widgets/guided_tour.dart';
 
 /// The help bottom sheet opened by every [HelpButton] (spec "Help on every
 /// page"): a drag handle, a small-caps "ABOUT THIS PAGE" header above the
 /// page name, a close button, a one-line summary, a "HOW TO USE IT" label,
 /// numbered steps (icon, bold title, one sentence), and a footer
-/// "Replay the tour" link. Scrollable so it never overflows on a small or
+/// "Replay the tour" link ([canReplayTour]). Scrollable so it never overflows on a small or
 /// large-text screen.
 ///
 /// Data-driven (spec "One data-driven sheet"): every page supplies a
@@ -20,10 +19,17 @@ import 'onboarding_tour_screen.dart';
 class HelpSheet extends StatelessWidget {
   final HelpTopic topic;
 
-  const HelpSheet({super.key, required this.topic});
+  /// Whether the "Replay the tour" link shows. Replaying closes every
+  /// screen above the home shell, so it is offered only on the shell's own
+  /// pages: on a screen opened over it (an editor with a half-typed entry,
+  /// say) the link would throw that screen away.
+  final bool canReplayTour;
+
+  const HelpSheet({super.key, required this.topic, this.canReplayTour = true});
 
   static Future<void> show(BuildContext context, {required HelpTopicId topic}) {
     final colors = context.colors;
+    final onShell = ModalRoute.of(context)?.isFirst ?? false;
     return showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
@@ -32,7 +38,7 @@ class HelpSheet extends StatelessWidget {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(DS.radiusCard)),
       ),
-      builder: (sheetContext) => HelpSheet(topic: helpTopicFor(sheetContext, topic)),
+      builder: (sheetContext) => HelpSheet(topic: helpTopicFor(sheetContext, topic), canReplayTour: onShell),
     );
   }
 
@@ -98,18 +104,20 @@ class HelpSheet extends StatelessWidget {
                 const SizedBox(height: DS.spaceMD),
                 Text(topic.footnote!, style: TextStyle(color: colors.textTertiary, fontSize: 12)),
               ],
-              const SizedBox(height: DS.spaceLG),
-              Divider(color: colors.hairline),
-              const SizedBox(height: DS.spaceXS),
-              Align(
-                alignment: AlignmentDirectional.centerStart,
-                child: TextButton.icon(
-                  onPressed: () => _replayTour(context),
-                  icon: Icon(Icons.replay, color: colors.brandText, size: 18),
-                  label: Text(l10n.onboardingReplayTour, style: TextStyle(color: colors.brandText)),
-                  style: TextButton.styleFrom(padding: EdgeInsets.zero, alignment: AlignmentDirectional.centerStart),
+              if (canReplayTour) ...[
+                const SizedBox(height: DS.spaceLG),
+                Divider(color: colors.hairline),
+                const SizedBox(height: DS.spaceXS),
+                Align(
+                  alignment: AlignmentDirectional.centerStart,
+                  child: TextButton.icon(
+                    onPressed: () => replayTour(context),
+                    icon: Icon(Icons.replay, color: colors.brandText, size: 18),
+                    label: Text(l10n.onboardingReplayTour, style: TextStyle(color: colors.brandText)),
+                    style: TextButton.styleFrom(padding: EdgeInsets.zero, alignment: AlignmentDirectional.centerStart),
+                  ),
                 ),
-              ),
+              ],
             ],
           ),
         ),
@@ -117,10 +125,6 @@ class HelpSheet extends StatelessWidget {
     );
   }
 
-  void _replayTour(BuildContext context) {
-    Navigator.of(context).pop();
-    Navigator.of(context).push(MaterialPageRoute(builder: (_) => const OnboardingTourScreen()));
-  }
 }
 
 class _HelpStepRow extends StatelessWidget {

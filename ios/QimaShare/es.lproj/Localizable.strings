@@ -1,0 +1,6 @@
+"sending" = "Enviando a Qima…";
+"sent.one" = "1 archivo enviado a Qima";
+"sent.many" = "%d archivos enviados a Qima";
+"sent.hint" = "Abre Qima para revisar lo que encontró.";
+"nothing" = "Aquí no hay nada que Qima pueda leer";
+"nothing.hint" = "Comparte extractos en PDF, CSV o Excel, capturas de pantalla o el texto de un mensaje del banco.";

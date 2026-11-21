@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/chart_range.dart';
 import '../models/instrument_catalog.dart';
+import '../models/setup_answers.dart';
 import '../models/watch_card.dart';
 import '../models/zakat.dart';
 import 'cloud_kv_store.dart';
@@ -143,6 +144,8 @@ class Preferences {
   static const String _preferredPortfolioRangeKey = 'preferredPortfolioRange';
   static const String _hideBalancesKey = 'hideBalances';
   static const String _plainSummariesKey = 'plainSummaries';
+  static const String _speechLanguageKey = 'speechLanguage';
+  static const String _plannedReminderIdsKey = 'plannedReminderIds';
   static const String _onDeviceModelKey = 'onDeviceModel';
   static const String _appLockEnabledKey = 'appLockEnabled';
   static const String _lockGraceKey = 'lockGrace';
@@ -150,6 +153,8 @@ class Preferences {
   static const String _lastAlertEvaluationAtKey = 'lastAlertEvaluationAt';
   static const String _iCloudSyncEnabledKey = 'iCloudSyncEnabled';
   static const String _onboardingCompletedKey = 'onboardingCompleted';
+  static const String _setupAnswersKey = 'setupAnswers';
+  static const String _getStartedDismissedKey = 'getStartedDismissed';
   static const String _zakatSettingsKey = 'zakatSettings';
   static const String _zakatReminderNotifiedForKey = 'zakatReminderNotifiedFor';
   static const String _legacyWatchcardsKey = 'pref.watchcards';
@@ -331,6 +336,22 @@ class Preferences {
     await local.setBool(_plainSummariesKey, value);
   }
 
+  /// v5: the language New transaction listens in, picked by the person
+  /// (Arabic speech while the app is in English). Per device.
+  String? get speechLanguage => local.getString(_speechLanguageKey);
+
+  Future<void> setSpeechLanguage(String languageCode) async {
+    await local.setString(_speechLanguageKey, languageCode);
+  }
+
+  /// v5: the planned-payment reminders scheduled on this device, so they
+  /// can be withdrawn when the plans change.
+  List<int> get plannedReminderIds => [for (final s in local.getStringList(_plannedReminderIdsKey) ?? const <String>[]) ?int.tryParse(s)];
+
+  Future<void> setPlannedReminderIds(List<int> ids) async {
+    await local.setStringList(_plannedReminderIdsKey, [for (final id in ids) '$id']);
+  }
+
   /// v4: whether the OS's on-device model may help read typed purchases
   /// and word summaries. Off until asked for, per device.
   bool get onDeviceModel => local.getBool(_onDeviceModelKey) ?? false;
@@ -428,6 +449,33 @@ class Preferences {
 
   Future<void> setOnboardingCompleted(bool value) async {
     await local.setBool(_onboardingCompletedKey, value);
+  }
+
+  /// Local-only, NOT synced, like [onboardingCompleted]: what the person
+  /// answered in setup on THIS device, or null when they skipped it (or set
+  /// the app up before setup existed). What the answers switch on (features,
+  /// the watchlist, the base currency) is stored and synced where it always
+  /// was; this only steers the tour, the Get started card and the tab the
+  /// app opens on.
+  SetupAnswers? get setupAnswers {
+    final raw = local.getString(_setupAnswersKey);
+    if (raw == null) return null;
+    try {
+      return SetupAnswers.fromJson(jsonDecode(raw) as Map<String, dynamic>);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Future<void> setSetupAnswers(SetupAnswers value) async {
+    await local.setString(_setupAnswersKey, jsonEncode(value.toJson()));
+  }
+
+  /// Local-only: the person closed Home's Get started card.
+  bool get getStartedDismissed => local.getBool(_getStartedDismissedKey) ?? false;
+
+  Future<void> setGetStartedDismissed(bool value) async {
+    await local.setBool(_getStartedDismissedKey, value);
   }
 
   /// Migration chain, simplified for a from-scratch app: (1) pre-sync

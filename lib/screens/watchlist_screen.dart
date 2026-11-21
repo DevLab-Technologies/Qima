@@ -15,6 +15,7 @@ import '../theme/qima_colors.dart';
 import '../theme/strings.dart';
 import '../widgets/asset_class_filter.dart';
 import '../widgets/confirm_delete_dialog.dart';
+import '../widgets/guided_tour.dart';
 import '../widgets/help_button.dart';
 import '../widgets/instrument_row.dart';
 import '../widgets/portfolio_hero.dart';
@@ -42,12 +43,22 @@ class WatchlistScreen extends StatefulWidget {
   final VoidCallback? onOpenSettings;
   final ScrollController? scrollController;
 
+  /// The Prices tab (v5): titled Prices, with no portfolio total, which now
+  /// lives on Home.
+  final bool asPrices;
+
+  /// Told when Edit order opens and closes, so the shell can hide its tab
+  /// bar and + button while the person reorders.
+  final ValueChanged<bool>? onEditingOrderChanged;
+
   const WatchlistScreen({
     super.key,
     this.manageRefreshLifecycle = true,
     this.onOpenPortfolio,
     this.onOpenSettings,
     this.scrollController,
+    this.asPrices = false,
+    this.onEditingOrderChanged,
   });
 
   @override
@@ -62,6 +73,15 @@ class _WatchlistScreenState extends State<WatchlistScreen> with WidgetsBindingOb
   /// sorts, and rows stop opening the detail screen or swiping to delete,
   /// so a drag never turns into either by accident.
   bool _editingOrder = false;
+
+  void _setEditingOrder(bool on) {
+    if (_editingOrder == on) return;
+    setState(() {
+      _editingOrder = on;
+      if (on) _filter = null;
+    });
+    widget.onEditingOrderChanged?.call(on);
+  }
 
   @override
   void initState() {
@@ -108,7 +128,7 @@ class _WatchlistScreenState extends State<WatchlistScreen> with WidgetsBindingOb
     return PopScope(
       canPop: !_editingOrder,
       onPopInvokedWithResult: (didPop, _) {
-        if (!didPop) setState(() => _editingOrder = false);
+        if (!didPop) _setEditingOrder(false);
       },
       child: ScreenBackground(
         child: Scaffold(
@@ -120,14 +140,16 @@ class _WatchlistScreenState extends State<WatchlistScreen> with WidgetsBindingOb
                   title: Text(l10n.watchlistEditOrder),
                   actions: [
                     TextButton(
-                      onPressed: () => setState(() => _editingOrder = false),
+                      onPressed: () => _setEditingOrder(false),
                       child: Text(l10n.commonDone, style: const TextStyle(fontWeight: FontWeight.w700)),
                     ),
                   ],
                 )
               : AppBar(
                   backgroundColor: Colors.transparent,
-                  title: Text(l10n.appTitle),
+                  automaticallyImplyLeading: !widget.asPrices,
+                  titleSpacing: widget.asPrices ? 16 : null,
+                  title: Text(widget.asPrices ? l10n.navPrices : l10n.appTitle),
                   actions: [
                     const HelpButton(topic: HelpTopicId.watchlist),
                     BlocBuilder<AppCubit, AppState>(
@@ -137,10 +159,7 @@ class _WatchlistScreenState extends State<WatchlistScreen> with WidgetsBindingOb
                         return IconButton(
                           icon: const Icon(Icons.swap_vert),
                           tooltip: l10n.watchlistEditOrder,
-                          onPressed: () => setState(() {
-                            _editingOrder = true;
-                            _filter = null;
-                          }),
+                          onPressed: () => _setEditingOrder(true),
                         );
                       },
                     ),
@@ -174,7 +193,7 @@ class _WatchlistScreenState extends State<WatchlistScreen> with WidgetsBindingOb
               if (state.cards.isEmpty) {
                 if (_editingOrder) {
                   WidgetsBinding.instance.addPostFrameCallback((_) {
-                    if (mounted) setState(() => _editingOrder = false);
+                    if (mounted) _setEditingOrder(false);
                   });
                 }
                 return Center(
@@ -215,7 +234,7 @@ class _WatchlistScreenState extends State<WatchlistScreen> with WidgetsBindingOb
   
               if (_editingOrder) return _editOrderList(context, cubit, l10n, colors, state.cards);
   
-              final valuation = cubit.portfolioValuation;
+              final valuation = widget.asPrices ? null : cubit.portfolioValuation;
   
               // Only classes actually present in the watchlist get a filter
               // chip; a class with zero cards never shows an empty chip.
@@ -246,7 +265,7 @@ class _WatchlistScreenState extends State<WatchlistScreen> with WidgetsBindingOb
               return ListView(
                 controller: widget.scrollController,
                 // Extra room at the end so the docked + never covers the last row.
-                padding: const EdgeInsets.fromLTRB(DS.spaceMD, DS.spaceMD, DS.spaceMD, DS.spaceXL * 2),
+                padding: EdgeInsets.fromLTRB(DS.spaceMD, DS.spaceMD, DS.spaceMD, widget.asPrices ? DS.tabListEnd(context) : DS.spaceXL * 2),
                 children: [
                   if (valuation != null) ...[
                     PortfolioHero(
@@ -297,15 +316,15 @@ class _WatchlistScreenState extends State<WatchlistScreen> with WidgetsBindingOb
                               itemBuilder: (context, index) => ReorderableDelayedDragStartListener(
                                 key: ValueKey(filteredCards[index].id),
                                 index: index,
-                                child: _row(context, cubit, l10n, colors, filteredCards[index]),
+                                child: _row(context, cubit, l10n, colors, filteredCards[index], first: index == 0),
                               ),
                             )
                           : Column(
                               children: [
-                                for (final card in filteredCards)
+                                for (final (i, card) in filteredCards.indexed)
                                   KeyedSubtree(
                                     key: ValueKey(card.id),
-                                    child: _row(context, cubit, l10n, colors, card),
+                                    child: _row(context, cubit, l10n, colors, card, first: i == 0),
                                   ),
                               ],
                             ),
@@ -337,8 +356,16 @@ class _WatchlistScreenState extends State<WatchlistScreen> with WidgetsBindingOb
 
     return ListView(
       controller: widget.scrollController,
-      padding: const EdgeInsets.all(DS.spaceMD),
+      // The shell hides its tab bar and + here, so only the home indicator
+      // is left to clear.
+      padding: EdgeInsets.fromLTRB(DS.spaceMD, DS.spaceMD, DS.spaceMD, MediaQuery.paddingOf(context).bottom + DS.spaceMD),
       children: [
+        Text(
+          l10n.watchlistEditOrderHint,
+          key: const ValueKey('editOrderHint'),
+          style: TextStyle(color: colors.textTertiary, fontSize: 13),
+        ),
+        const SizedBox(height: DS.spaceMD),
         Text(l10n.watchlistSortBy, style: TextStyle(color: colors.textTertiary, fontSize: 13)),
         const SizedBox(height: DS.spaceXS),
         Wrap(
@@ -382,19 +409,15 @@ class _WatchlistScreenState extends State<WatchlistScreen> with WidgetsBindingOb
             },
           ),
         ),
-        const SizedBox(height: DS.spaceSM),
-        Text(
-          l10n.watchlistEditOrderHint,
-          textAlign: TextAlign.center,
-          style: TextStyle(color: colors.textTertiary, fontSize: 12),
-        ),
       ],
     );
   }
 
-  Widget _row(BuildContext context, AppCubit cubit, AppLocalizations l10n, QimaColors colors, WatchCard card) {
+  /// [first]: the top row of the Prices tab, which the guided tour's Prices
+  /// stop points at.
+  Widget _row(BuildContext context, AppCubit cubit, AppLocalizations l10n, QimaColors colors, WatchCard card, {bool first = false}) {
     final presentation = cubit.presentation(card);
-    return Dismissible(
+    final row = Dismissible(
       key: ValueKey('dismissible-${card.id}'),
       direction: DismissDirection.endToStart,
       confirmDismiss: (_) => confirmDelete(
@@ -416,5 +439,6 @@ class _WatchlistScreenState extends State<WatchlistScreen> with WidgetsBindingOb
         ),
       ),
     );
+    return first && widget.asPrices ? KeyedSubtree(key: TourTargets.prices, child: row) : row;
   }
 }

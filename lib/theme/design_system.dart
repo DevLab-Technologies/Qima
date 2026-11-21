@@ -26,6 +26,12 @@ class DS {
   static const double spaceLG = 20;
   static const double spaceXL = 28;
 
+  /// Room at the end of a tab's list so its last row scrolls clear of the
+  /// floating tab bar and the + button above it. The shell's Scaffold
+  /// (extendBody) reports the bar's height as bottom padding, safe area
+  /// included, so this follows the bar on every phone.
+  static double tabListEnd(BuildContext context) => MediaQuery.paddingOf(context).bottom + 56 + spaceMD;
+
   // ---- Typography ----
   /// Big headline figures: the asset price on the detail screen, and the
   /// portfolio/zakat totals on hero cards.

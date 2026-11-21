@@ -3,13 +3,29 @@ import 'package:flutter/material.dart';
 
 import '../l10n/app_localizations.dart';
 import '../models/help_topic.dart';
+import '../services/import/bank_messages.dart';
 
 /// Every page that has a help topic, in the order the "How Qima works"
-/// index sheet lists them (spec "Help on every page"). Not every page with
+/// index sheet lists them (spec "Help on every page"): v5's money pages
+/// first, then prices, holdings and settings. Not every page with
 /// a [HelpButton] has an entry here 1:1 with the app's navigation order —
 /// this is the *catalog* order, grouped the way a user would expect to
 /// scan it (main tabs first, then the flows opened from them).
 enum HelpTopicId {
+  home,
+  money,
+  newTransaction,
+  transactions,
+  accounts,
+  balanceSheet,
+  assets,
+  importStatement,
+  bankMessages,
+  categories,
+  budget,
+  recurring,
+  people,
+  features,
   watchlist,
   assetDetail,
   portfolio,
@@ -35,6 +51,161 @@ enum HelpTopicId {
 HelpTopic helpTopicFor(BuildContext context, HelpTopicId id) {
   final l10n = AppLocalizations.of(context)!;
   switch (id) {
+    case HelpTopicId.home:
+      return HelpTopic(
+        title: l10n.navHome,
+        summary: l10n.helpHomeSummary,
+        steps: [
+          HelpStep(icon: Icons.account_balance_wallet_outlined, title: l10n.helpHomeStep1Title, body: l10n.helpHomeStep1Body),
+          HelpStep(icon: Icons.dashboard_customize_outlined, title: l10n.helpHomeStep2Title, body: l10n.helpHomeStep2Body),
+          HelpStep(icon: Icons.swap_vert, title: l10n.helpHomeStep3Title, body: l10n.helpHomeStep3Body),
+          HelpStep(icon: Icons.visibility_off_outlined, title: l10n.helpHomeStep4Title, body: l10n.helpHomeStep4Body),
+          HelpStep(icon: Icons.add_circle_outline, title: l10n.helpHomeStep5Title, body: l10n.helpHomeStep5Body),
+          if (assistantSupportedOnThisPlatform)
+            HelpStep(icon: Icons.record_voice_over_outlined, title: l10n.helpPortfolioStep7Title, body: l10n.helpPortfolioStep7Body),
+        ],
+      );
+    case HelpTopicId.money:
+      return HelpTopic(
+        title: l10n.navMoney,
+        summary: l10n.helpMoneySummary,
+        steps: [
+          HelpStep(icon: Icons.date_range_outlined, title: l10n.helpMoneyStep1Title, body: l10n.helpMoneyStep1Body),
+          HelpStep(icon: Icons.speed, title: l10n.helpMoneyStep2Title, body: l10n.helpMoneyStep2Body),
+          HelpStep(icon: Icons.donut_large_outlined, title: l10n.helpMoneyStep3Title, body: l10n.helpMoneyStep3Body),
+          HelpStep(icon: Icons.swap_vert, title: l10n.helpMoneyStep4Title, body: l10n.helpMoneyStep4Body),
+          HelpStep(icon: Icons.lightbulb_outline, title: l10n.helpMoneyStep5Title, body: l10n.helpMoneyStep5Body),
+        ],
+      );
+    case HelpTopicId.newTransaction:
+      return HelpTopic(
+        title: l10n.entryNewTitle,
+        summary: l10n.helpNewTransactionSummary,
+        steps: [
+          HelpStep(icon: Icons.tab, title: l10n.helpNewTransactionStep1Title, body: l10n.helpNewTransactionStep1Body),
+          HelpStep(icon: Icons.mic_none, title: l10n.helpNewTransactionStep2Title, body: l10n.helpNewTransactionStep2Body),
+          HelpStep(icon: Icons.category_outlined, title: l10n.helpNewTransactionStep3Title, body: l10n.helpNewTransactionStep3Body),
+          HelpStep(icon: Icons.block, title: l10n.helpNewTransactionStep4Title, body: l10n.helpNewTransactionStep4Body),
+        ],
+      );
+    case HelpTopicId.transactions:
+      return HelpTopic(
+        title: l10n.allTransactions,
+        summary: l10n.helpTransactionsSummary,
+        steps: [
+          HelpStep(icon: Icons.touch_app_outlined, title: l10n.helpTransactionsStep1Title, body: l10n.helpTransactionsStep1Body),
+          HelpStep(icon: Icons.info_outline, title: l10n.helpTransactionsStep2Title, body: l10n.helpTransactionsStep2Body),
+          HelpStep(icon: Icons.edit_outlined, title: l10n.helpTransactionsStep3Title, body: l10n.helpTransactionsStep3Body),
+        ],
+      );
+    case HelpTopicId.accounts:
+      return HelpTopic(
+        title: l10n.cardAccounts,
+        summary: l10n.helpAccountsSummary,
+        steps: [
+          HelpStep(icon: Icons.add_circle_outline, title: l10n.helpAccountsStep1Title, body: l10n.helpAccountsStep1Body),
+          HelpStep(icon: Icons.fact_check_outlined, title: l10n.helpAccountsStep2Title, body: l10n.helpAccountsStep2Body),
+          HelpStep(icon: Icons.payments_outlined, title: l10n.helpAccountsStep3Title, body: l10n.helpAccountsStep3Body),
+          HelpStep(icon: Icons.credit_card, title: l10n.helpAccountsStep4Title, body: l10n.helpAccountsStep4Body),
+          HelpStep(icon: Icons.archive_outlined, title: l10n.helpAccountsStep5Title, body: l10n.helpAccountsStep5Body),
+        ],
+      );
+    case HelpTopicId.balanceSheet:
+      return HelpTopic(
+        title: l10n.balanceSheet,
+        summary: l10n.helpBalanceSheetSummary,
+        steps: [
+          HelpStep(icon: Icons.account_balance_outlined, title: l10n.helpBalanceSheetStep1Title, body: l10n.helpBalanceSheetStep1Body),
+          HelpStep(icon: Icons.credit_card, title: l10n.helpBalanceSheetStep2Title, body: l10n.helpBalanceSheetStep2Body),
+          HelpStep(icon: Icons.calculate_outlined, title: l10n.helpBalanceSheetStep3Title, body: l10n.helpBalanceSheetStep3Body),
+          HelpStep(icon: Icons.toggle_off_outlined, title: l10n.helpBalanceSheetStep4Title, body: l10n.helpBalanceSheetStep4Body),
+        ],
+      );
+    case HelpTopicId.assets:
+      return HelpTopic(
+        title: l10n.sheetAssets,
+        summary: l10n.helpAssetsSummary,
+        steps: [
+          HelpStep(icon: Icons.add_circle_outline, title: l10n.helpAssetsStep1Title, body: l10n.helpAssetsStep1Body),
+          HelpStep(icon: Icons.edit_calendar_outlined, title: l10n.helpAssetsStep2Title, body: l10n.helpAssetsStep2Body),
+          HelpStep(icon: Icons.link, title: l10n.helpAssetsStep3Title, body: l10n.helpAssetsStep3Body),
+          HelpStep(icon: Icons.sell_outlined, title: l10n.helpAssetsStep4Title, body: l10n.helpAssetsStep4Body),
+        ],
+      );
+    case HelpTopicId.importStatement:
+      return HelpTopic(
+        title: l10n.importStatement,
+        summary: l10n.helpImportStatementSummary,
+        steps: [
+          HelpStep(icon: Icons.upload_file_outlined, title: l10n.helpImportStatementStep1Title, body: l10n.helpImportStatementStep1Body),
+          HelpStep(icon: Icons.fact_check_outlined, title: l10n.helpImportStatementStep2Title, body: l10n.helpImportStatementStep2Body),
+          HelpStep(icon: Icons.balance_outlined, title: l10n.helpImportStatementStep3Title, body: l10n.helpImportStatementStep3Body),
+          HelpStep(icon: Icons.check_circle_outline, title: l10n.helpImportStatementStep4Title, body: l10n.helpImportStatementStep4Body),
+        ],
+      );
+    case HelpTopicId.bankMessages:
+      return HelpTopic(
+        title: l10n.bankMessagesTitle,
+        summary: l10n.helpBankMessagesSummary,
+        steps: [
+          if (BankMessages.way != BankMessagesWay.shortcutsAutomation)
+            HelpStep(icon: Icons.sms_outlined, title: l10n.helpBankMessagesStep1Title, body: l10n.helpBankMessagesStep1Body),
+          if (BankMessages.way != BankMessagesWay.readSms)
+            HelpStep(icon: Icons.bolt_outlined, title: l10n.helpBankMessagesStep2Title, body: l10n.helpBankMessagesStep2Body),
+          HelpStep(icon: Icons.fact_check_outlined, title: l10n.helpBankMessagesStep3Title, body: l10n.helpBankMessagesStep3Body),
+          HelpStep(icon: Icons.lock_outline, title: l10n.helpBankMessagesStep4Title, body: l10n.helpBankMessagesStep4Body),
+        ],
+      );
+    case HelpTopicId.categories:
+      return HelpTopic(
+        title: l10n.categoriesTitle,
+        summary: l10n.helpCategoriesSummary,
+        steps: [
+          HelpStep(icon: Icons.label_outline, title: l10n.helpCategoriesStep1Title, body: l10n.helpCategoriesStep1Body),
+          HelpStep(icon: Icons.history, title: l10n.helpCategoriesStep2Title, body: l10n.helpCategoriesStep2Body),
+          HelpStep(icon: Icons.edit_outlined, title: l10n.helpCategoriesStep3Title, body: l10n.helpCategoriesStep3Body),
+          HelpStep(icon: Icons.auto_fix_off_outlined, title: l10n.helpCategoriesStep4Title, body: l10n.helpCategoriesStep4Body),
+        ],
+      );
+    case HelpTopicId.budget:
+      return HelpTopic(
+        title: l10n.featBudget,
+        summary: l10n.helpBudgetSummary,
+        steps: [
+          HelpStep(icon: Icons.add_circle_outline, title: l10n.helpBudgetStep1Title, body: l10n.helpBudgetStep1Body),
+          HelpStep(icon: Icons.speed, title: l10n.helpBudgetStep2Title, body: l10n.helpBudgetStep2Body),
+          HelpStep(icon: Icons.info_outline, title: l10n.helpBudgetStep3Title, body: l10n.helpBudgetStep3Body),
+        ],
+      );
+    case HelpTopicId.recurring:
+      return HelpTopic(
+        title: l10n.featRecurring,
+        summary: l10n.helpRecurringSummary,
+        steps: [
+          HelpStep(icon: Icons.add_circle_outline, title: l10n.helpRecurringStep1Title, body: l10n.helpRecurringStep1Body),
+          HelpStep(icon: Icons.event_outlined, title: l10n.helpRecurringStep2Title, body: l10n.helpRecurringStep2Body),
+          HelpStep(icon: Icons.edit_outlined, title: l10n.helpRecurringStep3Title, body: l10n.helpRecurringStep3Body),
+        ],
+      );
+    case HelpTopicId.people:
+      return HelpTopic(
+        title: l10n.featPeople,
+        summary: l10n.helpPeopleSummary,
+        steps: [
+          HelpStep(icon: Icons.call_made, title: l10n.helpPeopleStep1Title, body: l10n.helpPeopleStep1Body),
+          HelpStep(icon: Icons.call_received, title: l10n.helpPeopleStep2Title, body: l10n.helpPeopleStep2Body),
+          HelpStep(icon: Icons.call_split, title: l10n.helpPeopleStep3Title, body: l10n.helpPeopleStep3Body),
+        ],
+      );
+    case HelpTopicId.features:
+      return HelpTopic(
+        title: l10n.featuresTitle,
+        summary: l10n.helpFeaturesSummary,
+        steps: [
+          HelpStep(icon: Icons.toggle_on_outlined, title: l10n.helpFeaturesStep1Title, body: l10n.helpFeaturesStep1Body),
+          HelpStep(icon: Icons.auto_awesome_outlined, title: l10n.helpFeaturesStep2Title, body: l10n.helpFeaturesStep2Body),
+        ],
+      );
     case HelpTopicId.watchlist:
       return HelpTopic(
         title: l10n.helpWatchlistTitle,
@@ -43,7 +214,6 @@ HelpTopic helpTopicFor(BuildContext context, HelpTopicId id) {
           HelpStep(icon: Icons.touch_app_outlined, title: l10n.helpWatchlistStep1Title, body: l10n.helpWatchlistStep1Body),
           HelpStep(icon: Icons.add_circle_outline, title: l10n.helpWatchlistStep2Title, body: l10n.helpWatchlistStep2Body),
           HelpStep(icon: Icons.filter_list, title: l10n.helpWatchlistStep3Title, body: l10n.helpWatchlistStep3Body),
-          HelpStep(icon: Icons.show_chart, title: l10n.helpWatchlistStep4Title, body: l10n.helpWatchlistStep4Body),
           HelpStep(icon: Icons.refresh, title: l10n.helpWatchlistStep5Title, body: l10n.helpWatchlistStep5Body),
           HelpStep(icon: Icons.swap_vert, title: l10n.helpWatchlistStep6Title, body: l10n.helpWatchlistStep6Body),
         ],

@@ -19,18 +19,26 @@ final class WidgetBridgePlugin: NSObject, FlutterPlugin {
   }
 
   func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-    guard call.method == "saveSnapshot",
-          let args = call.arguments as? [String: Any],
-          let key = args["key"] as? String,
-          let json = args["json"] as? String
-    else {
+    switch call.method {
+    case "saveSnapshot":
+      guard let args = call.arguments as? [String: Any],
+            let key = args["key"] as? String,
+            let json = args["json"] as? String
+      else {
+        result(FlutterMethodNotImplemented)
+        return
+      }
+      UserDefaults(suiteName: WidgetBridgePlugin.appGroup)?.set(json, forKey: key)
+      if #available(macOS 11.0, *) {
+        WidgetCenter.shared.reloadAllTimelines()
+      }
+      result(nil)
+    case "groupContainerPath":
+      // Where "Let AI apps read Qima" keeps its copy (`AiApps` in Dart): the
+      // sandboxed qima-mcp helper shares this group, not Qima's container.
+      result(FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: WidgetBridgePlugin.appGroup)?.path)
+    default:
       result(FlutterMethodNotImplemented)
-      return
     }
-    UserDefaults(suiteName: WidgetBridgePlugin.appGroup)?.set(json, forKey: key)
-    if #available(macOS 11.0, *) {
-      WidgetCenter.shared.reloadAllTimelines()
-    }
-    result(nil)
   }
 }

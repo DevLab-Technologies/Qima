@@ -1,90 +1,42 @@
-# Finishing the watchOS companion
+# watchOS
 
-Per your decision earlier in this project, the watchOS companion stays a
-**native Swift app**, not a Flutter one — Flutter has no watchOS target at
-all, so this is the one platform in scope that can't be Dart. The good news:
-the original Qima repo already has a complete, working, tiny watchOS app at
-`/Users/elkhayyat/Dev/Qima/Watch/QimaWatchApp.swift`, and it needs almost no
-changes — it's read-only, has no dependency on a paired phone app to
-function (it fetches its own prices via its own `PriceRepository`), and
-already reuses the exact same `Shared/Models`/`Shared/Services` Swift
-domain layer that the rest of the original app used. This doc is the
-checklist to embed it as a companion of the Flutter iOS app, in place of the
-original native Swift phone app it used to pair with.
+Qima has no Apple Watch app. Flutter has no watchOS target, so one would have
+to be a native Swift app added to the iOS project. This note records what that
+would take; none of it is built.
 
-## Why this needs Xcode, not a script
+(Wear OS is different: the Android app adapts to a watch-sized screen and
+shows a read-only watchlist. See `lib/screens/watch_watchlist_screen.dart`.)
 
-Apple requires a watchOS app to be bundled *inside* its paired iOS host
-app's Xcode project as a companion target — it can't be an independently
-distributed app that happens to talk to a different bundle id. Since
-`ios/Runner.xcodeproj` (the Flutter app's iOS project) is a different
-Xcode project from the original `/Users/elkhayyat/Dev/Qima/Qima.xcodeproj`,
-the watch target has to be re-created inside `Runner.xcodeproj` — a
-target-creation + provisioning-profile task like the iOS WidgetKit extension
-(`WIDGETS_IOS_SETUP.md`).
+## Why it needs Xcode
 
-## Steps
+Apple requires a watchOS app to be bundled inside its paired iOS app's Xcode
+project as a companion target. It would be a new target in
+`ios/Runner.xcodeproj`, with its own App ID and provisioning profile, set up
+the same way as the WidgetKit extension (see
+[WIDGETS_IOS_SETUP.md](WIDGETS_IOS_SETUP.md)).
 
-1. **Copy the domain layer.** Add a new group to `ios/Runner.xcodeproj`
-   (e.g. `WatchShared`) and copy in the Swift files from
-   `/Users/elkhayyat/Dev/Qima/Shared/Models/` and
-   `/Users/elkhayyat/Dev/Qima/Shared/Services/` (plus `Shared/Theme/` for
-   `DS`/`Theme` used by `WatchRow`) — these are unmodified, already-tested
-   Swift files with zero Flutter dependency; they only need to compile into
-   the new watch target. This is the same domain logic the Dart layer in
-   this repo (`lib/models/`, `lib/services/`) was independently ported
-   from, so the watch app's math (money formatting, conversions, karat
-   scaling, etc.) already matches the phone app's — no re-verification
-   needed there.
-2. **File → New → Target → Watch App** in `ios/Runner.xcworkspace`, name it
-   `QimaWatch`. Replace its generated `ContentView`/`App` files with
-   `/Users/elkhayyat/Dev/Qima/Watch/QimaWatchApp.swift` (copy, don't move —
-   keep the original repo intact), add the `WatchShared` group's files to
-   the new target's compile sources, and copy
-   `Watch/Assets.xcassets/AppIcon.appiconset/` into the new target's asset
-   catalog.
-3. **App Group.** Add the same `group.com.devlabtechnologies.qima` App
-   Group capability to the `QimaWatch` target that the Runner and widget
-   extension targets already use — `AppGroup.swift` (part of
-   the copied `Shared/Services/`) reads/writes through this container, and
-   it must be the *same* group id the Flutter iOS app's widget/App Group
-   setup uses so both can eventually share cached price data.
-4. **iCloud key-value storage capability** — add it to both the `Runner`
-   and `QimaWatch` targets (Signing & Capabilities → `+ Capability` →
-   iCloud → check "Key-value storage"). This is what lets the watch app's
-   `WatchlistStore` see the same watchlist as the phone app once sync is
-   wired (next section) — note ad-hoc/development signing without a real
-   Apple Development identity silently strips this entitlement, per the
-   original README's warning.
-5. Build & run the `QimaWatch` scheme on a watchOS simulator/device paired
-   with the Runner app to confirm it boots, shows its own watchlist (empty
-   until synced or seeded), and fetches live prices independently.
+## What a watch app would need
 
-## The sync gap (important — read before assuming this "just works")
+1. **A Watch App target** in `ios/Runner.xcworkspace` (File › New › Target ›
+   Watch App), written in SwiftUI.
+2. **The App Group.** Add `group.com.devlabtechnologies.qima` to the new
+   target. The iOS app already writes a widget snapshot there
+   (`lib/services/widget_snapshot.dart`): prices, series, live FX rates and FX
+   history in canonical USD. The widget extension under `ios/QimaWidget/`
+   shows how to read and format it in Swift.
+3. **A way to get data onto the watch.** An App Group is not shared between a
+   phone and a watch, so the watch needs one of:
+   - WatchConnectivity, with the iOS app sending the snapshot when it changes;
+   - iCloud key-value storage, which the iOS app already uses for sync when
+     the person turns it on (`ios/Runner/CloudKVPlugin.swift`);
+   - fetching prices itself from the endpoints listed in the README.
+4. **Signing.** A new App ID, the App Group and (if used) the iCloud
+   capability on the watch target, and a provisioning profile for the release
+   pipeline (`docs/store-release.md`).
 
-The watch app's `WatchlistStore` is a `SyncedStore` reading from
-`NSUbiquitousKeyValueStore` (iCloud) + a local app-group JSON file — real
-iCloud sync, exactly as the original app had it. **This Flutter rewrite's
-own sync layer (`lib/services/synced_store.dart`) is currently stubbed as
-local-only** (`LocalOnlyCloudKVStore`, a no-op — this was an explicit,
-documented decision earlier in the project: iCloud sync via platform
-channel on iOS/macOS was scoped as a *follow-up*, not part of the initial
-domain-layer pass). Until that follow-up lands:
+## Rules to keep
 
-- The watchOS companion will run standalone (it fetches its own live
-  prices independently, so it's never *broken* — it just won't show
-  whatever watchlist the Flutter phone app has, and any watchlist you build
-  on the watch itself won't reach the phone).
-- To make the two apps' watchlists actually converge, the Flutter iOS app
-  needs a platform channel that reads/writes the exact same iCloud KVS +
-  app-group file `SyncedStore` uses (`watchcards.records.json` /
-  `holdings.records.json`, see `qima_spec.md` §2.10) — that channel is the
-  real remaining piece of work, not anything on the watch side, which
-  already speaks this format natively.
-
-## What's out of scope here
-
-Nothing on the watch app needs to change to support this — it was already
-written to be a thin, independent, glanceable consumer of the shared
-engine. The only "new" work is Xcode target plumbing (steps 1–5) and,
-eventually, the iCloud sync bridge described above.
+- Money arithmetic on the watch must match the app: quotes are stored in USD,
+  per troy ounce for metals, and converted for display at the last moment.
+- A watch app is read-only unless it writes through the same book as the
+  phone; it must not keep a second copy of balances.

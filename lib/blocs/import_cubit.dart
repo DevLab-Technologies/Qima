@@ -1,0 +1,269 @@
+import 'dart:convert';
+
+import 'package:crypto/crypto.dart';
+import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart' show BuildContext;
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../models/message_shape.dart';
+import '../models/statement_facts.dart';
+import '../models/statement_reader.dart';
+import '../services/ai_assist_provider.dart';
+import '../services/import/import_inbox.dart';
+import '../services/import/statement_files.dart';
+import '../services/text_recognition_service.dart';
+
+enum ImportStatus {
+  waiting,
+  reading,
+  read,
+
+  /// The same file was imported before.
+  alreadyImported,
+
+  /// Not a kind of file Qima reads.
+  unsupported,
+
+  /// Couldn't be opened or read.
+  unreadable,
+}
+
+class ImportItem extends Equatable {
+  final ImportFile file;
+  final ImportStatus status;
+  final List<StatementRow> rows;
+
+  /// What the file says about itself: balances, account, period.
+  final StatementFacts facts;
+  final String? hash;
+
+  /// Rows the person dealt with one at a time on the review screen, by
+  /// their place in [rows]: true when the row was added, false when it was
+  /// skipped. They are out of the review; the file stays until every row
+  /// is dealt with.
+  final Map<int, bool> settled;
+
+  const ImportItem(this.file,
+      {this.status = ImportStatus.waiting, this.rows = const [], this.facts = StatementFacts.none, this.hash, this.settled = const {}});
+
+  String get id => file.id;
+  bool get done => status != ImportStatus.waiting && status != ImportStatus.reading;
+
+  /// How many rows still wait for the person.
+  int get openRows => rows.length - settled.length;
+
+  ImportItem copyWith({ImportStatus? status, List<StatementRow>? rows, StatementFacts? facts, String? hash, Map<int, bool>? settled}) => ImportItem(file,
+      status: status ?? this.status, rows: rows ?? this.rows, facts: facts ?? this.facts, hash: hash ?? this.hash, settled: settled ?? this.settled);
+
+  @override
+  List<Object?> get props => [file, status, rows, facts, hash, settled];
+}
+
+class ImportState extends Equatable {
+  final List<ImportItem> items;
+
+  const ImportState({this.items = const []});
+
+  bool get isEmpty => items.isEmpty;
+  bool get reading => items.any((i) => !i.done);
+  int get rowCount => items.fold(0, (n, i) => n + i.openRows);
+
+  @override
+  List<Object?> get props => [items];
+}
+
+/// Reads what was shared to Qima (or picked in the app) in the background,
+/// one file at a time, while the person keeps using the app. Files stay in
+/// the inbox until they are imported or discarded on the review screen.
+class ImportCubit extends Cubit<ImportState> {
+  final ImportInbox inbox;
+  final StatementFiles files;
+
+  /// Whether a file with this SHA-256 was imported before.
+  final bool Function(String hash) wasImported;
+
+  /// The languages to read images in.
+  final List<String> Function() languages;
+
+  /// How senders write their messages, learned on the review screen.
+  final List<MessageShape> Function() shapes;
+
+  static List<MessageShape> _noShapes() => const [];
+
+  bool _running = false;
+  bool _again = false;
+
+  /// Items added on their own that can still be undone: out of the list,
+  /// their files still in the inbox until [remove] or [release].
+  final Map<String, ImportItem> _held = {};
+
+  /// Items brought back by Undo: they wait for the person, never added on
+  /// their own again.
+  final Set<String> _reviewOnly = {};
+
+  /// Whether [id] was brought back by Undo and must wait for the person.
+  bool reviewOnly(String id) => _reviewOnly.contains(id);
+
+  ImportCubit({
+    required this.inbox,
+    required TextRecognitionService recognition,
+    required this.wasImported,
+    required this.languages,
+    List<MessageShape> Function()? shapes,
+    AiAssistProvider Function()? assist,
+  })  : shapes = shapes ?? _noShapes,
+        files = StatementFiles(recognition: recognition, inbox: inbox, assist: assist ?? (() => const NullAiAssistProvider())),
+        super(const ImportState());
+
+  /// Picks up anything new in the inbox and reads it. Safe to call often
+  /// (on launch and whenever the app comes back to the front).
+  Future<void> checkInbox() async {
+    if (_running) {
+      _again = true;
+      return;
+    }
+    _running = true;
+    try {
+      do {
+        _again = false;
+        await _pass();
+      } while (_again && !isClosed);
+    } finally {
+      _running = false;
+    }
+  }
+
+  Future<void> _pass() async {
+    final pending = await inbox.pending();
+    if (isClosed) return;
+    final known = {for (final i in state.items) i.id};
+    final stillThere = {for (final f in pending) f.id};
+    final items = [
+      for (final i in state.items)
+        if (stillThere.contains(i.id)) i,
+      for (final f in pending)
+        if (!known.contains(f.id) && !_held.containsKey(f.id)) ImportItem(f),
+    ];
+    if (!listEquals(items, state.items)) emit(ImportState(items: items));
+
+    for (final item in items.where((i) => i.status == ImportStatus.waiting)) {
+      if (isClosed) return;
+      _update(item.copyWith(status: ImportStatus.reading));
+      ImportItem result;
+      try {
+        final bytes = await inbox.bytes(item.file);
+        // A bank message is told apart by when it came and who sent it as
+        // well as its words: the same text next month is a new payment.
+        final hash = sha256.convert([
+          if (item.file.message) ...utf8.encode('${item.file.receivedAt.toUtc().toIso8601String()}\n${item.file.sender ?? ''}\n'),
+          ...bytes,
+        ]).toString();
+        final duplicate = state.items.any((i) => i.id != item.id && i.hash == hash);
+        if (wasImported(hash) || duplicate) {
+          result = item.copyWith(status: ImportStatus.alreadyImported, hash: hash);
+        } else {
+          final read = await files.read(item.file, languages: languages(), shapes: shapes());
+          result = item.copyWith(
+            hash: hash,
+            rows: read.rows,
+            facts: read.facts,
+            status: switch (read.outcome) {
+              ReadOutcome.read => ImportStatus.read,
+              ReadOutcome.unsupported => ImportStatus.unsupported,
+              ReadOutcome.unreadable => ImportStatus.unreadable,
+            },
+          );
+        }
+      } catch (e) {
+        debugPrint('Import: ${item.file.name}: $e');
+        result = item.copyWith(status: ImportStatus.unreadable);
+      }
+      if (isClosed) return;
+      // A message that arrived on its own and holds no transaction (a
+      // one-time code, an offer) or was seen before goes without a word.
+      final nothing = result.status == ImportStatus.alreadyImported ||
+          (result.status == ImportStatus.read && result.rows.isEmpty && result.facts.closing == null);
+      if (item.file.message && nothing) {
+        await inbox.remove(item.id);
+        if (isClosed) return;
+        emit(ImportState(items: [for (final i in state.items) if (i.id != item.id) i]));
+        continue;
+      }
+      _update(result);
+    }
+  }
+
+  void _update(ImportItem item) {
+    if (!state.items.any((i) => i.id == item.id)) return;
+    emit(ImportState(items: [for (final i in state.items) i.id == item.id ? item : i]));
+  }
+
+  /// A text file's words (a bank message), or null when it can't be read.
+  Future<String?> text(ImportFile file) async {
+    try {
+      return utf8.decode(await inbox.bytes(file), allowMalformed: true);
+    } catch (e) {
+      debugPrint('Import: ${file.name}: $e');
+      return null;
+    }
+  }
+
+  /// Files picked in the app go through the same inbox.
+  Future<void> addFiles(List<(String name, List<int> bytes)> picked) async {
+    for (final (name, bytes) in picked) {
+      await inbox.add(name, bytes);
+    }
+    await checkInbox();
+  }
+
+  /// Takes files out of the inbox: after their rows are imported, or when
+  /// the person discards them.
+  Future<void> remove(Iterable<String> ids) async {
+    final set = ids.toSet();
+    for (final id in set) {
+      await inbox.remove(id);
+      _held.remove(id);
+      _reviewOnly.remove(id);
+    }
+    if (isClosed) return;
+    emit(ImportState(items: [for (final i in state.items) if (!set.contains(i.id)) i]));
+  }
+
+  /// Takes one row out of the review, [added] to the book or skipped. Its
+  /// file stays in the inbox until [remove].
+  void settle(String id, int row, {required bool added}) {
+    final item = state.items.where((i) => i.id == id).firstOrNull;
+    if (item == null || row < 0 || row >= item.rows.length) return;
+    _update(item.copyWith(settled: {...item.settled, row: added}));
+  }
+
+  /// Takes items out of the list while their adding can still be undone,
+  /// keeping their files in the inbox: if the app stops before [remove],
+  /// the files are read again and, already imported, dropped then.
+  void hold(Iterable<String> ids) {
+    final set = ids.toSet();
+    for (final i in state.items) {
+      if (set.contains(i.id)) _held[i.id] = i;
+    }
+    emit(ImportState(items: [for (final i in state.items) if (!set.contains(i.id)) i]));
+  }
+
+  /// Brings held items back to wait for the person (after Undo).
+  void release(Iterable<String> ids) {
+    final back = [for (final id in ids) ?_held.remove(id)];
+    if (back.isEmpty || isClosed) return;
+    _reviewOnly.addAll(back.map((i) => i.id));
+    emit(ImportState(items: [...state.items, ...back]));
+  }
+}
+
+/// The import cubit when the app provides one; screens shown on their own
+/// (tests, previews) work without it.
+ImportCubit? maybeImportCubit(BuildContext context) {
+  try {
+    return context.read<ImportCubit>();
+  } on ProviderNotFoundException {
+    return null;
+  }
+}

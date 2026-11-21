@@ -12,9 +12,9 @@ void main() {
   // environment's unmocked plugin channels, so this smoke test only checks
   // what's actually true offline: the app boots without throwing and shows
   // its loading placeholder while `init()` is in flight — it does not
-  // (and cannot, without a `QimaApp` test seam) exercise the onboarding
-  // tour or the home shell end to end; those are covered by
-  // `test/screens/onboarding_tour_screen_test.dart` and
+  // (and cannot, without a `QimaApp` test seam) exercise setup or the home
+  // shell end to end; those are covered by
+  // `test/screens/setup_flow_screen_test.dart` and
   // `test/screens/home_shell_test.dart` instead, against a harness with a
   // fake repository/notification service.
   testWidgets('App boots without throwing and shows a loading state', (WidgetTester tester) async {

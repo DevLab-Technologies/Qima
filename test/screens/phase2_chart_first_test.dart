@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../helpers/money_provider.dart';
 import 'package:qima/blocs/app_cubit.dart';
 import 'package:qima/l10n/app_localizations.dart';
 import 'package:qima/models/asset.dart';
@@ -82,8 +83,8 @@ void main() {
   }
 
   Widget harness({required Widget home, required Brightness brightness, AppCubit? cubit}) {
-    return BlocProvider<AppCubit>(
-      create: (_) => cubit ?? populatedCubit(),
+    final app = cubit ?? populatedCubit();
+    return MultiBlocProvider(providers: [BlocProvider<AppCubit>.value(value: app), testMoneyProvider(app)],
       child: MaterialApp(
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
@@ -221,8 +222,8 @@ void main() {
 
   group('RTL (Arabic locale) layout', () {
     Widget arabicHarness({required Widget home, AppCubit? cubit}) {
-      return BlocProvider<AppCubit>(
-        create: (_) => cubit ?? populatedCubit(),
+      final app = cubit ?? populatedCubit();
+      return MultiBlocProvider(providers: [BlocProvider<AppCubit>.value(value: app), testMoneyProvider(app)],
         child: MaterialApp(
           locale: const Locale('ar'),
           localizationsDelegates: AppLocalizations.localizationsDelegates,

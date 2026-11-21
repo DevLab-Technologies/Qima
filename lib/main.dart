@@ -7,16 +7,23 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'blocs/app_cubit.dart';
 import 'blocs/app_state.dart';
+import 'blocs/import_cubit.dart';
+import 'blocs/money_cubit.dart';
 import 'l10n/app_localizations.dart';
 import 'models/watch_card.dart';
 import 'screens/backup_screen.dart';
 import 'screens/home_shell.dart';
 import 'screens/instrument_detail_screen.dart';
-import 'screens/onboarding_tour_screen.dart';
 import 'screens/watch_watchlist_screen.dart';
 import 'screens/zakat_screen.dart';
+import 'screens/setup_flow_screen.dart';
+import 'services/ai_apps.dart';
+import 'services/import/import_inbox.dart';
+import 'services/import/statement_files.dart';
 import 'services/backup/backup_reminder_notifier.dart';
 import 'services/notification_service.dart';
+import 'services/planned_reminders.dart';
+import 'screens/money/more_money_screens.dart';
 import 'services/preferences.dart';
 import 'services/zakat_reminder_notifier.dart';
 import 'theme/app_theme.dart';
@@ -71,20 +78,50 @@ class _QimaAppState extends State<QimaApp> {
   /// here bypasses it.
   final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
   late final AppCubit _cubit;
+  late final MoneyCubit _money;
+  late final ImportCubit _import;
+  late final AiApps _aiApps;
   StreamSubscription<String>? _tapSubscription;
 
   @override
   void initState() {
     super.initState();
     _cubit = AppCubit();
+    _money = MoneyCubit(
+      store: _cubit.bookStore,
+      baseCurrency: () => _cubit.state.baseCurrency,
+      rates: () => _cubit.state.rates,
+    );
+    _import = ImportCubit(
+      inbox: createImportInbox(),
+      recognition: _cubit.textRecognition,
+      wasImported: _money.wasImported,
+      assist: () => _cubit.assist,
+      shapes: () => _money.state.settings.messageShapes,
+      languages: () => StatementFiles.languagesFor(
+          _cubit.state.appLanguage.localeIdentifier ?? WidgetsBinding.instance.platformDispatcher.locale.languageCode),
+    );
+    _aiApps = AiApps(app: _cubit, money: _money);
+    _cubit.onBookChanged = (key) => key == null ? _money.load() : _money.adoptCloudChanges(key);
     _tapSubscription = notificationTapPayloads.stream.listen(_handleNotificationTap);
-    _cubit.init().then((_) => _consumeColdLaunchPayload());
+    // The money ledger loads after init, once the cloud backend is settled
+    // (see AppCubit.init), so a fresh device never seeds over synced data.
+    _cubit.init().then((_) async {
+      await _money.load();
+      _aiApps.start();
+      // Files shared to Qima while it was closed.
+      unawaited(_import.checkInbox());
+      await _consumeColdLaunchPayload();
+    });
   }
 
   @override
   void dispose() {
     _tapSubscription?.cancel();
     unawaited(_cubit.disposeCloudSync());
+    unawaited(_money.close());
+    unawaited(_import.close());
+    unawaited(_aiApps.dispose());
     super.dispose();
   }
 
@@ -113,6 +150,10 @@ class _QimaAppState extends State<QimaApp> {
         navigator.push(MaterialPageRoute(builder: (_) => const BackupScreen()));
         return;
       }
+      if (payload == plannedReminderPayload) {
+        navigator.push(MaterialPageRoute(builder: (_) => const RecurringScreen()));
+        return;
+      }
       if (payload == zakatReminderNotificationPayload) {
         navigator.push(MaterialPageRoute(builder: (_) => const ZakatScreen()));
         return;
@@ -132,8 +173,13 @@ class _QimaAppState extends State<QimaApp> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<AppCubit>.value(
-      value: _cubit,
+    return MultiBlocProvider(
+      providers: [
+        RepositoryProvider<AiApps>.value(value: _aiApps),
+        BlocProvider<AppCubit>.value(value: _cubit),
+        BlocProvider<MoneyCubit>.value(value: _money),
+        BlocProvider<ImportCubit>.value(value: _import),
+      ],
       child: BlocBuilder<AppCubit, AppState>(
         buildWhen: (previous, current) =>
             previous.appLanguage != current.appLanguage || previous.appearance != current.appearance,
@@ -167,7 +213,17 @@ class _QimaAppState extends State<QimaApp> {
               // ScaffoldMessenger/Navigator that `MaterialApp` itself
               // supplies around `builder`'s output, so in-app snackbars
               // triggered right after unlocking still surface normally.
-              return LockGate(child: content);
+              // Planned payment reminders follow the plans, in the language
+              // the app shows.
+              return BlocListener<MoneyCubit, MoneyState>(
+                listenWhen: (previous, current) => previous.recurring != current.recurring,
+                listener: (context, money) {
+                  final l10n = AppLocalizations.of(context);
+                  if (l10n == null || !_cubit.state.initialized) return;
+                  unawaited(PlannedReminders(notifications: _cubit.notificationService, preferences: _cubit.preferences).sync(money.recurring, l10n));
+                },
+                child: LockGate(child: content),
+              );
             },
             home: const _AppHome(),
           );
@@ -177,10 +233,9 @@ class _QimaAppState extends State<QimaApp> {
   }
 }
 
-/// Decides what the app's first screen is once [AppCubit.init] resolves
-/// (spec "Onboarding tour": "Shown once, on first launch, before the home
-/// shell"): the onboarding tour when [AppState.shouldShowOnboarding] is
-/// true, the home shell otherwise. Stays on a blank loading surface (same
+/// Decides what the app's first screen is once [AppCubit.init] resolves:
+/// setup (shown once, on first launch, before the home shell) when
+/// [AppState.shouldShowOnboarding] is true, the home shell otherwise. Stays on a blank loading surface (same
 /// as every screen's own `!state.initialized` guard) until init resolves,
 /// so this never flashes the shell before deciding.
 class _AppHome extends StatelessWidget {
@@ -196,11 +251,9 @@ class _AppHome extends StatelessWidget {
           return const Scaffold(body: Center(child: CircularProgressIndicator()));
         }
         if (state.shouldShowOnboarding) {
-          return OnboardingTourScreen(
-            onFinished: () {
-              Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => const _Home()));
-            },
-          );
+          // Finishing or skipping clears the flag, which brings this
+          // builder back round to the home shell.
+          return const SetupFlowScreen();
         }
         return const _Home();
       },

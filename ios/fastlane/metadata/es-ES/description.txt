@@ -1,27 +1,38 @@
-Qima suma todo lo que tienes, empezando por el oro, en una sola cifra en la moneda que elijas.
+Qima suma todo lo que tienes y todo lo que debes en un solo número, en la moneda que elijas: cuentas bancarias, efectivo, tarjetas, préstamos, oro, cripto, inmuebles y dinero entre personas.
 
-PENSADA PARA EL ORO
-• Precios del oro, la plata, el platino y el paladio por onza troy, gramo o kilogramo, con 24K, 22K, 21K y 18K.
+TU PATRIMONIO
+• Tu patrimonio neto día a día, con un gráfico de una semana a todo el periodo.
+• Un balance de lo que tienes y lo que debes.
+• Valora tú mismo un inmueble, un coche u otro activo. Cada valor guarda su fecha y no se inventa nada entre medias.
+
+EL DINERO DEL DÍA A DÍA
+• Cuentas bancarias, efectivo, tarjetas de crédito y préstamos, cada uno con su saldo a lo largo del tiempo.
+• Gastos por categoría, presupuesto mensual y pagos recurrentes.
+• Añade un movimiento escribiéndolo o diciéndolo.
+• Importa extractos en PDF, hoja de cálculo o captura de pantalla. Se leen en tu dispositivo y revisas cada fila antes de añadirla.
+• Añade los SMS de tu banco con una automatización de Atajos.
+• Compara un saldo con tu banco y elige cómo entra la diferencia: como un movimiento o como un nuevo saldo inicial.
+
+ENTRE PERSONAS
+• El dinero que prestaste y el que te prestaron, con el neto a la vista.
+• Divide una cuenta y deja solo tu parte como gasto.
+
+ORO Y PRECIOS
+• Oro, plata, platino y paladio por onza troy, gramo o kilogramo, en 24K, 22K, 21K y 18K.
+• Bitcoin y Ethereum, acciones, índices y divisas junto a tus metales.
 • Registra cada compra, venta, transferencia y comisión, y ve el valor, el coste medio y la ganancia.
+• Alertas de precio, y widgets para la pantalla de inicio y la pantalla bloqueada.
 
 ZAKAT
-• Comprueba si superas el nisab y cuánto corresponde, sobre 85 g de oro o 595 g de plata.
-• Fija tu hawl en el calendario hégira o gregoriano y recibe un recordatorio.
+• El zakat a pagar sobre todo tu balance: inversiones, efectivo, dinero que te deben y bienes a la venta, menos las deudas vencidas.
+• Nisab sobre 85 g de oro o 595 g de plata, y un hawl contado en años lunares, con recordatorio.
 • Qima calcula; las decisiones detrás del cálculo son tuyas.
 
-UNA SOLA CARTERA
-• Bitcoin y Ethereum, acciones, índices y divisas de todo el mundo junto a tus metales.
-• Distribución por tipo de activo y del oro por quilates.
-• Alertas cuando un precio cruza un nivel o se mueve un porcentaje en 24 horas o 7 días.
-• Gráficos desde un día hasta todo el historial.
-• Importa y exporta tus posiciones como hoja de cálculo (CSV).
-• Widgets de precios y de cartera para la pantalla de inicio y la pantalla de bloqueo.
-
-PRIVADA POR DISEÑO
-• Sin cuenta, sin registro, sin anuncios, sin analíticas, sin rastreo.
-• Tus datos se quedan en tus dispositivos, con sincronización opcional con iCloud.
+PRIVADO POR DISEÑO
+• Sin cuenta ni registro, sin anuncios, sin analíticas, sin rastreo.
+• Tus datos se quedan en tus dispositivos.
 • Bloquea la app con Face ID o Touch ID, oculta los saldos y haz copias en un archivo que puedes proteger con contraseña (AES-256).
 
 Español, inglés, árabe y francés, con el árabe completo de derecha a izquierda. Gratis, sin suscripción ni compras dentro de la app.
 
-Los precios proceden de terceros y pueden tener retraso. Qima no es asesoramiento de inversión ni un bróker, exchange o custodio.
+Los precios proceden de fuentes externas y pueden ir con retraso. Qima no es asesoramiento de inversión ni un bróker, una plataforma de intercambio, un banco o un custodio.

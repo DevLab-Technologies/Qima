@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
+import '../models/statement_facts.dart';
+import '../models/statement_reader.dart';
 import '../models/transaction_capture.dart';
 
 /// The one seam between Qima's domain layer and an on-device language model
@@ -27,6 +29,12 @@ enum ModelStatus {
   unsupportedLanguage,
 }
 
+/// A provider that holds something while the model is on (a download, a
+/// loaded model) and lets it go when the person turns the model off.
+abstract interface class StoppableModel {
+  void stop();
+}
+
 abstract class AiAssistProvider {
   /// Whether a model is ready on this device right now. Models are
   /// hardware-gated and may still be downloading, so this can change between
@@ -46,6 +54,28 @@ abstract class AiAssistProvider {
   /// Returns null when the model can't help. Callers pass the result
   /// through [acceptPhrasing] before showing it.
   Future<String?> phrase(String sentence, String localeTag);
+
+  /// Says what each of a document's [lines] is: a transaction (with the
+  /// words naming who was paid), an opening or closing balance, the account
+  /// number, or the bank's own text. Returns null when the model can't
+  /// help. The reader checks every label against the line itself; see
+  /// `StatementReader.withLabels`.
+  Future<List<LineLabel>?> labelStatementLines(List<String> lines, String localeTag);
+
+  /// Says, for each page of the document at [path], which of its words
+  /// ([pages], numbered from 0 per page) are each transaction's date,
+  /// amount, balance and direction, and which are the opening and closing
+  /// balances, with each payee's name read off the picture. Returns null
+  /// when the model can't help. It points at words and never writes a
+  /// figure; see `StatementReader.withStructure`.
+  Future<List<PageStructure>?> structurePages(String path, List<DocPage> pages, String localeTag);
+
+  /// Says what one bank message ([text]) is about: what happened, and the
+  /// exact words of its amount, the balance it leaves and who it was with.
+  /// Returns null when the model can't help. The reader finds each copied
+  /// word in the message and takes figures only from there; see
+  /// `StatementReader.withMessageLabels`.
+  Future<MessageLabels?> readMessage(String text, String localeTag);
 }
 
 /// Whether a model's [candidate] rewording of [original] can be shown: it
@@ -108,6 +138,15 @@ class NullAiAssistProvider implements AiAssistProvider {
 
   @override
   Future<String?> phrase(String sentence, String localeTag) async => null;
+
+  @override
+  Future<List<LineLabel>?> labelStatementLines(List<String> lines, String localeTag) async => null;
+
+  @override
+  Future<List<PageStructure>?> structurePages(String path, List<DocPage> pages, String localeTag) async => null;
+
+  @override
+  Future<MessageLabels?> readMessage(String text, String localeTag) async => null;
 }
 
 /// The OS's own on-device model (v4 phase 6): Apple's Foundation Models on
@@ -169,6 +208,56 @@ class PlatformAiAssistProvider implements AiAssistProvider {
       return null;
     } on PlatformException catch (e) {
       debugPrint('AiAssist: phrase failed: $e');
+      return null;
+    }
+  }
+
+  @override
+  Future<List<LineLabel>?> labelStatementLines(List<String> lines, String localeTag) async {
+    if (lines.isEmpty) return null;
+    try {
+      final raw = await _channel.invokeListMethod<Object?>('labelStatementLines', {'lines': lines, 'locale': localeTag});
+      if (raw == null) return null;
+      return raw.whereType<Map<Object?, Object?>>().map(LineLabel.fromMap).nonNulls.toList();
+    } on MissingPluginException {
+      return null;
+    } on PlatformException catch (e) {
+      debugPrint('AiAssist: labelStatementLines failed: $e');
+      return null;
+    }
+  }
+
+  @override
+  Future<List<PageStructure>?> structurePages(String path, List<DocPage> pages, String localeTag) async {
+    if (pages.isEmpty) return null;
+    try {
+      final raw = await _channel.invokeListMethod<Object?>('structurePages', {
+        'path': path,
+        'locale': localeTag,
+        'pages': [
+          for (final p in pages) [for (final t in p.tokens) {'t': t.text, 'x': t.x, 'y': t.y, 'w': t.w, 'h': t.h}],
+        ],
+      });
+      if (raw == null || raw.length != pages.length) return null;
+      return [for (final p in raw) p is Map<Object?, Object?> ? PageStructure.fromMap(p) : const PageStructure()];
+    } on MissingPluginException {
+      return null;
+    } on PlatformException catch (e) {
+      debugPrint('AiAssist: structurePages failed: $e');
+      return null;
+    }
+  }
+
+  @override
+  Future<MessageLabels?> readMessage(String text, String localeTag) async {
+    if (text.trim().isEmpty) return null;
+    try {
+      final raw = await _channel.invokeMapMethod<Object?, Object?>('readMessage', {'text': text, 'locale': localeTag});
+      return raw == null ? null : MessageLabels.fromMap(raw);
+    } on MissingPluginException {
+      return null;
+    } on PlatformException catch (e) {
+      debugPrint('AiAssist: readMessage failed: $e');
       return null;
     }
   }

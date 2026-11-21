@@ -1,7 +1,9 @@
-Qima 4.0.0
-• Tap + to add to your watchlist or add a holding
-• Add a purchase in your own words: type it, say it or scan a receipt. It's read on your device and saved only when you confirm
-• Search assets in English, Arabic, Spanish or French
-• A plain summary of your past month
-• Ask Siri what your portfolio is worth
-• Picking a currency is clearer when adding an asset or a transaction
+Qima 5.0: everything you own and owe, in one place
+• Home shows your net worth over time, with your accounts, holdings, spending and zakat
+• Add bank accounts, cash, cards and loans, and see each balance over time
+• Spending by category, a monthly budget and recurring payments
+• Import statements as PDF, spreadsheet or screenshot, read on your device
+• Add a transaction by typing it or saying it
+• Value property, cars and other assets yourself
+• Track money you lent and borrowed, and split bills
+• Zakat now counts your whole balance sheet, and the hawl is always a lunar year

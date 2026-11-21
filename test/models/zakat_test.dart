@@ -287,42 +287,39 @@ void main() {
     });
 
     test('counts days by calendar day', () {
-      final s = HawlSchedule.of(
-        ZakatSettings(hawlStart: DateTime(2025, 1, 10), calendar: HawlCalendar.gregorian),
-        DateTime(2026, 1, 7, 23, 59),
-      )!;
+      final start = const HijriDate(1446, 7, 10).toGregorian()!;
+      final end = const HijriDate(1447, 7, 10).toGregorian()!;
+      final s = HawlSchedule.of(ZakatSettings(hawlStart: start), DateTime(end.year, end.month, end.day - 3, 23, 59))!;
       expect(s.daysUntilNext, 3);
     });
 
-    test('Gregorian 29 February clamps to 28 February in common years', () {
-      expect(HawlSchedule.anniversaryOf(DateTime(2024, 2, 29), 1, HawlCalendar.gregorian), DateTime(2025, 2, 28));
-      expect(HawlSchedule.anniversaryOf(DateTime(2024, 2, 29), 4, HawlCalendar.gregorian), DateTime(2028, 2, 29));
+    test('Gregorian dates still count a lunar year: the hawl comes about 11 days earlier each year', () {
+      final start = DateTime(2025, 1, 10);
+      final gregorian = HawlSchedule.of(ZakatSettings(hawlStart: start, calendar: HawlCalendar.gregorian), DateTime(2025, 6, 1))!;
+      final hijri = HawlSchedule.of(ZakatSettings(hawlStart: start), DateTime(2025, 6, 1))!;
+      expect(gregorian.next, hijri.next);
+      final days = gregorian.next.difference(start).inDays;
+      expect(days, inInclusiveRange(354, 355));
+      expect(gregorian.next.isBefore(DateTime(2026, 1, 1)), isTrue);
     });
 
     test('a start several years back lands on the right year', () {
-      final s = HawlSchedule.of(
-        ZakatSettings(hawlStart: DateTime(2019, 6, 1), calendar: HawlCalendar.gregorian),
-        DateTime(2026, 3, 1),
-      )!;
-      expect(s.next, DateTime(2026, 6, 1));
-      expect(s.lastCompleted, DateTime(2025, 6, 1));
+      final start = const HijriDate(1440, 9, 27).toGregorian()!;
+      final s = HawlSchedule.of(ZakatSettings(hawlStart: start), const HijriDate(1447, 6, 1).toGregorian()!)!;
+      expect(s.next, const HijriDate(1447, 9, 27).toGregorian());
+      expect(s.lastCompleted, const HijriDate(1446, 9, 27).toGregorian());
     });
 
-    test('a future start has its first completion a year after it', () {
-      final s = HawlSchedule.of(
-        ZakatSettings(hawlStart: DateTime(2026, 6, 1), calendar: HawlCalendar.gregorian),
-        DateTime(2026, 3, 1),
-      )!;
-      expect(s.next, DateTime(2027, 6, 1));
+    test('a future start has its first completion a lunar year after it', () {
+      final start = const HijriDate(1448, 1, 1).toGregorian()!;
+      final s = HawlSchedule.of(ZakatSettings(hawlStart: start), DateTime(2026, 3, 1))!;
+      expect(s.next, const HijriDate(1449, 1, 1).toGregorian());
       expect(s.lastCompleted, isNull);
     });
 
-    test('a Hijri start outside the Umm al-Qura table falls back to Gregorian', () {
-      expect(HawlSchedule.anniversaryOf(DateTime(1930, 5, 5), 1, HawlCalendar.hijri), DateTime(1931, 5, 5));
-    });
-
-    test('a Hijri anniversary past the end of the table is null', () {
-      expect(HawlSchedule.anniversaryOf(DateTime(2077, 1, 1), 2, HawlCalendar.hijri), isNull);
+    test('a start outside the Umm al-Qura table counts mean lunar years', () {
+      expect(HawlSchedule.anniversaryOf(DateTime(1930, 5, 5), 1), DateTime(1930, 5, 5 + 354));
+      expect(HawlSchedule.anniversaryOf(DateTime(2077, 1, 1), 2), DateTime(2077, 1, 1 + 709));
     });
   });
 }

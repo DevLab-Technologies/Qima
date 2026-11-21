@@ -583,10 +583,6 @@
   "backupCsvHeaderTotalCost": "Total",
   "backupCsvHeaderDate": "Date",
   "commonContinue": "Continue",
-  "onboardingNext": "Next",
-  "@onboardingNext": {
-    "description": "Onboarding tour primary button, steps 1-4."
-  },
   "onboardingSkip": "Skip",
   "@onboardingSkip": {
     "description": "Onboarding tour text button under Next, steps 1-4."
@@ -594,103 +590,6 @@
   "onboardingGetStarted": "Get started",
   "@onboardingGetStarted": {
     "description": "Onboarding tour primary button, step 5 (final step)."
-  },
-  "onboardingStep1Title": "Everything you own, in one number",
-  "@onboardingStep1Title": {
-    "description": "Onboarding step 1 (Welcome) title."
-  },
-  "onboardingStep1Body": "Gold, silver, crypto, stocks, indices and currencies, added up in your currency, with a plain summary of each month.",
-  "@onboardingStep1Body": {
-    "description": "Onboarding step 1 (Welcome) body."
-  },
-  "onboardingStep2Title": "Prices the way you buy",
-  "@onboardingStep2Title": {
-    "description": "Onboarding step 2 (Watchlist) title."
-  },
-  "onboardingStep2Body": "Live prices by gram, ounce or kilogram, 24K to 18K, in any currency. Tap + to add to your watchlist, tap a card for its chart.",
-  "@onboardingStep2Body": {
-    "description": "Onboarding step 2 (Watchlist) body."
-  },
-  "onboardingStep3Title": "Know what you hold",
-  "@onboardingStep3Title": {
-    "description": "Onboarding step 3 (Holdings) title."
-  },
-  "onboardingStep3Body": "Tap +, then Add holding, and type what you bought, or say it or scan a receipt. It is read on this device and saved only when you confirm. See what you hold, your average cost, value and gain.",
-  "@onboardingStep3Body": {
-    "description": "Onboarding step 3 (Holdings) body."
-  },
-  "onboardingStep4Title": "Never miss a move",
-  "@onboardingStep4Title": {
-    "description": "Onboarding step 4 (Alerts & widgets) title."
-  },
-  "onboardingStep4Body": "Get notified when a price crosses a level or moves by a percent. Put prices on your Home and Lock Screen.",
-  "@onboardingStep4Body": {
-    "description": "Onboarding step 4 (Alerts & widgets) title."
-  },
-  "onboardingStep4BodyApple": "Get notified when a price crosses a level or moves by a percent. Put prices on your Home and Lock Screen, or ask Siri what your portfolio is worth.",
-  "onboardingStep5Title": "Private by design",
-  "@onboardingStep5Title": {
-    "description": "Onboarding step 5 (Private by design) title."
-  },
-  "onboardingStep5Body": "No account. Your data stays on this device, with optional iCloud sync, Face ID lock and file backups.",
-  "@onboardingStep5Body": {
-    "description": "Onboarding step 5 (Private by design) title."
-  },
-  "onboardingStep5BodyAndroid": "No account. Your data stays on this device, with fingerprint or face unlock and file backups.",
-  "@onboardingStep5BodyAndroid": {
-    "description": "Onboarding step 5 body, Android wording (no iCloud, fingerprint/face unlock instead of Face ID)."
-  },
-  "onboardingStep5BodyMac": "No account. Your data stays on this Mac, with optional iCloud sync, Touch ID lock and file backups.",
-  "@onboardingStep5BodyMac": {
-    "description": "Onboarding step 5 body on macOS (Touch ID instead of Face ID)."
-  },
-  "onboardingStep5PillNoAccount": "No account",
-  "@onboardingStep5PillNoAccount": {
-    "description": "Onboarding step 5 pill."
-  },
-  "onboardingStep5PillOnDevice": "On this device",
-  "@onboardingStep5PillOnDevice": {
-    "description": "Onboarding step 5 pill."
-  },
-  "onboardingStep5ICloudTitle": "iCloud sync",
-  "@onboardingStep5ICloudTitle": {
-    "description": "Onboarding step 5 illustration row title (iOS only)."
-  },
-  "onboardingStep5ICloudSubtitle": "Optional · keeps devices in step",
-  "@onboardingStep5ICloudSubtitle": {
-    "description": "Onboarding step 5 illustration row subtitle (iOS only)."
-  },
-  "onboardingStep5AppLockTitle": "App lock",
-  "@onboardingStep5AppLockTitle": {
-    "description": "Onboarding step 5 illustration row title."
-  },
-  "onboardingStep5AppLockSubtitleApple": "Face ID or fingerprint",
-  "@onboardingStep5AppLockSubtitleApple": {
-    "description": "Onboarding step 5 App lock row subtitle, Apple platforms."
-  },
-  "onboardingStep5AppLockSubtitleGeneric": "Fingerprint or face unlock",
-  "@onboardingStep5AppLockSubtitleGeneric": {
-    "description": "Onboarding step 5 App lock row subtitle, non-Apple platforms."
-  },
-  "onboardingStep5AppLockSubtitleMac": "Touch ID or your Mac password",
-  "@onboardingStep5AppLockSubtitleMac": {
-    "description": "Onboarding step 5 app lock row subtitle on macOS."
-  },
-  "onboardingStep5HideBalancesTitle": "Hide balances",
-  "@onboardingStep5HideBalancesTitle": {
-    "description": "Onboarding step 5 illustration row title."
-  },
-  "onboardingStep5HideBalancesSubtitle": "Show •••• instead of amounts",
-  "@onboardingStep5HideBalancesSubtitle": {
-    "description": "Onboarding step 5 illustration row subtitle."
-  },
-  "onboardingBaseCurrencyTitle": "Base currency",
-  "@onboardingBaseCurrencyTitle": {
-    "description": "Onboarding step 5 base-currency row title."
-  },
-  "onboardingBaseCurrencySubtitle": "From your region · change in Settings",
-  "@onboardingBaseCurrencySubtitle": {
-    "description": "Onboarding step 5 base-currency row subtitle."
   },
   "onboardingSemanticStepOf": "Step {step} of {total}",
   "@onboardingSemanticStepOf": {
@@ -712,6 +611,126 @@
   "@helpButtonTooltip": {
     "description": "Tooltip/semantic label for the help (question mark) button in every app bar."
   },
+  "helpHomeSummary": "Your net worth: everything you own minus everything you owe, with the cards you use most.",
+  "helpHomeStep1Title": "Net worth",
+  "helpHomeStep1Body": "Tap it to open the balance sheet: what you own and what you owe, item by item.",
+  "helpHomeStep2Title": "Your cards",
+  "helpHomeStep2Body": "Accounts, Left to spend, Coming up and others appear as you use them. Tap a card to open it.",
+  "helpHomeStep3Title": "Edit Home",
+  "helpHomeStep3Body": "Move cards or hide the ones you don’t need. Qima never adds back a card you hid.",
+  "helpHomeStep4Title": "Hide balances",
+  "helpHomeStep4Body": "Tap the eye to mask every amount, for when someone is looking.",
+  "helpHomeStep5Title": "Add anything",
+  "helpHomeStep5Body": "Tap + for a transaction, a statement, a holding, or anything under More.",
+  "helpMoneySummary": "Where this month’s money went, and what came in and went out.",
+  "helpMoneyStep1Title": "Pick a month",
+  "helpMoneyStep1Body": "Use the arrows at the top to see another month.",
+  "helpMoneyStep2Title": "Spent and pace",
+  "helpMoneyStep2Body": "What you’ve spent so far, and where you’ll be by the month’s end at this pace.",
+  "helpMoneyStep3Title": "Where it went",
+  "helpMoneyStep3Body": "Spending by category, biggest first.",
+  "helpMoneyStep4Title": "Cash flow",
+  "helpMoneyStep4Body": "Money in, money out and what’s left over. Moves between your own accounts don’t count.",
+  "helpMoneyStep5Title": "Worth a look",
+  "helpMoneyStep5Body": "Notes on budgets and entries to categorize, when there’s something to see.",
+  "helpNewTransactionSummary": "Record money spent, earned or moved between your accounts.",
+  "helpNewTransactionStep1Title": "Pick the kind",
+  "helpNewTransactionStep1Body": "Spend, Income or Transfer. The amount and date stay when you switch.",
+  "helpNewTransactionStep2Title": "Say it",
+  "helpNewTransactionStep2Body": "Tap the mic and say, for example, “Spent 45 at Panda with Visa yesterday”. Qima fills in the form on this device; check it and tap Save.",
+  "helpNewTransactionStep3Title": "Category",
+  "helpNewTransactionStep3Body": "Spending and income go in a category. A move between your own accounts is never spending.",
+  "helpNewTransactionStep4Title": "Declined",
+  "helpNewTransactionStep4Body": "Turn on Declined for a payment that didn’t go through: it’s shown struck through and never counts.",
+  "helpTransactionsSummary": "Every transaction, newest first, and what each one did to your accounts.",
+  "helpTransactionsStep1Title": "Open one",
+  "helpTransactionsStep1Body": "Tap a transaction to see each account it touched, and by how much.",
+  "helpTransactionsStep2Title": "How it counts",
+  "helpTransactionsStep2Body": "Each one says whether it’s spending, income, a move between your accounts or a change in value.",
+  "helpTransactionsStep3Title": "Edit or delete",
+  "helpTransactionsStep3Body": "Open it, then edit or delete it. Deleting puts every account back as it was.",
+  "helpAccountsSummary": "Bank accounts, cash, cards and loans, with what’s in each one today.",
+  "helpAccountsStep1Title": "Add an account",
+  "helpAccountsStep1Body": "Give it a name, a type and its balance today. Qima starts from that figure.",
+  "helpAccountsStep2Title": "Check the balance",
+  "helpAccountsStep2Body": "Open an account and enter what your bank shows. For a difference, choose: add a transaction for it, or change the opening balance so nothing counts as spending.",
+  "helpAccountsStep3Title": "Count cash",
+  "helpAccountsStep3Body": "For cash, count what’s in your wallet and Qima sets the balance to it.",
+  "helpAccountsStep4Title": "Pay a card or loan",
+  "helpAccountsStep4Body": "Open the card or loan and tap Pay to record a payment from another account.",
+  "helpAccountsStep5Title": "Remove one",
+  "helpAccountsStep5Body": "An account with transactions is archived so its history still adds up. One never used is deleted.",
+  "helpBalanceSheetSummary": "Everything you own and everything you owe, adding up to your net worth.",
+  "helpBalanceSheetStep1Title": "What you own",
+  "helpBalanceSheetStep1Body": "Accounts, holdings at live prices, and assets at the value you set.",
+  "helpBalanceSheetStep2Title": "What you owe",
+  "helpBalanceSheetStep2Body": "Cards, loans (principal only) and money you owe people.",
+  "helpBalanceSheetStep3Title": "How the total is worked out",
+  "helpBalanceSheetStep3Body": "Open it to see each rule, such as the live rate used for other currencies.",
+  "helpBalanceSheetStep4Title": "Leave one out",
+  "helpBalanceSheetStep4Body": "Turn off Count in net worth on an account or asset; its history still adds up.",
+  "helpAssetsSummary": "A home, land, a car or a share in a business, at the value you set.",
+  "helpAssetsStep1Title": "Add an asset",
+  "helpAssetsStep1Body": "Pick a kind, then give it a value and a date. Gold and silver by weight are holdings instead.",
+  "helpAssetsStep2Title": "Update the value",
+  "helpAssetsStep2Body": "Every update is dated. The latest counts; older values stay as history.",
+  "helpAssetsStep3Title": "A loan on it",
+  "helpAssetsStep3Body": "Link the loan secured on it to see what’s still owed next to its value.",
+  "helpAssetsStep4Title": "Sold it",
+  "helpAssetsStep4Body": "Record the sale: the money goes into an account and the asset leaves your balance sheet.",
+  "helpImportStatementSummary": "Bring in transactions from your bank’s PDF, Excel or CSV, screenshots, or a copied file.",
+  "helpImportStatementStep1Title": "Pick the files",
+  "helpImportStatementStep1Body": "From Files, Photos, the clipboard, or Share › Qima from any app. They’re read on this device.",
+  "helpImportStatementStep2Title": "Check every row",
+  "helpImportStatementStep2Body": "Pick the account, untick what you don’t want and fix any category. Rows already in Qima start unticked.",
+  "helpImportStatementStep3Title": "Match the balance",
+  "helpImportStatementStep3Body": "When the statement shows a balance, tick Bring the balance to it. Then choose how: change the opening balance, or add a transaction for the difference.",
+  "helpImportStatementStep4Title": "Add them",
+  "helpImportStatementStep4Body": "Tap Add. The files are deleted once imported.",
+  "helpBankMessagesSummary": "Add purchases from the messages your bank sends you, after you check each one.",
+  "helpBankMessagesStep1Title": "On Android",
+  "helpBankMessagesStep1Body": "Turn on Read new bank messages and allow access. Bring in the last 60 days the first time.",
+  "helpBankMessagesStep2Title": "On iPhone",
+  "helpBankMessagesStep2Body": "Set up a Shortcuts automation once, so each bank message goes to Qima’s Add a bank message action.",
+  "helpBankMessagesStep3Title": "Check before adding",
+  "helpBankMessagesStep3Body": "Messages wait in the import review, each under the account it names; move one if it’s wrong and Qima remembers the sender. Fix a message once and the next like it is read your way. Codes, offers and repeats are skipped.",
+  "helpBankMessagesStep4Title": "Private",
+  "helpBankMessagesStep4Body": "Messages are read on this device and never leave it.",
+  "helpCategoriesSummary": "Sort spending into categories, and teach Qima where each name goes.",
+  "helpCategoriesStep1Title": "To categorize",
+  "helpCategoriesStep1Body": "Pick a category once for each name. Imports from that name use it from now on.",
+  "helpCategoriesStep2Title": "Earlier entries",
+  "helpCategoriesStep2Body": "Qima offers to move earlier entries from the same name too.",
+  "helpCategoriesStep3Title": "Your categories",
+  "helpCategoriesStep3Body": "Add, rename or remove categories. Transactions in a removed one keep it in their history.",
+  "helpCategoriesStep4Title": "Forget a name",
+  "helpCategoriesStep4Body": "Forget what Qima learned for a name, and its imports are sorted by hand again.",
+  "helpBudgetSummary": "A monthly amount for each category you want to watch.",
+  "helpBudgetStep1Title": "Set an amount",
+  "helpBudgetStep1Body": "Tap a category and enter its amount per month. Zero removes it.",
+  "helpBudgetStep2Title": "Left to spend",
+  "helpBudgetStep2Body": "Home shows what’s left this month, and Money notes a category that’s ahead of its pace.",
+  "helpBudgetStep3Title": "What counts",
+  "helpBudgetStep3Body": "Card payments, transfers and loan principal never count.",
+  "helpRecurringSummary": "Rent, bills, installments and income, shown in Coming up before they’re due.",
+  "helpRecurringStep1Title": "Add one",
+  "helpRecurringStep1Body": "Give it a name, an amount, the account and when it’s due: once, or every week, month, 3 months or year. An installment plan can end after a number of payments.",
+  "helpRecurringStep2Title": "Coming up",
+  "helpRecurringStep2Body": "Home lists the next ones due, money in and out, and a reminder can come the day before.",
+  "helpRecurringStep3Title": "Change or remove",
+  "helpRecurringStep3Body": "Tap one to record it, skip it, change it or remove it.",
+  "helpPeopleSummary": "Who owes you, whom you owe, and the repayments.",
+  "helpPeopleStep1Title": "Lent or borrowed",
+  "helpPeopleStep1Body": "Tap + › More › Lent or Borrowed, and type the person’s name.",
+  "helpPeopleStep2Title": "Repayments",
+  "helpPeopleStep2Body": "Record Repayment received or Repayment made, and what’s owed goes down.",
+  "helpPeopleStep3Title": "Bill split",
+  "helpPeopleStep3Body": "Pay a whole bill and split it: only your share is spending, the rest is owed to you.",
+  "helpFeaturesSummary": "Turn parts of Qima on or off. Features also turn on by themselves the first time you use them.",
+  "helpFeaturesStep1Title": "Turn one off",
+  "helpFeaturesStep1Body": "Its screens hide, never your money: its amounts still count on the balance sheet.",
+  "helpFeaturesStep2Title": "On when used",
+  "helpFeaturesStep2Body": "Record your first loan payment and Loans turns on, with an Undo if you didn’t want it.",
   "helpSheetAboutHeader": "ABOUT THIS PAGE",
   "@helpSheetAboutHeader": {
     "description": "Small-caps header above the page name in the help sheet."
@@ -736,11 +755,11 @@
   "@helpIndexIntro": {
     "description": "\"How Qima works\" index sheet intro line."
   },
-  "helpWatchlistTitle": "Watchlist",
+  "helpWatchlistTitle": "Prices",
   "@helpWatchlistTitle": {
     "description": "Watchlist help topic title (matches the page name)."
   },
-  "helpWatchlistSummary": "Live prices for everything you follow, with your portfolio total on top.",
+  "helpWatchlistSummary": "Live prices for everything you follow.",
   "@helpWatchlistSummary": {
     "description": "Watchlist help topic summary line."
   },
@@ -1122,7 +1141,7 @@
   "@helpBackupStep1Title": {
     "description": "Backup & restore help step 1 title."
   },
-  "helpBackupStep1Body": "Saves your watchlist, holdings, custom tickers and settings as a .json file.",
+  "helpBackupStep1Body": "Saves your accounts, transactions, assets, watchlist, holdings and settings as a .json file.",
   "@helpBackupStep1Body": {
     "description": "Backup & restore help step 1 body."
   },
@@ -1370,7 +1389,7 @@
   "@settingsHelpReplayTour": {
     "description": "Settings Help group row title."
   },
-  "settingsHelpReplayTourSubtitle": "See the five-step introduction again",
+  "settingsHelpReplayTourSubtitle": "A short tour of Home, Money and Prices",
   "@settingsHelpReplayTourSubtitle": {
     "description": "Settings Help group row subtitle."
   },
@@ -1565,7 +1584,7 @@
   "zakatCalendar": "Calendar",
   "zakatCalendarHijri": "Hijri",
   "zakatCalendarGregorian": "Gregorian",
-  "zakatGregorianNote": "A Gregorian year is about 11 days longer than a lunar one. Some scholars raise the rate to {solarRate} to account for it; Qima keeps {rate}.",
+  "zakatGregorianNote": "Dates show in the Gregorian calendar. The hawl is still a lunar year, so it completes about 11 days earlier each Gregorian year.",
   "zakatHawlClear": "Clear hawl date",
   "zakatRemind": "Remind me",
   "zakatRemindSubtitle": "A notification on the day your hawl completes",
@@ -1622,27 +1641,17 @@
     }
   },
   "helpZakatTitle": "Zakat",
-  "helpZakatSummary": "Qima works out zakat from your holdings at today’s prices. It calculates; the choices behind the calculation are yours.",
+  "helpZakatSummary": "Qima works out zakat from what you own at today’s prices. It calculates; the choices behind the calculation are yours.",
   "helpZakatStep1Title": "Nisab",
   "helpZakatStep1Body": "The threshold is 85 g of fine gold or 595 g of silver, priced live. Pick the basis in Zakat settings; silver is lower, so more people owe.",
   "helpZakatStep2Title": "What counts",
-  "helpZakatStep2Body": "Metals, crypto and cash count by default; equities don’t. Karat gold counts by its gold content. Switch any single asset off on the zakat screen.",
+  "helpZakatStep2Body": "Cash, metals and crypto count by default, and assets held for sale at their value; equities don’t. Card balances and money you owe people are deducted. Switch any single item off.",
   "helpZakatStep3Title": "Hawl",
   "helpZakatStep3Body": "Set the day your wealth first reached nisab. Zakat falls due each lunar year after it, and Qima can remind you on the day.",
   "helpZakatStep4Title": "A calculator, not a fatwa",
   "helpZakatStep4Body": "Scholars differ on the basis, on equities and on jewelry. Every default here can be changed — when unsure, ask a scholar you trust.",
   "@zakatDueLabel": {
     "placeholders": {
-      "rate": {
-        "type": "String"
-      }
-    }
-  },
-  "@zakatGregorianNote": {
-    "placeholders": {
-      "solarRate": {
-        "type": "String"
-      },
       "rate": {
         "type": "String"
       }
@@ -2211,12 +2220,16 @@
     }
   },
   "dictationStart": "Speak a purchase",
+  "dictationLanguage": "Language you speak",
+  "@dictationLanguage": {"description": "Tooltip on the button that picks the language New transaction listens in."},
   "dictationStop": "Stop listening",
   "dictationUnsupported": "Voice input in this language isn't available on this device. Qima only listens on the device, never through a server.",
   "dictationDenied": "Microphone or speech recognition is off for Qima. Turn them on in Settings to speak a purchase.",
   "settingsIntelligence": "On-device intelligence",
   "settingsUseModel": "Use the on-device model",
   "settingsUseModelFooter": "Helps read purchases Qima can't place on its own, and words the month summary. It runs only on this device, never gives advice, and never supplies a number: every figure comes from your own records.",
+  "settingsUseModelAndroid": "On Android, Google’s ML Kit runs the model: your messages and records stay on the phone, and ML Kit sends Google figures about its own use, such as the phone model and error codes.",
+  "settingsUseModelDownload": "On Windows and Linux, turning this on downloads an open model (Qwen2.5, about 1.1 GB) once from Hugging Face. After that it runs only on this computer.",
   "modelReady": "Ready on this device",
   "modelUnsupported": "Not available on this device",
   "modelTurnedOff": "Turn on Apple Intelligence in system Settings to use it",
@@ -2250,5 +2263,1111 @@
   "helpAddAssetStep5Title": "Add a holding",
   "helpAddAssetStep5Body": "Tap +, then Add holding. Type what you bought, or speak it or scan a receipt where this device can. Check what was read, then confirm.",
   "helpAddAssetStep6Title": "Read on this device",
-  "helpAddAssetStep6Body": "Speech and receipts are read on this device and never sent anywhere. Nothing is saved until you confirm, and every number comes from what you typed, said or scanned."
+  "helpAddAssetStep6Body": "Speech and receipts are read on this device and never sent anywhere. Nothing is saved until you confirm, and every number comes from what you typed, said or scanned.",
+  "navHome": "Home",
+  "navMoney": "Money",
+  "navPrices": "Prices",
+  "netWorth": "Net worth",
+  "balanceSheet": "Balance sheet",
+  "youOwn": "You own",
+  "youOweSide": "You owe",
+  "ownOweLine": "You own {own} · You owe {owe}",
+  "@ownOweLine": {
+    "placeholders": {
+      "own": {
+        "type": "String"
+      },
+      "owe": {
+        "type": "String"
+      }
+    }
+  },
+  "sheetHoldings": "Holdings",
+  "sheetHoldingsLive": "At live prices",
+  "sheetCash": "Cash and bank",
+  "sheetOwedToYou": "Money owed to you",
+  "sheetAssets": "Property and more",
+  "sheetCards": "Cards",
+  "sheetLoans": "Loans",
+  "sheetYouOwe": "Money you owe people",
+  "sheetNothingOwed": "Nothing owed. Cards, loans and money you owe people appear here once added.",
+  "sheetMissingRates": "No exchange rate yet for {codes}; those amounts are left out of the total.",
+  "@sheetMissingRates": {
+    "placeholders": {
+      "codes": {
+        "type": "String"
+      }
+    }
+  },
+  "acctCash": "Cash",
+  "acctDebit": "Bank account",
+  "acctCredit": "Card",
+  "acctLoan": "Loan",
+  "acctReceivable": "Owes you",
+  "acctPayable": "You owe",
+  "acctAsset": "Asset",
+  "acctCategory": "Category",
+  "assetKindProperty": "Property",
+  "assetKindVehicle": "Vehicle",
+  "assetKindBusiness": "Business",
+  "assetKindValuables": "Valuables",
+  "assetKindOther": "Other",
+  "assetKindPropertyHint": "A home, land, a shop",
+  "assetKindVehicleHint": "A car, a motorbike, a boat",
+  "assetKindBusinessHint": "Your share in a business",
+  "assetKindValuablesHint": "A watch, art, a collection",
+  "assetKindOtherHint": "Anything else you own",
+  "tplOpening": "Opening balance",
+  "tplSpend": "Spend",
+  "tplIncome": "Income",
+  "tplTransfer": "Transfer",
+  "tplAtm": "ATM withdrawal",
+  "tplSwap": "Currency swap",
+  "tplCardPayment": "Card payment",
+  "tplLoanPayment": "Loan payment",
+  "tplLent": "Lent",
+  "tplBorrowed": "Borrowed",
+  "tplRepaymentIn": "Repayment received",
+  "tplRepaymentOut": "Repayment made",
+  "tplRefund": "Refund",
+  "tplDeclined": "Declined",
+  "tplCashCount": "Cash count",
+  "tplBillSplit": "Bill split",
+  "tplValuation": "New value",
+  "tplAssetSale": "Sold",
+  "tplAdjustment": "Adjustment",
+  "catGroceries": "Groceries",
+  "catDining": "Dining",
+  "catTransport": "Transport",
+  "catBills": "Bills",
+  "catShopping": "Shopping",
+  "catHealth": "Health",
+  "catHome": "Home",
+  "catOther": "Other",
+  "catSalary": "Salary",
+  "catOtherIncome": "Other income",
+  "catInterestFees": "Interest & fees",
+  "sysOpening": "Opening balances",
+  "sysChange": "Change in value",
+  "sysRounding": "Rounding",
+  "featBudget": "Budget",
+  "featRecurring": "Planned payments",
+  "featPeople": "Lent and borrowed",
+  "featLoans": "Loans",
+  "featBillSplit": "Bill split",
+  "featZakat": "Zakat",
+  "featBudgetDetail": "A monthly amount per category, and what's left",
+  "featRecurringDetail": "Bills, installments and income, shown before they are due",
+  "featPeopleDetail": "Who owes you, and whom you owe",
+  "featLoansDetail": "What's left on a loan, and each payment's profit",
+  "featBillSplitDetail": "Pay a bill and split it; only your share is spending",
+  "featZakatDetail": "Zakat over your holdings, cash and debts",
+  "featureTurnedOn": "{feature} is on",
+  "@featureTurnedOn": {
+    "placeholders": {
+      "feature": {
+        "type": "String"
+      }
+    }
+  },
+  "featuresTitle": "Features",
+  "featuresSubtitle": "Budget, recurring, loans and more",
+  "featuresIntro": "Turning a feature off hides its screens, never your money: its amounts still count and still show on the balance sheet.",
+  "cardNeedsReview": "Needs review",
+  "cardComingUp": "Coming up",
+  "cardLeftToSpend": "Left to spend",
+  "cardAccounts": "Accounts",
+  "editHome": "Edit Home",
+  "editHomeIntro": "Move cards, or hide the ones you don't need. Qima never adds back a card you hid.",
+  "editHomeTotalFixed": "Always first: the balance sheet opens from it",
+  "editHomeCantHide": "Shows only when something needs you",
+  "moveUp": "Move up",
+  "moveDown": "Move down",
+  "moveToTop": "Move to top",
+  "startTitle": "Start with what you have",
+  "startMessage": "Add a bank account, a holding or a property. Qima adds them up into your net worth.",
+  "holdingsGainLine": "Gain {amount}",
+  "@holdingsGainLine": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "reviewValue": "Review the value of {name}",
+  "@reviewValue": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "accountAdd": "Add an account",
+  "accountEdit": "Edit account",
+  "accountNameLabel": "Name",
+  "accountCurrency": "Currency",
+  "accountBalanceToday": "Balance today",
+  "accountOwedToday": "Owed on it today",
+  "accountLoanLeft": "Left to pay (principal)",
+  "accountTheyOwe": "They owe you",
+  "accountYouOwe": "You owe them",
+  "accountBalanceHelp": "Qima starts from this figure; leave it empty for zero.",
+  "accountSince": "As of",
+  "accountLimit": "Card limit",
+  "accountCounts": "Count in net worth",
+  "accountCountsHelp": "Off leaves it out of the total; its history still adds up.",
+  "accountErrorName": "Give it a name.",
+  "accountLeftOut": "Not counted in net worth",
+  "accountAvailable": "{amount} available",
+  "@accountAvailable": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "accountCountCash": "Count cash",
+  "accountCheckBalance": "Check the balance",
+  "accountPayCard": "Pay the card",
+  "accountPayLoan": "Pay the loan",
+  "accountRemoveTitle": "Remove account",
+  "accountRemoveMessage": "An account with transactions is archived so its history still adds up. One never used is deleted.",
+  "accountsEmptyTitle": "No accounts yet",
+  "accountsEmptyMessage": "Add a bank account, cash, a card or a loan with what's in it today.",
+  "reconcileTracked": "Qima has {amount}.",
+  "@reconcileTracked": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "reconcileCounted": "What you counted",
+  "reconcileStatement": "Balance on the statement or app",
+  "reconcileDone": "The difference is recorded under Other, so the balance matches.",
+  "entryAmount": "Amount",
+  "entryPrincipal": "Principal",
+  "entryProfit": "Profit or interest",
+  "entryProfitHelp": "Counts as spending in Interest & fees; the principal never does.",
+  "entrySent": "Sent",
+  "entryClearsTheirs": "Clears of what they owe",
+  "entryClearsMine": "Clears of what you owe",
+  "entryClearsHelp": "Leave empty for today's rate: {amount}",
+  "@entryClearsHelp": {"placeholders": {"amount": {"type": "String"}}},
+  "entryReceived": "Received",
+  "entryPaidFrom": "Paid from",
+  "entryFrom": "From",
+  "entryTo": "To",
+  "entryPerson": "Person",
+  "entryCategory": "Category",
+  "entryDate": "Date",
+  "entryMerchant": "Where",
+  "entryNote": "Note",
+  "entryDeclined": "Declined",
+  "entryDeclinedHelp": "Shown struck through; never in a balance.",
+  "entryEditTitle": "Edit transaction",
+  "entryDeleteTitle": "Delete transaction?",
+  "entryDeleteMessage": "Every account it touched goes back to what it was before.",
+  "entryErrorAmount": "Enter an amount above zero.",
+  "entryErrorAccount": "Choose the accounts.",
+  "entryErrorSameCurrency": "Both accounts need the same currency. For different currencies, use Currency swap.",
+  "entryErrorSwap": "Choose two accounts in different currencies.",
+  "entryErrorPerson": "Enter who it is.",
+  "entryErrorRate": "There's no exchange rate for this currency yet. Try again once prices refresh.",
+  "entryNeedsAccountTitle": "Add an account first",
+  "entryNeedsAccountMessage": "This needs an account to come from or go to. Add one in Accounts.",
+  "howItAddsUp": "How it adds up",
+  "hiuUp": "{name} up by {amount}",
+  "@hiuUp": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "hiuDown": "{name} down by {amount}",
+  "@hiuDown": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "hiuSpending": "Spending: it counts in your budget.",
+  "hiuIncome": "Income: it counts in your cash flow.",
+  "hiuRefund": "A refund lowers spending in its category.",
+  "hiuWorth": "A change in value moves net worth only; it's never income or spending.",
+  "hiuMove": "A move between your own accounts: not spending, and your net worth stays the same.",
+  "hiuDeclined": "Declined: nothing moved.",
+  "allTransactions": "All transactions",
+  "transactionsSearch": "Search",
+  "transactionsEmptyTitle": "No transactions",
+  "transactionsEmptyMessage": "Add one with the + button.",
+  "moneySpent": "Spent",
+  "moneySpentOf": "{spent} of {budget}",
+  "@moneySpentOf": {
+    "placeholders": {
+      "spent": {
+        "type": "String"
+      },
+      "budget": {
+        "type": "String"
+      }
+    }
+  },
+  "moneySpentSoFar": "Spent {amount} this month",
+  "@moneySpentSoFar": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "moneyPace": "At this pace: {amount} by the month's end",
+  "@moneyPace": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "moneyNothingSpent": "Nothing spent this month.",
+  "moneyIn": "Money in",
+  "moneyOut": "Money out",
+  "moneyLeftOver": "Left over",
+  "moneyShort": "Short",
+  "moneyTrend": "Spending by month",
+  "moneyTransactions": "Transactions",
+  "moneyStartMessage": "Add an account first, then record what you spend.",
+  "whereItWent": "Where it went",
+  "cashFlow": "Cash flow",
+  "worthALook": "Worth a look",
+  "aheadOfPace": "{name} is ahead of its budget",
+  "@aheadOfPace": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "spareIn": "{name} has {amount} to spare",
+  "@spareIn": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "previousMonth": "Previous month",
+  "nextMonth": "Next month",
+  "ask": "Ask",
+  "askSpentMonth": "How much did I spend this month?",
+  "askSpentMonthAnswer": "{amount}",
+  "@askSpentMonthAnswer": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "askTopCategory": "Where did most of it go?",
+  "askTopCategoryAnswer": "{name}: {amount}",
+  "@askTopCategoryAnswer": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "askVsLastMonth": "Is it more than last month?",
+  "askMore": "{amount} more than last month",
+  "@askMore": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "askLess": "{amount} less than last month",
+  "@askLess": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "askSame": "About the same as last month",
+  "askOwed": "Who owes me money?",
+  "askNobodyOwes": "Nobody owes you money.",
+  "assetAdd": "Add an asset",
+  "assetEdit": "Edit asset",
+  "assetGoldNote": "Gold and silver by weight stay holdings, because Qima prices them. Add them with Add a holding.",
+  "assetValueToday": "Value today",
+  "assetCost": "Price paid",
+  "assetBought": "Date bought",
+  "optional": "Optional",
+  "assetLoan": "Loan secured on it",
+  "assetNoLoan": "None",
+  "assetForSale": "Held for sale",
+  "assetForSaleHelp": "Counts for zakat at its value. Off for things you use.",
+  "assetErrorValue": "Enter today's value.",
+  "assetsTotal": "Total value",
+  "assetsTotalHelp": "Values you set yourself, each with its date",
+  "assetsEmptyTitle": "No assets yet",
+  "assetsEmptyMessage": "Add a home, land, a car or a share in a business. You set the value; Qima keeps its history.",
+  "assetUpdated": "Updated {date}",
+  "@assetUpdated": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "assetSinceBought": "{amount} since bought",
+  "@assetSinceBought": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "assetUpdateValue": "Update the value",
+  "assetUpdateHelp": "Every update is dated. The latest counts; older values stay as history.",
+  "assetNewValue": "New value",
+  "assetValueSource": "Where the value comes from",
+  "assetSold": "Sold it",
+  "assetSellTitle": "Sell {name}",
+  "@assetSellTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "assetLastValue": "Last value: {amount}",
+  "@assetLastValue": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "assetSoldInto": "Money went into",
+  "assetSoldFor": "Sold for",
+  "assetGain": "Gain of {amount}",
+  "@assetGain": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "assetLoss": "Loss of {amount}",
+  "@assetLoss": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "assetGainHelp": "Compared with the last value. It's a change in value, never income.",
+  "assetPayOff": "The sale paid off {name}",
+  "@assetPayOff": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "assetPayOffHelp": "{amount} still owed, paid from the same account",
+  "@assetPayOffHelp": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "assetYours": "What is yours",
+  "assetValue": "Value",
+  "assetStillOwed": "Still owed on {name}",
+  "@assetStillOwed": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "assetYoursTotal": "Yours",
+  "assetYoursHelp": "The balance sheet still lists the asset under what you own and the loan under what you owe.",
+  "assetHistory": "History",
+  "assetRemoveTitle": "Remove asset",
+  "assetRemoveMessage": "To record a sale, use Sold it instead. Removing archives it with its history.",
+  "howTotalWorked": "How the total is worked out",
+  "howTotalIntro": "Net worth is what you own minus what you owe.",
+  "howTotalHoldings": "Holdings use live prices, as on the watchlist.",
+  "howTotalAssets": "Assets you value yourself use their latest value, with its date; each can be left out.",
+  "howTotalLoans": "Loans count principal only; future profit isn't a debt until it falls due.",
+  "howTotalRates": "Other currencies use the live rate.",
+  "sheetAccountsCount": "{count, plural, =0{No accounts} =1{1 account} other{{count} accounts}}",
+  "@sheetAccountsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "budgetFor": "Budget for {name}",
+  "@budgetFor": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "budgetIntro": "Set a monthly amount for the categories you want to watch. Card payments, transfers and loan principal never count.",
+  "budgetMonthly": "Each month",
+  "budgetZeroHelp": "Zero removes it.",
+  "budgetNone": "No budget",
+  "budgetOf": "Budget {amount}",
+  "@budgetOf": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "budgetSet": "Set a budget",
+  "budgetTotal": "This month's budget",
+  "recurringAdd": "Add a planned payment",
+  "recurringDay": "Day of the month",
+  "recurringEmptyTitle": "No planned payments",
+  "recurringEmptyMessage": "Add rent, bills, installments or your salary to see them in Coming up before they're due.",
+  "recurringNext": "Next {date}",
+  "@recurringNext": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "recurringRecord": "Record {name} for {date}",
+  "@recurringRecord": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "peopleEmptyTitle": "Nobody yet",
+  "peopleEmptyMessage": "Record money you lend or borrow, and the repayments.",
+  "splitTotal": "Bill total",
+  "splitWho": "Who else shared it",
+  "splitShare": "Share",
+  "splitAddPerson": "Add a person",
+  "splitEvenly": "Split evenly",
+  "splitMine": "Your share (spending)",
+  "splitOwedToYou": "Owed to you",
+  "splitHelp": "The full amount leaves the account; only your share is spending, and each other share becomes money owed to you.",
+  "splitErrorPerson": "Each person needs a name and a share.",
+  "splitErrorShares": "Add at least one person, with shares no more than the total.",
+  "categoriesTitle": "Categories",
+  "categoriesSpending": "Spending",
+  "categoriesIncome": "Income",
+  "categoryRename": "Rename category",
+  "categoryRemove": "Remove category",
+  "categoryRemoveMessage": "Transactions in it keep it in their history.",
+  "categoryAddSpending": "New spending category",
+  "categoryAddIncome": "New income category",
+  "valueReview": "Review asset values",
+  "valueReviewHelp": "A reminder in Needs review",
+  "valueReviewOff": "Off",
+  "valueReviewMonths": "{months, plural, =1{Every month} other{Every {months} months}}",
+  "@valueReviewMonths": {
+    "placeholders": {
+      "months": {
+        "type": "int"
+      }
+    }
+  },
+  "addSheetTransaction": "Transaction",
+  "addSheetTransactionSubtitle": "Money spent, earned or moved",
+  "entryVoiceTitle": "Say it instead of typing",
+  "entryVoiceListening": "Listening… tap to stop",
+  "@entryVoiceTitle": {"description": "The large voice button at the top of New transaction."},
+  "entryVoiceHint": "Say what happened, like “Spent 45 at Panda with Visa yesterday”",
+  "entryVoiceNothing": "Didn’t catch an amount or a name. Try again, or type it.",
+  "entryNewTitle": "New transaction",
+  "addSheetMore": "More",
+  "addSheetMoreSubtitle": "Income, transfers, loans, lending, accounts, assets",
+  "whatsNewTitle": "What's new in Qima",
+  "whatsNewTabs": "Three tabs: Home for where you stand, Money for where it goes, Prices for the market.",
+  "whatsNewBalanceSheet": "Your holdings, accounts, cards and loans add up on one balance sheet. Tap the total to see it.",
+  "whatsNewAssets": "Add property, a car or a business and update its value yourself.",
+  "whatsNewPick": "What would you like to use?",
+  "whatsNewLater": "You can change these any time in Settings › Features.",
+  "zakatDueTitle": "Zakat due",
+  "zakatDueLine": "{amount} due",
+  "@zakatDueLine": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "zakatBelowLine": "Below the nisab",
+  "zakatBaseLine": "Counted: {amount}",
+  "@zakatBaseLine": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "zakatAbove": "Above the nisab of {amount}",
+  "@zakatAbove": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "zakatBelow": "Below the nisab of {amount}",
+  "@zakatBelow": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "zakatNoThreshold": "The nisab is shown once gold and silver prices load.",
+  "zakatBase": "Counted for zakat",
+  "zakatHeldForSale": "Assets held for sale",
+  "zakatDebtsDue": "Debts due now",
+  "zakatBookHelp": "Holdings follow your zakat settings. Card balances and money you owe people are deducted; loans aren't, because only an instalment due now would be, and Qima doesn't know a loan's schedule.",
+  "zakatHoldingsDetail": "Holdings in detail",
+  "importStatement": "Import a statement",
+  "importStatementSubtitle": "PDF, Excel, CSV or screenshots from your bank",
+  "importFromFiles": "From Files",
+  "importFromFilesHint": "Statements as PDF, Excel or CSV",
+  "importFromPhotos": "Screenshots from Photos",
+  "importFromPhotosHint": "Your banking app's transactions",
+  "importFromClipboard": "From the clipboard",
+  "importFromClipboardHint": "A copied statement, receipt, bank message or screenshot",
+  "importPastedName": "Pasted",
+  "importShareTip": "You can also share files to Qima from any app.",
+  "importReadingFiles": "{count, plural, =1{Reading 1 file…} other{Reading {count} files…}}",
+  "@importReadingFiles": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "importReadyRows": "{count, plural, =0{Nothing found to add} =1{1 transaction to review} other{{count} transactions to review}}",
+  "@importReadyRows": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "importReadyBalance": "A balance to check",
+  "bankMessagesTitle": "Bank text messages",
+  "bankMessagesEntry": "Bank text messages",
+  "bankMessagesEntryHint": "Add purchases from your bank’s messages",
+  "bankMessagesIntro": "Your bank texts you each purchase, transfer and salary. Qima can read those messages and suggest them as transactions. You check each one before it’s added.",
+  "bankMessagesRead": "Read new bank messages",
+  "bankMessagesReadHint": "Only messages with an amount. Codes and personal messages are skipped.",
+  "bankMessagesRecent": "Bring in the last 60 days",
+  "bankMessagesRecentHint": "Messages already in Qima are skipped",
+  "bankMessagesDenied": "Qima needs permission to read messages. You can allow it in Settings.",
+  "bankMessagesSetUp": "Set it up once in Shortcuts",
+  "bankMessagesStep1": "Open Shortcuts, go to Automation and tap +, then choose Message.",
+  "bankMessagesStep2": "Pick your bank as the sender, or a word its messages always have, such as SAR.",
+  "bankMessagesStep3": "Choose Run Immediately.",
+  "bankMessagesStep4": "Add Qima’s “Add a bank message” action and pass it the message and its sender.",
+  "bankMessagesOpenShortcuts": "Open Shortcuts",
+  "bankMessagesUnavailable": "Bank messages can be added on iPhone and Android.",
+  "bankMessagesPrivacy": "Messages are read on this device and never leave it.",
+  "importMessagesInto": "Messages into",
+  "importMessageFrom": "Message from {sender}",
+  "@importMessageFrom": {"placeholders": {"sender": {"type": "String"}}},
+  "importMoveMessage": "Move to another account",
+  "bankMessagesNotifyTitle": "Bank messages to check",
+  "bankMessagesNotifyBody": "Open Qima to check them before they’re added.",
+  "bankMessagesAutoAdded": "{count, plural, =1{Added 1 transaction from a bank message} other{Added {count} transactions from bank messages}}",
+  "@bankMessagesAutoAdded": {"placeholders": {"count": {"type": "int"}}},
+  "bankMessagesAutoAdd": "Add the ones Qima is sure of",
+  "bankMessagesAutoAddHint": "When a message names its account and nothing needs checking, it’s added right away, with Undo. The rest wait for you.",
+  "bankMessagesOfferTitle": "Add purchases from your bank’s texts",
+  "bankMessagesOfferBody": "Qima can read new bank messages on this phone and suggest each one as a transaction in its own account. Messages are read on this device only.",
+  "bankMessagesOfferAllow": "Allow",
+  "bankMessagesOfferLater": "Not now",
+  "bankMessagesFound": "{count, plural, =0{No bank messages found} =1{1 bank message to check} other{{count} bank messages to check}}",
+  "@bankMessagesFound": {"placeholders": {"count": {"type": "int"}}},
+  "importBannerTitle": "Shared to Qima",
+  "importReviewTitle": "Review import",
+  "importIntoAccount": "Statement of",
+  "importNoAccountTitle": "Add the account first",
+  "importNoAccountBody": "Add the bank account or card this statement is from, then come back here.",
+  "importNoAccountMessagesBody": "Add the bank account or card these messages are from, then come back here.",
+  "importAddCount": "{count, plural, =0{Add} =1{Add 1 transaction} other{Add {count} transactions}}",
+  "@importAddCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "importAdded": "{count, plural, =1{1 transaction added} other{{count} transactions added}}",
+  "@importAdded": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "importDiscardAll": "Discard all",
+  "importApplyBalance": "Apply the balance",
+  "@importApplyBalance": {
+    "description": "Review button when no rows are ticked but the statement balance will be set"
+  },
+  "importDiscardConfirm": "Discard these files? Nothing from them is added.",
+  "importDiscard": "Discard",
+  "importRemoveFile": "Remove file",
+  "importAddRow": "Add this transaction",
+  "importSkipRow": "Skip this transaction",
+  "importFlagInBook": "Already in Qima",
+  "importFlagMaybeInBook": "Same amount as {merchant} on {date}: check it isn't the same",
+  "@importFlagMaybeInBook": {
+    "placeholders": {
+      "merchant": {"type": "String"},
+      "date": {"type": "String"}
+    }
+  },
+  "importBetweenAccounts": "Between your accounts",
+  "importTransferWith": "Transfer · {name}",
+  "@importTransferWith": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "importRowName": "Description",
+  "importFlagRepeated": "Also in another file",
+  "importFlagCurrency": "In {currency}, not the account's currency",
+  "@importFlagCurrency": {
+    "placeholders": {
+      "currency": {
+        "type": "String"
+      }
+    }
+  },
+  "importDateGuessed": "No date found: set to the day it was shared",
+  "importSignGuessed": "Check: in or out?",
+  "importFlagNotTransaction": "Looks like the bank's own text, not a transaction",
+  "importRefCard": "Card •••• {last4}",
+  "@importRefCard": {
+    "placeholders": {
+      "last4": {
+        "type": "String"
+      }
+    }
+  },
+  "importRefAccount": "Account •••• {last4}",
+  "@importRefAccount": {
+    "placeholders": {
+      "last4": {
+        "type": "String"
+      }
+    }
+  },
+  "importRefIban": "IBAN •••• {last4}",
+  "@importRefIban": {
+    "placeholders": {
+      "last4": {
+        "type": "String"
+      }
+    }
+  },
+  "importBalances": "Opening {opening} → closing {closing}",
+  "@importBalances": {
+    "placeholders": {
+      "opening": {
+        "type": "String"
+      },
+      "closing": {
+        "type": "String"
+      }
+    }
+  },
+  "importAddsUp": "The ticked rows match the statement's opening and closing balances",
+  "importGap": "{amount} not accounted for: check for a missed row",
+  "@importGap": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "importOpeningBalance": "Add the opening balance: {amount}",
+  "@importOpeningBalance": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "importMatchBalance": "Bring the balance to {amount}",
+  "@importMatchBalance": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "importBalanceDetail": "As the statement shows on {date}. Without it, Qima would have {tracked}.",
+  "@importBalanceDetail": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "tracked": {
+        "type": "String"
+      }
+    }
+  },
+  "importStatusReading": "Reading…",
+  "importStatusWaiting": "Waiting",
+  "importStatusAlready": "Imported before",
+  "importStatusUnsupported": "Qima can't read this kind of file",
+  "importStatusUnreadable": "Couldn't read this file",
+  "importStatusNothing": "No transactions found in this file",
+  "importRowFound": "{count, plural, =1{1 found} other{{count} found}}",
+  "@importRowFound": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "importEditRow": "Transaction",
+  "importCategory": "Category",
+  "importNothingSelected": "Tick the transactions to add.",
+  "importReadOnDevice": "Read on this device. Files are deleted once imported.",
+  "importMessageNoSender": "Messages without a sender all go to one account. Pass the Sender to Qima’s action in your Shortcuts automation.",
+  "@importMessageNoSender": {"description": "Tip on the import review when a bank message from an iOS Shortcuts automation came without its sender"},
+  "importEmpty": "Nothing waiting",
+  "catUncategorized": "Uncategorized",
+  "@catUncategorized": {
+    "description": "Categories: catUncategorized"
+  },
+  "catUncategorizedIncome": "Uncategorized income",
+  "@catUncategorizedIncome": {
+    "description": "Categories: catUncategorizedIncome"
+  },
+  "toCategorizeTitle": "To categorize",
+  "@toCategorizeTitle": {
+    "description": "Categories: toCategorizeTitle"
+  },
+  "toCategorizeCount": "{count, plural, =1{1 to categorize} other{{count} to categorize}}",
+  "@toCategorizeCount": {
+    "description": "Categories: toCategorizeCount",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "toCategorizeHint": "Pick a category once for each name. Imports from that name use it from now on.",
+  "@toCategorizeHint": {
+    "description": "Categories: toCategorizeHint"
+  },
+  "toCategorizeEmpty": "Everything has a category.",
+  "@toCategorizeEmpty": {
+    "description": "Categories: toCategorizeEmpty"
+  },
+  "toCategorizeAlso": "{count, plural, =1{Also put 1 earlier entry from {name} in {category}? It is in {from} now.} other{Also put {count} earlier entries from {name} in {category}? They are in {from} now.}}",
+  "@toCategorizeAlso": {
+    "description": "Categories: toCategorizeAlso",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "name": {
+        "type": "String"
+      },
+      "category": {
+        "type": "String"
+      },
+      "from": {
+        "type": "String"
+      }
+    }
+  },
+  "toCategorizeAlsoYes": "Move them",
+  "@toCategorizeAlsoYes": {
+    "description": "Categories: toCategorizeAlsoYes"
+  },
+  "categoriesLearned": "Learned from your choices",
+  "@categoriesLearned": {
+    "description": "Categories: categoriesLearned"
+  },
+  "categoriesForgetTitle": "Forget this choice?",
+  "@categoriesForgetTitle": {
+    "description": "Categories: categoriesForgetTitle"
+  },
+  "categoriesForgetMessage": "Imports from {name} will no longer go to {category} on their own. Entries already there stay.",
+  "@categoriesForgetMessage": {
+    "description": "Categories: categoriesForgetMessage",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "category": {
+        "type": "String"
+      }
+    }
+  },
+  "categoriesForget": "Forget",
+  "@categoriesForget": {
+    "description": "Categories: categoriesForget"
+  },
+  "marketClosed": "Closed",
+  "marketClosedOpens": "Market closed · opens {time}",
+  "marketOpenCloses": "Market open · closes {time}",
+  "marketClosedLong": "Market closed",
+  "@marketClosed": {
+    "description": "A price row's mark while its market is shut."
+  },
+  "@marketClosedOpens": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "@marketOpenCloses": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "@marketClosedLong": {
+    "description": "The detail screen's line when the next opening is unknown."
+  },
+  "holdingsCount": "{count, plural, =1{1 holding} other{{count} holdings}}",
+  "@holdingsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "pricesAt": "prices {time}",
+  "@pricesAt": {
+    "description": "Under the holdings total on Home: when prices were last fetched.",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "balanceWayTransaction": "Add a transaction",
+  "balanceWayTransactionDetail": "The difference counts as spending or income in {other}",
+  "@balanceWayTransactionDetail": {
+    "placeholders": {
+      "other": {
+        "type": "String"
+      }
+    }
+  },
+  "balanceWayOpening": "Change the opening balance",
+  "balanceWayOpeningDetail": "From its first day, not as spending or income",
+  "netLabel": "Net",
+  "@netLabel": {
+    "description": "Under the figure in the middle of a donut: what is left after subtracting one side from the other."
+  },
+  "planOut": "Going out",
+  "planIn": "Coming in",
+  "planRepeat": "Repeats",
+  "planRepeatOnce": "Once",
+  "planRepeatWeekly": "Every week",
+  "planRepeatMonthly": "Every month",
+  "planRepeatQuarterly": "Every 3 months",
+  "planRepeatYearly": "Every year",
+  "planDate": "Due on",
+  "planTimes": "Number of payments",
+  "planTimesHelp": "Leave empty for no end, or 4 for an installment plan in 4 parts.",
+  "planPaidInto": "Paid into",
+  "planRemind": "Remind me the day before",
+  "planLeft": "{left} of {total} left",
+  "@planLeft": {"placeholders": {"left": {"type": "int"}, "total": {"type": "int"}}},
+  "planFinished": "Finished",
+  "planOverdue": "Overdue since {date}",
+  "@planOverdue": {"placeholders": {"date": {"type": "String"}}},
+  "planRecord": "Record",
+  "planSkip": "Skip this one",
+  "planDueTomorrow": "{name} is due tomorrow",
+  "@planDueTomorrow": {"placeholders": {"name": {"type": "String"}}},
+  "planExpectedTomorrow": "{name} is expected tomorrow",
+  "@planExpectedTomorrow": {"placeholders": {"name": {"type": "String"}}},
+  "planReminderBody": "Open Qima to record it when it happens.",
+  "plannedThisMonth": "{amount} still planned this month",
+  "@plannedThisMonth": {"placeholders": {"amount": {"type": "String"}}},
+  "categoryNew": "New category…",
+  "categoryNewTitle": "New category",
+  "planEdit": "Change it",
+  "accountNumberAccount": "Account number",
+  "accountNumberIban": "IBAN",
+  "accountNumberCard": "Card number",
+  "accountNumberHelp": "The last 4 digits are enough. Qima keeps only the last 4, to match statements and bank messages to this account.",
+  "accountNumberShort": "Enter at least the last 4 digits",
+  "applePaySetUp": "Apple Pay payments",
+  "applePayIntro": "Each Apple Pay payment can come to Qima as you pay, even from cards that never text you.",
+  "applePayStep1": "In Shortcuts, go to Automation, tap + and choose Wallet.",
+  "applePayStep2": "Pick your cards, then choose Run Immediately.",
+  "applePayStep3": "Add Qima’s “Add a Wallet payment” action.",
+  "applePayStep4": "Set its Amount, Merchant and Card to the Shortcut Input’s Amount, Merchant and Card or Pass.",
+  "entryMarkAs": "Mark as",
+  "splitByAmount": "Amount",
+  "splitByEqually": "Equally",
+  "splitByPercent": "Percent",
+  "splitByShares": "Shares",
+  "splitYou": "You",
+  "tplHoldingTrade": "Holdings trade",
+  "sysHoldings": "Holdings",
+  "holdingPaidFrom": "Paid from",
+  "holdingPaidInto": "Paid into",
+  "holdingNoCash": "No cash moved (already held)",
+  "holdingCashHelp": "Takes the amount off this account so it isn't counted twice.",
+  "entryFromHoldings": "This came from a holdings trade. Change or delete it in Holdings.",
+  "settingsAiApps": "AI apps",
+  "aiAppsToggle": "Let AI apps read Qima",
+  "aiAppsFooter": "Claude and other AI apps on this computer that support MCP can read your accounts, transactions, budget and net worth. They can't change anything. What they read goes to that app's AI service. Account, card and IBAN numbers and account notes are never shared, and turning this off removes the shared copy.",
+  "aiAppsSetupTitle": "Add Qima to your AI app",
+  "aiAppsSetupBody": "In Claude Desktop, open Settings, then Developer, then Edit Config, and add this to the file. Other apps that support MCP use the same command and arguments.",
+  "aiAppsCopy": "Copy",
+  "aiAppsCopied": "Copied",
+  "aiAppsFreshness": "The copy updates while Qima is open.",
+  "aiAppsNoHelper": "The connector isn't in this copy of Qima. Install Qima from the store or the website to use it.",
+  "setupWelcomeTitle": "Let’s set Qima up for you",
+  "setupWelcomeBody": "Answer a few questions and Qima shows only what you need. It takes about a minute.",
+  "setupWelcomeNoAccount": "No account needed",
+  "setupWelcomeOnDevice": "Your answers stay on this device",
+  "setupWelcomeChangeLater": "Change anything later in Settings",
+  "setupWelcomeSkip": "Skip, I’ll set it up myself",
+  "setupChosen": "{count, plural, =0{Nothing chosen} other{{count} chosen}}",
+  "@setupChosen": {"placeholders": {"count": {"type": "int"}}},
+  "setupListSeparator": ", ",
+  "setupCurrencyTitle": "What is your main currency?",
+  "setupCurrencyBody": "Totals, budgets and prices are shown in it.",
+  "setupCurrencyFromRegion": "From your region",
+  "setupCurrencyMore": "More currencies",
+  "setupUsesTitle": "How do you want to use Qima?",
+  "setupChooseAll": "Choose all that apply.",
+  "setupUseMoney": "Manage my money",
+  "setupUseMoneyBody": "Spending, accounts, budgets and bills",
+  "setupUsePortfolio": "Manage my portfolio",
+  "setupUsePortfolioBody": "What I hold, what it cost and what it is worth",
+  "setupUsePrices": "Watch prices",
+  "setupUsePricesBody": "Gold, stocks, currencies and alerts",
+  "setupUseNetWorth": "Know my net worth",
+  "setupUseNetWorthBody": "Everything I own and owe, in one number",
+  "setupUseZakat": "Work out my zakat",
+  "setupUseZakatBody": "Over my holdings, cash and debts",
+  "setupProductsTitle": "What do you invest in or follow?",
+  "setupProductsBody": "Qima suggests prices to watch from your choices.",
+  "setupProductMetals": "Gold and silver",
+  "setupProductMetalsBody": "Bars, coins and jewellery, by karat",
+  "setupProductStocks": "Stocks",
+  "setupProductStocksBody": "Shares you own or follow",
+  "setupProductCurrencies": "Currencies",
+  "setupProductCurrenciesBody": "Dollar, euro and riyal rates",
+  "setupProductCrypto": "Crypto",
+  "setupProductCryptoBody": "Bitcoin, Ethereum and others",
+  "setupProductIndices": "Indices",
+  "setupProductIndicesBody": "S&P 500, Nasdaq and others",
+  "setupProductProperty": "Property and other",
+  "setupProductPropertyBody": "A home, land, a car or a business",
+  "setupPricesTitle": "Start with these prices",
+  "setupPricesBody": "Picked from your choices and shown in {currency}. Untick any you do not want.",
+  "@setupPricesBody": {"placeholders": {"currency": {"type": "String"}}},
+  "setupPricesAdd": "{count, plural, =0{Add to my watchlist} =1{Add 1 to my watchlist} other{Add {count} to my watchlist}}",
+  "@setupPricesAdd": {"placeholders": {"count": {"type": "int"}}},
+  "setupPricesNotNow": "Not now",
+  "setupGoalsTitle": "What do you want from your money?",
+  "setupGoalWhere": "Know where my money goes",
+  "setupGoalWhereBody": "Spending by category, every month",
+  "setupGoalSave": "Save more each month",
+  "setupGoalSaveBody": "Money in, money out and what is left over",
+  "setupGoalBudget": "Stick to a budget",
+  "setupGoalBudgetBody": "A monthly amount for each category",
+  "setupGoalBills": "Never miss a bill",
+  "setupGoalBillsBody": "Bills and installments before they are due",
+  "setupGoalPeople": "Track who owes me",
+  "setupGoalPeopleBody": "Money lent and borrowed, by person",
+  "setupCaptureTitle": "How will you add your spending?",
+  "setupCaptureBody": "You can use more than one.",
+  "setupCaptureType": "Type or say it",
+  "setupCaptureTypeBody": "“Coffee 85 from cash” becomes a transaction",
+  "setupCaptureMessages": "Read my bank messages",
+  "setupCaptureMessagesBody": "Each bank message becomes a transaction to review",
+  "setupCaptureStatement": "Import a statement",
+  "setupCaptureStatementBody": "A PDF, Excel or CSV file, or a screenshot",
+  "setupCapturePrivacy": "Messages and files are read on this device. Nothing is uploaded.",
+  "setupSummaryTitle": "Qima is ready",
+  "setupSummaryBody": "This is what your answers set up. Tap a row to change it.",
+  "setupSummaryCurrency": "Main currency",
+  "setupSummaryHome": "On your Home",
+  "setupSummaryFeatures": "Turned on",
+  "setupSummaryNothingNew": "Nothing extra",
+  "setupSummaryWatchlist": "Watchlist",
+  "setupSummaryWatchlistKept": "Left as it is",
+  "setupSummaryPrices": "{count, plural, =1{1 price} other{{count} prices}}",
+  "@setupSummaryPrices": {"placeholders": {"count": {"type": "int"}}},
+  "setupSummaryCapture": "Adding spending",
+  "setupSummaryLater": "You can change any of this later in Settings.",
+  "setupSummaryTour": "Show me around",
+  "setupSummaryGoHome": "Go to Home",
+  "tourTabsTitle": "Three places",
+  "tourTabsBody": "Home is where you stand. Money is where it goes. Prices is the market.",
+  "tourAddTitle": "Add anything from here",
+  "tourAddBody": "A transaction, an account, a holding or a price. You can type it or say it.",
+  "tourMoneyTitle": "Your month at a glance",
+  "tourMoneyBody": "Money in, money out and what is left over, month by month.",
+  "tourPricesTitle": "Tap a price for its chart",
+  "tourPricesBody": "Set an alert there and Qima tells you when it crosses a level.",
+  "tourStepOf": "{step} of {total}",
+  "@tourStepOf": {"placeholders": {"step": {"type": "int"}, "total": {"type": "int"}}},
+  "tourSkip": "Skip tour",
+  "tourNext": "Next",
+  "startCardTitle": "Get started",
+  "startCardProgress": "{done} of {total}",
+  "@startCardProgress": {"placeholders": {"done": {"type": "int"}, "total": {"type": "int"}}},
+  "startCardSetUp": "Set up Qima",
+  "startCardDismiss": "Hide Get started",
+  "startTaskAccount": "Add your first account",
+  "startTaskTransaction": "Record a transaction",
+  "startTaskHolding": "Add what you hold",
+  "startTaskAsset": "Add a property, a car or another asset",
+  "startTaskAlert": "Set a price alert",
+  "startTaskBankMessages": "Set up bank messages",
+  "settingsHelpRunSetup": "Run setup again",
+  "settingsHelpRunSetupSubtitle": "Answer the setup questions again. Nothing you use is turned off."
 }

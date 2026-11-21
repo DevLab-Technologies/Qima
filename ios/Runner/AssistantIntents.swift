@@ -4,8 +4,9 @@ import Foundation
 // Read-only answers for Siri, Shortcuts and Spotlight (v4 phase 5). They
 // read the snapshot the app publishes for its widgets (Snapshot.swift) and
 // price with the same rules, so an answer matches the widget and the app.
-// Nothing here writes: a system assistant can't show Qima's check-before-
-// saving step, so recording stays in the app.
+// Nothing here records: a system assistant can't show Qima's check-before-
+// saving step, so recording stays in the app. A bank message sent from a
+// Shortcuts automation only waits in the import inbox for that check.
 
 /// An asset the app has a price for: watchlist cards' assets first.
 @available(iOS 17.0, macOS 14.0, *)
@@ -102,6 +103,91 @@ struct GetPortfolioValueIntent: AppIntent {
     }
 }
 
+/// A bank's text message, sent by a Shortcuts automation ("When I get a
+/// message from my bank, add it to Qima"). It waits in the import inbox,
+/// as a shared file does, until the person checks it in the app; a message
+/// with no transaction in it is dropped there.
+@available(iOS 17.0, macOS 14.0, *)
+struct AddBankMessageIntent: AppIntent {
+    static let title: LocalizedStringResource = "Add a bank message"
+    static let description = IntentDescription("Sends a bank's text message to Qima. Nothing is added until you check it in the app.")
+    static let openAppWhenRun = false
+
+    @Parameter(title: "Message")
+    var message: String
+
+    /// The Message automation's Sender, so Qima can tell which bank (and
+    /// account) the message is from.
+    @Parameter(title: "Sender")
+    var sender: String?
+
+    func perform() async throws -> some IntentResult {
+        try MessageInbox.add(message, sender: sender)
+        return .result()
+    }
+}
+
+/// One Apple Pay payment from a Shortcuts Wallet automation ("When I tap
+/// any of my cards"), written as a labelled message so the same reader that
+/// reads bank texts reads it, and waiting for review like one.
+@available(iOS 17.0, macOS 14.0, *)
+struct AddApplePayIntent: AppIntent {
+    static let title: LocalizedStringResource = "Add a Wallet payment"
+    static let description = IntentDescription("Sends a card payment from a Wallet automation to Qima. Nothing is added until you check it in the app.")
+    static let openAppWhenRun = false
+
+    @Parameter(title: "Amount")
+    var amount: String
+
+    @Parameter(title: "Merchant")
+    var merchant: String
+
+    @Parameter(title: "Card")
+    var card: String?
+
+    func perform() async throws -> some IntentResult {
+        try MessageInbox.add(Self.message(amount: amount, merchant: merchant, card: card, at: Date()))
+        return .result()
+    }
+
+    static func message(amount: String, merchant: String, card: String?, at date: Date) -> String {
+        let when = DateFormatter()
+        when.locale = Locale(identifier: "en_US_POSIX")
+        when.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        func clean(_ s: String) -> String { s.trimmingCharacters(in: .whitespacesAndNewlines) }
+        var lines = ["Apple Pay purchase"]
+        if let card, !clean(card).isEmpty { lines.append("Card: \(clean(card))") }
+        lines.append("Amount: \(clean(amount))")
+        if !clean(merchant).isEmpty { lines.append("Merchant: \(clean(merchant))") }
+        lines.append("On: \(when.string(from: date))")
+        return lines.joined(separator: "\n")
+    }
+}
+
+/// The share extension's inbox layout (`ShareViewController`): a folder per
+/// item, written under a dotted name and renamed once complete.
+enum MessageInbox {
+    struct Unavailable: Error {}
+
+    static func add(_ text: String, sender: String? = nil, at date: Date = Date()) throws {
+        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return }
+        guard let container = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: "group.com.devlabtechnologies.qima") else {
+            throw Unavailable()
+        }
+        let inbox = container.appendingPathComponent("ImportInbox", isDirectory: true)
+        let id = UUID().uuidString
+        let staging = inbox.appendingPathComponent(".\(id)", isDirectory: true)
+        try FileManager.default.createDirectory(at: staging, withIntermediateDirectories: true)
+        let name = "Bank message.txt"
+        try Data(trimmed.utf8).write(to: staging.appendingPathComponent(name))
+        var meta: [String: Any] = ["name": name, "receivedAt": ISO8601DateFormatter().string(from: date), "kind": "message"]
+        if let from = sender?.trimmingCharacters(in: .whitespacesAndNewlines), !from.isEmpty { meta["sender"] = from }
+        try JSONSerialization.data(withJSONObject: meta).write(to: staging.appendingPathComponent("meta.json"))
+        try FileManager.default.moveItem(at: staging, to: inbox.appendingPathComponent(id, isDirectory: true))
+    }
+}
+
 @available(iOS 17.0, macOS 14.0, *)
 struct QimaShortcuts: AppShortcutsProvider {
     static var appShortcuts: [AppShortcut] {
@@ -122,6 +208,18 @@ struct QimaShortcuts: AppShortcutsProvider {
             ],
             shortTitle: "Price",
             systemImageName: "chart.line.uptrend.xyaxis"
+        )
+        AppShortcut(
+            intent: AddBankMessageIntent(),
+            phrases: ["Add a bank message to \(.applicationName)"],
+            shortTitle: "Bank message",
+            systemImageName: "message"
+        )
+        AppShortcut(
+            intent: AddApplePayIntent(),
+            phrases: ["Add a Wallet payment to \(.applicationName)"],
+            shortTitle: "Wallet payment",
+            systemImageName: "wallet.pass"
         )
     }
 }

@@ -15,7 +15,6 @@ import 'package:qima/models/watch_card.dart';
 import 'package:qima/screens/help_index_sheet.dart';
 import 'package:qima/screens/help_sheet.dart';
 import 'package:qima/screens/home_shell.dart';
-import 'package:qima/screens/onboarding_tour_screen.dart';
 import 'package:qima/screens/settings_screen.dart';
 import 'package:qima/screens/watchlist_screen.dart';
 import 'package:qima/services/local_file_store.dart';
@@ -24,6 +23,8 @@ import 'package:qima/theme/help_topics.dart';
 import 'package:qima/widgets/help_button.dart';
 import 'package:qima/theme/app_theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../helpers/money_provider.dart';
 
 /// Help button + help sheet behavior (spec "Help on every page" +
 /// Engineering rules): the button is present on every listed page, opens
@@ -66,8 +67,7 @@ void main() {
   });
 
   Widget harness(Widget child, {Locale locale = const Locale('en')}) {
-    return BlocProvider<AppCubit>.value(
-      value: cubit,
+    return MultiBlocProvider(providers: [BlocProvider<AppCubit>.value(value: cubit), testMoneyProvider(cubit)],
       child: MaterialApp(
         locale: locale,
         localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -115,7 +115,7 @@ void main() {
     expect(find.text(l10n.helpWatchlistStep1Title), findsOneWidget);
   });
 
-  testWidgets('"Replay the tour" from a help sheet opens the tour', (tester) async {
+  testWidgets('"Replay the tour" from a help sheet closes it and asks the shell for the tour', (tester) async {
     setSurfaceSize(tester, const Size(400, 800));
     await tester.pumpWidget(harness(const WatchlistScreen(manageRefreshLifecycle: false)));
     await settle(tester);
@@ -130,7 +130,31 @@ void main() {
     await tester.tap(find.text(l10n.onboardingReplayTour));
     await settle(tester);
 
-    expect(find.byType(OnboardingTourScreen), findsOneWidget);
+    expect(find.byType(HelpSheet), findsNothing);
+    expect(cubit.state.tourRequested, isTrue);
+  });
+
+  testWidgets('a help sheet on a screen opened over the shell has no "Replay the tour"', (tester) async {
+    setSurfaceSize(tester, const Size(400, 800));
+    await tester.pumpWidget(harness(Builder(
+      builder: (context) => Scaffold(
+        body: TextButton(
+          onPressed: () => Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => const WatchlistScreen(manageRefreshLifecycle: false))),
+          child: const Text('open'),
+        ),
+      ),
+    )));
+    await settle(tester);
+    await tester.tap(find.text('open'));
+    await settle(tester);
+
+    await tester.tap(find.byIcon(Icons.help_outline));
+    await settle(tester);
+
+    final l10n = await AppLocalizations.delegate.load(const Locale('en'));
+    // Replaying would close the screen under the sheet, so it isn't offered.
+    expect(find.byType(HelpSheet), findsOneWidget);
+    expect(find.text(l10n.onboardingReplayTour), findsNothing);
   });
 
   testWidgets('the "How Qima works" index sheet lists every topic', (tester) async {
@@ -175,11 +199,11 @@ void main() {
     await tester.tap(find.text(l10n.settingsHelpHowQimaWorks));
     await settle(tester);
 
-    await tester.tap(find.text(l10n.helpPortfolioTitle));
+    await tester.tap(find.descendant(of: find.byType(HelpIndexSheet), matching: find.text(l10n.entryNewTitle)));
     await settle(tester);
 
     expect(find.byType(HelpSheet), findsOneWidget);
-    expect(find.text(l10n.helpPortfolioStep1Title), findsOneWidget);
+    expect(find.text(l10n.helpNewTransactionStep1Title), findsOneWidget);
   });
 
   testWidgets('Settings Help group has Replay the tour and How Qima works', (tester) async {

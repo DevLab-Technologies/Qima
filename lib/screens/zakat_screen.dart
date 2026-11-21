@@ -3,15 +3,19 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../blocs/app_cubit.dart';
 import '../blocs/app_state.dart';
+import '../blocs/money_cubit.dart';
 import '../l10n/app_localizations.dart';
 import '../models/asset.dart';
 import '../models/hijri_date.dart';
 import '../models/holding_totals.dart';
 import '../models/metal_breakdown.dart';
+import '../models/money.dart';
 import '../models/zakat.dart';
+import '../models/zakat_book.dart';
 import '../theme/design_system.dart';
 import '../theme/help_topics.dart';
 import '../theme/masking.dart';
+import '../theme/money_labels.dart';
 import '../theme/qima_colors.dart';
 import '../theme/strings.dart';
 import '../widgets/help_button.dart';
@@ -21,14 +25,18 @@ import 'hawl_date_picker.dart';
 import 'holdings_screen.dart';
 import 'zakat_settings_screen.dart';
 
-/// Zakat overview (v3, Figma "Zakat · Overview"): the amount due at 2.5%,
-/// today's nisab and where the user stands against it, their hawl, and the
-/// list of held assets with what counts and why.
+/// The one Zakat screen: the amount to pay at 2.5% over everything zakat
+/// applies to (holdings the settings count, cash, money owed to you,
+/// assets held for sale, less debts due), today's nisab and where the
+/// person stands against it, their hawl, what each part adds, and the held
+/// assets with what counts and why.
 ///
-/// Recomputed on every state change from the live holdings and prices —
-/// nothing here is stored except the user's [ZakatSettings].
+/// Recomputed on every state change from the book, the live holdings and
+/// prices; nothing here is stored except the person's [ZakatSettings].
 class ZakatScreen extends StatefulWidget {
   const ZakatScreen({super.key});
+
+  static Future<void> open(BuildContext context) => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ZakatScreen()));
 
   @override
   State<ZakatScreen> createState() => _ZakatScreenState();
@@ -68,10 +76,12 @@ class _ZakatScreenState extends State<ZakatScreen> {
         body: BlocBuilder<AppCubit, AppState>(
           builder: (context, state) {
             final assessment = cubit.zakatAssessment;
+            final money = context.watch<MoneyCubit>().state;
+            final z = ZakatOnBook.of(book: money.book, holdings: assessment, currency: state.baseCurrency, rates: state.rates);
             final schedule = HawlSchedule.of(state.zakatSettings, DateTime.now());
             final hidden = state.hideBalances;
 
-            if (assessment.status == NisabStatus.noHoldings) {
+            if (assessment.status == NisabStatus.noHoldings && z.base == 0 && !money.hasBook) {
               return ListView(
                 padding: const EdgeInsets.all(DS.spaceMD),
                 children: [
@@ -102,13 +112,18 @@ class _ZakatScreenState extends State<ZakatScreen> {
               child: ListView(
                 padding: const EdgeInsets.all(DS.spaceMD),
                 children: [
-                  _DueHero(assessment: assessment, schedule: schedule, hidden: hidden),
+                  _DueHero(assessment: assessment, z: z, schedule: schedule, hidden: hidden),
                   const SizedBox(height: DS.spaceLG),
                   SectionHeader(l10n.zakatNisabSection),
-                  _NisabCard(assessment: assessment, settings: state.zakatSettings, schedule: schedule, hidden: hidden),
+                  _NisabCard(assessment: assessment, z: z, settings: state.zakatSettings, schedule: schedule, hidden: hidden),
                   const SizedBox(height: DS.spaceLG),
                   SectionHeader(l10n.zakatWhatCountsSection),
-                  _WhatCountsCard(assessment: assessment, hidden: hidden),
+                  _PartsCard(z: z, hidden: hidden),
+                  if (assessment.lines.isNotEmpty) ...[
+                    const SizedBox(height: DS.spaceLG),
+                    SectionHeader(l10n.sheetHoldings),
+                    _WhatCountsCard(assessment: assessment, hidden: hidden),
+                  ],
                   const SizedBox(height: DS.spaceLG),
                   const _Disclaimer(),
                 ],
@@ -121,22 +136,27 @@ class _ZakatScreenState extends State<ZakatScreen> {
   }
 }
 
+/// Where the whole book stands against the nisab.
+NisabStatus _statusOf(ZakatOnBook z) => !z.thresholdKnown ? NisabStatus.thresholdUnknown : (z.above ? NisabStatus.above : NisabStatus.below);
+
 class _DueHero extends StatelessWidget {
   final ZakatAssessment assessment;
+  final ZakatOnBook z;
   final HawlSchedule? schedule;
   final bool hidden;
 
-  const _DueHero({required this.assessment, required this.schedule, required this.hidden});
+  const _DueHero({required this.assessment, required this.z, required this.schedule, required this.hidden});
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final colors = context.colors;
-    final base = Masking.amount(assessment.base, hidden: hidden);
+    final base = Masking.amount(Money(z.base, z.currency), hidden: hidden);
+    final status = _statusOf(z);
 
     final String statusLabel;
     final Color statusColor;
-    switch (assessment.status) {
+    switch (status) {
       case NisabStatus.above:
         statusLabel = l10n.zakatStatusAbove;
         statusColor = colors.up;
@@ -150,7 +170,7 @@ class _DueHero extends StatelessWidget {
     }
 
     final String explanation;
-    switch (assessment.status) {
+    switch (status) {
       case NisabStatus.above:
         final s = schedule;
         if (s == null) {
@@ -162,7 +182,7 @@ class _DueHero extends StatelessWidget {
               base, dateWithYear(context, s.next), s.daysUntilNext);
         }
       case NisabStatus.below:
-        explanation = l10n.zakatExplainBelow(base, Masking.amount(assessment.threshold!, hidden: false));
+        explanation = l10n.zakatExplainBelow(base, Masking.amount(z.threshold!, hidden: false));
       case NisabStatus.thresholdUnknown:
       case NisabStatus.noHoldings:
         explanation = l10n.zakatExplainUnknown(displayLabel(context, _metalNameKey(assessment.basis)));
@@ -189,14 +209,14 @@ class _DueHero extends StatelessWidget {
             fit: BoxFit.scaleDown,
             alignment: AlignmentDirectional.centerStart,
             child: Text(
-              Masking.amount(assessment.due, hidden: hidden),
+              Masking.amount(Money(z.due, z.currency), hidden: hidden),
               maxLines: 1,
               style: TextStyle(color: colors.textPrimary, fontSize: 32, fontWeight: FontWeight.w800),
             ),
           ),
           const SizedBox(height: DS.spaceXS),
           Text(explanation, style: TextStyle(color: colors.textSecondary, fontSize: 13)),
-          if (assessment.status == NisabStatus.thresholdUnknown) ...[
+          if (status == NisabStatus.thresholdUnknown) ...[
             const SizedBox(height: DS.spaceSM),
             OutlinedButton.icon(
               icon: const Icon(Icons.refresh, size: 18),
@@ -225,11 +245,12 @@ class _DueHero extends StatelessWidget {
 
 class _NisabCard extends StatelessWidget {
   final ZakatAssessment assessment;
+  final ZakatOnBook z;
   final ZakatSettings settings;
   final HawlSchedule? schedule;
   final bool hidden;
 
-  const _NisabCard({required this.assessment, required this.settings, required this.schedule, required this.hidden});
+  const _NisabCard({required this.assessment, required this.z, required this.settings, required this.schedule, required this.hidden});
 
   @override
   Widget build(BuildContext context) {
@@ -330,12 +351,6 @@ class _NisabCard extends StatelessWidget {
           row(l10n.zakatThresholdToday, threshold == null ? '—' : Masking.amount(threshold, hidden: false)),
           Divider(color: colors.hairline, height: 1),
           row(
-            l10n.zakatYourBase,
-            Masking.amount(assessment.base, hidden: hidden),
-            valueColor: assessment.status == NisabStatus.above ? colors.up : null,
-          ),
-          Divider(color: colors.hairline, height: 1),
-          row(
             l10n.zakatHawlStart,
             hawlValue,
             subtitle: hawlSubtitle,
@@ -360,6 +375,53 @@ class _NisabCard extends StatelessWidget {
       if (s != null) s.completesToday ? l10n.zakatHawlCompletesToday : l10n.zakatHawlNext(format(s.next)),
     ];
     return parts.isEmpty ? null : parts.join(' · ');
+  }
+}
+
+/// What each part of the balance sheet adds to the base, debts due taken
+/// off.
+class _PartsCard extends StatelessWidget {
+  final ZakatOnBook z;
+  final bool hidden;
+
+  const _PartsCard({required this.z, required this.hidden});
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final colors = context.colors;
+    String label(ZakatPart p) => switch (p) {
+          ZakatPart.holdings => l10n.sheetHoldings,
+          ZakatPart.cash => l10n.sheetCash,
+          ZakatPart.owedToYou => l10n.sheetOwedToYou,
+          ZakatPart.heldForSale => l10n.zakatHeldForSale,
+          ZakatPart.debtsDue => l10n.zakatDebtsDue,
+        };
+    String amount(double v) => moneyText(v, z.currency, hidden: hidden);
+    Widget line(String title, String value, {bool bold = false, Key? key}) => Padding(
+          key: key,
+          padding: const EdgeInsets.symmetric(vertical: DS.spaceXS),
+          child: Row(children: [
+            Expanded(child: Text(title, style: TextStyle(color: colors.textPrimary, fontWeight: bold ? FontWeight.w700 : FontWeight.w400))),
+            Directionality(
+              textDirection: TextDirection.ltr,
+              child: Text(value, style: TextStyle(color: colors.textPrimary, fontWeight: bold ? FontWeight.w800 : FontWeight.w600)),
+            ),
+          ]),
+        );
+    return DSCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          for (final p in ZakatPart.values) line(label(p), '${p == ZakatPart.debtsDue ? '−' : '+'} ${amount(z.parts[p] ?? 0)}'),
+          Divider(color: colors.hairline, height: DS.spaceMD),
+          line(l10n.zakatBase, amount(z.base), bold: true, key: const ValueKey('zakatBase')),
+          const SizedBox(height: DS.spaceXS),
+          Text(l10n.zakatBookHelp, style: TextStyle(color: colors.textTertiary, fontSize: 12)),
+          if (z.missingRates.isNotEmpty) Text(l10n.sheetMissingRates(z.missingRates.join(', ')), style: TextStyle(color: colors.down, fontSize: 12)),
+        ],
+      ),
+    );
   }
 }
 

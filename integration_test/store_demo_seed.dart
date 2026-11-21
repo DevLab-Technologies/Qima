@@ -15,11 +15,11 @@ import 'package:qima/services/preferences.dart';
 /// dark mode, past onboarding, with prices and history loaded. Idempotent
 /// across runs: re-adding a card id removed earlier would fight the store's
 /// tombstones, so existing demo cards are kept and only others removed.
-Future<void> seedStoreDemo(AppCubit cubit, {AppLanguage language = AppLanguage.en}) async {
+Future<void> seedStoreDemo(AppCubit cubit, {AppLanguage language = AppLanguage.en, String currency = 'USD'}) async {
   await cubit.completeOnboarding();
   await cubit.setAppLanguage(language);
   await cubit.setAppearance(Appearance.dark);
-  await cubit.setBaseCurrency('USD');
+  await cubit.setBaseCurrency(currency);
   // Every run starts from the same ranges: walkthroughs tap other ones, and
   // tapping an already-selected chip does nothing.
   await cubit.setPreferredPortfolioRange(ChartRange.all);

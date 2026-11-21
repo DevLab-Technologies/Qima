@@ -1,0 +1,6 @@
+"sending" = "Sending to Qima…";
+"sent.one" = "1 file sent to Qima";
+"sent.many" = "%d files sent to Qima";
+"sent.hint" = "Open Qima to review what it found.";
+"nothing" = "Nothing here Qima can read";
+"nothing.hint" = "Share statements as PDF, CSV or Excel, screenshots, or the text of a bank message.";

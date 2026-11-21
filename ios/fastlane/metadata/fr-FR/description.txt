@@ -1,27 +1,38 @@
-Qima additionne tout ce que vous possédez, à commencer par l'or, en un seul chiffre, dans la devise de votre choix.
+Qima additionne tout ce que vous possédez et tout ce que vous devez en un seul chiffre, dans la devise de votre choix : comptes bancaires, espèces, cartes, prêts, or, crypto, biens immobiliers et argent entre proches.
 
-PENSÉE POUR L'OR
-• Cours de l'or, de l'argent, du platine et du palladium par once troy, gramme ou kilogramme, en 24K, 22K, 21K et 18K.
+VOTRE PATRIMOINE
+• Votre patrimoine net jour après jour, avec un graphique d'une semaine à toute la période.
+• Un bilan de ce que vous possédez et de ce que vous devez.
+• Estimez vous-même un bien, une voiture ou tout autre actif. Chaque valeur garde sa date, et rien n'est inventé entre deux.
+
+L'ARGENT AU QUOTIDIEN
+• Comptes bancaires, espèces, cartes de crédit et prêts, chacun avec son solde dans le temps.
+• Dépenses par catégorie, budget mensuel et paiements récurrents.
+• Ajoutez une opération en l'écrivant ou en la disant.
+• Importez vos relevés en PDF, tableur ou capture d'écran. Ils sont lus sur votre appareil, et vous vérifiez chaque ligne avant de l'ajouter.
+• Ajoutez les SMS de votre banque grâce à une automatisation Raccourcis.
+• Comparez un solde avec votre banque et choisissez comment l'écart est enregistré : comme une opération ou comme un nouveau solde d'ouverture.
+
+ENTRE PROCHES
+• L'argent prêté et emprunté, avec le solde net d'un coup d'œil.
+• Partagez une addition et ne gardez que votre part comme dépense.
+
+OR ET COURS
+• Or, argent, platine et palladium à l'once troy, au gramme ou au kilogramme, en 24K, 22K, 21K et 18K.
+• Bitcoin et Ethereum, actions, indices et devises à côté de vos métaux.
 • Enregistrez chaque achat, vente, transfert et frais, et voyez la valeur, le coût moyen et le gain.
+• Alertes de cours, et widgets pour l'écran d'accueil et l'écran verrouillé.
 
 ZAKAT
-• Voyez si vous dépassez le nisab et ce qui est dû, sur la base de 85 g d'or ou 595 g d'argent.
-• Fixez votre hawl sur le calendrier hégirien ou grégorien et recevez un rappel.
+• La zakat à verser sur l'ensemble de votre bilan : placements, espèces, argent qu'on vous doit et biens destinés à la vente, moins les dettes exigibles.
+• Nisab sur 85 g d'or ou 595 g d'argent, et un hawl compté en années lunaires, avec un rappel.
 • Qima calcule ; les choix derrière le calcul vous appartiennent.
 
-UN SEUL PORTEFEUILLE
-• Bitcoin et Ethereum, actions, indices et devises du monde entier à côté de vos métaux.
-• Répartition par classe d'actifs, et de l'or par carat.
-• Alertes quand un cours franchit un seuil ou varie d'un pourcentage en 24 heures ou 7 jours.
-• Graphiques d'un jour à tout l'historique.
-• Importez et exportez vos avoirs sous forme de tableur (CSV).
-• Widgets de cours et de portefeuille pour l'écran d'accueil et l'écran verrouillé.
+CONFIDENTIEL PAR CONCEPTION
+• Sans compte ni inscription, sans publicité, sans statistiques, sans pistage.
+• Vos données restent sur vos appareils.
+• Verrouillez l'app avec Face ID ou Touch ID, masquez les soldes, et sauvegardez dans un fichier protégeable par mot de passe (AES-256).
 
-PRIVÉ PAR CONCEPTION
-• Pas de compte, pas d'inscription, pas de publicité, pas d'analyse, pas de pistage.
-• Vos données restent sur vos appareils, avec une synchronisation iCloud facultative.
-• Verrouillez l'app avec Face ID ou Touch ID, masquez les soldes et sauvegardez dans un fichier protégeable par mot de passe (AES-256).
+Français, anglais, arabe et espagnol, avec l'arabe entièrement de droite à gauche. Gratuit, sans abonnement ni achat intégré.
 
-Français, anglais, arabe et espagnol, avec l'arabe entièrement de droite à gauche. Gratuit, sans abonnement ni achats intégrés.
-
-Les cours proviennent de tiers et peuvent être différés. Qima n'est pas un conseil en investissement, ni un courtier, une plateforme d'échange ou un dépositaire.
+Les cours proviennent de sources tierces et peuvent être différés. Qima n'est pas un conseil en investissement, ni un courtier, une plateforme d'échange, une banque ou un dépositaire.

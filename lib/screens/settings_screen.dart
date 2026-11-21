@@ -1,17 +1,23 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart' show kIsWeb, TargetPlatform, defaultTargetPlatform;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
+import 'package:intl/intl.dart' hide TextDirection;
 import 'package:package_info_plus/package_info_plus.dart';
 
 import '../blocs/app_cubit.dart';
 import '../blocs/app_state.dart';
+import '../blocs/money_cubit.dart';
 import '../l10n/app_localizations.dart';
 import '../models/chart_range.dart';
 import '../services/app_lock_service.dart';
 import '../services/cloud_kv_store.dart';
 import '../services/preferences.dart';
+import '../services/ai_apps.dart';
 import '../services/ai_assist_provider.dart';
+import '../services/platform_ai.dart';
 import '../theme/design_system.dart';
 import '../theme/help_topics.dart';
 import '../theme/qima_colors.dart';
@@ -19,11 +25,15 @@ import '../theme/strings.dart';
 import '../widgets/help_button.dart';
 import '../widgets/section_header.dart';
 import 'alerts_screen.dart';
+import 'money/accounts_screens.dart';
+import 'money/home_screen.dart';
+import 'money/more_money_screens.dart';
 import 'backup_screen.dart';
 import 'currency_picker.dart';
 import 'help_index_sheet.dart';
 import 'help_sheet.dart';
-import 'onboarding_tour_screen.dart';
+import '../widgets/guided_tour.dart';
+import 'setup_flow_screen.dart';
 import 'zakat_settings_screen.dart';
 
 /// Single settings sheet: base currency, default chart range, widget refresh
@@ -105,6 +115,11 @@ class SettingsScreen extends StatelessWidget {
                 SectionHeader(l10n.settingsIntelligence),
                 const _OnDeviceModelSection(),
                 const SizedBox(height: DS.spaceLG),
+                if (AiApps.supported) ...[
+                  SectionHeader(l10n.settingsAiApps),
+                  const _AiAppsSection(),
+                  const SizedBox(height: DS.spaceLG),
+                ],
                 SectionHeader(l10n.settingsBackup),
                 const _BackupSection(),
                 const SizedBox(height: DS.spaceLG),
@@ -120,6 +135,9 @@ class SettingsScreen extends StatelessWidget {
                         Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ZakatSettingsScreen())),
                   ),
                 ),
+                const SizedBox(height: DS.spaceLG),
+                SectionHeader(l10n.navMoney),
+                const _MoneySection(),
                 const SizedBox(height: DS.spaceLG),
                 SectionHeader(l10n.settingsBaseCurrency),
                 DSCard(
@@ -640,7 +658,18 @@ class _HelpSection extends StatelessWidget {
               style: TextStyle(color: colors.textTertiary, fontSize: 12),
             ),
             trailing: Icon(Icons.chevron_right, color: colors.textTertiary),
-            onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const OnboardingTourScreen())),
+            onTap: () => replayTour(context),
+          ),
+          Divider(color: colors.hairline, height: DS.spaceLG),
+          ListTile(
+            contentPadding: EdgeInsets.zero,
+            title: Text(l10n.settingsHelpRunSetup, style: TextStyle(color: colors.textPrimary)),
+            subtitle: Text(
+              l10n.settingsHelpRunSetupSubtitle,
+              style: TextStyle(color: colors.textTertiary, fontSize: 12),
+            ),
+            trailing: Icon(Icons.chevron_right, color: colors.textTertiary),
+            onTap: () => Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => const SetupFlowScreen(rerun: true))),
           ),
           Divider(color: colors.hairline, height: DS.spaceLG),
           ListTile(
@@ -675,6 +704,119 @@ class _HelpSection extends StatelessWidget {
 /// Settings · On-device intelligence (v4 phase 6): the switch, and whether
 /// the OS's model is ready for the app's language. The switch works either
 /// way; with no model, nothing changes.
+/// "Let AI apps read Qima" (desktop only): the switch, what it shares, and
+/// once it is on, the config to paste into an AI app. See [AiApps].
+class _AiAppsSection extends StatefulWidget {
+  const _AiAppsSection();
+
+  @override
+  State<_AiAppsSection> createState() => _AiAppsSectionState();
+}
+
+class _AiAppsSectionState extends State<_AiAppsSection> {
+  bool _copied = false;
+  Timer? _copiedReset;
+
+  @override
+  void dispose() {
+    _copiedReset?.cancel();
+    super.dispose();
+  }
+
+  Future<void> _copy(String text) async {
+    await Clipboard.setData(ClipboardData(text: text));
+    if (!mounted) return;
+    setState(() => _copied = true);
+    _copiedReset?.cancel();
+    _copiedReset = Timer(const Duration(seconds: 2), () {
+      if (mounted) setState(() => _copied = false);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final ai = context.read<AiApps>();
+    final l10n = AppLocalizations.of(context)!;
+    final colors = context.colors;
+    final footnote = TextStyle(color: colors.textTertiary, fontSize: 12, height: 1.35);
+    return DSCard(
+      padding: const EdgeInsets.symmetric(horizontal: DS.spaceMD, vertical: DS.spaceXS),
+      child: ValueListenableBuilder<bool>(
+        valueListenable: ai.enabled,
+        builder: (context, on, _) => Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SwitchListTile.adaptive(
+              key: const Key('aiAppsToggle'),
+              contentPadding: EdgeInsets.zero,
+              title: Text(l10n.aiAppsToggle, style: TextStyle(color: colors.textPrimary)),
+              value: on,
+              onChanged: ai.setEnabled,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(bottom: DS.spaceSM),
+              child: Text(l10n.aiAppsFooter, style: footnote),
+            ),
+            if (on) ..._setup(ai, l10n, colors, footnote),
+          ],
+        ),
+      ),
+    );
+  }
+
+  List<Widget> _setup(AiApps ai, AppLocalizations l10n, QimaColors colors, TextStyle footnote) {
+    final helper = AiApps.helperPath();
+    if (helper == null) {
+      return [Padding(padding: const EdgeInsets.only(bottom: DS.spaceSM), child: Text(l10n.aiAppsNoHelper, style: footnote))];
+    }
+    return [
+      const Divider(height: DS.spaceLG),
+      Text(l10n.aiAppsSetupTitle, style: TextStyle(color: colors.textPrimary, fontWeight: FontWeight.w600)),
+      const SizedBox(height: DS.spaceXS),
+      Text(l10n.aiAppsSetupBody, style: footnote),
+      const SizedBox(height: DS.spaceSM),
+      FutureBuilder<String?>(
+        future: ai.snapshotPath(),
+        builder: (context, snap) {
+          final path = snap.data;
+          if (path == null) return const SizedBox.shrink();
+          final config = AiApps.config(helper: helper, snapshot: path);
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Commands and paths read left to right in every language.
+              Directionality(
+                textDirection: TextDirection.ltr,
+                child: Container(
+                  padding: const EdgeInsets.all(DS.spaceSM),
+                  decoration: BoxDecoration(
+                    color: colors.textPrimary.withValues(alpha: 0.05),
+                    borderRadius: BorderRadius.circular(DS.radiusTile),
+                  ),
+                  child: SelectableText(
+                    config,
+                    key: const Key('aiAppsConfig'),
+                    style: TextStyle(fontFamily: 'Menlo', fontFamilyFallback: const ['Consolas', 'monospace'], fontSize: 12, color: colors.textSecondary),
+                  ),
+                ),
+              ),
+              Align(
+                alignment: AlignmentDirectional.centerEnd,
+                child: TextButton.icon(
+                  onPressed: () => _copy(config),
+                  icon: Icon(_copied ? Icons.check : Icons.copy_rounded, size: 16),
+                  label: Text(_copied ? l10n.aiAppsCopied : l10n.aiAppsCopy),
+                ),
+              ),
+            ],
+          );
+        },
+      ),
+      Padding(padding: const EdgeInsets.only(bottom: DS.spaceSM), child: Text(l10n.aiAppsFreshness, style: footnote)),
+    ];
+  }
+}
+
 class _OnDeviceModelSection extends StatefulWidget {
   const _OnDeviceModelSection();
 
@@ -684,21 +826,48 @@ class _OnDeviceModelSection extends StatefulWidget {
 
 class _OnDeviceModelSectionState extends State<_OnDeviceModelSection> {
   Future<ModelStatus>? _status;
-  String? _tag;
+  String? _asked;
+
+  /// While the model is getting ready (downloading), it's asked again
+  /// every few seconds so the screen shows when it's done.
+  Timer? _recheck;
+  static const _recheckEvery = Duration(seconds: 5);
+
+  /// On Android the model is Google's ML Kit, which reports its use to
+  /// Google, so it isn't touched (not even to ask if it's there) until the
+  /// person turns it on.
+  static bool get _android => !kIsWeb && defaultTargetPlatform == TargetPlatform.android;
+
+  /// On Windows and Linux asking starts the model's download, so it waits
+  /// for the switch too.
+  static bool get _waitsForSwitch => _android || usesDownloadedModel;
+
+  Future<ModelStatus>? _statusFor(AppCubit cubit, String tag) {
+    if (_waitsForSwitch && !cubit.state.onDeviceModel) return null;
+    if (tag != _asked) {
+      _asked = tag;
+      _recheck?.cancel();
+      final status = _status = cubit.aiAssist.status(tag);
+      status.then((value) {
+        if (value != ModelStatus.notReady || !mounted || !identical(status, _status)) return;
+        _recheck = Timer(_recheckEvery, () {
+          if (mounted) setState(() => _asked = null);
+        });
+      }, onError: (Object _) {});
+    }
+    return _status;
+  }
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    final tag = Localizations.localeOf(context).toLanguageTag();
-    if (tag != _tag) {
-      _tag = tag;
-      _status = context.read<AppCubit>().aiAssist.status(tag);
-    }
+  void dispose() {
+    _recheck?.cancel();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<AppCubit>();
+    final status = _statusFor(cubit, Localizations.localeOf(context).toLanguageTag());
     final l10n = AppLocalizations.of(context)!;
     final colors = context.colors;
     return DSCard(
@@ -710,7 +879,7 @@ class _OnDeviceModelSectionState extends State<_OnDeviceModelSection> {
             contentPadding: EdgeInsets.zero,
             title: Text(l10n.settingsUseModel, style: TextStyle(color: colors.textPrimary)),
             subtitle: FutureBuilder<ModelStatus>(
-              future: _status,
+              future: status,
               builder: (context, snapshot) {
                 final status = snapshot.data;
                 if (status == null) return const SizedBox.shrink();
@@ -728,13 +897,67 @@ class _OnDeviceModelSectionState extends State<_OnDeviceModelSection> {
               },
             ),
             value: cubit.state.onDeviceModel,
-            onChanged: cubit.setOnDeviceModel,
+            onChanged: (on) async {
+              await cubit.setOnDeviceModel(on);
+              // Asked afresh, not the answer from before it was turned off.
+              if (mounted) setState(() => _asked = null);
+            },
           ),
           Padding(
             padding: const EdgeInsets.only(bottom: DS.spaceSM),
             child: Text(
-              l10n.settingsUseModelFooter,
+              _android
+                  ? '${l10n.settingsUseModelFooter} ${l10n.settingsUseModelAndroid}'
+                  : usesDownloadedModel
+                      ? '${l10n.settingsUseModelFooter} ${l10n.settingsUseModelDownload}'
+                      : l10n.settingsUseModelFooter,
               style: TextStyle(color: colors.textTertiary, fontSize: 12, height: 1.35),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+
+/// Money (v5): which features are on, how Home is arranged, categories, and
+/// how often to review the values of assets valued by hand.
+class _MoneySection extends StatelessWidget {
+  const _MoneySection();
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final colors = context.colors;
+    final money = context.read<MoneyCubit>();
+    final months = context.select<MoneyCubit, int>((c) => c.state.settings.valueReviewMonths);
+    Widget tile(String title, String? subtitle, Widget screen) => ListTile(
+          contentPadding: const EdgeInsets.symmetric(horizontal: DS.spaceMD, vertical: DS.space2XS),
+          title: Text(title, style: TextStyle(color: colors.textPrimary)),
+          subtitle: subtitle == null ? null : Text(subtitle, style: TextStyle(color: colors.textTertiary, fontSize: 12)),
+          trailing: Icon(Icons.chevron_right, color: colors.textTertiary),
+          onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => screen)),
+        );
+    return DSCard(
+      padding: EdgeInsets.zero,
+      child: Column(
+        children: [
+          tile(l10n.featuresTitle, l10n.featuresSubtitle, const FeaturesScreen()),
+          tile(l10n.editHome, null, const EditHomeScreen()),
+          tile(l10n.categoriesTitle, null, const CategoriesScreen()),
+          ListTile(
+            contentPadding: const EdgeInsets.symmetric(horizontal: DS.spaceMD, vertical: DS.space2XS),
+            title: Text(l10n.valueReview, style: TextStyle(color: colors.textPrimary)),
+            subtitle: Text(l10n.valueReviewHelp, style: TextStyle(color: colors.textTertiary, fontSize: 12)),
+            trailing: DropdownButton<int>(
+              value: months,
+              underline: const SizedBox.shrink(),
+              items: [
+                DropdownMenuItem(value: 0, child: Text(l10n.valueReviewOff)),
+                for (final m in const [3, 6, 12]) DropdownMenuItem(value: m, child: Text(l10n.valueReviewMonths(m))),
+              ],
+              onChanged: (v) => money.setValueReviewMonths(v ?? months),
             ),
           ),
         ],

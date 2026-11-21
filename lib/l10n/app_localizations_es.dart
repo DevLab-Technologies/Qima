@@ -1102,101 +1102,10 @@ class AppLocalizationsEs extends AppLocalizations {
   String get commonContinue => 'Continuar';
 
   @override
-  String get onboardingNext => 'Siguiente';
-
-  @override
   String get onboardingSkip => 'Omitir';
 
   @override
   String get onboardingGetStarted => 'Empezar';
-
-  @override
-  String get onboardingStep1Title => 'Todo lo que tienes, en un número';
-
-  @override
-  String get onboardingStep1Body =>
-      'Oro, plata, cripto, acciones, índices y divisas, sumados en tu moneda, con un resumen claro de cada mes.';
-
-  @override
-  String get onboardingStep2Title => 'Precios como los compras';
-
-  @override
-  String get onboardingStep2Body =>
-      'Precios en vivo por gramo, onza o kilo, de 24K a 18K, en cualquier moneda. Toca + para añadir a tu seguimiento y una tarjeta para ver su gráfico.';
-
-  @override
-  String get onboardingStep3Title => 'Sabe lo que tienes';
-
-  @override
-  String get onboardingStep3Body =>
-      'Toca + y luego Añadir posición, y escribe lo que compraste, o díctalo o escanea un recibo. Se lee en este dispositivo y solo se guarda cuando confirmas. Ve lo que tienes, tu coste medio, valor y ganancia.';
-
-  @override
-  String get onboardingStep4Title => 'No te pierdas ningún movimiento';
-
-  @override
-  String get onboardingStep4Body =>
-      'Recibe un aviso cuando un precio cruce un nivel o se mueva un porcentaje. Pon los precios en tu pantalla de inicio y de bloqueo.';
-
-  @override
-  String get onboardingStep4BodyApple =>
-      'Recibe un aviso cuando un precio cruce un nivel o se mueva un porcentaje. Pon precios en tu pantalla de inicio y de bloqueo, o pregunta a Siri cuánto vale tu cartera.';
-
-  @override
-  String get onboardingStep5Title => 'Privado por diseño';
-
-  @override
-  String get onboardingStep5Body =>
-      'Sin cuenta. Tus datos permanecen en este dispositivo, con sincronización opcional con iCloud, bloqueo por Face ID y copias de seguridad en archivo.';
-
-  @override
-  String get onboardingStep5BodyAndroid =>
-      'Sin cuenta. Tus datos permanecen en este dispositivo, con desbloqueo por huella o rostro y copias de seguridad en archivo.';
-
-  @override
-  String get onboardingStep5BodyMac =>
-      'Sin cuenta. Tus datos permanecen en este Mac, con sincronización opcional con iCloud, bloqueo por Touch ID y copias de seguridad en archivo.';
-
-  @override
-  String get onboardingStep5PillNoAccount => 'Sin cuenta';
-
-  @override
-  String get onboardingStep5PillOnDevice => 'En este dispositivo';
-
-  @override
-  String get onboardingStep5ICloudTitle => 'Sincronización con iCloud';
-
-  @override
-  String get onboardingStep5ICloudSubtitle =>
-      'Opcional · mantiene los dispositivos sincronizados';
-
-  @override
-  String get onboardingStep5AppLockTitle => 'Bloqueo de la app';
-
-  @override
-  String get onboardingStep5AppLockSubtitleApple => 'Face ID o huella dactilar';
-
-  @override
-  String get onboardingStep5AppLockSubtitleGeneric =>
-      'Huella dactilar o desbloqueo facial';
-
-  @override
-  String get onboardingStep5AppLockSubtitleMac =>
-      'Touch ID o la contraseña del Mac';
-
-  @override
-  String get onboardingStep5HideBalancesTitle => 'Ocultar saldos';
-
-  @override
-  String get onboardingStep5HideBalancesSubtitle =>
-      'Mostrar •••• en lugar de los importes';
-
-  @override
-  String get onboardingBaseCurrencyTitle => 'Moneda base';
-
-  @override
-  String get onboardingBaseCurrencySubtitle =>
-      'Según tu región · cámbiala en Ajustes';
 
   @override
   String onboardingSemanticStepOf(int step, int total) {
@@ -1208,6 +1117,432 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get helpButtonTooltip => 'Ayuda';
+
+  @override
+  String get helpHomeSummary =>
+      'Tu patrimonio neto: todo lo que tienes menos todo lo que debes, con las tarjetas que más usas.';
+
+  @override
+  String get helpHomeStep1Title => 'Patrimonio neto';
+
+  @override
+  String get helpHomeStep1Body =>
+      'Tócalo para abrir el balance: lo que tienes y lo que debes, partida por partida.';
+
+  @override
+  String get helpHomeStep2Title => 'Tus tarjetas';
+
+  @override
+  String get helpHomeStep2Body =>
+      'Cuentas, Disponible para gastar, Próximamente y otras aparecen cuando las usas. Toca una tarjeta para abrirla.';
+
+  @override
+  String get helpHomeStep3Title => 'Editar inicio';
+
+  @override
+  String get helpHomeStep3Body =>
+      'Mueve las tarjetas u oculta las que no necesites. Qima nunca vuelve a mostrar una tarjeta que ocultaste.';
+
+  @override
+  String get helpHomeStep4Title => 'Ocultar saldos';
+
+  @override
+  String get helpHomeStep4Body =>
+      'Toca el ojo para ocultar todos los importes cuando alguien esté mirando.';
+
+  @override
+  String get helpHomeStep5Title => 'Añade lo que sea';
+
+  @override
+  String get helpHomeStep5Body =>
+      'Toca + para un movimiento, un extracto, una inversión o cualquier cosa en Más.';
+
+  @override
+  String get helpMoneySummary =>
+      'A dónde fue el dinero de este mes, y lo que entró y salió.';
+
+  @override
+  String get helpMoneyStep1Title => 'Elige un mes';
+
+  @override
+  String get helpMoneyStep1Body =>
+      'Usa las flechas de arriba para ver otro mes.';
+
+  @override
+  String get helpMoneyStep2Title => 'Gastado y ritmo';
+
+  @override
+  String get helpMoneyStep2Body =>
+      'Lo que llevas gastado y dónde acabarás el mes a este ritmo.';
+
+  @override
+  String get helpMoneyStep3Title => 'A dónde fue';
+
+  @override
+  String get helpMoneyStep3Body => 'El gasto por categoría, de mayor a menor.';
+
+  @override
+  String get helpMoneyStep4Title => 'Flujo de caja';
+
+  @override
+  String get helpMoneyStep4Body =>
+      'Dinero que entra, que sale y lo que sobra. Los movimientos entre tus cuentas no cuentan.';
+
+  @override
+  String get helpMoneyStep5Title => 'Merece un vistazo';
+
+  @override
+  String get helpMoneyStep5Body =>
+      'Notas sobre presupuestos y movimientos por clasificar, cuando hay algo que ver.';
+
+  @override
+  String get helpNewTransactionSummary =>
+      'Registra dinero gastado, ganado o movido entre tus cuentas.';
+
+  @override
+  String get helpNewTransactionStep1Title => 'Elige el tipo';
+
+  @override
+  String get helpNewTransactionStep1Body =>
+      'Gasto, Ingreso o Transferencia. El importe y la fecha se mantienen al cambiar.';
+
+  @override
+  String get helpNewTransactionStep2Title => 'Dilo';
+
+  @override
+  String get helpNewTransactionStep2Body =>
+      'Toca el micrófono y di, por ejemplo, «Gasté 45 en Mercadona con la Visa ayer». Qima rellena el formulario en este dispositivo; revísalo y toca Guardar.';
+
+  @override
+  String get helpNewTransactionStep3Title => 'Categoría';
+
+  @override
+  String get helpNewTransactionStep3Body =>
+      'El gasto y el ingreso van en una categoría. Mover dinero entre tus cuentas nunca es gasto.';
+
+  @override
+  String get helpNewTransactionStep4Title => 'Rechazado';
+
+  @override
+  String get helpNewTransactionStep4Body =>
+      'Activa Rechazado para un pago que no se completó: aparece tachado y nunca cuenta.';
+
+  @override
+  String get helpTransactionsSummary =>
+      'Todos los movimientos, del más reciente al más antiguo, y lo que hizo cada uno en tus cuentas.';
+
+  @override
+  String get helpTransactionsStep1Title => 'Abre uno';
+
+  @override
+  String get helpTransactionsStep1Body =>
+      'Toca un movimiento para ver cada cuenta afectada y en cuánto.';
+
+  @override
+  String get helpTransactionsStep2Title => 'Cómo cuenta';
+
+  @override
+  String get helpTransactionsStep2Body =>
+      'Cada uno indica si es gasto, ingreso, un movimiento entre tus cuentas o un cambio de valor.';
+
+  @override
+  String get helpTransactionsStep3Title => 'Editar o eliminar';
+
+  @override
+  String get helpTransactionsStep3Body =>
+      'Ábrelo y edítalo o elimínalo. Eliminarlo deja cada cuenta como estaba.';
+
+  @override
+  String get helpAccountsSummary =>
+      'Cuentas bancarias, efectivo, tarjetas y préstamos, con lo que hay en cada uno hoy.';
+
+  @override
+  String get helpAccountsStep1Title => 'Añadir una cuenta';
+
+  @override
+  String get helpAccountsStep1Body =>
+      'Dale un nombre, un tipo y su saldo de hoy. Qima empieza desde esa cifra.';
+
+  @override
+  String get helpAccountsStep2Title => 'Comprobar el saldo';
+
+  @override
+  String get helpAccountsStep2Body =>
+      'Abre una cuenta e introduce lo que muestra tu banco. Si hay diferencia, elige: añadir un movimiento, o cambiar el saldo inicial para que nada cuente como gasto.';
+
+  @override
+  String get helpAccountsStep3Title => 'Contar el efectivo';
+
+  @override
+  String get helpAccountsStep3Body =>
+      'Para el efectivo, cuenta lo que hay en tu cartera y Qima ajusta el saldo.';
+
+  @override
+  String get helpAccountsStep4Title => 'Pagar una tarjeta o un préstamo';
+
+  @override
+  String get helpAccountsStep4Body =>
+      'Abre la tarjeta o el préstamo y toca Pagar para registrar un pago desde otra cuenta.';
+
+  @override
+  String get helpAccountsStep5Title => 'Quitar una';
+
+  @override
+  String get helpAccountsStep5Body =>
+      'Una cuenta con movimientos se archiva para que su historial cuadre. Una que nunca se usó se elimina.';
+
+  @override
+  String get helpBalanceSheetSummary =>
+      'Todo lo que tienes y todo lo que debes, hasta llegar a tu patrimonio neto.';
+
+  @override
+  String get helpBalanceSheetStep1Title => 'Lo que tienes';
+
+  @override
+  String get helpBalanceSheetStep1Body =>
+      'Cuentas, inversiones a precio en vivo y bienes al valor que tú fijas.';
+
+  @override
+  String get helpBalanceSheetStep2Title => 'Lo que debes';
+
+  @override
+  String get helpBalanceSheetStep2Body =>
+      'Tarjetas, préstamos (solo el principal) y el dinero que debes a otras personas.';
+
+  @override
+  String get helpBalanceSheetStep3Title => 'Cómo se calcula el total';
+
+  @override
+  String get helpBalanceSheetStep3Body =>
+      'Ábrelo para ver cada regla, como el tipo de cambio en vivo de otras monedas.';
+
+  @override
+  String get helpBalanceSheetStep4Title => 'Excluir una';
+
+  @override
+  String get helpBalanceSheetStep4Body =>
+      'Desactiva Contar en el patrimonio en una cuenta o un bien; su historial sigue cuadrando.';
+
+  @override
+  String get helpAssetsSummary =>
+      'Una vivienda, un terreno, un coche o una participación en un negocio, al valor que tú fijas.';
+
+  @override
+  String get helpAssetsStep1Title => 'Añadir un bien';
+
+  @override
+  String get helpAssetsStep1Body =>
+      'Elige un tipo y dale un valor y una fecha. El oro y la plata al peso son inversiones.';
+
+  @override
+  String get helpAssetsStep2Title => 'Actualizar el valor';
+
+  @override
+  String get helpAssetsStep2Body =>
+      'Cada actualización lleva fecha. Cuenta la última; las anteriores quedan como historial.';
+
+  @override
+  String get helpAssetsStep3Title => 'Un préstamo sobre él';
+
+  @override
+  String get helpAssetsStep3Body =>
+      'Vincula el préstamo garantizado con él para ver lo que queda por pagar junto a su valor.';
+
+  @override
+  String get helpAssetsStep4Title => 'Lo vendí';
+
+  @override
+  String get helpAssetsStep4Body =>
+      'Registra la venta: el dinero entra en una cuenta y el bien sale de tu balance.';
+
+  @override
+  String get helpImportStatementSummary =>
+      'Trae movimientos del PDF, Excel o CSV de tu banco, de capturas de pantalla o de un archivo copiado.';
+
+  @override
+  String get helpImportStatementStep1Title => 'Elige los archivos';
+
+  @override
+  String get helpImportStatementStep1Body =>
+      'Desde Archivos, Fotos, el portapapeles o Compartir › Qima desde cualquier app. Se leen en este dispositivo.';
+
+  @override
+  String get helpImportStatementStep2Title => 'Revisa cada fila';
+
+  @override
+  String get helpImportStatementStep2Body =>
+      'Elige la cuenta, desmarca lo que no quieras y corrige las categorías. Las filas que ya están en Qima empiezan desmarcadas.';
+
+  @override
+  String get helpImportStatementStep3Title => 'Iguala el saldo';
+
+  @override
+  String get helpImportStatementStep3Body =>
+      'Cuando el extracto muestre un saldo, marca Ajustar el saldo. Luego elige: cambiar el saldo inicial, o añadir un movimiento por la diferencia.';
+
+  @override
+  String get helpImportStatementStep4Title => 'Añádelos';
+
+  @override
+  String get helpImportStatementStep4Body =>
+      'Toca Añadir. Los archivos se eliminan una vez importados.';
+
+  @override
+  String get helpBankMessagesSummary =>
+      'Añade compras desde los mensajes que te envía tu banco, después de revisar cada uno.';
+
+  @override
+  String get helpBankMessagesStep1Title => 'En Android';
+
+  @override
+  String get helpBankMessagesStep1Body =>
+      'Activa Leer los nuevos mensajes del banco y permite el acceso. Trae los últimos 60 días la primera vez.';
+
+  @override
+  String get helpBankMessagesStep2Title => 'En iPhone';
+
+  @override
+  String get helpBankMessagesStep2Body =>
+      'Configura una vez una automatización de Atajos para que cada mensaje vaya a la acción «Add a bank message» de Qima.';
+
+  @override
+  String get helpBankMessagesStep3Title => 'Revisa antes de añadir';
+
+  @override
+  String get helpBankMessagesStep3Body =>
+      'Los mensajes esperan en la revisión de importación, cada uno en la cuenta que indica; mueve uno si está mal y Qima recuerda el remitente. Corrige un mensaje una vez y el siguiente igual se leerá como indicaste. Se omiten códigos, ofertas y repetidos.';
+
+  @override
+  String get helpBankMessagesStep4Title => 'Privado';
+
+  @override
+  String get helpBankMessagesStep4Body =>
+      'Los mensajes se leen en este dispositivo y nunca salen de él.';
+
+  @override
+  String get helpCategoriesSummary =>
+      'Clasifica el gasto en categorías y enseña a Qima a dónde va cada nombre.';
+
+  @override
+  String get helpCategoriesStep1Title => 'Por clasificar';
+
+  @override
+  String get helpCategoriesStep1Body =>
+      'Elige una categoría una vez por nombre. Las importaciones de ese nombre la usarán a partir de ahora.';
+
+  @override
+  String get helpCategoriesStep2Title => 'Movimientos anteriores';
+
+  @override
+  String get helpCategoriesStep2Body =>
+      'Qima ofrece mover también los movimientos anteriores del mismo nombre.';
+
+  @override
+  String get helpCategoriesStep3Title => 'Tus categorías';
+
+  @override
+  String get helpCategoriesStep3Body =>
+      'Añade, renombra o quita categorías. Los movimientos de una categoría quitada la conservan en su historial.';
+
+  @override
+  String get helpCategoriesStep4Title => 'Olvidar un nombre';
+
+  @override
+  String get helpCategoriesStep4Body =>
+      'Olvida lo que Qima aprendió de un nombre y sus importaciones se clasificarán de nuevo a mano.';
+
+  @override
+  String get helpBudgetSummary =>
+      'Un importe mensual para cada categoría que quieras vigilar.';
+
+  @override
+  String get helpBudgetStep1Title => 'Fija un importe';
+
+  @override
+  String get helpBudgetStep1Body =>
+      'Toca una categoría e introduce su importe mensual. Cero lo quita.';
+
+  @override
+  String get helpBudgetStep2Title => 'Disponible para gastar';
+
+  @override
+  String get helpBudgetStep2Body =>
+      'Inicio muestra lo que queda este mes y Dinero avisa de una categoría que va por delante de su ritmo.';
+
+  @override
+  String get helpBudgetStep3Title => 'Lo que cuenta';
+
+  @override
+  String get helpBudgetStep3Body =>
+      'Los pagos de tarjeta, las transferencias y el principal de los préstamos nunca cuentan.';
+
+  @override
+  String get helpRecurringSummary =>
+      'Alquiler, facturas, cuotas e ingresos, que aparecen en Próximamente antes de su fecha.';
+
+  @override
+  String get helpRecurringStep1Title => 'Añade uno';
+
+  @override
+  String get helpRecurringStep1Body =>
+      'Dale un nombre, un importe, la cuenta y cuándo vence: una vez, o cada semana, mes, 3 meses o año. Un pago a plazos puede terminar tras un número de cuotas.';
+
+  @override
+  String get helpRecurringStep2Title => 'Próximamente';
+
+  @override
+  String get helpRecurringStep2Body =>
+      'Inicio muestra los próximos, entradas y salidas, y puede llegar un aviso el día antes.';
+
+  @override
+  String get helpRecurringStep3Title => 'Cambiar o quitar';
+
+  @override
+  String get helpRecurringStep3Body =>
+      'Toca uno para registrarlo, saltarlo, cambiarlo o quitarlo.';
+
+  @override
+  String get helpPeopleSummary =>
+      'Quién te debe, a quién debes y las devoluciones.';
+
+  @override
+  String get helpPeopleStep1Title => 'Presté o pedí prestado';
+
+  @override
+  String get helpPeopleStep1Body =>
+      'Toca + › Más › Presté o Pedí prestado y escribe el nombre de la persona.';
+
+  @override
+  String get helpPeopleStep2Title => 'Devoluciones';
+
+  @override
+  String get helpPeopleStep2Body =>
+      'Registra Devolución recibida o Devolución hecha y lo que se debe baja.';
+
+  @override
+  String get helpPeopleStep3Title => 'Dividir una cuenta';
+
+  @override
+  String get helpPeopleStep3Body =>
+      'Paga toda la cuenta y divídela: solo tu parte es gasto, el resto te lo deben.';
+
+  @override
+  String get helpFeaturesSummary =>
+      'Activa o desactiva partes de Qima. Las funciones también se activan solas la primera vez que las usas.';
+
+  @override
+  String get helpFeaturesStep1Title => 'Desactiva una';
+
+  @override
+  String get helpFeaturesStep1Body =>
+      'Se ocultan sus pantallas, nunca tu dinero: sus importes siguen contando en el balance.';
+
+  @override
+  String get helpFeaturesStep2Title => 'Se activa al usarla';
+
+  @override
+  String get helpFeaturesStep2Body =>
+      'Registra tu primer pago de préstamo y se activa Préstamos, con Deshacer si no lo querías.';
 
   @override
   String get helpSheetAboutHeader => 'ACERCA DE ESTA PÁGINA';
@@ -1229,11 +1564,10 @@ class AppLocalizationsEs extends AppLocalizations {
       'Elige una página para ver qué hace y cómo usarla.';
 
   @override
-  String get helpWatchlistTitle => 'Lista de seguimiento';
+  String get helpWatchlistTitle => 'Precios';
 
   @override
-  String get helpWatchlistSummary =>
-      'Precios en vivo de todo lo que sigues, con el total de tu cartera arriba.';
+  String get helpWatchlistSummary => 'Precios en vivo de todo lo que sigues.';
 
   @override
   String get helpWatchlistStep1Title => 'Abre una tarjeta';
@@ -1582,7 +1916,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get helpBackupStep1Body =>
-      'Guarda tu lista de seguimiento, posiciones, tickers personalizados y ajustes como un archivo .json.';
+      'Guarda tus cuentas, movimientos, bienes, lista de seguimiento, inversiones y ajustes en un archivo .json.';
 
   @override
   String get helpBackupStep2Title => 'Añade una contraseña';
@@ -1799,7 +2133,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get settingsHelpReplayTourSubtitle =>
-      'Vuelve a ver la introducción de cinco pasos';
+      'Un recorrido breve por Inicio, Dinero y Precios';
 
   @override
   String get settingsHelpHowQimaWorks => 'Cómo funciona Qima';
@@ -2033,9 +2367,8 @@ class AppLocalizationsEs extends AppLocalizations {
   String get zakatCalendarGregorian => 'Gregoriano';
 
   @override
-  String zakatGregorianNote(String solarRate, String rate) {
-    return 'Un año gregoriano dura unos 11 días más que uno lunar. Algunos sabios suben el porcentaje al $solarRate por ello; Qima mantiene el $rate.';
-  }
+  String get zakatGregorianNote =>
+      'Las fechas se muestran en el calendario gregoriano. El hawl sigue siendo un año lunar, así que se cumple unos 11 días antes cada año gregoriano.';
 
   @override
   String get zakatHawlClear => 'Borrar fecha del hawl';
@@ -2136,7 +2469,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get helpZakatSummary =>
-      'Qima calcula el zakat a partir de tus tenencias a precios de hoy. Calcula; las decisiones detrás del cálculo son tuyas.';
+      'Qima calcula el zakat a partir de lo que tienes a precios de hoy. Calcula; las decisiones detrás del cálculo son tuyas.';
 
   @override
   String get helpZakatStep1Title => 'Nisab';
@@ -2150,7 +2483,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get helpZakatStep2Body =>
-      'Metales, cripto y efectivo cuentan por defecto; las acciones no. El oro con quilates cuenta por su contenido de oro. Desactiva cualquier activo en la pantalla de zakat.';
+      'El efectivo, los metales y las criptomonedas cuentan por defecto, y los bienes a la venta por su valor; las acciones no. Se descuentan los saldos de tarjeta y lo que debes a otras personas. Desactiva cualquier partida.';
 
   @override
   String get helpZakatStep3Title => 'Hawl';
@@ -2901,6 +3234,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get dictationStart => 'Dicta una compra';
 
   @override
+  String get dictationLanguage => 'Idioma en que hablas';
+
+  @override
   String get dictationStop => 'Dejar de escuchar';
 
   @override
@@ -2920,6 +3256,14 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get settingsUseModelFooter =>
       'Ayuda a leer compras que Qima no puede entender por sí sola y redacta el resumen del mes. Funciona solo en este dispositivo, nunca da consejos y nunca aporta un número: cada cifra sale de tus propios registros.';
+
+  @override
+  String get settingsUseModelAndroid =>
+      'En Android, el modelo funciona con ML Kit de Google: tus mensajes y registros se quedan en el teléfono, y ML Kit envía a Google datos sobre su propio uso, como el modelo del teléfono y los códigos de error.';
+
+  @override
+  String get settingsUseModelDownload =>
+      'En Windows y Linux, al activarlo se descarga una vez un modelo abierto (Qwen2.5, unos 1,1 GB) desde Hugging Face. Después funciona solo en este ordenador.';
 
   @override
   String get modelReady => 'Listo en este dispositivo';
@@ -3009,4 +3353,2119 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get helpAddAssetStep6Body =>
       'La voz y los recibos se leen en este dispositivo y nunca se envían. No se guarda nada hasta que confirmes, y cada número sale de lo que escribiste, dijiste o escaneaste.';
+
+  @override
+  String get navHome => 'Inicio';
+
+  @override
+  String get navMoney => 'Dinero';
+
+  @override
+  String get navPrices => 'Precios';
+
+  @override
+  String get netWorth => 'Patrimonio neto';
+
+  @override
+  String get balanceSheet => 'Balance';
+
+  @override
+  String get youOwn => 'Lo que tienes';
+
+  @override
+  String get youOweSide => 'Lo que debes';
+
+  @override
+  String ownOweLine(String own, String owe) {
+    return 'Tienes $own · Debes $owe';
+  }
+
+  @override
+  String get sheetHoldings => 'Inversiones';
+
+  @override
+  String get sheetHoldingsLive => 'A precios actuales';
+
+  @override
+  String get sheetCash => 'Efectivo y bancos';
+
+  @override
+  String get sheetOwedToYou => 'Te deben';
+
+  @override
+  String get sheetAssets => 'Propiedades y más';
+
+  @override
+  String get sheetCards => 'Tarjetas';
+
+  @override
+  String get sheetLoans => 'Préstamos';
+
+  @override
+  String get sheetYouOwe => 'Debes a otras personas';
+
+  @override
+  String get sheetNothingOwed =>
+      'No debes nada. Las tarjetas, préstamos y deudas aparecen aquí cuando las añadas.';
+
+  @override
+  String sheetMissingRates(String codes) {
+    return 'Aún no hay tipo de cambio para $codes; esos importes no cuentan en el total.';
+  }
+
+  @override
+  String get acctCash => 'Efectivo';
+
+  @override
+  String get acctDebit => 'Cuenta bancaria';
+
+  @override
+  String get acctCredit => 'Tarjeta';
+
+  @override
+  String get acctLoan => 'Préstamo';
+
+  @override
+  String get acctReceivable => 'Te debe';
+
+  @override
+  String get acctPayable => 'Le debes';
+
+  @override
+  String get acctAsset => 'Activo';
+
+  @override
+  String get acctCategory => 'Categoría';
+
+  @override
+  String get assetKindProperty => 'Inmueble';
+
+  @override
+  String get assetKindVehicle => 'Vehículo';
+
+  @override
+  String get assetKindBusiness => 'Negocio';
+
+  @override
+  String get assetKindValuables => 'Objetos de valor';
+
+  @override
+  String get assetKindOther => 'Otro';
+
+  @override
+  String get assetKindPropertyHint => 'Una casa, un terreno, un local';
+
+  @override
+  String get assetKindVehicleHint => 'Un coche, una moto, un barco';
+
+  @override
+  String get assetKindBusinessHint => 'Tu parte de un negocio';
+
+  @override
+  String get assetKindValuablesHint => 'Un reloj, arte, una colección';
+
+  @override
+  String get assetKindOtherHint => 'Cualquier otra cosa que tengas';
+
+  @override
+  String get tplOpening => 'Saldo inicial';
+
+  @override
+  String get tplSpend => 'Gasto';
+
+  @override
+  String get tplIncome => 'Ingreso';
+
+  @override
+  String get tplTransfer => 'Transferencia';
+
+  @override
+  String get tplAtm => 'Retiro en cajero';
+
+  @override
+  String get tplSwap => 'Cambio de divisa';
+
+  @override
+  String get tplCardPayment => 'Pago de tarjeta';
+
+  @override
+  String get tplLoanPayment => 'Pago de préstamo';
+
+  @override
+  String get tplLent => 'Presté';
+
+  @override
+  String get tplBorrowed => 'Pedí prestado';
+
+  @override
+  String get tplRepaymentIn => 'Devolución recibida';
+
+  @override
+  String get tplRepaymentOut => 'Devolución hecha';
+
+  @override
+  String get tplRefund => 'Reembolso';
+
+  @override
+  String get tplDeclined => 'Rechazada';
+
+  @override
+  String get tplCashCount => 'Recuento de efectivo';
+
+  @override
+  String get tplBillSplit => 'Cuenta dividida';
+
+  @override
+  String get tplValuation => 'Nuevo valor';
+
+  @override
+  String get tplAssetSale => 'Vendido';
+
+  @override
+  String get tplAdjustment => 'Ajuste';
+
+  @override
+  String get catGroceries => 'Supermercado';
+
+  @override
+  String get catDining => 'Restaurantes';
+
+  @override
+  String get catTransport => 'Transporte';
+
+  @override
+  String get catBills => 'Facturas';
+
+  @override
+  String get catShopping => 'Compras';
+
+  @override
+  String get catHealth => 'Salud';
+
+  @override
+  String get catHome => 'Hogar';
+
+  @override
+  String get catOther => 'Otros';
+
+  @override
+  String get catSalary => 'Salario';
+
+  @override
+  String get catOtherIncome => 'Otros ingresos';
+
+  @override
+  String get catInterestFees => 'Intereses y comisiones';
+
+  @override
+  String get sysOpening => 'Saldos iniciales';
+
+  @override
+  String get sysChange => 'Cambio de valor';
+
+  @override
+  String get sysRounding => 'Redondeo';
+
+  @override
+  String get featBudget => 'Presupuesto';
+
+  @override
+  String get featRecurring => 'Pagos previstos';
+
+  @override
+  String get featPeople => 'Prestado y debido';
+
+  @override
+  String get featLoans => 'Préstamos';
+
+  @override
+  String get featBillSplit => 'Dividir cuentas';
+
+  @override
+  String get featZakat => 'Zakat';
+
+  @override
+  String get featBudgetDetail =>
+      'Un importe mensual por categoría y lo que queda';
+
+  @override
+  String get featRecurringDetail =>
+      'Facturas, cuotas e ingresos antes de su fecha';
+
+  @override
+  String get featPeopleDetail => 'Quién te debe y a quién debes';
+
+  @override
+  String get featLoansDetail =>
+      'Lo que queda de un préstamo y los intereses de cada pago';
+
+  @override
+  String get featBillSplitDetail =>
+      'Paga una cuenta y divídela; solo tu parte es gasto';
+
+  @override
+  String get featZakatDetail => 'Zakat sobre inversiones, efectivo y deudas';
+
+  @override
+  String featureTurnedOn(String feature) {
+    return '$feature activado';
+  }
+
+  @override
+  String get featuresTitle => 'Funciones';
+
+  @override
+  String get featuresSubtitle => 'Presupuesto, recurrentes, préstamos y más';
+
+  @override
+  String get featuresIntro =>
+      'Desactivar una función oculta sus pantallas, nunca tu dinero: sus importes siguen contando en el balance.';
+
+  @override
+  String get cardNeedsReview => 'Para revisar';
+
+  @override
+  String get cardComingUp => 'Próximamente';
+
+  @override
+  String get cardLeftToSpend => 'Disponible para gastar';
+
+  @override
+  String get cardAccounts => 'Cuentas';
+
+  @override
+  String get editHome => 'Editar Inicio';
+
+  @override
+  String get editHomeIntro =>
+      'Mueve tarjetas u oculta las que no necesites. Qima nunca vuelve a mostrar una tarjeta oculta.';
+
+  @override
+  String get editHomeTotalFixed =>
+      'Siempre primero: desde aquí se abre el balance';
+
+  @override
+  String get editHomeCantHide =>
+      'Solo aparece cuando algo requiere tu atención';
+
+  @override
+  String get moveUp => 'Subir';
+
+  @override
+  String get moveDown => 'Bajar';
+
+  @override
+  String get moveToTop => 'Mover arriba del todo';
+
+  @override
+  String get startTitle => 'Empieza con lo que tienes';
+
+  @override
+  String get startMessage =>
+      'Añade una cuenta, una inversión o un inmueble. Qima los suma en tu patrimonio neto.';
+
+  @override
+  String holdingsGainLine(String amount) {
+    return 'Ganancia $amount';
+  }
+
+  @override
+  String reviewValue(String name) {
+    return 'Revisa el valor de $name';
+  }
+
+  @override
+  String get accountAdd => 'Añadir cuenta';
+
+  @override
+  String get accountEdit => 'Editar cuenta';
+
+  @override
+  String get accountNameLabel => 'Nombre';
+
+  @override
+  String get accountCurrency => 'Moneda';
+
+  @override
+  String get accountBalanceToday => 'Saldo hoy';
+
+  @override
+  String get accountOwedToday => 'Deuda hoy';
+
+  @override
+  String get accountLoanLeft => 'Capital pendiente';
+
+  @override
+  String get accountTheyOwe => 'Te debe';
+
+  @override
+  String get accountYouOwe => 'Le debes';
+
+  @override
+  String get accountBalanceHelp =>
+      'Qima empieza desde esta cifra; déjalo vacío para cero.';
+
+  @override
+  String get accountSince => 'A fecha de';
+
+  @override
+  String get accountLimit => 'Límite de la tarjeta';
+
+  @override
+  String get accountCounts => 'Contar en el patrimonio';
+
+  @override
+  String get accountCountsHelp =>
+      'Desactivado no cuenta en el total; su historial sigue cuadrando.';
+
+  @override
+  String get accountErrorName => 'Ponle un nombre.';
+
+  @override
+  String get accountLeftOut => 'No cuenta en el patrimonio';
+
+  @override
+  String accountAvailable(String amount) {
+    return '$amount disponible';
+  }
+
+  @override
+  String get accountCountCash => 'Contar efectivo';
+
+  @override
+  String get accountCheckBalance => 'Comprobar saldo';
+
+  @override
+  String get accountPayCard => 'Pagar la tarjeta';
+
+  @override
+  String get accountPayLoan => 'Pagar el préstamo';
+
+  @override
+  String get accountRemoveTitle => 'Eliminar cuenta';
+
+  @override
+  String get accountRemoveMessage =>
+      'Una cuenta con movimientos se archiva para que su historial cuadre. Una sin uso se elimina.';
+
+  @override
+  String get accountsEmptyTitle => 'Aún no hay cuentas';
+
+  @override
+  String get accountsEmptyMessage =>
+      'Añade una cuenta, efectivo, una tarjeta o un préstamo con su saldo de hoy.';
+
+  @override
+  String reconcileTracked(String amount) {
+    return 'Qima tiene $amount.';
+  }
+
+  @override
+  String get reconcileCounted => 'Lo que has contado';
+
+  @override
+  String get reconcileStatement => 'Saldo en el extracto o la app';
+
+  @override
+  String get reconcileDone =>
+      'La diferencia se anota en Otros y el saldo cuadra.';
+
+  @override
+  String get entryAmount => 'Importe';
+
+  @override
+  String get entryPrincipal => 'Capital';
+
+  @override
+  String get entryProfit => 'Intereses';
+
+  @override
+  String get entryProfitHelp =>
+      'Cuenta como gasto en Intereses y comisiones; el capital nunca.';
+
+  @override
+  String get entrySent => 'Enviado';
+
+  @override
+  String get entryClearsTheirs => 'Salda de lo que te debe';
+
+  @override
+  String get entryClearsMine => 'Salda de lo que debes';
+
+  @override
+  String entryClearsHelp(String amount) {
+    return 'Déjalo vacío para usar el cambio de hoy: $amount';
+  }
+
+  @override
+  String get entryReceived => 'Recibido';
+
+  @override
+  String get entryPaidFrom => 'Pagado con';
+
+  @override
+  String get entryFrom => 'Desde';
+
+  @override
+  String get entryTo => 'A';
+
+  @override
+  String get entryPerson => 'Persona';
+
+  @override
+  String get entryCategory => 'Categoría';
+
+  @override
+  String get entryDate => 'Fecha';
+
+  @override
+  String get entryMerchant => 'Dónde';
+
+  @override
+  String get entryNote => 'Nota';
+
+  @override
+  String get entryDeclined => 'Rechazada';
+
+  @override
+  String get entryDeclinedHelp =>
+      'Se muestra tachada; nunca cuenta en un saldo.';
+
+  @override
+  String get entryEditTitle => 'Editar movimiento';
+
+  @override
+  String get entryDeleteTitle => '¿Eliminar movimiento?';
+
+  @override
+  String get entryDeleteMessage => 'Cada cuenta afectada vuelve a como estaba.';
+
+  @override
+  String get entryErrorAmount => 'Introduce un importe mayor que cero.';
+
+  @override
+  String get entryErrorAccount => 'Elige las cuentas.';
+
+  @override
+  String get entryErrorSameCurrency =>
+      'Ambas cuentas deben tener la misma moneda. Para distintas, usa Cambio de divisa.';
+
+  @override
+  String get entryErrorSwap => 'Elige dos cuentas en monedas distintas.';
+
+  @override
+  String get entryErrorPerson => 'Indica quién es.';
+
+  @override
+  String get entryErrorRate =>
+      'Aún no hay tipo de cambio para esta moneda. Inténtalo tras actualizar precios.';
+
+  @override
+  String get entryNeedsAccountTitle => 'Primero añade una cuenta';
+
+  @override
+  String get entryNeedsAccountMessage =>
+      'Esto necesita una cuenta de origen o destino. Añádela en Cuentas.';
+
+  @override
+  String get howItAddsUp => 'Cómo cuadra';
+
+  @override
+  String hiuUp(String name, String amount) {
+    return '$name sube $amount';
+  }
+
+  @override
+  String hiuDown(String name, String amount) {
+    return '$name baja $amount';
+  }
+
+  @override
+  String get hiuSpending => 'Gasto: cuenta en tu presupuesto.';
+
+  @override
+  String get hiuIncome => 'Ingreso: cuenta en tu flujo de caja.';
+
+  @override
+  String get hiuRefund => 'Un reembolso reduce el gasto de su categoría.';
+
+  @override
+  String get hiuWorth =>
+      'Un cambio de valor solo mueve el patrimonio; nunca es ingreso ni gasto.';
+
+  @override
+  String get hiuMove =>
+      'Un movimiento entre tus cuentas: no es gasto y tu patrimonio no cambia.';
+
+  @override
+  String get hiuDeclined => 'Rechazada: no se movió nada.';
+
+  @override
+  String get allTransactions => 'Todos los movimientos';
+
+  @override
+  String get transactionsSearch => 'Buscar';
+
+  @override
+  String get transactionsEmptyTitle => 'Sin movimientos';
+
+  @override
+  String get transactionsEmptyMessage => 'Añade uno con el botón +.';
+
+  @override
+  String get moneySpent => 'Gastado';
+
+  @override
+  String moneySpentOf(String spent, String budget) {
+    return '$spent de $budget';
+  }
+
+  @override
+  String moneySpentSoFar(String amount) {
+    return 'Gastado $amount este mes';
+  }
+
+  @override
+  String moneyPace(String amount) {
+    return 'A este ritmo: $amount a fin de mes';
+  }
+
+  @override
+  String get moneyNothingSpent => 'Nada gastado este mes.';
+
+  @override
+  String get moneyIn => 'Entradas';
+
+  @override
+  String get moneyOut => 'Salidas';
+
+  @override
+  String get moneyLeftOver => 'Sobrante';
+
+  @override
+  String get moneyShort => 'Déficit';
+
+  @override
+  String get moneyTrend => 'Gasto por mes';
+
+  @override
+  String get moneyTransactions => 'Movimientos';
+
+  @override
+  String get moneyStartMessage =>
+      'Añade una cuenta y luego anota lo que gastas.';
+
+  @override
+  String get whereItWent => 'En qué se fue';
+
+  @override
+  String get cashFlow => 'Flujo de caja';
+
+  @override
+  String get worthALook => 'Vale la pena revisar';
+
+  @override
+  String aheadOfPace(String name) {
+    return '$name va por delante de su presupuesto';
+  }
+
+  @override
+  String spareIn(String name, String amount) {
+    return '$name tiene $amount de margen';
+  }
+
+  @override
+  String get previousMonth => 'Mes anterior';
+
+  @override
+  String get nextMonth => 'Mes siguiente';
+
+  @override
+  String get ask => 'Pregunta';
+
+  @override
+  String get askSpentMonth => '¿Cuánto gasté este mes?';
+
+  @override
+  String askSpentMonthAnswer(String amount) {
+    return '$amount';
+  }
+
+  @override
+  String get askTopCategory => '¿En qué se fue la mayor parte?';
+
+  @override
+  String askTopCategoryAnswer(String name, String amount) {
+    return '$name: $amount';
+  }
+
+  @override
+  String get askVsLastMonth => '¿Es más que el mes pasado?';
+
+  @override
+  String askMore(String amount) {
+    return '$amount más que el mes pasado';
+  }
+
+  @override
+  String askLess(String amount) {
+    return '$amount menos que el mes pasado';
+  }
+
+  @override
+  String get askSame => 'Más o menos igual que el mes pasado';
+
+  @override
+  String get askOwed => '¿Quién me debe dinero?';
+
+  @override
+  String get askNobodyOwes => 'Nadie te debe dinero.';
+
+  @override
+  String get assetAdd => 'Añadir un bien';
+
+  @override
+  String get assetEdit => 'Editar bien';
+
+  @override
+  String get assetGoldNote =>
+      'El oro y la plata por peso siguen siendo inversiones, porque Qima les pone precio. Añádelos con Añadir inversión.';
+
+  @override
+  String get assetValueToday => 'Valor hoy';
+
+  @override
+  String get assetCost => 'Precio pagado';
+
+  @override
+  String get assetBought => 'Fecha de compra';
+
+  @override
+  String get optional => 'Opcional';
+
+  @override
+  String get assetLoan => 'Préstamo asociado';
+
+  @override
+  String get assetNoLoan => 'Ninguno';
+
+  @override
+  String get assetForSale => 'En venta';
+
+  @override
+  String get assetForSaleHelp =>
+      'Cuenta para el zakat por su valor. Desactívalo para lo que usas.';
+
+  @override
+  String get assetErrorValue => 'Introduce el valor de hoy.';
+
+  @override
+  String get assetsTotal => 'Valor total';
+
+  @override
+  String get assetsTotalHelp => 'Valores que fijas tú, cada uno con su fecha';
+
+  @override
+  String get assetsEmptyTitle => 'Aún no hay bienes';
+
+  @override
+  String get assetsEmptyMessage =>
+      'Añade una casa, un terreno, un coche o parte de un negocio. Tú fijas el valor y Qima guarda su historial.';
+
+  @override
+  String assetUpdated(String date) {
+    return 'Actualizado el $date';
+  }
+
+  @override
+  String assetSinceBought(String amount) {
+    return '$amount desde la compra';
+  }
+
+  @override
+  String get assetUpdateValue => 'Actualizar valor';
+
+  @override
+  String get assetUpdateHelp =>
+      'Cada actualización tiene fecha. Cuenta la última; las anteriores quedan en el historial.';
+
+  @override
+  String get assetNewValue => 'Nuevo valor';
+
+  @override
+  String get assetValueSource => 'De dónde sale el valor';
+
+  @override
+  String get assetSold => 'Lo vendí';
+
+  @override
+  String assetSellTitle(String name) {
+    return 'Vender $name';
+  }
+
+  @override
+  String assetLastValue(String amount) {
+    return 'Último valor: $amount';
+  }
+
+  @override
+  String get assetSoldInto => 'El dinero entró en';
+
+  @override
+  String get assetSoldFor => 'Vendido por';
+
+  @override
+  String assetGain(String amount) {
+    return 'Ganancia de $amount';
+  }
+
+  @override
+  String assetLoss(String amount) {
+    return 'Pérdida de $amount';
+  }
+
+  @override
+  String get assetGainHelp =>
+      'Frente al último valor. Es un cambio de valor, nunca ingreso.';
+
+  @override
+  String assetPayOff(String name) {
+    return 'La venta liquidó $name';
+  }
+
+  @override
+  String assetPayOffHelp(String amount) {
+    return 'Quedan $amount, pagados desde la misma cuenta';
+  }
+
+  @override
+  String get assetYours => 'Lo que es tuyo';
+
+  @override
+  String get assetValue => 'Valor';
+
+  @override
+  String assetStillOwed(String name) {
+    return 'Pendiente de $name';
+  }
+
+  @override
+  String get assetYoursTotal => 'Tuyo';
+
+  @override
+  String get assetYoursHelp =>
+      'El balance sigue mostrando el bien en lo que tienes y el préstamo en lo que debes.';
+
+  @override
+  String get assetHistory => 'Historial';
+
+  @override
+  String get assetRemoveTitle => 'Eliminar bien';
+
+  @override
+  String get assetRemoveMessage =>
+      'Para registrar una venta usa Lo vendí. Eliminar lo archiva con su historial.';
+
+  @override
+  String get howTotalWorked => 'Cómo se calcula el total';
+
+  @override
+  String get howTotalIntro =>
+      'El patrimonio neto es lo que tienes menos lo que debes.';
+
+  @override
+  String get howTotalHoldings =>
+      'Las inversiones usan precios actuales, como en Precios.';
+
+  @override
+  String get howTotalAssets =>
+      'Los bienes que valoras tú usan su último valor con fecha; cada uno puede excluirse.';
+
+  @override
+  String get howTotalLoans =>
+      'Los préstamos cuentan solo el capital; los intereses futuros no son deuda hasta que vencen.';
+
+  @override
+  String get howTotalRates =>
+      'Las demás monedas usan el tipo de cambio actual.';
+
+  @override
+  String sheetAccountsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count cuentas',
+      one: '1 cuenta',
+      zero: 'Sin cuentas',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String budgetFor(String name) {
+    return 'Presupuesto de $name';
+  }
+
+  @override
+  String get budgetIntro =>
+      'Fija un importe mensual para las categorías que quieras vigilar. Los pagos de tarjeta, transferencias y capital nunca cuentan.';
+
+  @override
+  String get budgetMonthly => 'Cada mes';
+
+  @override
+  String get budgetZeroHelp => 'Cero lo elimina.';
+
+  @override
+  String get budgetNone => 'Sin presupuesto';
+
+  @override
+  String budgetOf(String amount) {
+    return 'Presupuesto $amount';
+  }
+
+  @override
+  String get budgetSet => 'Fijar presupuesto';
+
+  @override
+  String get budgetTotal => 'Presupuesto de este mes';
+
+  @override
+  String get recurringAdd => 'Añadir pago previsto';
+
+  @override
+  String get recurringDay => 'Día del mes';
+
+  @override
+  String get recurringEmptyTitle => 'Sin pagos previstos';
+
+  @override
+  String get recurringEmptyMessage =>
+      'Añade alquiler, facturas, cuotas o tu sueldo para verlos en Próximamente antes de su fecha.';
+
+  @override
+  String recurringNext(String date) {
+    return 'Próximo $date';
+  }
+
+  @override
+  String recurringRecord(String name, String date) {
+    return 'Registrar $name del $date';
+  }
+
+  @override
+  String get peopleEmptyTitle => 'Nadie todavía';
+
+  @override
+  String get peopleEmptyMessage =>
+      'Anota lo que prestas o pides prestado, y las devoluciones.';
+
+  @override
+  String get splitTotal => 'Total de la cuenta';
+
+  @override
+  String get splitWho => 'Quién más participó';
+
+  @override
+  String get splitShare => 'Parte';
+
+  @override
+  String get splitAddPerson => 'Añadir persona';
+
+  @override
+  String get splitEvenly => 'Dividir a partes iguales';
+
+  @override
+  String get splitMine => 'Tu parte (gasto)';
+
+  @override
+  String get splitOwedToYou => 'Te deben';
+
+  @override
+  String get splitHelp =>
+      'Sale el importe total de la cuenta; solo tu parte es gasto y las demás pasan a deberse.';
+
+  @override
+  String get splitErrorPerson => 'Cada persona necesita nombre y parte.';
+
+  @override
+  String get splitErrorShares =>
+      'Añade al menos una persona, con partes que no superen el total.';
+
+  @override
+  String get categoriesTitle => 'Categorías';
+
+  @override
+  String get categoriesSpending => 'Gastos';
+
+  @override
+  String get categoriesIncome => 'Ingresos';
+
+  @override
+  String get categoryRename => 'Renombrar categoría';
+
+  @override
+  String get categoryRemove => 'Eliminar categoría';
+
+  @override
+  String get categoryRemoveMessage =>
+      'Los movimientos la conservan en su historial.';
+
+  @override
+  String get categoryAddSpending => 'Nueva categoría de gasto';
+
+  @override
+  String get categoryAddIncome => 'Nueva categoría de ingreso';
+
+  @override
+  String get valueReview => 'Revisar valores de bienes';
+
+  @override
+  String get valueReviewHelp => 'Un aviso en Para revisar';
+
+  @override
+  String get valueReviewOff => 'Desactivado';
+
+  @override
+  String valueReviewMonths(int months) {
+    String _temp0 = intl.Intl.pluralLogic(
+      months,
+      locale: localeName,
+      other: 'Cada $months meses',
+      one: 'Cada mes',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get addSheetTransaction => 'Movimiento';
+
+  @override
+  String get addSheetTransactionSubtitle => 'Dinero gastado, recibido o movido';
+
+  @override
+  String get entryVoiceTitle => 'Dilo en vez de escribir';
+
+  @override
+  String get entryVoiceListening => 'Escuchando… toca para parar';
+
+  @override
+  String get entryVoiceHint =>
+      'Di lo que pasó, por ejemplo «Gasté 45 en Mercadona con la Visa ayer»';
+
+  @override
+  String get entryVoiceNothing =>
+      'No se entendió un importe ni un nombre. Inténtalo de nuevo o escríbelo.';
+
+  @override
+  String get entryNewTitle => 'Nuevo movimiento';
+
+  @override
+  String get addSheetMore => 'Más';
+
+  @override
+  String get addSheetMoreSubtitle =>
+      'Ingresos, transferencias, préstamos, cuentas, bienes';
+
+  @override
+  String get whatsNewTitle => 'Novedades de Qima';
+
+  @override
+  String get whatsNewTabs =>
+      'Tres pestañas: Inicio para tu situación, Dinero para tus gastos, Precios para el mercado.';
+
+  @override
+  String get whatsNewBalanceSheet =>
+      'Tus inversiones, cuentas, tarjetas y préstamos suman en un solo balance. Toca el total para verlo.';
+
+  @override
+  String get whatsNewAssets =>
+      'Añade un inmueble, un coche o un negocio y actualiza su valor tú mismo.';
+
+  @override
+  String get whatsNewPick => '¿Qué te gustaría usar?';
+
+  @override
+  String get whatsNewLater => 'Puedes cambiarlas en Ajustes › Funciones.';
+
+  @override
+  String get zakatDueTitle => 'Zakat a pagar';
+
+  @override
+  String zakatDueLine(String amount) {
+    return '$amount a pagar';
+  }
+
+  @override
+  String get zakatBelowLine => 'Por debajo del nisab';
+
+  @override
+  String zakatBaseLine(String amount) {
+    return 'Computado: $amount';
+  }
+
+  @override
+  String zakatAbove(String amount) {
+    return 'Por encima del nisab de $amount';
+  }
+
+  @override
+  String zakatBelow(String amount) {
+    return 'Por debajo del nisab de $amount';
+  }
+
+  @override
+  String get zakatNoThreshold =>
+      'El nisab aparece al cargar los precios del oro y la plata.';
+
+  @override
+  String get zakatBase => 'Computado para el zakat';
+
+  @override
+  String get zakatHeldForSale => 'Bienes en venta';
+
+  @override
+  String get zakatDebtsDue => 'Deudas vencidas';
+
+  @override
+  String get zakatBookHelp =>
+      'Las inversiones siguen tus ajustes de zakat. Se descuentan las tarjetas y lo que debes a personas; los préstamos no, porque solo contaría la cuota vencida y Qima no conoce su calendario.';
+
+  @override
+  String get zakatHoldingsDetail => 'Inversiones en detalle';
+
+  @override
+  String get importStatement => 'Importar un extracto';
+
+  @override
+  String get importStatementSubtitle =>
+      'PDF, Excel, CSV o capturas de tu banco';
+
+  @override
+  String get importFromFiles => 'Desde Archivos';
+
+  @override
+  String get importFromFilesHint => 'Extractos en PDF, Excel o CSV';
+
+  @override
+  String get importFromPhotos => 'Capturas desde Fotos';
+
+  @override
+  String get importFromPhotosHint => 'Los movimientos de tu app del banco';
+
+  @override
+  String get importFromClipboard => 'Desde el portapapeles';
+
+  @override
+  String get importFromClipboardHint =>
+      'Un extracto, recibo, mensaje del banco o captura copiado';
+
+  @override
+  String get importPastedName => 'Pegado';
+
+  @override
+  String get importShareTip =>
+      'También puedes compartir archivos con Qima desde cualquier app.';
+
+  @override
+  String importReadingFiles(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Leyendo $count archivos…',
+      one: 'Leyendo 1 archivo…',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String importReadyRows(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count movimientos por revisar',
+      one: '1 movimiento por revisar',
+      zero: 'No se encontró nada que añadir',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get importReadyBalance => 'Un saldo por revisar';
+
+  @override
+  String get bankMessagesTitle => 'Mensajes del banco';
+
+  @override
+  String get bankMessagesEntry => 'Mensajes del banco';
+
+  @override
+  String get bankMessagesEntryHint =>
+      'Añade compras desde los mensajes de tu banco';
+
+  @override
+  String get bankMessagesIntro =>
+      'Tu banco te envía un mensaje por cada compra, transferencia y nómina. Qima puede leer esos mensajes y proponerlos como movimientos. Revisas cada uno antes de añadirlo.';
+
+  @override
+  String get bankMessagesRead => 'Leer los nuevos mensajes del banco';
+
+  @override
+  String get bankMessagesReadHint =>
+      'Solo mensajes con un importe. Se omiten los códigos y los mensajes personales.';
+
+  @override
+  String get bankMessagesRecent => 'Traer los últimos 60 días';
+
+  @override
+  String get bankMessagesRecentHint =>
+      'Se omiten los mensajes que ya están en Qima';
+
+  @override
+  String get bankMessagesDenied =>
+      'Qima necesita permiso para leer mensajes. Puedes darlo en Ajustes.';
+
+  @override
+  String get bankMessagesSetUp => 'Configúralo una vez en Atajos';
+
+  @override
+  String get bankMessagesStep1 =>
+      'Abre Atajos, ve a Automatización y toca +, luego elige Mensaje.';
+
+  @override
+  String get bankMessagesStep2 =>
+      'Elige tu banco como remitente, o una palabra que siempre aparece en sus mensajes, como EUR.';
+
+  @override
+  String get bankMessagesStep3 => 'Elige Ejecutar inmediatamente.';
+
+  @override
+  String get bankMessagesStep4 =>
+      'Añade la acción «Add a bank message» de Qima y pásale el mensaje y su remitente.';
+
+  @override
+  String get bankMessagesOpenShortcuts => 'Abrir Atajos';
+
+  @override
+  String get bankMessagesUnavailable =>
+      'Los mensajes del banco se pueden añadir en iPhone y Android.';
+
+  @override
+  String get bankMessagesPrivacy =>
+      'Los mensajes se leen en este dispositivo y nunca salen de él.';
+
+  @override
+  String get importMessagesInto => 'Mensajes a';
+
+  @override
+  String importMessageFrom(String sender) {
+    return 'Mensaje de $sender';
+  }
+
+  @override
+  String get importMoveMessage => 'Mover a otra cuenta';
+
+  @override
+  String get bankMessagesNotifyTitle => 'Mensajes del banco por revisar';
+
+  @override
+  String get bankMessagesNotifyBody =>
+      'Abre Qima para revisarlos antes de añadirlos.';
+
+  @override
+  String bankMessagesAutoAdded(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Se añadieron $count transacciones de mensajes del banco',
+      one: 'Se añadió 1 transacción de un mensaje del banco',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get bankMessagesAutoAdd => 'Añadir los que Qima tiene claros';
+
+  @override
+  String get bankMessagesAutoAddHint =>
+      'Cuando un mensaje indica su cuenta y no hay nada que revisar, se añade al momento, con Deshacer. El resto te espera.';
+
+  @override
+  String get bankMessagesOfferTitle =>
+      'Añade compras desde los SMS de tu banco';
+
+  @override
+  String get bankMessagesOfferBody =>
+      'Qima puede leer los mensajes nuevos del banco en este teléfono y proponer cada uno como transacción en su propia cuenta. Los mensajes se leen solo en este dispositivo.';
+
+  @override
+  String get bankMessagesOfferAllow => 'Permitir';
+
+  @override
+  String get bankMessagesOfferLater => 'Ahora no';
+
+  @override
+  String bankMessagesFound(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count mensajes del banco por revisar',
+      one: '1 mensaje del banco por revisar',
+      zero: 'No se encontraron mensajes del banco',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get importBannerTitle => 'Compartido con Qima';
+
+  @override
+  String get importReviewTitle => 'Revisar importación';
+
+  @override
+  String get importIntoAccount => 'Extracto de';
+
+  @override
+  String get importNoAccountTitle => 'Añade primero la cuenta';
+
+  @override
+  String get importNoAccountBody =>
+      'Añade la cuenta bancaria o tarjeta de este extracto y vuelve aquí.';
+
+  @override
+  String get importNoAccountMessagesBody =>
+      'Añade la cuenta bancaria o tarjeta de la que vienen estos mensajes y vuelve aquí.';
+
+  @override
+  String importAddCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Añadir $count movimientos',
+      one: 'Añadir 1 movimiento',
+      zero: 'Añadir',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String importAdded(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count movimientos añadidos',
+      one: '1 movimiento añadido',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get importDiscardAll => 'Descartar todo';
+
+  @override
+  String get importApplyBalance => 'Aplicar el saldo';
+
+  @override
+  String get importDiscardConfirm =>
+      '¿Descartar estos archivos? No se añadirá nada.';
+
+  @override
+  String get importDiscard => 'Descartar';
+
+  @override
+  String get importRemoveFile => 'Quitar archivo';
+
+  @override
+  String get importAddRow => 'Añadir este movimiento';
+
+  @override
+  String get importSkipRow => 'Descartar este movimiento';
+
+  @override
+  String get importFlagInBook => 'Ya está en Qima';
+
+  @override
+  String importFlagMaybeInBook(String merchant, String date) {
+    return 'Mismo importe que $merchant el $date: comprueba que no es la misma';
+  }
+
+  @override
+  String get importBetweenAccounts => 'Entre tus cuentas';
+
+  @override
+  String importTransferWith(String name) {
+    return 'Transferencia · $name';
+  }
+
+  @override
+  String get importRowName => 'Descripción';
+
+  @override
+  String get importFlagRepeated => 'También en otro archivo';
+
+  @override
+  String importFlagCurrency(String currency) {
+    return 'En $currency, no en la moneda de la cuenta';
+  }
+
+  @override
+  String get importDateGuessed =>
+      'Sin fecha: se usó el día en que se compartió';
+
+  @override
+  String get importSignGuessed => 'Revisa: ¿entrada o salida?';
+
+  @override
+  String get importFlagNotTransaction =>
+      'Parece texto del banco, no un movimiento';
+
+  @override
+  String importRefCard(String last4) {
+    return 'Tarjeta •••• $last4';
+  }
+
+  @override
+  String importRefAccount(String last4) {
+    return 'Cuenta •••• $last4';
+  }
+
+  @override
+  String importRefIban(String last4) {
+    return 'IBAN •••• $last4';
+  }
+
+  @override
+  String importBalances(String opening, String closing) {
+    return 'Inicial $opening → final $closing';
+  }
+
+  @override
+  String get importAddsUp =>
+      'Las filas marcadas cuadran con los saldos inicial y final del extracto';
+
+  @override
+  String importGap(String amount) {
+    return '$amount sin explicar: revisa si falta un movimiento';
+  }
+
+  @override
+  String importOpeningBalance(String amount) {
+    return 'Añadir el saldo inicial: $amount';
+  }
+
+  @override
+  String importMatchBalance(String amount) {
+    return 'Ajustar el saldo a $amount';
+  }
+
+  @override
+  String importBalanceDetail(String date, String tracked) {
+    return 'Como muestra el extracto el $date. Sin esto, Qima tendría $tracked.';
+  }
+
+  @override
+  String get importStatusReading => 'Leyendo…';
+
+  @override
+  String get importStatusWaiting => 'En espera';
+
+  @override
+  String get importStatusAlready => 'Ya importado';
+
+  @override
+  String get importStatusUnsupported =>
+      'Qima no puede leer este tipo de archivo';
+
+  @override
+  String get importStatusUnreadable => 'No se pudo leer este archivo';
+
+  @override
+  String get importStatusNothing =>
+      'No se encontraron movimientos en este archivo';
+
+  @override
+  String importRowFound(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count encontrados',
+      one: '1 encontrado',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get importEditRow => 'Movimiento';
+
+  @override
+  String get importCategory => 'Categoría';
+
+  @override
+  String get importNothingSelected =>
+      'Marca los movimientos que quieras añadir.';
+
+  @override
+  String get importReadOnDevice =>
+      'Se lee en este dispositivo. Los archivos se borran al importarlos.';
+
+  @override
+  String get importMessageNoSender =>
+      'Los mensajes sin remitente van todos a una sola cuenta. Pasa el remitente a la acción de Qima en tu automatización de Atajos.';
+
+  @override
+  String get importEmpty => 'Nada pendiente';
+
+  @override
+  String get catUncategorized => 'Sin categoría';
+
+  @override
+  String get catUncategorizedIncome => 'Ingresos sin categoría';
+
+  @override
+  String get toCategorizeTitle => 'Por clasificar';
+
+  @override
+  String toCategorizeCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count por clasificar',
+      one: '1 por clasificar',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get toCategorizeHint =>
+      'Elige una categoría una vez por nombre. Las importaciones de ese nombre la usarán desde ahora.';
+
+  @override
+  String get toCategorizeEmpty => 'Todo tiene categoría.';
+
+  @override
+  String toCategorizeAlso(
+    int count,
+    String name,
+    String category,
+    String from,
+  ) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          '¿Poner también $count movimientos anteriores de $name en $category? Ahora están en $from.',
+      one:
+          '¿Poner también 1 movimiento anterior de $name en $category? Ahora está en $from.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get toCategorizeAlsoYes => 'Moverlos';
+
+  @override
+  String get categoriesLearned => 'Aprendido de tus elecciones';
+
+  @override
+  String get categoriesForgetTitle => '¿Olvidar esta elección?';
+
+  @override
+  String categoriesForgetMessage(String name, String category) {
+    return 'Las importaciones de $name ya no irán solas a $category. Los movimientos que ya están allí se quedan.';
+  }
+
+  @override
+  String get categoriesForget => 'Olvidar';
+
+  @override
+  String get marketClosed => 'Cerrado';
+
+  @override
+  String marketClosedOpens(String time) {
+    return 'Mercado cerrado · abre $time';
+  }
+
+  @override
+  String marketOpenCloses(String time) {
+    return 'Mercado abierto · cierra $time';
+  }
+
+  @override
+  String get marketClosedLong => 'Mercado cerrado';
+
+  @override
+  String holdingsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count inversiones',
+      one: '1 inversión',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String pricesAt(String time) {
+    return 'precios $time';
+  }
+
+  @override
+  String get balanceWayTransaction => 'Añadir un movimiento';
+
+  @override
+  String balanceWayTransactionDetail(String other) {
+    return 'La diferencia cuenta como gasto o ingreso en $other';
+  }
+
+  @override
+  String get balanceWayOpening => 'Cambiar el saldo inicial';
+
+  @override
+  String get balanceWayOpeningDetail =>
+      'Desde su primer día, ni gasto ni ingreso';
+
+  @override
+  String get netLabel => 'Neto';
+
+  @override
+  String get planOut => 'Sale';
+
+  @override
+  String get planIn => 'Entra';
+
+  @override
+  String get planRepeat => 'Se repite';
+
+  @override
+  String get planRepeatOnce => 'Una vez';
+
+  @override
+  String get planRepeatWeekly => 'Cada semana';
+
+  @override
+  String get planRepeatMonthly => 'Cada mes';
+
+  @override
+  String get planRepeatQuarterly => 'Cada 3 meses';
+
+  @override
+  String get planRepeatYearly => 'Cada año';
+
+  @override
+  String get planDate => 'Vence el';
+
+  @override
+  String get planTimes => 'Número de pagos';
+
+  @override
+  String get planTimesHelp =>
+      'Déjalo vacío si no termina, o 4 para un pago a plazos en 4 cuotas.';
+
+  @override
+  String get planPaidInto => 'Se ingresa en';
+
+  @override
+  String get planRemind => 'Avisarme el día antes';
+
+  @override
+  String planLeft(int left, int total) {
+    return 'Quedan $left de $total';
+  }
+
+  @override
+  String get planFinished => 'Terminado';
+
+  @override
+  String planOverdue(String date) {
+    return 'Vencido desde el $date';
+  }
+
+  @override
+  String get planRecord => 'Registrar';
+
+  @override
+  String get planSkip => 'Saltar este';
+
+  @override
+  String planDueTomorrow(String name) {
+    return '$name vence mañana';
+  }
+
+  @override
+  String planExpectedTomorrow(String name) {
+    return '$name llega mañana';
+  }
+
+  @override
+  String get planReminderBody => 'Abre Qima para registrarlo cuando ocurra.';
+
+  @override
+  String plannedThisMonth(String amount) {
+    return '$amount aún previstos este mes';
+  }
+
+  @override
+  String get categoryNew => 'Nueva categoría…';
+
+  @override
+  String get categoryNewTitle => 'Nueva categoría';
+
+  @override
+  String get planEdit => 'Cambiar';
+
+  @override
+  String get accountNumberAccount => 'Número de cuenta';
+
+  @override
+  String get accountNumberIban => 'IBAN';
+
+  @override
+  String get accountNumberCard => 'Número de tarjeta';
+
+  @override
+  String get accountNumberHelp =>
+      'Bastan los últimos 4 dígitos. Qima solo guarda esos 4, para asociar extractos y mensajes del banco a esta cuenta.';
+
+  @override
+  String get accountNumberShort => 'Escribe al menos los últimos 4 dígitos';
+
+  @override
+  String get applePaySetUp => 'Pagos con Apple Pay';
+
+  @override
+  String get applePayIntro =>
+      'Cada pago con Apple Pay puede llegar a Qima al pagar, incluso de tarjetas que no envían mensajes.';
+
+  @override
+  String get applePayStep1 =>
+      'En Atajos, ve a Automatización, toca + y elige Cartera.';
+
+  @override
+  String get applePayStep2 =>
+      'Elige tus tarjetas y luego Ejecutar inmediatamente.';
+
+  @override
+  String get applePayStep3 => 'Añade la acción «Add a Wallet payment» de Qima.';
+
+  @override
+  String get applePayStep4 =>
+      'Pon su Amount, Merchant y Card en Importe, Comercio y Tarjeta o pase de la entrada del atajo.';
+
+  @override
+  String get entryMarkAs => 'Marcar como';
+
+  @override
+  String get splitByAmount => 'Importe';
+
+  @override
+  String get splitByEqually => 'A partes iguales';
+
+  @override
+  String get splitByPercent => 'Porcentaje';
+
+  @override
+  String get splitByShares => 'Partes';
+
+  @override
+  String get splitYou => 'Tú';
+
+  @override
+  String get tplHoldingTrade => 'Operación de inversión';
+
+  @override
+  String get sysHoldings => 'Inversiones';
+
+  @override
+  String get holdingPaidFrom => 'Pagado desde';
+
+  @override
+  String get holdingPaidInto => 'Ingresado en';
+
+  @override
+  String get holdingNoCash => 'Sin movimiento de dinero (ya lo tenía)';
+
+  @override
+  String get holdingCashHelp =>
+      'El importe se resta de esta cuenta para no contarlo dos veces.';
+
+  @override
+  String get entryFromHoldings =>
+      'Viene de una operación de inversión. Cámbiala o bórrala en Inversiones.';
+
+  @override
+  String get settingsAiApps => 'Apps de IA';
+
+  @override
+  String get aiAppsToggle => 'Permitir que las apps de IA lean Qima';
+
+  @override
+  String get aiAppsFooter =>
+      'Claude y otras apps de IA de este ordenador compatibles con MCP pueden leer tus cuentas, movimientos, presupuesto y patrimonio neto, sin cambiar nada. Lo que leen se envía al servicio de IA de esa app. Los números de cuenta, tarjeta e IBAN y las notas de las cuentas nunca se comparten, y al desactivarlo se borra la copia compartida.';
+
+  @override
+  String get aiAppsSetupTitle => 'Añadir Qima a tu app de IA';
+
+  @override
+  String get aiAppsSetupBody =>
+      'En Claude Desktop, abre Ajustes, luego Developer y luego Edit Config, y añade esto al archivo. Las demás apps compatibles con MCP usan el mismo comando y argumentos.';
+
+  @override
+  String get aiAppsCopy => 'Copiar';
+
+  @override
+  String get aiAppsCopied => 'Copiado';
+
+  @override
+  String get aiAppsFreshness =>
+      'La copia se actualiza mientras Qima está abierta.';
+
+  @override
+  String get aiAppsNoHelper =>
+      'El conector no está en esta copia de Qima. Instala Qima desde la tienda o la web para usarlo.';
+
+  @override
+  String get setupWelcomeTitle => 'Vamos a preparar Qima para ti';
+
+  @override
+  String get setupWelcomeBody =>
+      'Responde unas preguntas y Qima mostrará solo lo que necesitas. Lleva un minuto.';
+
+  @override
+  String get setupWelcomeNoAccount => 'Sin cuenta';
+
+  @override
+  String get setupWelcomeOnDevice =>
+      'Tus respuestas se quedan en este dispositivo';
+
+  @override
+  String get setupWelcomeChangeLater =>
+      'Cambia lo que quieras después en Ajustes';
+
+  @override
+  String get setupWelcomeSkip => 'Omitir, lo configuro yo';
+
+  @override
+  String setupChosen(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count elegidos',
+      one: '1 elegido',
+      zero: 'Nada elegido',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get setupListSeparator => ', ';
+
+  @override
+  String get setupCurrencyTitle => '¿Cuál es tu moneda principal?';
+
+  @override
+  String get setupCurrencyBody =>
+      'Los totales, presupuestos y precios se muestran en ella.';
+
+  @override
+  String get setupCurrencyFromRegion => 'Según tu región';
+
+  @override
+  String get setupCurrencyMore => 'Más monedas';
+
+  @override
+  String get setupUsesTitle => '¿Cómo quieres usar Qima?';
+
+  @override
+  String get setupChooseAll => 'Elige todo lo que corresponda.';
+
+  @override
+  String get setupUseMoney => 'Gestionar mi dinero';
+
+  @override
+  String get setupUseMoneyBody => 'Gastos, cuentas, presupuestos y facturas';
+
+  @override
+  String get setupUsePortfolio => 'Gestionar mi cartera';
+
+  @override
+  String get setupUsePortfolioBody =>
+      'Lo que tengo, lo que costó y lo que vale';
+
+  @override
+  String get setupUsePrices => 'Seguir precios';
+
+  @override
+  String get setupUsePricesBody => 'Oro, acciones, monedas y alertas';
+
+  @override
+  String get setupUseNetWorth => 'Conocer mi patrimonio neto';
+
+  @override
+  String get setupUseNetWorthBody => 'Todo lo que tengo y debo, en una cifra';
+
+  @override
+  String get setupUseZakat => 'Calcular mi zakat';
+
+  @override
+  String get setupUseZakatBody => 'Sobre mis inversiones, efectivo y deudas';
+
+  @override
+  String get setupProductsTitle => '¿En qué inviertes o qué sigues?';
+
+  @override
+  String get setupProductsBody =>
+      'Qima sugiere precios para seguir según lo que elijas.';
+
+  @override
+  String get setupProductMetals => 'Oro y plata';
+
+  @override
+  String get setupProductMetalsBody =>
+      'Lingotes, monedas y joyas, por quilates';
+
+  @override
+  String get setupProductStocks => 'Acciones';
+
+  @override
+  String get setupProductStocksBody => 'Acciones que tienes o sigues';
+
+  @override
+  String get setupProductCurrencies => 'Monedas';
+
+  @override
+  String get setupProductCurrenciesBody =>
+      'Tipos del dólar, el euro y el riyal';
+
+  @override
+  String get setupProductCrypto => 'Cripto';
+
+  @override
+  String get setupProductCryptoBody => 'Bitcoin, Ethereum y otras';
+
+  @override
+  String get setupProductIndices => 'Índices';
+
+  @override
+  String get setupProductIndicesBody => 'S&P 500, Nasdaq y otros';
+
+  @override
+  String get setupProductProperty => 'Inmuebles y otros';
+
+  @override
+  String get setupProductPropertyBody =>
+      'Una casa, un terreno, un coche o un negocio';
+
+  @override
+  String get setupPricesTitle => 'Empieza con estos precios';
+
+  @override
+  String setupPricesBody(String currency) {
+    return 'Elegidos según tus respuestas y mostrados en $currency. Desmarca los que no quieras.';
+  }
+
+  @override
+  String setupPricesAdd(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Añadir $count a mi lista',
+      one: 'Añadir 1 a mi lista',
+      zero: 'Añadir a mi lista',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get setupPricesNotNow => 'Ahora no';
+
+  @override
+  String get setupGoalsTitle => '¿Qué quieres de tu dinero?';
+
+  @override
+  String get setupGoalWhere => 'Saber adónde va mi dinero';
+
+  @override
+  String get setupGoalWhereBody => 'Gastos por categoría, cada mes';
+
+  @override
+  String get setupGoalSave => 'Ahorrar más cada mes';
+
+  @override
+  String get setupGoalSaveBody => 'Lo que entra, lo que sale y lo que queda';
+
+  @override
+  String get setupGoalBudget => 'Ceñirme a un presupuesto';
+
+  @override
+  String get setupGoalBudgetBody => 'Un importe mensual por categoría';
+
+  @override
+  String get setupGoalBills => 'No olvidar ninguna factura';
+
+  @override
+  String get setupGoalBillsBody => 'Facturas y cuotas antes de que venzan';
+
+  @override
+  String get setupGoalPeople => 'Saber quién me debe';
+
+  @override
+  String get setupGoalPeopleBody => 'Dinero prestado y debido, por persona';
+
+  @override
+  String get setupCaptureTitle => '¿Cómo vas a añadir tus gastos?';
+
+  @override
+  String get setupCaptureBody => 'Puedes usar más de una.';
+
+  @override
+  String get setupCaptureType => 'Escribirlo o decirlo';
+
+  @override
+  String get setupCaptureTypeBody =>
+      '«Café 85 en efectivo» se convierte en un movimiento';
+
+  @override
+  String get setupCaptureMessages => 'Leer los mensajes de mi banco';
+
+  @override
+  String get setupCaptureMessagesBody =>
+      'Cada mensaje del banco se convierte en un movimiento por revisar';
+
+  @override
+  String get setupCaptureStatement => 'Importar un extracto';
+
+  @override
+  String get setupCaptureStatementBody =>
+      'Un archivo PDF, Excel o CSV, o una captura';
+
+  @override
+  String get setupCapturePrivacy =>
+      'Los mensajes y archivos se leen en este dispositivo. No se sube nada.';
+
+  @override
+  String get setupSummaryTitle => 'Qima está lista';
+
+  @override
+  String get setupSummaryBody =>
+      'Esto es lo que configuran tus respuestas. Toca una fila para cambiarla.';
+
+  @override
+  String get setupSummaryCurrency => 'Moneda principal';
+
+  @override
+  String get setupSummaryHome => 'En Inicio';
+
+  @override
+  String get setupSummaryFeatures => 'Activado';
+
+  @override
+  String get setupSummaryNothingNew => 'Nada adicional';
+
+  @override
+  String get setupSummaryWatchlist => 'Lista de seguimiento';
+
+  @override
+  String get setupSummaryWatchlistKept => 'Se queda como está';
+
+  @override
+  String setupSummaryPrices(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count precios',
+      one: '1 precio',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get setupSummaryCapture => 'Añadir gastos';
+
+  @override
+  String get setupSummaryLater =>
+      'Puedes cambiar todo esto después en Ajustes.';
+
+  @override
+  String get setupSummaryTour => 'Enséñame la app';
+
+  @override
+  String get setupSummaryGoHome => 'Ir a Inicio';
+
+  @override
+  String get tourTabsTitle => 'Tres lugares';
+
+  @override
+  String get tourTabsBody =>
+      'Inicio es tu situación. Dinero, adónde va. Precios, el mercado.';
+
+  @override
+  String get tourAddTitle => 'Añade lo que sea desde aquí';
+
+  @override
+  String get tourAddBody =>
+      'Un movimiento, una cuenta, una posición o un precio. Puedes escribirlo o decirlo.';
+
+  @override
+  String get tourMoneyTitle => 'Tu mes de un vistazo';
+
+  @override
+  String get tourMoneyBody =>
+      'Lo que entra, lo que sale y lo que queda, mes a mes.';
+
+  @override
+  String get tourPricesTitle => 'Toca un precio para ver su gráfico';
+
+  @override
+  String get tourPricesBody =>
+      'Pon una alerta ahí y Qima te avisa cuando cruce un nivel.';
+
+  @override
+  String tourStepOf(int step, int total) {
+    return '$step de $total';
+  }
+
+  @override
+  String get tourSkip => 'Omitir';
+
+  @override
+  String get tourNext => 'Siguiente';
+
+  @override
+  String get startCardTitle => 'Primeros pasos';
+
+  @override
+  String startCardProgress(int done, int total) {
+    return '$done de $total';
+  }
+
+  @override
+  String get startCardSetUp => 'Configurar Qima';
+
+  @override
+  String get startCardDismiss => 'Ocultar Primeros pasos';
+
+  @override
+  String get startTaskAccount => 'Añade tu primera cuenta';
+
+  @override
+  String get startTaskTransaction => 'Registra un movimiento';
+
+  @override
+  String get startTaskHolding => 'Añade lo que tienes';
+
+  @override
+  String get startTaskAsset => 'Añade un inmueble, un coche u otro bien';
+
+  @override
+  String get startTaskAlert => 'Crea una alerta de precio';
+
+  @override
+  String get startTaskBankMessages => 'Configura los mensajes del banco';
+
+  @override
+  String get settingsHelpRunSetup => 'Repetir la configuración';
+
+  @override
+  String get settingsHelpRunSetupSubtitle =>
+      'Vuelve a responder las preguntas. No se desactiva nada que uses.';
 }

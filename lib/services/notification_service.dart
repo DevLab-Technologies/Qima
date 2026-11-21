@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:timezone/timezone.dart' as tz;
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Fired with the tapped notification's payload (a `WatchCard.id`) whenever a
@@ -191,6 +192,37 @@ class NotificationService {
       // A notification failing to display must never crash a refresh —
       // it's a side effect of an otherwise-successful price update.
       debugPrint('NotificationService: show failed: $e\n$st');
+    }
+  }
+
+  /// Posts at [at] (local time) even when Qima isn't running: planned
+  /// payment reminders. Replaces anything already scheduled with [id].
+  Future<void> scheduleAt({required int id, required DateTime at, required String title, required String body, required String payload}) async {
+    const androidDetails = AndroidNotificationDetails(_channelId, _channelName, channelDescription: _channelDescription);
+    const darwinDetails = DarwinNotificationDetails();
+    const details = NotificationDetails(android: androidDetails, iOS: darwinDetails, macOS: darwinDetails);
+    try {
+      await _plugin.zonedSchedule(
+        id: id,
+        // The instant, in UTC: no time zone database needed.
+        scheduledDate: tz.TZDateTime.from(at, tz.UTC),
+        notificationDetails: details,
+        androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+        title: title,
+        body: body,
+        payload: payload,
+      );
+    } catch (e, st) {
+      debugPrint('NotificationService: schedule failed: $e\n$st');
+    }
+  }
+
+  /// Withdraws a scheduled or posted notification.
+  Future<void> cancel(int id) async {
+    try {
+      await _plugin.cancel(id: id);
+    } catch (e, st) {
+      debugPrint('NotificationService: cancel failed: $e\n$st');
     }
   }
 }

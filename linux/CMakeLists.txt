@@ -94,6 +94,9 @@ set(INSTALL_BUNDLE_LIB_DIR "${CMAKE_INSTALL_PREFIX}/lib")
 install(TARGETS ${BINARY_NAME} RUNTIME DESTINATION "${CMAKE_INSTALL_PREFIX}"
   COMPONENT Runtime)
 
+# Qima's MCP helper for AI apps (see tool/qima_mcp).
+include("${CMAKE_CURRENT_SOURCE_DIR}/../tool/qima_mcp/qima_mcp.cmake")
+
 install(FILES "${FLUTTER_ICU_DATA_FILE}" DESTINATION "${INSTALL_BUNDLE_DATA_DIR}"
   COMPONENT Runtime)
 

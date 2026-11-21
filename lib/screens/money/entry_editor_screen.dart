@@ -1,0 +1,656 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../blocs/app_cubit.dart';
+import '../../blocs/money_cubit.dart';
+import '../../l10n/app_localizations.dart';
+import '../../models/book_account.dart';
+import '../../models/book_entry.dart';
+import '../../models/categorizer.dart';
+import '../../models/entry_builder.dart';
+import '../../models/import_plan.dart';
+import '../../models/spoken_entry.dart';
+import '../../theme/design_system.dart';
+import '../../theme/money_labels.dart';
+import '../../theme/qima_colors.dart';
+import '../../widgets/dictation_button.dart';
+import '../../widgets/money_widgets.dart';
+import '../../theme/help_topics.dart';
+import '../../widgets/help_button.dart';
+
+/// The ways a person adds a transaction. Each is one template; the editor
+/// asks only what that template needs.
+enum EntryKind {
+  spend,
+  income,
+  transfer,
+  cardPayment,
+  loanPayment,
+  lent,
+  borrowed,
+  repaymentIn,
+  repaymentOut,
+  refund,
+  swap;
+
+  EntryTemplate get template => switch (this) {
+        EntryKind.spend => EntryTemplate.spend,
+        EntryKind.income => EntryTemplate.income,
+        EntryKind.transfer => EntryTemplate.transfer,
+        EntryKind.cardPayment => EntryTemplate.cardPayment,
+        EntryKind.loanPayment => EntryTemplate.loanPayment,
+        EntryKind.lent => EntryTemplate.lent,
+        EntryKind.borrowed => EntryTemplate.borrowed,
+        EntryKind.repaymentIn => EntryTemplate.repaymentIn,
+        EntryKind.repaymentOut => EntryTemplate.repaymentOut,
+        EntryKind.refund => EntryTemplate.refund,
+        EntryKind.swap => EntryTemplate.swap,
+      };
+
+  /// The kind an existing entry can be edited as, or null when it can only
+  /// be deleted and made again (an import, a sale, a valuation).
+  static EntryKind? forEntry(BookEntry e) => switch (e.template) {
+        EntryTemplate.spend || EntryTemplate.declined => EntryKind.spend,
+        EntryTemplate.income => EntryKind.income,
+        EntryTemplate.transfer || EntryTemplate.atm => EntryKind.transfer,
+        EntryTemplate.cardPayment => EntryKind.cardPayment,
+        EntryTemplate.loanPayment => EntryKind.loanPayment,
+        EntryTemplate.refund => EntryKind.refund,
+        EntryTemplate.swap => EntryKind.swap,
+        EntryTemplate.lent => EntryKind.lent,
+        EntryTemplate.borrowed => EntryKind.borrowed,
+        EntryTemplate.repaymentIn => EntryKind.repaymentIn,
+        EntryTemplate.repaymentOut => EntryKind.repaymentOut,
+        _ => null,
+      };
+}
+
+class EntryEditorScreen extends StatefulWidget {
+  final EntryKind kind;
+
+  /// Editing: the entry being changed. Its id is kept.
+  final BookEntry? existing;
+
+  /// Starting values, e.g. the card a Pay card button came from.
+  final String? fromAccountId;
+  final String? toAccountId;
+
+  const EntryEditorScreen({super.key, required this.kind, this.existing, this.fromAccountId, this.toAccountId});
+
+  static Future<void> open(BuildContext context, EntryKind kind, {BookEntry? existing, String? from, String? to}) =>
+      Navigator.of(context).push(MaterialPageRoute(builder: (_) => EntryEditorScreen(kind: kind, existing: existing, fromAccountId: from, toAccountId: to)));
+
+  @override
+  State<EntryEditorScreen> createState() => _EntryEditorScreenState();
+}
+
+class _EntryEditorScreenState extends State<EntryEditorScreen> {
+  final _amount = TextEditingController();
+  final _second = TextEditingController(); // received (swap), profit (loan) or debt cleared (repayment)
+  final _merchant = TextEditingController();
+  final _note = TextEditingController();
+  final _person = TextEditingController();
+  BookAccount? _from;
+  BookAccount? _to;
+  BookAccount? _category;
+  DateTime _date = DateTime.now();
+  bool _declined = false;
+  String? _error;
+
+  /// What the mic heard, shown while and after listening.
+  String? _heard;
+
+  late EntryKind kind = widget.kind;
+
+  /// Spend, income and transfer share one page, one tab each, while adding.
+  static const tabs = [EntryKind.spend, EntryKind.income, EntryKind.transfer];
+  bool get _showTabs => widget.existing == null && tabs.contains(widget.kind);
+  MoneyCubit get _money => context.read<MoneyCubit>();
+
+  @override
+  void initState() {
+    super.initState();
+    final s = _money.state;
+    final book = s.book;
+    final e = widget.existing;
+    if (e != null) {
+      _prefill(e);
+      return;
+    }
+    _from = widget.fromAccountId == null ? null : book.accounts[widget.fromAccountId];
+    _to = widget.toAccountId == null ? null : book.accounts[widget.toAccountId];
+    _from ??= _fromChoices.firstOrNull;
+    _to ??= _toChoices.where((a) => a.id != _from?.id).firstOrNull;
+    _category = _categoryChoices.firstOrNull;
+  }
+
+  /// Moves to another tab. The amount, date, merchant and note stay; the
+  /// money account chosen stays where the new tab has a place for it.
+  void _switchTo(EntryKind next) {
+    if (next == kind) return;
+    final money = kind == EntryKind.income ? _to : _from;
+    setState(() {
+      kind = next;
+      _error = null;
+      BookAccount? keep(List<BookAccount> choices) => choices.where((a) => a.id == money?.id).firstOrNull ?? choices.firstOrNull;
+      _from = _fromChoices.isEmpty ? null : keep(_fromChoices);
+      _to = kind == EntryKind.income ? keep(_toChoices) : _toChoices.where((a) => a.id != _from?.id).firstOrNull;
+      _category = _categoryChoices.firstOrNull;
+    });
+  }
+
+  void _prefill(BookEntry e) {
+    final book = _money.state.book;
+    BookAccount? acct(bool Function(BookAccount) test, {bool positive = false, bool negative = false}) {
+      for (final l in e.lines) {
+        final a = book.accounts[l.accountId];
+        if (a == null || !test(a)) continue;
+        if (positive && l.amount <= 0) continue;
+        if (negative && l.amount >= 0) continue;
+        return a;
+      }
+      return null;
+    }
+
+    int lineOf(BookAccount? a) => a == null ? 0 : e.lines.firstWhere((l) => l.accountId == a.id).amount;
+    bool own(BookAccount a) => a.side.onBalanceSheet;
+    bool cat(BookAccount a) => a.type == AccountType.category && a.id != SystemAccount.interestAndFees.id;
+    _date = e.date;
+    _merchant.text = e.merchant;
+    _note.text = e.note;
+    _declined = e.status == EntryStatus.declined;
+    switch (kind) {
+      case EntryKind.spend:
+        _from = acct(own);
+        _category = acct(cat);
+        _amount.text = minorFieldText(lineOf(_category), _from?.currency ?? 'USD');
+      case EntryKind.income || EntryKind.refund:
+        _to = acct(own);
+        _category = acct(cat);
+        _amount.text = minorFieldText(lineOf(_to), _to?.currency ?? 'USD');
+      case EntryKind.loanPayment:
+        _to = acct((a) => a.type == AccountType.loan);
+        _from = acct(own, negative: true);
+        final interest = e.lines.where((l) => l.accountId == SystemAccount.interestAndFees.id).firstOrNull;
+        _amount.text = minorFieldText(lineOf(_to), _to?.currency ?? 'USD');
+        _second.text = interest == null ? '' : minorFieldText(interest.amount, interest.currency);
+      case EntryKind.swap:
+        _from = acct(own, negative: true);
+        _to = acct(own, positive: true);
+        _amount.text = minorFieldText(-lineOf(_from), _from?.currency ?? 'USD');
+        _second.text = minorFieldText(lineOf(_to), _to?.currency ?? 'USD');
+      case EntryKind.repaymentIn || EntryKind.repaymentOut:
+        // The editor's "from" is the person, "to" the money.
+        final debt = acct((a) => a.type == AccountType.receivable || a.type == AccountType.payable);
+        _from = debt;
+        _to = acct((a) => own(a) && a.id != debt?.id);
+        _amount.text = minorFieldText(lineOf(_to).abs(), _to?.currency ?? 'USD');
+        if (_crossCurrency) _second.text = minorFieldText(lineOf(_from).abs(), _from!.currency!);
+      default:
+        _from = acct(own, negative: true);
+        _to = acct(own, positive: true);
+        _amount.text = minorFieldText(lineOf(_to).abs(), _to?.currency ?? 'USD');
+        if (kind == EntryKind.lent || kind == EntryKind.borrowed) {
+          final person = kind == EntryKind.lent ? _to : _from;
+          _person.text = person?.name ?? '';
+          // A spend marked as lent, or an income as borrowed: the money
+          // account and amount stay, and whom it was paid to or came from
+          // is the first guess at the person.
+          if (person == null) {
+            final money = kind == EntryKind.lent ? _from : _to;
+            _amount.text = minorFieldText(lineOf(money).abs(), money?.currency ?? 'USD');
+            _person.text = e.merchant;
+          }
+        }
+    }
+  }
+
+  /// Fills the form from a spoken sentence. Only what was said changes,
+  /// and every figure is the person's own; they check it and tap Save.
+  void _applySpoken(String text) {
+    final l10n = AppLocalizations.of(context)!;
+    final state = _money.state;
+    final heard = SpokenEntry.parse(
+      text,
+      accounts: {for (final a in _of({..._money_, AccountType.credit})) a.id: l10n.accountName(a)},
+      categories: {
+        for (final a in [...state.categories(AccountSide.spending), ...state.categories(AccountSide.income)])
+          if (!Categorizer.isUncategorized(a.id)) a.id: l10n.accountName(a),
+      },
+    );
+    if (heard.isEmpty) {
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(SnackBar(persist: false, content: Text(l10n.entryVoiceNothing)));
+      return;
+    }
+    final next = switch (heard.kind) {
+      SpokenKind.spend => EntryKind.spend,
+      SpokenKind.income => EntryKind.income,
+      SpokenKind.transfer => EntryKind.transfer,
+      null => null,
+    };
+    if (_showTabs && next != null) _switchTo(next);
+    final book = state.book;
+    BookAccount? pick(List<BookAccount> choices, String? id) => id == null ? null : choices.where((a) => a.id == id).firstOrNull;
+    setState(() {
+      _error = null;
+      if (heard.amount != null) _amount.text = groupedAmount(heard.amount!);
+      if (heard.merchant != null) _merchant.text = heard.merchant!;
+      if (heard.daysAgo != null) {
+        final now = DateTime.now();
+        _date = DateTime(now.year, now.month, now.day - heard.daysAgo!);
+      }
+      final ids = heard.accountIds;
+      if (ids.isNotEmpty) {
+        if (kind == EntryKind.income || kind == EntryKind.refund) {
+          _to = pick(_toChoices, ids.first) ?? _to;
+        } else if (_toChoices.isNotEmpty && ids.length > 1) {
+          _from = pick(_fromChoices, ids[0]) ?? _from;
+          _to = pick(_toChoices, ids[1]) ?? _to;
+        } else if (kind == EntryKind.cardPayment || kind == EntryKind.loanPayment) {
+          _from = pick(_fromChoices, ids.first) ?? _from;
+          _to = pick(_toChoices, ids.first) ?? _to;
+        } else {
+          _from = pick(_fromChoices, ids.first) ?? _from;
+        }
+        // Money never moves from an account to itself.
+        if (kind == EntryKind.transfer && _to != null && _to!.id == _from?.id) {
+          _to = _toChoices.where((a) => a.id != _from?.id).firstOrNull;
+        }
+      }
+      final said = pick(_categoryChoices, heard.categoryId);
+      if (said != null) {
+        _category = said;
+      } else if (heard.merchant != null && _categoryChoices.isNotEmpty) {
+        final guess = ImportPlanner.guessCategory(heard.merchant!, isIn: kind == EntryKind.income, categorizer: Categorizer(book, rules: state.settings.categoryRules));
+        if (guess.sure) _category = pick(_categoryChoices, guess.categoryId) ?? _category;
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    for (final c in [_amount, _second, _merchant, _note, _person]) {
+      c.dispose();
+    }
+    super.dispose();
+  }
+
+  List<BookAccount> _of(Set<AccountType> types) => [
+        for (final a in _money.state.accounts)
+          if (types.contains(a.type) && !a.archived) a,
+      ];
+
+  static const _money_ = {AccountType.cash, AccountType.debit};
+
+  List<BookAccount> get _fromChoices => switch (kind) {
+        EntryKind.spend => _of({..._money_, AccountType.credit}),
+        EntryKind.income || EntryKind.borrowed || EntryKind.repaymentIn || EntryKind.refund => const [],
+        EntryKind.repaymentOut => _of({AccountType.payable}),
+        _ => _of(_money_),
+      };
+
+  List<BookAccount> get _toChoices => switch (kind) {
+        EntryKind.income || EntryKind.borrowed => _of(_money_),
+        EntryKind.refund => _of({..._money_, AccountType.credit}),
+        EntryKind.transfer || EntryKind.swap => _of(_money_),
+        EntryKind.cardPayment => _of({AccountType.credit}),
+        EntryKind.loanPayment => _of({AccountType.loan}),
+        EntryKind.repaymentIn => _of(_money_),
+        _ => const [],
+      };
+
+  List<BookAccount> get _categoryChoices => switch (kind) {
+        EntryKind.spend || EntryKind.refund => [
+            for (final a in _money.state.categories(AccountSide.spending))
+              if (a.id != SystemAccount.interestAndFees.id) a,
+          ],
+        EntryKind.income => _money.state.categories(AccountSide.income),
+        _ => const [],
+      };
+
+  /// The money account the amount is in.
+  String get _currency {
+    final a = switch (kind) {
+      EntryKind.income || EntryKind.refund || EntryKind.borrowed || EntryKind.repaymentIn || EntryKind.repaymentOut => _to,
+      EntryKind.cardPayment || EntryKind.loanPayment => _to ?? _from,
+      _ => _from,
+    };
+    return a?.currency ?? context.read<AppCubit>().state.baseCurrency;
+  }
+
+  /// A repayment whose money is in another currency than the debt: the
+  /// second amount is how much of the debt it clears.
+  bool get _crossCurrency =>
+      (kind == EntryKind.repaymentIn || kind == EntryKind.repaymentOut) && _from != null && _to != null && _from!.currency != _to!.currency;
+
+  EntryBuilder get _builder {
+    final id = widget.existing?.id;
+    final b = _money.builder;
+    return id == null ? b : EntryBuilder(baseCurrency: b.baseCurrency, rates: b.rates, newId: () => id);
+  }
+
+  /// What the amount clears of the debt at today's rate, for the helper.
+  String? _todayClears(EntryBuilder b) {
+    final amount = parseMinor(_amount.text, _currency);
+    if (amount == null || amount <= 0) return null;
+    try {
+      return minorText(b.convert(amount, _to!.currency!, _from!.currency!), _from!.currency!, hidden: false);
+    } on ArgumentError {
+      return null;
+    }
+  }
+
+  Future<void> _save() async {
+    final l10n = AppLocalizations.of(context)!;
+    final amount = parseMinor(_amount.text, _currency);
+    if (amount == null || amount <= 0) return setState(() => _error = l10n.entryErrorAmount);
+    final b = _builder;
+    final merchant = _merchant.text.trim();
+    BookEntry? entry;
+    try {
+      switch (kind) {
+        case EntryKind.spend:
+          if (_from == null || _category == null) return setState(() => _error = l10n.entryErrorAccount);
+          entry = b.spend(_from!, _category!, amount, _date, merchant: merchant, status: _declined ? EntryStatus.declined : EntryStatus.posted);
+        case EntryKind.income:
+          if (_to == null || _category == null) return setState(() => _error = l10n.entryErrorAccount);
+          entry = b.income(_to!, _category!, amount, _date, merchant: merchant);
+        case EntryKind.refund:
+          if (_to == null || _category == null) return setState(() => _error = l10n.entryErrorAccount);
+          entry = b.refund(_to!, _category!, amount, _date, merchant: merchant);
+        case EntryKind.transfer:
+          if (_from == null || _to == null || _from!.id == _to!.id) return setState(() => _error = l10n.entryErrorAccount);
+          if (_from!.currency != _to!.currency) return setState(() => _error = l10n.entryErrorSameCurrency);
+          entry = b.transfer(_from!, _to!, amount, _date, atm: _from!.type == AccountType.debit && _to!.type == AccountType.cash);
+        case EntryKind.swap:
+          final received = _to == null ? null : parseMinor(_second.text, _to!.currency!);
+          if (_from == null || _to == null || _from!.currency == _to!.currency) return setState(() => _error = l10n.entryErrorSwap);
+          if (received == null || received <= 0) return setState(() => _error = l10n.entryErrorAmount);
+          entry = b.swap(_from!, amount, _to!, received, _date);
+        case EntryKind.cardPayment:
+          if (_from == null || _to == null) return setState(() => _error = l10n.entryErrorAccount);
+          if (_from!.currency != _to!.currency) return setState(() => _error = l10n.entryErrorSameCurrency);
+          entry = b.cardPayment(_from!, _to!, amount, _date);
+        case EntryKind.loanPayment:
+          if (_from == null || _to == null) return setState(() => _error = l10n.entryErrorAccount);
+          if (_from!.currency != _to!.currency) return setState(() => _error = l10n.entryErrorSameCurrency);
+          final profit = _second.text.trim().isEmpty ? 0 : parseMinor(_second.text, _to!.currency!);
+          if (profit == null || profit < 0) return setState(() => _error = l10n.entryErrorAmount);
+          entry = b.loanPayment(_from!, _to!, principal: amount, profit: profit, date: _date);
+        case EntryKind.lent || EntryKind.borrowed:
+          final money = kind == EntryKind.lent ? _from : _to;
+          final name = _person.text.trim();
+          if (money == null) return setState(() => _error = l10n.entryErrorAccount);
+          if (name.isEmpty) return setState(() => _error = l10n.entryErrorPerson);
+          final person = await _money.personAccount(name, money.currency!, owesMe: kind == EntryKind.lent);
+          entry = kind == EntryKind.lent ? b.lent(money, person, amount, _date) : b.borrowed(money, person, amount, _date);
+        case EntryKind.repaymentIn || EntryKind.repaymentOut:
+          if (_from == null || _to == null) return setState(() => _error = l10n.entryErrorAccount);
+          int? clears;
+          if (_crossCurrency && _second.text.trim().isNotEmpty) {
+            clears = parseMinor(_second.text, _from!.currency!);
+            if (clears == null || clears <= 0) return setState(() => _error = l10n.entryErrorAmount);
+          }
+          entry = kind == EntryKind.repaymentIn
+              ? b.repaymentIn(_to!, _from!, amount, _date, clears: clears)
+              : b.repaymentOut(_to!, _from!, amount, _date, clears: clears);
+      }
+    } on ArgumentError {
+      return setState(() => _error = l10n.entryErrorRate);
+    }
+    final withNote = _note.text.trim().isEmpty ? entry : entry.copyWith(note: _note.text.trim());
+    final turnedOn = await _money.saveEntry(withNote);
+    if (!mounted) return;
+    final messenger = ScaffoldMessenger.of(context);
+    Navigator.of(context).pop();
+    if (turnedOn != null) {
+      messenger.showSnackBar(SnackBar(
+        content: Text(l10n.featureTurnedOn(l10n.feature(turnedOn))),
+        action: SnackBarAction(label: l10n.commonUndo, onPressed: () => _money.setFeature(turnedOn, false)),
+      ));
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final state = context.watch<MoneyCubit>().state;
+    // Lent and repayment-in take the person from the people lists.
+    final people = switch (kind) {
+      EntryKind.repaymentIn => state.ofType(AccountType.receivable),
+      _ => const <BookAccount>[],
+    };
+    final title = widget.existing != null
+        ? l10n.entryEditTitle
+        : _showTabs
+            ? l10n.entryNewTitle
+            : l10n.template(kind.template);
+    final missingAccount = (_fromChoices.isEmpty && !{EntryKind.income, EntryKind.refund, EntryKind.borrowed, EntryKind.repaymentIn}.contains(kind)) ||
+        (_toChoices.isEmpty && {EntryKind.income, EntryKind.refund, EntryKind.borrowed, EntryKind.transfer, EntryKind.cardPayment, EntryKind.loanPayment, EntryKind.swap, EntryKind.repaymentIn}.contains(kind));
+
+    final kindTabs = !_showTabs
+        ? null
+        : SegmentedButton<EntryKind>(
+            key: const ValueKey('entryKindTabs'),
+            showSelectedIcon: false,
+            segments: [
+              for (final k in tabs) ButtonSegment(value: k, icon: Icon(MoneyIcons.template(k.template)), label: Text(l10n.template(k.template))),
+            ],
+            selected: {kind},
+            onSelectionChanged: (s) => _switchTo(s.first),
+          );
+
+    final heard = _heard;
+    final picked = context.select<AppCubit, String?>((c) => c.state.speechLanguage);
+    final appLanguage = Localizations.localeOf(context).languageCode;
+    final speech = _speechLanguages.containsKey(picked) ? picked! : (_speechLanguages.containsKey(appLanguage) ? appLanguage : 'en');
+    final fields = <Widget>[
+      ?kindTabs,
+      // Voice reads spending, income and transfers only.
+      if (!missingAccount && widget.existing == null && tabs.contains(kind))
+        DictationButton(
+          language: Locale(speech),
+          onText: (t) => setState(() => _heard = t),
+          onFinal: _applySpoken,
+          onListening: (on) {
+            if (on) setState(() => _heard = null);
+          },
+          builder: (context, look) => _VoiceCard(look: look, heard: heard, language: speech),
+        ),
+      AmountField(
+        controller: _amount,
+        autofocus: widget.existing == null,
+        label: switch (kind) {
+          EntryKind.loanPayment => l10n.entryPrincipal,
+          EntryKind.swap => l10n.entrySent,
+          _ => l10n.entryAmount,
+        },
+        currency: _currency,
+        // The cleared-at-today's-rate hint follows the amount.
+        onChanged: _crossCurrency ? (_) => setState(() {}) : null,
+      ),
+      if (kind == EntryKind.loanPayment) AmountField(controller: _second, label: l10n.entryProfit, currency: _currency, helper: l10n.entryProfitHelp),
+      if (kind == EntryKind.swap && _to != null) AmountField(controller: _second, label: l10n.entryReceived, currency: _to!.currency!),
+      if (_crossCurrency)
+        AmountField(
+          key: const ValueKey('entryClears'),
+          controller: _second,
+          label: kind == EntryKind.repaymentIn ? l10n.entryClearsTheirs : l10n.entryClearsMine,
+          currency: _from!.currency!,
+          helper: l10n.entryClearsHelp(_todayClears(_builder) ?? ''),
+        ),
+      if (_fromChoices.isNotEmpty)
+        AccountPicker(
+          label: switch (kind) {
+            EntryKind.repaymentOut => l10n.entryPerson,
+            EntryKind.spend => l10n.entryPaidFrom,
+            _ => l10n.entryFrom,
+          },
+          accounts: _fromChoices,
+          value: _from,
+          onChanged: (a) => setState(() => _from = a),
+        ),
+      if (kind == EntryKind.repaymentOut)
+        AccountPicker(label: l10n.entryFrom, accounts: _of(_money_), value: _to, onChanged: (a) => setState(() => _to = a)),
+      if (kind == EntryKind.repaymentIn)
+        AccountPicker(label: l10n.entryPerson, accounts: people, value: _from, onChanged: (a) => setState(() => _from = a)),
+      if (_toChoices.isNotEmpty)
+        AccountPicker(
+          label: switch (kind) {
+            EntryKind.cardPayment => l10n.acctCredit,
+            EntryKind.loanPayment => l10n.acctLoan,
+            _ => l10n.entryTo,
+          },
+          accounts: _toChoices,
+          value: _to,
+          onChanged: (a) => setState(() => _to = a),
+        ),
+      if (kind == EntryKind.lent || kind == EntryKind.borrowed)
+        PersonField(key: const ValueKey('entryPerson'), controller: _person, label: l10n.entryPerson),
+      if (_categoryChoices.isNotEmpty)
+        CategoryPicker(
+          accounts: _categoryChoices,
+          value: _category,
+          side: kind == EntryKind.income ? AccountSide.income : AccountSide.spending,
+          onChanged: (a) => setState(() => _category = a),
+        ),
+      DateField(label: l10n.entryDate, value: _date, onChanged: (d) => setState(() => _date = d)),
+      if ({EntryKind.spend, EntryKind.income, EntryKind.refund}.contains(kind))
+        TextField(controller: _merchant, decoration: InputDecoration(labelText: l10n.entryMerchant, border: const OutlineInputBorder())),
+      TextField(controller: _note, decoration: InputDecoration(labelText: l10n.entryNote, border: const OutlineInputBorder())),
+      if (kind == EntryKind.spend)
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          title: Text(l10n.entryDeclined),
+          subtitle: Text(l10n.entryDeclinedHelp),
+          value: _declined,
+          onChanged: (v) => setState(() => _declined = v),
+        ),
+      if (_error != null) Text(_error!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+    ];
+
+    return ScreenBackground(
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          title: Text(title),
+          actions: [
+            const HelpButton(topic: HelpTopicId.newTransaction),
+            if (!missingAccount) TextButton(onPressed: _save, child: Text(l10n.holdingsSave)),
+          ],
+        ),
+        body: missingAccount
+            ? Column(children: [
+                if (kindTabs != null) Padding(padding: const EdgeInsets.all(DS.spaceMD), child: kindTabs),
+                Expanded(child: MoneyEmpty(icon: Icons.account_balance_outlined, title: l10n.entryNeedsAccountTitle, message: l10n.entryNeedsAccountMessage)),
+              ])
+            : ListView(
+                padding: const EdgeInsets.all(DS.spaceMD),
+                children: [
+                  for (final f in fields) Padding(padding: const EdgeInsets.only(bottom: DS.spaceMD), child: f),
+                ],
+              ),
+      ),
+    );
+  }
+}
+
+/// The languages the spoken-entry parser reads, each named in itself.
+const _speechLanguages = {'en': 'English', 'ar': 'العربية', 'fr': 'Français', 'es': 'Español'};
+
+/// The voice button, large and first on the page, since many people would
+/// rather say a transaction than type it: a big mic, what to say (then what
+/// was heard), and the language it listens in.
+class _VoiceCard extends StatelessWidget {
+  final DictationLook look;
+  final String? heard;
+  final String language;
+
+  const _VoiceCard({required this.look, required this.heard, required this.language});
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final colors = context.colors;
+    final said = heard;
+    final title = look.listening ? l10n.entryVoiceListening : l10n.entryVoiceTitle;
+    final detail = said == null || said.isEmpty ? l10n.entryVoiceHint : '“$said”';
+    return Material(
+      color: colors.brand.withValues(alpha: look.listening ? 0.16 : 0.08),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(DS.radiusTile),
+        side: BorderSide(color: colors.brand.withValues(alpha: look.listening ? 0.8 : 0.35)),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        key: const ValueKey('entryVoice'),
+        onTap: look.onPressed,
+        child: Padding(
+          padding: const EdgeInsets.all(DS.spaceMD),
+          child: Row(children: [
+            Tooltip(
+              message: look.tooltip,
+              child: Semantics(
+                button: true,
+                label: look.tooltip,
+                child: Container(
+                  width: 52,
+                  height: 52,
+                  decoration: BoxDecoration(shape: BoxShape.circle, color: look.ready || look.listening ? colors.brand : colors.textTertiary.withValues(alpha: 0.4)),
+                  child: Icon(look.listening ? Icons.stop_rounded : Icons.mic_rounded, color: colors.onBrand, size: 28),
+                ),
+              ),
+            ),
+            const SizedBox(width: DS.spaceMD),
+            Expanded(
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
+                Text(title, style: TextStyle(fontWeight: FontWeight.w600, color: colors.textPrimary)),
+                const SizedBox(height: 2),
+                Text(
+                  detail,
+                  key: said == null ? null : const ValueKey('entryHeard'),
+                  style: TextStyle(color: colors.textSecondary, fontSize: 13, fontStyle: said == null || said.isEmpty ? FontStyle.normal : FontStyle.italic),
+                ),
+              ]),
+            ),
+            _SpeechLanguageButton(language: language, enabled: !look.listening),
+          ]),
+        ),
+      ),
+    );
+  }
+}
+
+/// Which language the mic listens in ("EN", "AR"…), so Arabic speech is
+/// heard as Arabic while the app is in English. The pick is remembered.
+class _SpeechLanguageButton extends StatelessWidget {
+  final String language;
+  final bool enabled;
+
+  const _SpeechLanguageButton({required this.language, required this.enabled});
+
+  @override
+  Widget build(BuildContext context) {
+    return PopupMenuButton<String>(
+      key: const ValueKey('speechLanguage'),
+      enabled: enabled,
+      tooltip: AppLocalizations.of(context)!.dictationLanguage,
+      initialValue: language,
+      onSelected: (code) => context.read<AppCubit>().setSpeechLanguage(code),
+      itemBuilder: (_) => [
+        for (final e in _speechLanguages.entries) PopupMenuItem(key: ValueKey('speechLanguage-${e.key}'), value: e.key, child: Text(e.value)),
+      ],
+      child: Container(
+        padding: const EdgeInsets.fromLTRB(DS.spaceSM, DS.space2XS, DS.space2XS, DS.space2XS),
+        decoration: BoxDecoration(borderRadius: BorderRadius.circular(999), border: Border.all(color: context.colors.hairlineStrong)),
+        child: Row(mainAxisSize: MainAxisSize.min, children: [
+          Text(language.toUpperCase(), style: TextStyle(fontWeight: FontWeight.w600, color: context.colors.textSecondary)),
+          Icon(Icons.arrow_drop_down, size: 18, color: context.colors.textTertiary),
+        ]),
+      ),
+    );
+  }
+}

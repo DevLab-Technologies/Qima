@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:qima/l10n/app_localizations_en.dart';
+import 'package:qima/models/hijri_date.dart';
 import 'package:qima/models/zakat.dart';
 import 'package:qima/services/notification_service.dart';
 import 'package:qima/services/preferences.dart';
@@ -19,6 +20,8 @@ void main() {
   late Preferences preferences;
   late _RecordingNotifications notifications;
   final l10n = AppLocalizationsEn();
+  // A lunar year before 1 June 2026, so the first hawl completes that day.
+  final hawlStart = HijriDate.fromGregorian(DateTime(2026, 6, 1))!.addYears(-1)!.toGregorian()!;
 
   setUp(() async {
     SharedPreferences.setMockInitialValues({});
@@ -32,7 +35,7 @@ void main() {
   Future<void> settings({bool remind = true, DateTime? start}) => preferences.setZakatSettings(ZakatSettings(
         remind: remind,
         calendar: HawlCalendar.gregorian,
-        hawlStart: start ?? DateTime(2025, 6, 1),
+        hawlStart: start ?? hawlStart,
       ));
 
   test('posts on the day a hawl completes, with no amount in the text', () async {
@@ -68,7 +71,7 @@ void main() {
   test('posts again the following year', () async {
     await settings();
     await notifier().notifyIfDue(now: DateTime(2026, 6, 1), l10n: l10n);
-    await notifier().notifyIfDue(now: DateTime(2027, 6, 1), l10n: l10n);
+    await notifier().notifyIfDue(now: HawlSchedule.anniversaryOf(hawlStart, 2)!, l10n: l10n);
     expect(notifications.shown, hasLength(2));
   });
 

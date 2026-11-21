@@ -10,6 +10,7 @@ import 'package:qima/models/instrument_catalog.dart';
 import 'package:qima/models/money.dart';
 import 'package:qima/models/price_alert.dart';
 import 'package:qima/models/quote.dart';
+import 'package:qima/models/setup_answers.dart';
 import 'package:qima/models/watch_card.dart';
 import 'package:qima/services/local_file_store.dart';
 import 'package:qima/services/notification_service.dart';
@@ -220,5 +221,87 @@ void main() {
     await cubit.init();
     expect(cubit.state.baseCurrency, 'EUR');
     await cubit.close();
+  });
+
+  group('setup answers', () {
+    test('are kept on the device and read back on the next launch', () async {
+      const answers = SetupAnswers(uses: {SetupUse.money, SetupUse.portfolio}, goals: {SetupGoal.budget});
+      final cubit = makeCubit();
+      await cubit.init();
+      expect(cubit.state.setup, isNull);
+      await cubit.saveSetup(answers);
+      await cubit.dismissGetStarted();
+      await cubit.close();
+
+      final second = makeCubit();
+      await second.init();
+      expect(second.state.setup, answers);
+      expect(second.state.getStartedDismissed, isTrue);
+      await second.close();
+    });
+
+    test('running setup again brings the Get started card back', () async {
+      final cubit = makeCubit();
+      await cubit.init();
+      await cubit.dismissGetStarted();
+      await cubit.saveSetup(const SetupAnswers(uses: {SetupUse.prices}));
+      expect(cubit.state.getStartedDismissed, isFalse);
+      await cubit.close();
+    });
+
+    test('the picked prices replace the seeded watchlist while it is untouched', () async {
+      final cubit = makeCubit();
+      await cubit.init();
+      final picks = [
+        for (final s in const SetupAnswers(uses: {SetupUse.prices}, products: {SetupProduct.metals}).suggestions('EGP')) s.card,
+      ];
+
+      await cubit.adoptSetupWatchlist(picks);
+
+      expect([for (final c in cubit.state.cards) c.id], [for (final c in picks) c.id]);
+      await cubit.close();
+    });
+
+    test('a pick that is one of the seeded cards keeps that card', () async {
+      final cubit = makeCubit();
+      await cubit.init();
+      final seededGold = cubit.state.cards.firstWhere((c) => c.instrumentID == 'metal.XAU');
+      final picks = [
+        for (final s in const SetupAnswers(uses: {SetupUse.prices}, products: {SetupProduct.metals}).suggestions('USD'))
+          if (s.preselected) s.card,
+      ];
+
+      await cubit.adoptSetupWatchlist(picks);
+
+      expect([for (final c in cubit.state.cards) c.id], [seededGold.id]);
+      await cubit.close();
+    });
+
+    test('a watchlist the person already changed keeps everything, and gains the picks', () async {
+      final cubit = makeCubit();
+      await cubit.init();
+      final silver = cubit.state.cards.firstWhere((c) => c.instrumentID == 'metal.XAG');
+      await cubit.removeCard(silver.id);
+      final picks = [
+        for (final s in const SetupAnswers(uses: {SetupUse.prices}, products: {SetupProduct.currencies}).suggestions('USD'))
+          if (s.preselected) s.card,
+      ];
+
+      await cubit.adoptSetupWatchlist(picks);
+
+      expect([for (final c in cubit.state.cards) c.instrumentID], ['metal.XAU', 'crypto.BTC', 'fx.EUR', 'fx.GBP']);
+      // A newly watched instrument is refreshed in the background; let that
+      // land before the cubit closes.
+      await Future<void>.delayed(const Duration(milliseconds: 100));
+      await cubit.close();
+    });
+
+    test('no picks leaves the watchlist alone', () async {
+      final cubit = makeCubit();
+      await cubit.init();
+      await cubit.adoptSetupWatchlist(const []);
+      expect(cubit.state.cards, hasLength(3));
+      await cubit.close();
+    });
   });
 }

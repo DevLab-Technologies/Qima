@@ -124,6 +124,10 @@ dependencies {
     // the compiler generates the service and its XML description.
     implementation("androidx.appfunctions:appfunctions:1.0.0-beta01")
     ksp("androidx.appfunctions:appfunctions-compiler:1.0.0-beta01")
+    // Gemini Nano through ML Kit's Prompt API, for reading bank messages
+    // (OnDeviceModelChannel.kt). Needs Android 8; the manifest overrides its
+    // minSdk and the channel never loads it on older phones.
+    implementation("com.google.mlkit:genai-prompt:1.0.0-beta5")
     // flutter_local_notifications' core-library desugaring requirement (see
     // compileOptions above).
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")

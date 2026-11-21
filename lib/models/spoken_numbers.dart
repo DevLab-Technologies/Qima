@@ -89,6 +89,26 @@ class SpokenNumbers {
         continue;
       }
       var word = _bare(token);
+      // Digits the recognizer wrote, then a scale in words: "4 مية وخمسين",
+      // "22 ألف", "3 hundred". The digits join the run.
+      if (!any) {
+        final digits = RegExp(r'^(ب?)([0-9٠-٩]+(?:\.[0-9٠-٩]+)?)$').firstMatch(word);
+        if (digits != null) {
+          var k = i + 1;
+          while (k < tokens.length && tokens[k].trim().isEmpty) {
+            k++;
+          }
+          final next = k < tokens.length ? _value(_bare(tokens[k])) : null;
+          if (next != null && (next.$2 || next.$1 == 100)) {
+            prefix = digits.group(1)!;
+            current = double.parse(_ascii(digits.group(2)!));
+            any = true;
+            i++;
+            end = i;
+            continue;
+          }
+        }
+      }
       if (!any && word.length > 1 && word.startsWith('ب') && _value(word.substring(1)) != null) {
         prefix = 'ب';
         word = word.substring(1);
@@ -110,6 +130,16 @@ class SpokenNumbers {
         i++;
         end = i;
         continue;
+      }
+      // "2 ألف و500": digits joined on after a scale.
+      if (any && current == 0 && total > 0) {
+        final more = RegExp(r'^و?([0-9٠-٩]+)$').firstMatch(word);
+        if (more != null) {
+          current = double.parse(_ascii(more.group(1)!));
+          i++;
+          end = i;
+          continue;
+        }
       }
       if (any && (word == 'and' || word == 'و')) {
         i++;
@@ -152,6 +182,9 @@ class SpokenNumbers {
 
   /// Lower-cased, without surrounding punctuation.
   static String _bare(String token) => token.toLowerCase().replaceAll(_edges, '');
+
+  /// Arabic-Indic digits as ASCII.
+  static String _ascii(String digits) => String.fromCharCodes(digits.runes.map((r) => r >= 0x0660 && r <= 0x0669 ? r - 0x0660 + 0x30 : r));
 
   /// Hamza forms to bare alef and ta marbuta to ha, as people spell them.
   static String _foldArabic(String word) => word

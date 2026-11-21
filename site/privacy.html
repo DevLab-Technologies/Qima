@@ -33,7 +33,7 @@
 <main class="wrap narrow legal" id="main">
 
 <h1>Privacy Policy</h1>
-<p class="updated">Last updated 23 September 2026 · Applies to the Qima mobile app and this website</p>
+<p class="updated">Last updated 16 November 2026 · Applies to the Qima mobile app and this website</p>
 
 <p>
   Qima is a precious-metals-first portfolio and price tracker published by
@@ -86,9 +86,36 @@
   We have no access to those provider logs.
 </p>
 
+<h2>The on-device model</h2>
+<p>
+  If you turn on <em>Use the on-device model</em> in Settings (it is off until
+  you do), Qima asks the model built into your device to help read bank
+  messages and statements and to word the month summary. On Apple devices that
+  is Apple's Foundation Models; on Android it is Gemini Nano, run through
+  Google's ML Kit. Windows and Linux have no model of their own, so there Qima
+  uses an open model, Qwen2.5 1.5B Instruct (about 1.1 GB). Whichever it is,
+  the model runs on your device: your messages, statements and records are
+  never sent anywhere.
+</p>
+<p>
+  On Windows and Linux, turning the setting on downloads that model once from
+  Hugging Face, where its makers publish it. Like any website, Hugging Face
+  sees your IP address when the file is downloaded; nothing about you or your
+  records is sent. Qima checks the file against its published fingerprint
+  before using it, and never contacts Hugging Face again once it has it.
+</p>
+<p>
+  On Android, ML Kit sends Google figures about its own use, such as the phone
+  model, Android version, app version, which ML Kit feature ran, how long it
+  took and any error codes, under
+  <a href="https://developers.google.com/ml-kit/terms">Google's ML Kit terms</a>.
+  It does not send the text it read or anything you entered. With the setting
+  off, Qima does not use ML Kit.
+</p>
+
 <h2>What we do not do</h2>
 <ul>
-  <li>No analytics, telemetry or crash-reporting SDKs</li>
+  <li>No analytics, telemetry or crash-reporting SDKs (the one exception is ML Kit's usage figures above, on Android, with the on-device model on)</li>
   <li>No advertising, ad networks or advertising identifiers</li>
   <li>No cross-app or cross-site tracking, and no device fingerprinting</li>
   <li>No third-party marketing, attribution or data-broker SDKs</li>

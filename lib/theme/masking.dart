@@ -15,9 +15,9 @@ class Masking {
   static const String mask = '••••••';
 
   /// Formats [money] normally, or returns [mask] when [hidden].
-  static String amount(Money money, {required bool hidden, bool useFallbackSymbol = false}) {
+  static String amount(Money money, {required bool hidden, bool useFallbackSymbol = false, int? decimals}) {
     if (hidden) return mask;
-    return money.formatted(useFallbackSymbol: useFallbackSymbol);
+    return money.formatted(useFallbackSymbol: useFallbackSymbol, decimals: decimals);
   }
 
   /// Compact-formats [money] normally, or returns [mask] when [hidden].
