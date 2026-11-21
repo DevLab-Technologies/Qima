@@ -1,66 +1,77 @@
 # Qima
 
-**Qima** (Arabic: *قيمة*, "value") is a precious-metals-first portfolio tracker
-for phones, tablets, desktop and the web. It follows spot prices for gold,
-silver, platinum and palladium alongside crypto, equities, indices and
-currencies — valued in whatever currency and unit you actually think in, from
-troy ounces to grams to 21-karat gold per gram.
+**Qima** (Arabic: *قيمة*, "value") keeps everything you own and owe in one
+balance sheet: cash and bank accounts, cards, loans, money lent and borrowed,
+holdings in gold, silver, crypto and stocks, and assets you value yourself,
+such as land or a car. It works out your net worth, your spending and your
+zakat from the same book.
 
-One Flutter codebase across iOS, Android, macOS, Windows, Linux, Web and Wear
-OS, built on a shared domain layer that every screen and platform surface
-reads from.
+One Flutter codebase for iOS, Android, macOS, Windows, Linux, Web and Wear OS.
+There are no accounts and no server: the book lives on your device.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-informational.svg)](LICENSE)
 ![Platforms](https://img.shields.io/badge/platforms-iOS%20%7C%20Android%20%7C%20macOS%20%7C%20Windows%20%7C%20Linux%20%7C%20Web%20%7C%20Wear%20OS-lightgrey.svg)
-![Flutter](https://img.shields.io/badge/Flutter-3.x-02569B.svg)
+![Flutter](https://img.shields.io/badge/Flutter-3.41-02569B.svg)
+
+Website: [qima.money](https://qima.money/)
 
 ---
 
 ## Features
 
-**Watchlist** — track any mix of metals, crypto, equities, indices and fiat
-pairs. The same instrument can appear more than once with a different display
-currency or unit, so gold in USD per ounce and gold in EGP per gram sit side by
-side as separate cards.
+The app has three tabs: **Home**, **Money** and **Prices**.
 
-**Real units, real currencies** — every quote is stored canonically in USD per
-troy ounce (or per unit) and converted at display time. Metals convert to
-grams and kilograms; gold additionally breaks down by 24K/22K/21K/18K purity,
-the way Gulf and Middle-East jewellery markets quote it. Fiat instruments are
-quoted against your display currency, which makes cross-pairs like EUR shown in
-JPY fall out for free.
+**A double-entry book** — every transaction is a balanced entry between
+accounts, so the balance sheet always adds up. Spend, income and transfers
+share one "New transaction" page; accounts can be in any currency.
 
-**Custom tickers** — add any stock, ETF or index ticker not already in the
-built-in catalog, validated live against the price provider before it's saved.
+**Net worth** — a dated history of what you own and owe, with charts. Assets
+you value by hand keep every valuation you enter; Qima never invents a value
+between two of them.
 
-**Holdings and P/L** — record lots with a quantity, unit, purchase price and
-currency. Qima aggregates them into canonical quantity, cost basis,
-weighted-average unit cost, and unrealised gain, converted into your base
-currency.
+**Budgets and planned payments** — monthly budgets by category, a single
+"left to spend" figure, and bills or income that repeat weekly, monthly,
+quarterly or yearly, with a reminder the day before.
 
-**Charts** — 1D through 5Y plus YTD and all-time, with scrubbing, range-aware
-axis labels, and change figures scoped to the visible window. Non-USD charts use
-*historical* FX at each point, so a chart in EGP shows real movement rather than
-today's rate applied to yesterday's prices.
+**People** — money lent and borrowed is netted per person and currency, and a
+bill can be split by amount, equally, by percent or by shares.
 
-**Home-screen widgets** — a configurable price widget and a whole-portfolio
-value widget on Android; see [Known limitations](#known-limitations) for iOS
-and macOS.
+**Statement import** — bring in PDF statements (text or scanned), screenshots,
+CSV and XLSX files, and bank text messages. Every import goes through a review
+screen first; nothing is saved until you confirm it. Android can read bank SMS
+with your permission; on iOS a Shortcuts automation hands messages to the app.
 
-**Wear OS** — a read-only companion watchlist, running off the same shared
-engine, packaged in the same app.
+**Voice and receipts** — say a transaction or photograph a receipt. Both are
+read on the device. See [Privacy](#privacy).
+
+**Prices and holdings** — a watchlist of metals, crypto, equities, indices and
+currency pairs, in the currency and unit you think in: troy ounces, grams,
+kilograms, and gold by 24K/22K/21K/18K purity. Holdings track quantity, cost
+basis and unrealised gain. Charts run from 1D to all-time and use *historical*
+exchange rates at each point.
+
+**Zakat** — worked out over the whole book, on a Hijri year, with a reminder
+when it falls due.
+
+**Alerts** — price alerts delivered as local notifications, checked by a
+background refresh.
+
+**Home-screen widgets** — configurable price and portfolio widgets on iOS,
+macOS and Android, plus a watchlist widget on iOS and macOS. See
+[WIDGETS_IOS_SETUP.md](WIDGETS_IOS_SETUP.md).
+
+**Backup and restore** — one file with the whole book, optionally protected
+with a password (AES-256-GCM, key derived with PBKDF2). Restore by merging or
+replacing, with a before/after preview.
+
+**App lock** — Face ID, fingerprint or the device passcode.
+
+**AI apps on the desktop** — optionally let apps that speak the Model Context
+Protocol read the book through a local, read-only helper. Off by default. See
+[docs/ai-apps.md](docs/ai-apps.md).
 
 **Localised** — English, Arabic, Spanish and French, with full right-to-left
-layout for Arabic and an in-app language override.
-
-**Private by design** — no accounts, no analytics, no tracking. All data is
-stored locally on-device. See [Privacy](#privacy).
-
-**Backup & restore** — export your watchlist, holdings, custom tickers,
-alerts and settings to a single file, optionally password-protected with
-AES-256; restore it on this device or another with a Merge (last-write-wins)
-or Replace choice and a live before/after diff. Holdings can also be
-exported as a spreadsheet for your own records.
+layout for Arabic.
 
 ---
 
@@ -68,8 +79,15 @@ exported as a spreadsheet for your own records.
 
 | | |
 |---|---|
-| Flutter | Latest stable channel |
-| Platform toolchains | Xcode (iOS/macOS), Android SDK, or nothing extra for Web |
+| Flutter | 3.41.6 (the version CI pins in `.github/workflows/ci.yml`) |
+| iOS / macOS | Xcode |
+| Android | Android SDK and a JDK |
+| Windows / Linux | The Flutter desktop toolchain and CMake 3.28 or later |
+| Web | Nothing extra |
+
+The Windows and Linux builds download the llama.cpp sources at a pinned
+version the first time they are configured, so the first build needs a network
+connection.
 
 ---
 
@@ -77,11 +95,18 @@ exported as a spreadsheet for your own records.
 
 ```bash
 flutter pub get
+```
+
+```bash
 flutter run
 ```
 
-Pick a device/target with `flutter run -d <device>` (e.g. `macos`, `chrome`,
-an iOS simulator id, or a connected Android device).
+Pick a target with `flutter run -d <device>` (for example `macos`, `chrome`,
+an iOS simulator id or a connected Android device).
+
+Debug builds need no signing setup, keys or accounts. Release signing and the
+store pipelines are described in [docs/store-release.md](docs/store-release.md)
+and only matter to maintainers.
 
 ---
 
@@ -89,13 +114,16 @@ an iOS simulator id, or a connected Android device).
 
 ```bash
 flutter analyze
+```
+
+```bash
 flutter test
 ```
 
-71 tests cover the money math, unit conversion, FX handling (current and
-historical), quote-series analytics, chart sampling, scrubbing and holdings
-valuation — everywhere a silent arithmetic error would misreport someone's
-wealth.
+More than 1,100 tests cover the book and its arithmetic, currency and unit
+conversion, statement and message reading, spoken-entry parsing, zakat, import
+matching, backup, and the main screens. They are deterministic: no wall-clock
+reads and no live network calls.
 
 ---
 
@@ -103,71 +131,84 @@ wealth.
 
 ```
 lib/
-  models/      Instruments, money, quotes, holdings, chart ranges
-  services/    Providers, repository, persistence, sync engine
-  theme/       Design system, chart view
-  blocs/       App-wide state (flutter_bloc)
-  screens/     Watchlist, detail, holdings, settings, add-instrument
-  l10n/        ARB translations (en · ar · es · fr)
+  models/      The book (accounts, entries, valuations), money, instruments,
+               statement and message readers, zakat, net worth
+  services/    Price providers, stores, sync, import, backup, alerts,
+               on-device model and speech bridges
+  blocs/       App state (flutter_bloc): AppCubit, MoneyCubit, ImportCubit
+  screens/     Home shell, prices, holdings, zakat, settings
+    money/     Home, Money, accounts, balance sheet, import review
   widgets/     Shared widget building blocks
-android/       Android app + Jetpack Glance home-screen widgets
-ios/ macos/    Native platform shells
-windows/ linux/web/  Native platform shells
-test/          Unit tests for the domain layer
+  theme/       Design system, chart view, help topics
+  mcp/         The read-only helper for AI apps on the desktop
+  l10n/        ARB translations (en, ar, es, fr)
+packages/
+  qima_llm/    FFI plugin that runs a small model with llama.cpp
+               (Windows and Linux)
+android/       Android app, Glance widgets, bank SMS reader
+ios/ macos/    Apple apps, WidgetKit extension, share extension (iOS)
+windows/ linux/ web/   Platform shells
+test/          Unit and widget tests
+integration_test/      Store screenshot runs
+tool/          Asset, string and screenshot scripts
+site/          The qima.money website
+brand/         Brand tokens and guidelines
+docs/          Release, AI apps and planning notes
 ```
 
 ---
 
 ## Architecture
 
-Data flows one way, and every surface reads the same path:
+**The book** is the source of truth for money. `Book` holds accounts and
+balanced entries; `MoneyCubit` owns it and `BookStore` persists it. Net worth,
+budgets, people, zakat and the balance sheet are all computed from the book
+rather than stored, so every screen agrees.
+
+**Prices** flow one way:
 
 ```
 Providers  ->  PriceRepository  ->  Stores (local storage)  ->  AppCubit  ->  Screens
-                                                                 WatchCards -> Widgets
+                                                                           ->  Widgets
 ```
 
-**`QuoteProvider`** is the seam for pricing. Routing is by asset class alone, so
-adding a source means adding one type; swapping Yahoo for a licensed feed is a
-single-file change.
+`QuoteProvider` is the seam for pricing. Routing is by asset class alone, so
+adding a source means adding one type.
 
 - `GoldAPIProvider` — metals and crypto spot (`api.gold-api.com`)
 - `YahooQuoteProvider` / `YahooHistoryProvider` — equities, indices and
   historical series (`query1.finance.yahoo.com`)
-- `ExchangeRateAPIProvider` — FX rates for 160+ currencies (`open.er-api.com`)
+- `ExchangeRateAPIProvider` — FX rates (`open.er-api.com`)
 - `FiatQuoteProvider` — prices fiat instruments off the live FX table
 
-**`PriceRepository`** owns the wiring: routing, FX, history backfill and widget
-reloads, so refresh behaviour is identical everywhere it's used.
+**Canonical pricing** is the invariant worth knowing before changing anything:
+quotes are stored in USD, per troy ounce for metals and per unit otherwise.
+Currency, unit and karat are presentation concerns applied by `PriceConverter`
+at the last moment, which is why the same series can be shown in any currency
+without refetching.
 
 **Persistence** is local JSON storage on native platforms (via
-`path_provider`) and `shared_preferences`-backed storage on Web. User-owned
-collections (watchlist, holdings, custom tickers) go through `SyncedStore`,
-a last-write-wins-per-item merge engine with soft-delete tombstones — the
-plumbing multi-device sync needs, currently wired to a local-only backend (see
-[Known limitations](#known-limitations)).
+`path_provider`) and `shared_preferences`-backed storage on Web. Synced
+collections go through `SyncedStore`, a last-write-wins-per-item merge engine
+with soft-delete tombstones. Its cloud backend is iCloud key-value storage on
+Apple platforms, off until you turn it on in Settings, and local-only
+everywhere else.
 
-**`InstrumentCatalog`** is data, not code paths. Adding an instrument is one
-line; the watchlist, add-flow, detail screen and widget configuration are all
-driven off that list.
-
-**Canonical pricing** is the invariant worth knowing before changing anything:
-everything is stored in USD, per troy ounce for metals and per unit otherwise.
-Currency, unit and karat are presentation concerns applied by `PriceConverter`
-at the last moment — which is why the same series can be re-rendered in any
-currency without refetching.
+**Reading statements and messages** is rule-based first (`StatementReader`,
+`SpokenEntry`). An on-device model is an optional second reader behind
+`AiAssistProvider`; its output is accepted only when it keeps your own numbers
+unchanged and adds none.
 
 ---
 
 ## Data sources
 
-Qima uses free, keyless public endpoints — there is no API key to configure and
+Qima uses free, keyless public endpoints. There is no API key to configure and
 nothing to sign up for.
 
 > **Note:** Yahoo Finance's chart endpoint is *unofficial* (the public API was
-> retired). It is a good fit for personal use, but it carries no stability or
-> terms-of-service guarantee. Swap in a licensed feed before distributing
-> commercially. The `QuoteProvider` protocol keeps that a single-file change.
+> retired) and carries no stability or terms-of-service guarantee. The
+> `QuoteProvider` seam keeps replacing it a single-file change.
 
 Prices are indicative and may be delayed or wrong. Qima is a tracking tool, not
 financial advice.
@@ -176,68 +217,97 @@ financial advice.
 
 ## Known limitations
 
-This is an active rewrite of a native Swift app into a single cross-platform
-Flutter codebase. A few things are intentionally incomplete rather than faked:
-
-- **Web + Yahoo Finance**: browsers enforce CORS, and Yahoo's chart endpoint
-  doesn't send permissive CORS headers. On Web, stock/index prices and all
-  historical charts sourced from Yahoo (which includes metal and crypto
-  *history*, not their live spot price) can't be fetched directly from the
-  browser. Metals/crypto spot prices and live FX rates work fine there —
-  `gold-api.com` and `open.er-api.com` both send `Access-Control-Allow-Origin:
-  *`. This isn't fixable without introducing a backend, which is out of scope.
-- **Widgets**: iOS and macOS have configurable price and portfolio widgets;
-  Android's have no per-widget settings yet. See `WIDGETS_IOS_SETUP.md`.
-- **watchOS**: a true Apple Watch app needs native Swift (Flutter has no
-  watchOS target). See `WATCHOS_SETUP.md` for how to point the original app's
-  watch companion at this project's data contract.
-- **Multi-device sync**: the `SyncedStore` merge engine is fully implemented
-  and tested, but currently backed by local-only storage. Wiring a real
-  iCloud/cloud key-value backend behind the same interface is the remaining
-  step for cross-device sync.
+- **Web**: browsers enforce CORS and Yahoo's chart endpoint does not allow
+  cross-origin requests, so stock and index prices and all historical charts
+  are unavailable on Web. Metal and crypto spot prices and live FX work. The
+  on-device model, voice input and receipt scan are not available on Web.
+- **Sync**: cross-device sync exists only through iCloud on Apple platforms.
+  Android, Windows, Linux and Web keep the book on one device; use Backup to
+  move it.
+- **Mac widgets and iCloud** need the App Store build's entitlements; they do
+  not work in a locally signed build.
+- **watchOS**: there is no Apple Watch app. See
+  [WATCHOS_SETUP.md](WATCHOS_SETUP.md).
+- **Share to Qima** is an iOS share extension only; Android and macOS import
+  through the file picker or paste.
 
 ---
 
 ## Privacy
 
-Qima has no accounts, no analytics and no tracking SDKs. Holdings and
-watchlist data are stored locally on your device. The only network traffic is
-anonymous HTTPS price and FX requests to the endpoints listed above; no user
-data is attached to them.
+Qima has no accounts, no analytics and no tracking SDKs. The book, watchlist
+and settings are stored on your device, and in your own iCloud if you turn
+sync on. Network traffic is limited to:
+
+- anonymous HTTPS price and FX requests to the endpoints listed above, with no
+  user data attached;
+- on Windows and Linux, a one-time download of the model file when you turn
+  the on-device model on (see below).
+
+The full policy is in [`site/privacy.html`](site/privacy.html).
 
 ### On-device model
 
-With Settings · On-device intelligence turned on, iOS and macOS 26 use
-Apple's on-device Foundation Model (`SystemLanguageModel.default`, never
-Private Cloud Compute) to read purchases the built-in parser can't and to
-word the month summary. Qima accepts the model's output only when it keeps
-the user's own numbers unchanged and adds none.
+The model is off until you turn on Settings · On-device intelligence. It
+reads bank messages the built-in rules cannot. What runs depends on the
+platform:
+
+- **iOS and macOS 26** — Apple's on-device Foundation Model
+  (`SystemLanguageModel.default`, never Private Cloud Compute). Here it also
+  reads purchases and words the month summary.
+- **Android** — Gemini Nano through Google's ML Kit, on devices that have it.
+  The model runs on the device; ML Kit itself reports usage figures to
+  Google, which is why it is not touched until you turn the setting on.
+- **Windows and Linux** — Qwen2.5-1.5B-Instruct (Apache 2.0), run on the CPU
+  by llama.cpp. The model file is downloaded once from Hugging Face at a
+  pinned revision and checked against a SHA-256 hash.
+- **Web** — not available.
+
+### Bank messages
+
+On Android, Qima reads SMS only after you grant the permission, and reads them
+on the device. On iOS, a Shortcuts automation you set up yourself passes each
+message to the app. Account, card and IBAN numbers are kept only as their last
+four digits.
 
 ### Voice input
 
-The mic in Add uses the operating system's **on-device** speech recognizer
-only: `requiresOnDeviceRecognition` on iOS and macOS, and the on-device
+The mic uses the operating system's **on-device** speech recognizer only:
+`requiresOnDeviceRecognition` on iOS and macOS, and the on-device
 `SpeechRecognizer` on Android 12 and later. Audio and text never leave the
-device. When the device has no on-device model for the app's language, the
-mic says so and stays off; there is no server fallback. Web, Windows and
-Linux have no voice input. Qima asks for microphone and speech recognition
-access the first time you tap the mic, and listens only until you tap it
-again or stop speaking.
+device. When the device has no on-device recognizer for the chosen language,
+the mic says so and stays off; there is no server fallback. Web, Windows and
+Linux have no voice input.
 
 ### Receipt scan
 
-The scan button in Add reads a receipt photo with Apple's on-device Vision
-text recognition (iOS and macOS). The photo is not uploaded and not kept:
-the app's copy is deleted as soon as its text is read. The text goes into
-the Add field, and nothing is saved until you confirm the preview. Qima asks
-for camera access the first time you take a photo.
+The scan button reads a receipt photo with Apple's on-device Vision text
+recognition (iOS and macOS). The photo is not uploaded and not kept: the app's
+copy is deleted as soon as its text is read, and nothing is saved until you
+confirm the preview.
+
+### AI apps
+
+Off by default and desktop only. While it is on, Qima writes a copy of the
+book to a local file that a helper serves, read-only, to the AI apps you
+configure. Whatever such an app reads goes to that app's model provider. See
+[docs/ai-apps.md](docs/ai-apps.md) for exactly what is included and left out.
+
+---
+
+## Third-party notices
+
+- Almarai typeface — SIL Open Font License 1.1 (`assets/fonts/almarai/OFL.txt`)
+- Riyal symbol font — MIT (`assets/fonts/riyal/LICENSE`)
+- llama.cpp — MIT (`packages/qima_llm/LICENSE`)
 
 ---
 
 ## Contributing
 
 Issues and pull requests are welcome — see [CONTRIBUTING.md](CONTRIBUTING.md)
-for the workflow.
+for the workflow. Report security problems privately, as described in
+[SECURITY.md](SECURITY.md).
 
 ## License
 
