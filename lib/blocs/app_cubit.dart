@@ -9,7 +9,6 @@ import '../models/alert_runtime_state.dart';
 import '../models/asset.dart';
 import '../models/backup.dart';
 import '../models/custom_instrument.dart';
-import '../models/deterministic_uuid.dart';
 import '../models/fx_history.dart';
 import '../models/holding.dart';
 import '../models/holding_transaction.dart';
@@ -396,7 +395,11 @@ class AppCubit extends Cubit<AppState> {
   /// the picks are added next to what is there.
   Future<void> adoptSetupWatchlist(List<WatchCard> picks) async {
     if (picks.isEmpty) return;
-    final seedIDs = {for (final id in InstrumentCatalog.defaultWatchlist) deterministicUuid('watchcard.$id')};
+    final seedIDs = {
+      for (final id in InstrumentCatalog.defaultWatchlist)
+        if (InstrumentCatalog.instrument(id) case final instrument?)
+          WatchCard.seed(instrumentID: id, currency: state.baseCurrency, unit: instrument.quotation.defaultUnit),
+    };
     final untouched = state.cards.length == seedIDs.length && state.cards.every((c) => seedIDs.contains(c.id));
     final replaced = untouched ? [for (final c in state.cards) if (!picks.any(c.isSameCombo)) c.id] : const <String>[];
     for (final card in picks) {
@@ -697,7 +700,9 @@ class AppCubit extends Cubit<AppState> {
 
   List<Instrument> get trackedInstruments => _trackedInstrumentsFor(state.cards, state.transactions);
 
-  InstrumentPresentation presentation(WatchCard card) {
+  /// [series] stands in for a price that is not in the state: setup's
+  /// suggestions are not on the watchlist yet, so nothing has fetched them.
+  InstrumentPresentation presentation(WatchCard card, {QuoteSeries? series}) {
     final instrument = card.instrument ?? InstrumentCatalog.all.first;
     final converter = PriceConverter(
       rates: state.rates,
@@ -706,8 +711,11 @@ class AppCubit extends Cubit<AppState> {
       karat: card.karat,
       history: state.fxHistory,
     );
-    final series = state.seriesByID[instrument.id] ?? QuoteSeries.empty(instrument.id);
-    return InstrumentPresentation(instrument: instrument, series: series, converter: converter);
+    return InstrumentPresentation(
+      instrument: instrument,
+      series: state.seriesByID[instrument.id] ?? series ?? QuoteSeries.empty(instrument.id),
+      converter: converter,
+    );
   }
 
   // ---------------------------------------------------------------------

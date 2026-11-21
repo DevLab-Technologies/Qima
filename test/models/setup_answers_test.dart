@@ -148,6 +148,14 @@ void main() {
       expect({for (final s in a) s.card.id}, hasLength(a.length));
     });
 
+    test('a suggestion keeps its key when the main currency changes', () {
+      final egp = following({SetupProduct.metals, SetupProduct.crypto}).suggestions('EGP');
+      final usd = following({SetupProduct.metals, SetupProduct.crypto}).suggestions('USD');
+      expect({for (final s in egp) s.key}, hasLength(egp.length));
+      expect({for (final s in egp) s.key}, containsAll({for (final s in usd) s.key}));
+      expect([for (final s in egp) s.card.id], isNot(contains(usd.first.card.id)));
+    });
+
     test('property has no prices', () {
       expect(following({SetupProduct.property}).suggestions('USD'), isEmpty);
     });

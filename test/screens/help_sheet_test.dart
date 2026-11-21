@@ -134,6 +134,29 @@ void main() {
     expect(cubit.state.tourRequested, isTrue);
   });
 
+  testWidgets('a help sheet on a screen opened over the shell has no "Replay the tour"', (tester) async {
+    setSurfaceSize(tester, const Size(400, 800));
+    await tester.pumpWidget(harness(Builder(
+      builder: (context) => Scaffold(
+        body: TextButton(
+          onPressed: () => Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => const WatchlistScreen(manageRefreshLifecycle: false))),
+          child: const Text('open'),
+        ),
+      ),
+    )));
+    await settle(tester);
+    await tester.tap(find.text('open'));
+    await settle(tester);
+
+    await tester.tap(find.byIcon(Icons.help_outline));
+    await settle(tester);
+
+    final l10n = await AppLocalizations.delegate.load(const Locale('en'));
+    // Replaying would close the screen under the sheet, so it isn't offered.
+    expect(find.byType(HelpSheet), findsOneWidget);
+    expect(find.text(l10n.onboardingReplayTour), findsNothing);
+  });
+
   testWidgets('the "How Qima works" index sheet lists every topic', (tester) async {
     setSurfaceSize(tester, const Size(400, 900));
     await tester.pumpWidget(harness(const SettingsScreen()));

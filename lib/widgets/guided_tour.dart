@@ -1,7 +1,9 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../blocs/app_cubit.dart';
 import '../l10n/app_localizations.dart';
 import '../models/setup_answers.dart';
 import '../theme/design_system.dart';
@@ -33,6 +35,15 @@ class TourTargets {
         TourStop.money => 1,
         TourStop.prices => 2,
       };
+}
+
+/// Replays the guided tour from a screen above the home shell (Settings, a
+/// help sheet): the tour runs over the shell, so everything above it closes
+/// first, and the shell starts the tour when it is asked to.
+void replayTour(BuildContext context) {
+  final app = context.read<AppCubit>();
+  Navigator.of(context).popUntil((route) => route.isFirst);
+  app.requestTour();
 }
 
 /// The guided tour: the screen dims, one thing stays lit, and a card says
@@ -173,6 +184,16 @@ class _GuidedTourOverlayState extends State<GuidedTourOverlay> {
         // the upper half, so it never covers what it is about.
         final above = lit != null && lit.center.dy > size.height / 2;
         const gap = 14.0;
+        // Where the card starts when it sits below its target, and the room
+        // it has either way: with large text it scrolls inside that room
+        // rather than running off the screen, and its buttons stay put.
+        final insets = MediaQuery.paddingOf(context);
+        final top = lit == null ? insets.top + DS.spaceMD : math.min(lit.bottom + gap, size.height - 160);
+        final room = lit == null
+            ? size.height - insets.vertical - DS.spaceMD * 2
+            : above
+                ? lit.top - gap - insets.top - DS.spaceMD
+                : size.height - top - math.max(insets.bottom, DS.spaceMD);
         final cardWidth = math.min(size.width - DS.spaceMD * 2, 360.0);
         final left = lit == null ? (size.width - cardWidth) / 2 : (lit.center.dx - cardWidth / 2).clamp(DS.spaceMD, size.width - cardWidth - DS.spaceMD);
 
@@ -191,21 +212,38 @@ class _GuidedTourOverlayState extends State<GuidedTourOverlay> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Text(title, style: TextStyle(color: colors.textPrimary, fontSize: 17, fontWeight: FontWeight.w700)),
-                  const SizedBox(height: DS.spaceXS),
-                  Text(body, style: TextStyle(color: colors.textSecondary, fontSize: 14, height: 1.4)),
-                  const SizedBox(height: DS.spaceSM),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(l10n.tourStepOf(_index + 1, widget.stops.length), style: TextStyle(color: colors.textTertiary, fontSize: 13)),
+                  Flexible(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Text(title, style: TextStyle(color: colors.textPrimary, fontSize: 17, fontWeight: FontWeight.w700)),
+                          const SizedBox(height: DS.spaceXS),
+                          Text(body, style: TextStyle(color: colors.textSecondary, fontSize: 14, height: 1.4)),
+                        ],
                       ),
-                      if (!last) TextButton(onPressed: widget.onDone, child: Text(l10n.tourSkip)),
-                      const SizedBox(width: DS.spaceXS),
-                      FilledButton(
-                        style: FilledButton.styleFrom(minimumSize: const Size(0, 40), padding: const EdgeInsets.symmetric(horizontal: 18)),
-                        onPressed: _next,
-                        child: Text(last ? l10n.commonDone : l10n.tourNext),
+                    ),
+                  ),
+                  const SizedBox(height: DS.spaceSM),
+                  // A Wrap: with large text the buttons drop under the step
+                  // count instead of being squeezed off the card.
+                  Wrap(
+                    alignment: WrapAlignment.spaceBetween,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    spacing: DS.spaceXS,
+                    children: [
+                      Text(l10n.tourStepOf(_index + 1, widget.stops.length), style: TextStyle(color: colors.textTertiary, fontSize: 13)),
+                      Wrap(
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        spacing: DS.spaceXS,
+                        children: [
+                          if (!last) TextButton(onPressed: widget.onDone, child: Text(l10n.tourSkip)),
+                          FilledButton(
+                            style: FilledButton.styleFrom(minimumSize: const Size(0, 40), padding: const EdgeInsets.symmetric(horizontal: 18)),
+                            onPressed: _next,
+                            child: Text(last ? l10n.commonDone : l10n.tourNext),
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -241,13 +279,13 @@ class _GuidedTourOverlayState extends State<GuidedTourOverlay> {
               Positioned(
                 left: left,
                 width: cardWidth,
-                top: lit == null
-                    ? null
-                    : above
-                        ? null
-                        : math.min(lit.bottom + gap, size.height - 160),
+                top: lit != null && above ? null : top,
                 bottom: lit != null && above ? size.height - lit.top + gap : null,
-                child: lit == null ? SizedBox(height: size.height, child: Center(child: card)) : card,
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(maxHeight: math.max(room, 120)),
+                  // With nothing lit the card sits in the middle of its room.
+                  child: lit == null ? SizedBox(height: math.max(room, 120), child: Center(child: card)) : card,
+                ),
               ),
           ],
           ),

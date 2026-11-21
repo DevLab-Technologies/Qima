@@ -38,6 +38,11 @@ class SetupSuggestion extends Equatable {
 
   const SetupSuggestion(this.card, {this.preselected = true});
 
+  /// Names this suggestion among the ones offered together, whatever the
+  /// main currency: the instrument and, for gold, its karat. (The card's id
+  /// and unit follow the currency, so they change when it does.)
+  String get key => '${card.instrumentID}.${card.karat?.rawValue ?? 0}';
+
   @override
   List<Object?> get props => [card, preselected];
 }

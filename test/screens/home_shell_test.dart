@@ -409,6 +409,36 @@ void main() {
       expectTabSelected(tester, l10n.navHome);
     });
 
+    testWidgets('with very large text every card keeps its buttons on screen', (tester) async {
+      setSurfaceSize(tester, const Size(320, 568));
+      tester.platformDispatcher.textScaleFactorTestValue = 2.6;
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+      // The shell under the tour has its own limits at this size; only the
+      // tour's layout is under test here.
+      final tourErrors = <String>[];
+      final previous = FlutterError.onError;
+      FlutterError.onError = (details) {
+        if (details.toString().contains('guided_tour.dart')) tourErrors.add(details.exceptionAsString());
+      };
+      addTearDown(() => FlutterError.onError = previous);
+      await tester.pumpWidget(app(cubit));
+      await settle(tester);
+      cubit.requestTour();
+      await settle(tester);
+
+      for (var stop = 1; stop <= 4; stop++) {
+        final button = find.descendant(of: find.byType(GuidedTourOverlay), matching: find.byType(FilledButton));
+        expect(button, findsOneWidget);
+        final rect = tester.getRect(button);
+        expect(rect.top >= 0 && rect.bottom <= 568 && rect.left >= 0 && rect.right <= 320, isTrue, reason: 'stop $stop: $rect');
+        await tester.tap(button);
+        await settle(tester);
+      }
+      FlutterError.onError = previous;
+      expect(find.byType(GuidedTourOverlay), findsNothing);
+      expect(tourErrors, isEmpty);
+    });
+
     testWidgets('Skip tour ends it at any stop, and nothing under it reacts while it runs', (tester) async {
       setSurfaceSize(tester, const Size(400, 800));
       final l10n = await AppLocalizations.delegate.load(const Locale('en'));

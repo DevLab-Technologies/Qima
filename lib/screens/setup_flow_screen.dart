@@ -9,6 +9,7 @@ import '../blocs/money_cubit.dart';
 import '../l10n/app_localizations.dart';
 import '../l10n/currency_names.dart';
 import '../models/money_settings.dart';
+import '../models/quote.dart';
 import '../models/setup_answers.dart';
 import '../models/watch_card.dart';
 import '../services/import/bank_messages.dart';
@@ -27,14 +28,15 @@ import 'currency_picker.dart';
 /// `main.dart`), and again from Settings as "Run setup again" ([rerun]).
 /// Nothing is changed until the last screen is confirmed or Skip is pressed,
 /// except the base currency, which applies as it is picked so every later
-/// screen already shows prices in it.
+/// screen already shows prices in it (a rerun that is backed out of puts
+/// the earlier currency back).
 ///
 /// The first-launch showing never pops: finishing marks onboarding done
 /// (`AppCubit.completeOnboarding`), and `main.dart` shows the home shell in
 /// its place. A rerun pops back to the shell.
 class SetupFlowScreen extends StatefulWidget {
   /// Started from Settings: no welcome screen, answers start from the last
-  /// ones, and Back on the first screen leaves without changing anything.
+  /// ones, and Back on the first screen leaves with nothing changed.
   final bool rerun;
 
   const SetupFlowScreen({super.key, this.rerun = false});
@@ -47,26 +49,71 @@ class _SetupFlowScreenState extends State<SetupFlowScreen> {
   late SetupAnswers _answers;
   late SetupStep _step;
 
-  /// Ids of the suggested prices that are ticked; null until the prices
-  /// screen (or the summary) first needs them, so they start from the
-  /// suggestions' own defaults for the products chosen by then.
+  /// Keys ([SetupSuggestion.key]) of the suggested prices that are ticked;
+  /// null until one is ticked or unticked, so the prices screen opens on
+  /// the suggestions' own defaults for the products chosen by then. Keys do
+  /// not name the currency, so the ticks survive a change of main currency.
   Set<String>? _picked;
 
-  /// "Not now" on the prices screen: the watchlist is left as it is.
-  bool _keepWatchlist = false;
+  /// "Add" was pressed on the prices screen. Until then (the screen was
+  /// skipped, never reached, or left by "Not now") the watchlist is left as
+  /// it is: nothing is added that the person did not confirm.
+  bool _addPrices = false;
   bool _busy = false;
+
+  /// A rerun's currency when it opened, put back if it is backed out of;
+  /// [_applied] once the answers were confirmed instead.
+  late final String _currencyBefore;
+  bool _applied = false;
+
+  /// Prices for suggestions that are not on the watchlist, which nothing
+  /// else fetches, by instrument id; [_previewing] holds the ones asked for.
+  final Map<String, QuoteSeries> _previews = {};
+  final Set<String> _previewing = {};
 
   @override
   void initState() {
     super.initState();
     _answers = widget.rerun ? (context.read<AppCubit>().state.setup ?? const SetupAnswers()) : const SetupAnswers();
     _step = _steps.first;
+    _currencyBefore = context.read<AppCubit>().state.baseCurrency;
     // On first launch nothing has fetched rates or prices yet (the home
     // shell does that, and it isn't up), and the currency list and the
     // suggested prices need them.
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) unawaited(context.read<AppCubit>().refreshIfStale());
+      if (!mounted) return;
+      unawaited(context.read<AppCubit>().refreshIfStale());
+      _leaveIfAlreadyInUse(context.read<MoneyCubit>().state);
     });
+  }
+
+  /// Someone whose book already has accounts (it arrived by sync, or was
+  /// restored) is not new, whatever this device's first-launch flag says:
+  /// setup makes way for the app. Only from the welcome screen, so answers
+  /// under way are never thrown out.
+  void _leaveIfAlreadyInUse(MoneyState money) {
+    if (widget.rerun || _busy || _step != SetupStep.welcome || !money.loaded || !money.hasBook) return;
+    unawaited(_skipAll());
+  }
+
+  /// Fetches the prices of suggestions that are not on the watchlist, so
+  /// the prices screen shows what each one costs. A failure leaves the row
+  /// without a price and is tried again the next time the screen opens.
+  void _loadPreviews() {
+    final app = context.read<AppCubit>();
+    for (final s in _suggestions(app.state.baseCurrency)) {
+      final instrument = s.card.instrument;
+      if (instrument == null || app.state.seriesByID.containsKey(instrument.id) || !_previewing.add(instrument.id)) continue;
+      unawaited(() async {
+        try {
+          final series = await app.repository.refresh(instrument);
+          if (mounted) setState(() => _previews[instrument.id] = series);
+        } catch (e) {
+          debugPrint('Setup: price for ${instrument.id} failed: $e');
+          _previewing.remove(instrument.id);
+        }
+      }());
+    }
   }
 
   List<SetupStep> get _steps => [
@@ -84,20 +131,23 @@ class _SetupFlowScreenState extends State<SetupFlowScreen> {
   List<SetupSuggestion> _suggestions(String currency) => _answers.pruned.suggestions(currency);
 
   Set<String> _pickedFor(List<SetupSuggestion> suggestions) {
-    final offered = {for (final s in suggestions) s.card.id};
-    final picked = _picked ?? {for (final s in suggestions) if (s.preselected) s.card.id};
+    final offered = {for (final s in suggestions) s.key};
+    final picked = _picked ?? {for (final s in suggestions) if (s.preselected) s.key};
     // A product unticked after the prices were picked takes its prices along.
     return picked.intersection(offered);
   }
 
   List<WatchCard> _pickedCards(String currency) {
-    if (_keepWatchlist || !_answers.pruned.hasPricedProducts) return const [];
+    if (!_addPrices || !_answers.pruned.hasPricedProducts) return const [];
     final suggestions = _suggestions(currency);
     final picked = _pickedFor(suggestions);
-    return [for (final s in suggestions) if (picked.contains(s.card.id)) s.card];
+    return [for (final s in suggestions) if (picked.contains(s.key)) s.card];
   }
 
-  void _go(SetupStep step) => setState(() => _step = step);
+  void _go(SetupStep step) {
+    setState(() => _step = step);
+    if (step == SetupStep.prices) _loadPreviews();
+  }
 
   void _next() {
     final steps = _steps;
@@ -130,13 +180,21 @@ class _SetupFlowScreenState extends State<SetupFlowScreen> {
       // The book loads right after the app does; on first launch setup can
       // be finished before it has, and a save now would be overwritten.
       if (!money.state.loaded) {
-        await money.stream.firstWhere((s) => s.loaded, orElse: () => money.state);
+        try {
+          await money.stream.firstWhere((s) => s.loaded, orElse: () => money.state).timeout(_bookWait);
+        } on TimeoutException {
+          debugPrint('Setup: the book did not load in time; features are left as they are');
+        }
         // The book closed before it loaded: the app is shutting down.
-        if (!money.state.loaded) return;
+        if (money.isClosed) return;
       }
-      await money.applySetup(answers.features);
+      // A book that never loaded is not written to (the write would replace
+      // what is stored); setup still finishes, and the features can be
+      // switched on later from Settings.
+      if (money.state.loaded) await money.applySetup(answers.features);
       await app.adoptSetupWatchlist(cards);
       await app.saveSetup(answers);
+      _applied = true;
       if (widget.rerun) {
         // The tour runs over the shell, so it is asked for once setup is
         // out of its way.
@@ -165,6 +223,9 @@ class _SetupFlowScreenState extends State<SetupFlowScreen> {
     }
   }
 
+  /// How long finishing waits for the book before going on without it.
+  static const _bookWait = Duration(seconds: 8);
+
   void _toggle<T>(Set<T> current, T value, SetupAnswers Function(Set<T>) apply) {
     final next = {...current};
     next.contains(value) ? next.remove(value) : next.add(value);
@@ -183,9 +244,18 @@ class _SetupFlowScreenState extends State<SetupFlowScreen> {
       // (a rerun goes back to Settings, first launch closes the app).
       canPop: first,
       onPopInvokedWithResult: (didPop, _) {
-        if (!didPop && !first) _back();
+        if (!didPop) {
+          if (!first) _back();
+        } else if (widget.rerun && !_applied) {
+          // Backed out of a rerun: nothing else was changed, so the
+          // currency goes back to what it was too.
+          unawaited(context.read<AppCubit>().setBaseCurrency(_currencyBefore));
+        }
       },
-      child: Scaffold(
+      child: BlocListener<MoneyCubit, MoneyState>(
+        listenWhen: (a, b) => !a.loaded && b.loaded,
+        listener: (context, money) => _leaveIfAlreadyInUse(money),
+        child: Scaffold(
         backgroundColor: colors.bg0,
         body: ScreenBackground(
           child: SafeArea(
@@ -208,6 +278,7 @@ class _SetupFlowScreenState extends State<SetupFlowScreen> {
               ),
             ),
           ),
+        ),
         ),
       ),
     );
@@ -387,13 +458,13 @@ class _SetupFlowScreenState extends State<SetupFlowScreen> {
           : () {
               setState(() {
                 _picked = picked;
-                _keepWatchlist = false;
+                _addPrices = true;
               });
               _next();
             },
       secondaryLabel: l10n.setupPricesNotNow,
       onSecondary: () {
-        setState(() => _keepWatchlist = true);
+        setState(() => _addPrices = false);
         _next();
       },
       children: [
@@ -407,11 +478,11 @@ class _SetupFlowScreenState extends State<SetupFlowScreen> {
                     children: [
                       Expanded(
                         child: InstrumentRow(
-                          presentation: cubit.presentation(s.card),
-                          onTap: () => _togglePick(picked, s.card.id),
+                          presentation: cubit.presentation(s.card, series: _previews[s.card.instrumentID]),
+                          onTap: () => _togglePick(picked, s.key),
                         ),
                       ),
-                      Checkbox(value: picked.contains(s.card.id), onChanged: (_) => _togglePick(picked, s.card.id)),
+                      Checkbox(value: picked.contains(s.key), onChanged: (_) => _togglePick(picked, s.key)),
                     ],
                   ),
                 ),
@@ -422,9 +493,9 @@ class _SetupFlowScreenState extends State<SetupFlowScreen> {
     );
   }
 
-  void _togglePick(Set<String> picked, String id) {
+  void _togglePick(Set<String> picked, String key) {
     final next = {...picked};
-    next.contains(id) ? next.remove(id) : next.add(id);
+    next.contains(key) ? next.remove(key) : next.add(key);
     setState(() => _picked = next);
   }
 

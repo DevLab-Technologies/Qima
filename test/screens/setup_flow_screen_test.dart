@@ -7,6 +7,7 @@ import 'package:qima/blocs/app_cubit.dart';
 import 'package:qima/blocs/money_cubit.dart';
 import 'package:qima/l10n/app_localizations.dart';
 import 'package:qima/models/asset.dart';
+import 'package:qima/models/book_account.dart';
 import 'package:qima/models/fx_history.dart';
 import 'package:qima/models/money.dart';
 import 'package:qima/models/money_settings.dart';
@@ -343,6 +344,119 @@ void main() {
     expect(money.state.settings.features, {MoneyFeature.budget, MoneyFeature.loans, MoneyFeature.people});
     expect(cubit.state.setup?.goals, {SetupGoal.people});
     expect(cubit.state.tourRequested, isFalse);
+  });
+
+  testWidgets('Skip before the prices were confirmed adds none of them', (tester) async {
+    setSurfaceSize(tester, const Size(400, 900));
+    await tester.pumpWidget(harness());
+    await settle(tester);
+
+    await tapText(tester, l10n.onboardingGetStarted);
+    await tapText(tester, l10n.commonContinue);
+    await tapText(tester, l10n.setupUsePrices);
+    await tapText(tester, l10n.commonContinue);
+    await tapText(tester, l10n.setupProductMetals);
+    // Skipped on the products screen: the suggestions were never shown.
+    await tapToFinish(tester, l10n.onboardingSkip);
+
+    expect(cubit.state.setup?.products, {SetupProduct.metals});
+    expect([for (final c in cubit.state.cards) c.instrumentID], ['metal.XAU', 'metal.XAG', 'crypto.BTC']);
+  });
+
+  testWidgets('the ticked prices survive a change of main currency', (tester) async {
+    setSurfaceSize(tester, const Size(400, 900));
+    await tester.pumpWidget(harness());
+    await settle(tester);
+
+    await tapText(tester, l10n.onboardingGetStarted);
+    await tapText(tester, l10n.commonContinue);
+    await tapText(tester, l10n.setupUsePrices);
+    await tapText(tester, l10n.commonContinue);
+    await tapText(tester, l10n.setupProductCrypto);
+    await tapText(tester, l10n.commonContinue);
+    // Bitcoin is ticked; Ethereum is added to it.
+    await tester.tap(find.byType(Checkbox).last);
+    await settle(tester);
+    await tapText(tester, l10n.setupPricesAdd(2));
+
+    // From the summary, back to the currency, and forward again.
+    await tapText(tester, l10n.setupSummaryCurrency);
+    await tapText(tester, 'Egyptian Pound');
+    await tapText(tester, l10n.commonContinue);
+    await tapText(tester, l10n.commonContinue);
+    await tapText(tester, l10n.commonContinue);
+    expect(find.text(l10n.setupPricesBody('EGP')), findsOneWidget);
+    await tapText(tester, l10n.setupPricesAdd(2));
+    await tapToFinish(tester, l10n.setupSummaryGoHome);
+
+    expect({for (final c in cubit.state.cards) (c.instrumentID, c.currency)}, containsAll({('crypto.BTC', 'EGP'), ('crypto.ETH', 'EGP')}));
+  });
+
+  testWidgets('backing out of a rerun puts the currency back', (tester) async {
+    setSurfaceSize(tester, const Size(400, 900));
+    await tester.pumpWidget(harness(rerun: true));
+    await settle(tester);
+    await tester.tap(find.text('open'));
+    await settle(tester);
+
+    await tapText(tester, 'Egyptian Pound');
+    expect(cubit.state.baseCurrency, 'EGP');
+    await tester.tap(find.byType(BackButtonIcon));
+    await settle(tester);
+
+    expect(find.byType(SetupFlowScreen), findsNothing);
+    expect(cubit.state.baseCurrency, 'USD');
+    expect(cubit.state.setup, isNull);
+  });
+
+  testWidgets('a book that never loads does not hold setup up', (tester) async {
+    setSurfaceSize(tester, const Size(400, 900));
+    final unloaded = MoneyCubit(store: cubit.bookStore, baseCurrency: () => cubit.state.baseCurrency, rates: () => cubit.state.rates);
+    addTearDown(unloaded.close);
+    await tester.pumpWidget(MultiBlocProvider(
+      providers: [BlocProvider<AppCubit>.value(value: cubit), BlocProvider<MoneyCubit>.value(value: unloaded)],
+      child: MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        theme: buildTheme(Brightness.light),
+        home: const SetupFlowScreen(),
+      ),
+    ));
+    await settle(tester);
+
+    await tapText(tester, l10n.onboardingGetStarted);
+    await tapText(tester, l10n.commonContinue);
+    await tapText(tester, l10n.setupUseZakat);
+    await tester.tap(find.text(l10n.onboardingSkip));
+    // The wait for the book gives up; the rest of setup is still applied.
+    await tester.pump(const Duration(seconds: 9));
+    await tester.runAsync(() async {
+      for (var i = 0; i < 60 && cubit.state.shouldShowOnboarding; i++) {
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+      }
+    });
+
+    expect(cubit.state.shouldShowOnboarding, isFalse);
+    expect(cubit.state.setup?.uses, {SetupUse.zakat});
+    expect(unloaded.state.loaded, isFalse);
+  });
+
+  testWidgets('someone whose book already has accounts is not asked to set up', (tester) async {
+    setSurfaceSize(tester, const Size(400, 900));
+    await tester.runAsync(() async {
+      await money.addAccount(const BookAccount(id: 'wallet', name: 'Wallet', side: AccountSide.own, type: AccountType.cash, currency: 'USD'));
+    });
+    expect(money.state.hasBook, isTrue);
+    await tester.pumpWidget(harness());
+    await tester.runAsync(() async {
+      for (var i = 0; i < 60 && cubit.state.shouldShowOnboarding; i++) {
+        await tester.pump(const Duration(milliseconds: 50));
+        await Future<void>.delayed(const Duration(milliseconds: 20));
+      }
+    });
+
+    expect(cubit.state.shouldShowOnboarding, isFalse);
+    expect(cubit.state.setup, isNull);
   });
 
   testWidgets('lays out in Arabic on a small screen with large text', (tester) async {

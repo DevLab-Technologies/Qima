@@ -32,6 +32,7 @@ import 'backup_screen.dart';
 import 'currency_picker.dart';
 import 'help_index_sheet.dart';
 import 'help_sheet.dart';
+import '../widgets/guided_tour.dart';
 import 'setup_flow_screen.dart';
 import 'zakat_settings_screen.dart';
 
@@ -657,12 +658,7 @@ class _HelpSection extends StatelessWidget {
               style: TextStyle(color: colors.textTertiary, fontSize: 12),
             ),
             trailing: Icon(Icons.chevron_right, color: colors.textTertiary),
-            onTap: () {
-              // The tour runs over the home shell, so Settings closes first.
-              final app = context.read<AppCubit>();
-              Navigator.of(context).popUntil((route) => route.isFirst);
-              app.requestTour();
-            },
+            onTap: () => replayTour(context),
           ),
           Divider(color: colors.hairline, height: DS.spaceLG),
           ListTile(
