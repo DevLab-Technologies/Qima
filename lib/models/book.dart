@@ -76,10 +76,14 @@ class Book {
     };
   }
 
+  /// Every account's balance with no date given, worked out once: lists
+  /// ask for it once per row.
+  late final Map<String, Amounts> _undated = balances();
+
   /// One account's shown balance in its own currency (zero if untouched).
   int balanceOf(String accountId, {DateTime? asOf}) {
     final a = accounts[accountId];
-    final b = balances(asOf: asOf)[accountId] ?? const {};
+    final b = (asOf == null ? _undated : balances(asOf: asOf))[accountId] ?? const {};
     if (a?.currency != null) return b[a!.currency] ?? 0;
     if (b.length > 1) throw StateError('${a?.name ?? accountId} holds several currencies; read balances() instead.');
     return b.values.isEmpty ? 0 : b.values.first;

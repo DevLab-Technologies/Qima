@@ -166,12 +166,24 @@ void main() {
       final purchase = utf8.encode('Purchase of SAR 89.00 at JARIR on 06/11/26');
       await share('Bank message.txt', purchase, kind: 'message');
       await share('Bank message.txt', utf8.encode('Your SAR balance statement is ready in the app'), kind: 'message');
-      await share('Bank message.txt', purchase, kind: 'message');
+      await share('Bank message.txt', purchase, at: DateTime(2026, 11, 7, 12, 0, 1), kind: 'message');
       await importer.checkInbox();
       final item = importer.state.items.single;
       expect(item.file.message, isTrue);
       expect(item.rows.single.amount, -89);
       expect(await inbox.pending(), hasLength(1));
+    });
+
+    test('the same words in a bank message that came at another time are a new message', () async {
+      final payment = utf8.encode('Payment of USD 9.99 to NETFLIX from card 1234');
+      await share('Bank message.txt', payment, at: DateTime(2026, 10, 7, 9), kind: 'message');
+      await importer.checkInbox();
+      await money.markImported([importer.state.items.single.hash!]);
+      await importer.remove([importer.state.items.single.id]);
+      await share('Bank message.txt', payment, at: DateTime(2026, 11, 7, 9), kind: 'message');
+      await importer.checkInbox();
+      expect(importer.state.items.single.status, ImportStatus.read);
+      expect(importer.state.items.single.rows.single.amount, -9.99);
     });
 
     test('the same file shared twice, or imported before, is skipped', () async {

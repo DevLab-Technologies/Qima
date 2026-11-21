@@ -50,7 +50,12 @@ class BudgetScreen extends StatelessWidget {
         ),
       );
       controller.dispose();
-      if (value != null) await money.setBudget(c.id, value);
+      if (value == null) return;
+      try {
+        await money.setBudget(c.id, value);
+      } on ArgumentError {
+        if (context.mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.entryErrorRate)));
+      }
     }
 
     return ScreenBackground(

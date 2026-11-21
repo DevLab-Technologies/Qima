@@ -208,9 +208,12 @@ class MoneyCubit extends Cubit<MoneyState> {
   }
 
   /// An account with entries is archived, so its history still adds up;
-  /// one that was never used is deleted.
+  /// one that was never used is deleted. A planned payment or an asset's
+  /// loan that still points at it counts as use.
   Future<void> removeAccount(String id) async {
-    final used = state.entries.any((e) => e.lines.any((l) => l.accountId == id));
+    final used = state.entries.any((e) => e.lines.any((l) => l.accountId == id)) ||
+        state.recurring.any((r) => r.fromAccountId == id || r.categoryId == id) ||
+        state.accounts.any((a) => a.securedLoanId == id);
     final account = state.accounts.firstWhere((a) => a.id == id);
     final accounts = used ? await store.accounts.upsert(account.copyWith(archived: true)) : await store.accounts.delete(id);
     if (!isClosed) emit(state.copyWith(accounts: accounts));
@@ -315,8 +318,20 @@ class MoneyCubit extends Cubit<MoneyState> {
   /// Takes back an import: its entries go, and its files may be imported
   /// again.
   Future<void> undoImport(Iterable<String> entryIds, {Iterable<String> fileHashes = const []}) async {
-    for (final id in entryIds) {
-      await deleteEntry(id);
+    final ids = entryIds.toSet();
+    final olds = [for (final e in state.entries) if (ids.contains(e.id)) e];
+    if (olds.isNotEmpty) {
+      // One write for the batch, as importEntries added it.
+      final seen = <String>{};
+      final stated = [
+        for (final old in olds)
+          for (final s in _laterValues(_assetsIn(old), old.date, except: old.id))
+            if (!ids.contains(s.$1.id) && seen.add('${s.$1.id}|${s.$2}')) s,
+      ]..sort((a, b) => a.$1.date.compareTo(b.$1.date));
+      final entries = await store.entries.deleteAll(ids);
+      if (isClosed) return;
+      emit(state.copyWith(entries: entries));
+      await _restate(stated);
     }
     final drop = fileHashes.toSet();
     if (drop.isEmpty || !state.settings.importedHashes.any(drop.contains)) return;
@@ -605,13 +620,21 @@ class MoneyCubit extends Cubit<MoneyState> {
     final base = baseCurrency();
     final was = state.settings.budgetCurrency;
     // Budgets set before the base currency changed are converted, so they
-    // keep their worth rather than being read in the new currency.
-    final budgets = was == null || was == base
-        ? {...state.settings.budgets}
-        : {
-            for (final MapEntry(:key, :value) in state.settings.budgets.entries)
-              if (NetWorthSummary.inCurrency(value, was, base, rates()) case final v?) key: MinorUnits.fromMajor(v, base),
-          };
+    // keep their worth rather than being read in the new currency. Without
+    // a rate nothing is saved: a budget that can't be converted is never
+    // dropped.
+    final Map<String, int> budgets;
+    if (was == null || was == base) {
+      budgets = {...state.settings.budgets};
+    } else {
+      final r = rates();
+      budgets = {};
+      for (final MapEntry(:key, :value) in state.settings.budgets.entries) {
+        final v = NetWorthSummary.inCurrency(value, was, base, r);
+        if (v == null) throw ArgumentError('No rate for $was against $base.');
+        budgets[key] = MinorUnits.fromMajor(v, base);
+      }
+    }
     amount <= 0 ? budgets.remove(categoryId) : budgets[categoryId] = amount;
     return _saveSettings(state.settings.copyWith(
       budgets: budgets,

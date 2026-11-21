@@ -91,19 +91,27 @@ class AiApps {
     }
   }
 
-  Future<void> _serial(Future<void> Function() step) => _queue = _queue.then((_) => step());
+  /// A step that failed never holds up the ones after it: turning sharing
+  /// off must still delete the copy.
+  Future<void> _serial(Future<void> Function() step) => _queue = _queue.then((_) => step(), onError: (_) => step());
 
   /// Where the copy lives on this computer: the App Group container on a
   /// Mac App Store build (its sandboxed helper shares that group), else the
   /// app's support folder, which an unsandboxed helper can read.
   Future<String?> snapshotPath() => _path ??= () async {
         if (!supported) return null;
-        if (defaultTargetPlatform == TargetPlatform.macOS) {
-          final group = await _macBridge.invokeMethod<String>('groupContainerPath');
-          if (group != null && _writable(group)) return '$group/${SnapshotLocation.fileName}';
+        try {
+          if (defaultTargetPlatform == TargetPlatform.macOS) {
+            final group = await _macBridge.invokeMethod<String>('groupContainerPath');
+            if (group != null && _writable(group)) return '$group/${SnapshotLocation.fileName}';
+          }
+          final dir = await getApplicationSupportDirectory();
+          return '${dir.path}${Platform.pathSeparator}${SnapshotLocation.fileName}';
+        } catch (_) {
+          // Asked again next time rather than remembered as failed.
+          _path = null;
+          rethrow;
         }
-        final dir = await getApplicationSupportDirectory();
-        return '${dir.path}${Platform.pathSeparator}${SnapshotLocation.fileName}';
       }();
 
   /// Builds without the App Group entitlement get a group path they may not

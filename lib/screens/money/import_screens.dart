@@ -676,7 +676,13 @@ class _ImportReviewScreenState extends State<ImportReviewScreen> {
       final finished = [for (final i in imports.items) if (i.done) i];
       // Learned before the files leave the inbox: shapes need their text.
       final shapes = await _shapes(groups, importer);
-      await money.importEntries([...entries, ...fixes], fileHashes: [for (final i in finished) if (i.status == ImportStatus.read) ?i.hash]);
+      // Only a file that added something counts as imported, so one left
+      // out whole can be shared again.
+      final addedFrom = {for (final c in chosen) c.fileId};
+      await money.importEntries([...entries, ...fixes], fileHashes: [
+        for (final i in finished)
+          if (i.status == ImportStatus.read && (addedFrom.contains(i.id) || i.settled.containsValue(true))) ?i.hash,
+      ]);
       for (final g in groups) {
         await _keepRefs(money, g);
       }

@@ -153,7 +153,12 @@ class ImportCubit extends Cubit<ImportState> {
       ImportItem result;
       try {
         final bytes = await inbox.bytes(item.file);
-        final hash = sha256.convert(bytes).toString();
+        // A bank message is told apart by when it came and who sent it as
+        // well as its words: the same text next month is a new payment.
+        final hash = sha256.convert([
+          if (item.file.message) ...utf8.encode('${item.file.receivedAt.toUtc().toIso8601String()}\n${item.file.sender ?? ''}\n'),
+          ...bytes,
+        ]).toString();
         final duplicate = state.items.any((i) => i.id != item.id && i.hash == hash);
         if (wasImported(hash) || duplicate) {
           result = item.copyWith(status: ImportStatus.alreadyImported, hash: hash);

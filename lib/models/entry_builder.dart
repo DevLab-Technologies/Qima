@@ -221,6 +221,9 @@ class EntryBuilder {
       final existing = own.where((e) => e.template == EntryTemplate.opening).firstOrNull;
       if (existing == null) return opening(account, d, own.firstOrNull?.date ?? date);
       final shown = existing.lines.where((l) => l.accountId == account.id).fold(0, (n, l) => n + l.amount) * account.side.shownSign;
+      // An entry can't hold zero lines, so an opening balance brought to
+      // nothing is cancelled by a second one on the same day.
+      if (shown + d == 0) return opening(account, d, existing.date);
       return existing.copyWith(lines: opening(account, shown + d, existing.date).lines);
     }
     final other = book.accounts[DefaultCategories.other] ?? book.accounts.values.firstWhere((a) => a.side == AccountSide.spending);
@@ -258,8 +261,9 @@ class EntryBuilder {
     final intoBase = toBase(proceeds, into.currency!);
     final assetBase = toBase(carried, asset.currency!);
     return _entry(EntryTemplate.assetSale, date, [
-      _line(into, proceeds, baseAmount: intoBase),
-      _line(asset, -carried, baseAmount: -assetBase),
+      if (proceeds != 0) _line(into, proceeds, baseAmount: intoBase),
+      // An asset carried at nothing has no line of its own: it is all gain.
+      if (carried != 0) _line(asset, -carried, baseAmount: -assetBase),
       if (intoBase != assetBase) _line(_change, assetBase - intoBase, currency: baseCurrency),
     ]);
   }

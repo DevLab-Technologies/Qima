@@ -65,6 +65,12 @@ object BankSms {
     /** How long the same text from the same sender counts as the same message. */
     private const val SAME_MESSAGE_MS = 10 * 60 * 1000L
 
+    /**
+     * How far back kept messages are remembered, by their own date: longer
+     * than "Bring in the last 60 days" reaches, so a second run adds nothing.
+     */
+    private const val REMEMBERED_MS = 90L * 24 * 60 * 60 * 1000
+
     private val money = Regex(
         "\\b(SAR|EGP|AED|USD|EUR|GBP|KWD|QAR|BHD|OMR|JOD|SR|LE)\\b|ر\\.?\\s?س|ريال|ج\\.?\\s?م|جنيه|درهم|دينار|" +
             "debit|credit|purchase|withdraw|deposit|transfer|payment|paid|spent|balance|refund|salary|" +
@@ -110,7 +116,7 @@ object BankSms {
         val recent = JSONObject(p.getString(RECENT, "{}") ?: "{}")
         val now = System.currentTimeMillis()
         val keys = recent.keys().asSequence().toList()
-        for (k in keys) if (now - recent.optLong(k) > 2 * 24 * 60 * 60 * 1000L) recent.remove(k)
+        for (k in keys) if (now - recent.optLong(k) > REMEMBERED_MS) recent.remove(k)
         val before = recent.optLong(key, -1L)
         val seen = before >= 0 && kotlin.math.abs(at - before) < SAME_MESSAGE_MS
         if (!seen) recent.put(key, at)

@@ -431,7 +431,9 @@ void main() {
     await tester.pump();
     expect(money.state.book.balanceOf('rajhi'), before - sar(512.40) + sar(17500));
     expect(importer.state.isEmpty, isTrue);
-    expect(money.state.settings.importedHashes, hasLength(2));
+    // Only the CSV added something; the screenshot, left out whole, can be
+    // shared again.
+    expect(money.state.settings.importedHashes, hasLength(1));
     expect(tester.takeException(), isNull);
   });
 
